@@ -2,7 +2,53 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Form {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  title: String!
+  description: String
+  state: FormState!
+  isPromoted: Boolean!
+  expiredAt: DateTime
+  privacyExpiredAt: DateTime
+  owner: User!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum FormState {
+  Ready
+  Expired
+}
+
+type User {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  username: String!
+  phoneNum: String
+  email: String!
+  password: String!
+  type: UserType!
+  coin: Int!
+  avatarImg: String
+  forms: Form
+}
+
+enum UserType {
+  Free
+  Premium
+  Admin
+}
+
 type CreateAccountOutput {
+  ok: Boolean!
+  error: String
+}
+
+type CreateFormOutput {
   ok: Boolean!
   error: String
 }
@@ -13,6 +59,7 @@ type Query {
 
 type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
+  createForm(input: CreateFormInput!): CreateFormOutput!
 }
 
 input CreateAccountInput {
@@ -20,4 +67,9 @@ input CreateAccountInput {
   phoneNum: String
   email: String!
   password: String!
+}
+
+input CreateFormInput {
+  title: String!
+  description: String
 }

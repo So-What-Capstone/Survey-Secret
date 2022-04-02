@@ -7,12 +7,10 @@ import { UsersResolver } from './users.resolver';
 
 @Module({
   imports: [
-    MongooseModule.forFeatureAsync([
+    MongooseModule.forFeature([
       {
         name: User.name,
-        useFactory: () => {
-          return UserSchema;
-        },
+        schema: UserSchema,
       },
     ]),
   ],

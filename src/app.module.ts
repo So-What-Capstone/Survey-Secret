@@ -8,6 +8,8 @@ import { join } from 'path';
 import * as Joi from 'joi';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { FormsModule } from './forms/forms.module';
+import { QuestionsModule } from './questions/questions.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
     }),
     UsersModule,
     MongooseModule.forRoot(process.env.DB_URL),
+    FormsModule,
+    QuestionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

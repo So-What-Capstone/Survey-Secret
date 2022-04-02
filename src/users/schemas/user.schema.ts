@@ -10,10 +10,12 @@ import {
   IsEmail,
   IsEnum,
   IsInt,
-  IsNumber,
+  IsOptional,
   IsString,
   Length,
 } from 'class-validator';
+import mongoose from 'mongoose';
+import { Form } from '../../forms/schemas/form.schema';
 import { CoreSchema } from './../../common/schemas/core.schema';
 
 export enum UserType {
@@ -50,11 +52,12 @@ export class User extends CoreSchema {
     type: String,
     unique: true,
     sparse: true,
-    default: true,
+    default: null,
     match: /^[0-9]{11}$/,
   })
   @IsString()
   @Length(11, 11)
+  @IsOptional()
   phoneNum?: string;
 
   @Field((type) => String)
@@ -62,7 +65,6 @@ export class User extends CoreSchema {
     type: String,
     required: true,
     unique: true,
-    index: true,
     trim: true,
   })
   @IsEmail()
@@ -73,7 +75,7 @@ export class User extends CoreSchema {
   @IsString()
   password: string;
 
-  @Field((type) => Number)
+  @Field((type) => UserType)
   @Prop({
     type: String,
     enum: UserType,
@@ -91,6 +93,10 @@ export class User extends CoreSchema {
   @Field((type) => String, { nullable: true })
   @Prop({ type: String }) //default : AWS 기본 프로필사진 링크
   avatarImg?: string;
+
+  @Field((type) => Form, { nullable: true })
+  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Form' })
+  forms?: Form[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
