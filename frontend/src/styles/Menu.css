@@ -123,6 +123,13 @@
     width: 10rem;
     text-align: center;
     color: black;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+    border-radius: 1rem;
+    
+}
+.list-item:hover{
+    background-color: #E2D784CF;
 }
 
 .empty-box{

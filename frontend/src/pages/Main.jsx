@@ -1,7 +1,8 @@
 import React from 'react';
 import { Routes, Route } from "react-router-dom";
-import { Button } from 'antd';
+
 import Menu from '../modules/Menu';
+import MainContent from '../modules/MainContent';
 
 
 function Main() {
@@ -9,8 +10,7 @@ function Main() {
         <div>
             <Menu />
             <p>main</p>
-            <Button type="primary">지구폭파</Button>
-            <Button>태양계 탈출</Button>
+            <MainContent/>
             <Routes>
                 <Route path="test" element={<p>test</p>} />
             </Routes>

@@ -1,0 +1,18 @@
+.swiper-container-main{
+    width: 80%;
+    transition: transform 0.5s;
+    background-color: antiquewhite;
+}
+
+.swiper-inner{
+    width:100%;
+    display: flex;
+}
+
+.swiper-inner img{
+    width:100%;
+}
+
+.non-scroll{
+    overflow: hidden;
+}
