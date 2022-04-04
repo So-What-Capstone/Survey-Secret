@@ -5,12 +5,19 @@ import { Model } from 'mongoose';
 import { CreateFormInput, CreateFormOutput } from './dtos/craete-form.dto';
 import { User } from '../users/schemas/user.schema';
 import { UserDocument } from '../users/schemas/user.schema';
+import {
+  CreateSectionInput,
+  CreateSectionOutput,
+} from './dtos/create-section.dto';
+import { Section, SectionDocument } from './schemas/section.schema';
 
 @Injectable()
 export class FormsService {
   constructor(
     @InjectModel(Form.name) private readonly formModel: Model<FormDocument>,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Section.name)
+    private readonly sectionModel: Model<SectionDocument>,
   ) {}
 
   async createForm(
@@ -27,6 +34,29 @@ export class FormsService {
 
       user.forms.push(form);
       user.save();
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async createSection({
+    formId,
+    order,
+    title,
+  }: CreateSectionInput): Promise<CreateSectionOutput> {
+    try {
+      const form = await this.formModel.findOne({ _id: formId });
+
+      const section = await this.sectionModel.create({
+        title,
+        form,
+        order,
+      });
+
+      form.sections.push(section);
+      await form.save();
 
       return { ok: true };
     } catch (error) {

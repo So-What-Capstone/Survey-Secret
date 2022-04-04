@@ -15,6 +15,8 @@ import {
 } from 'class-validator';
 import { User } from '../../users/schemas/user.schema';
 import mongoose from 'mongoose';
+import { schemaOption } from './../../common/schemas/option.schema';
+import { Section } from './section.schema';
 
 export enum FormState {
   Ready = 'Ready',
@@ -25,11 +27,6 @@ export enum FormState {
 registerEnumType(FormState, { name: 'FormState' });
 
 export type FormDocument = Form & Document;
-
-const schemaOption: SchemaOptions = {
-  timestamps: true,
-  autoIndex: true,
-};
 
 @InputType('FormInputType', { isAbstract: true })
 @ObjectType()
@@ -74,6 +71,10 @@ export class Form extends CoreSchema {
   @Field((type) => User)
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: User;
+
+  @Field((type) => [Section], { nullable: true })
+  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Section' })
+  sections?: Section[];
 }
 
 export const FormSchema = SchemaFactory.createForClass(Form);

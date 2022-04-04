@@ -17,21 +17,20 @@ import {
 import mongoose from 'mongoose';
 import { Form } from '../../forms/schemas/form.schema';
 import { CoreSchema } from './../../common/schemas/core.schema';
+import { schemaOption } from './../../common/schemas/option.schema';
 
+//enum type 정의
 export enum UserType {
   Free = 'Free',
   Premium = 'Premium',
   Admin = 'Admin',
 }
 
+//enum type을 graphql type에 등록
 registerEnumType(UserType, { name: 'UserType' });
 
+//userService에서 inject 할 때 사용합니다.
 export type UserDocument = User & Document;
-
-const schemaOption: SchemaOptions = {
-  timestamps: true,
-  autoIndex: true,
-};
 
 @InputType('UserInput', { isAbstract: true })
 @ObjectType()
@@ -90,13 +89,15 @@ export class User extends CoreSchema {
   @IsInt()
   coin: number;
 
+  //값이 안들어와도 되는 경우에는 graphql에서 nullable option 넣고, typescript에도 ? 꼭 맞춰주셔야 됩니다!
   @Field((type) => String, { nullable: true })
   @Prop({ type: String }) //default : AWS 기본 프로필사진 링크
   avatarImg?: string;
 
-  @Field((type) => Form, { nullable: true })
+  @Field((type) => [Form], { nullable: true })
   @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Form' })
   forms?: Form[];
 }
 
+//class를 토대로 schema를 생성합니다.
 export const UserSchema = SchemaFactory.createForClass(User);
