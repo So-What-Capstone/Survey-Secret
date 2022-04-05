@@ -33,7 +33,7 @@ export class FormsService {
       });
 
       user.forms.push(form);
-      user.save();
+      await user.save();
 
       return { ok: true };
     } catch (error) {

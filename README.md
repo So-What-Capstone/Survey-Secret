@@ -38,6 +38,15 @@
 - 스네이크케이스에서 카멜케이스로 JS에 맞추어서 바꿨습니다.
 - 섹션 타이틀(section_title)같은 경우 section.section_title 이런식으로 중복 사용될 것 같아서 title만 저장했습니다.
 
+### AuthGuard 사용법
+
+- Resolver 위에 @Type(["Type"]) 쓰시면 사용 가능합니다.
+- Type의 종류로는 Any, Free, Premium, Admin 등이 있습니다.
+- @Type을 생략하면 비로그인 회원도 사용할 수 있습니다.
+- Any인 경우, 로그인 한 회원 누구나 사용 가능한 resolver
+- ["Free","Premium"]인 경우, Admin을 제외한 회원 사용 가능 resolver
+- 예시 -> forms.resolver.ts 의 createForm()
+
 </pre>
 
 <p align="center">

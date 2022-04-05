@@ -57,6 +57,18 @@ type CreateAccountOutput {
   error: String
 }
 
+type FindUserByIdOutput {
+  ok: Boolean!
+  error: String
+  user: User
+}
+
+type LoginOutput {
+  ok: Boolean!
+  error: String
+  token: String
+}
+
 type CreateFormOutput {
   ok: Boolean!
   error: String
@@ -69,10 +81,16 @@ type CreateSectionOutput {
 
 type Query {
   test: Boolean!
+  findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
+}
+
+input FindUserByIdInput {
+  id: String!
 }
 
 type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
+  login(input: LoginInput!): LoginOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
   createSection(input: CreateSectionInput!): CreateSectionOutput!
 }
@@ -80,6 +98,11 @@ type Mutation {
 input CreateAccountInput {
   username: String!
   phoneNum: String
+  email: String!
+  password: String!
+}
+
+input LoginInput {
   email: String!
   password: String!
 }

@@ -1,4 +1,5 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Type } from '../auth/type.decorator';
 import { CreateFormOutput, CreateFormInput } from './dtos/craete-form.dto';
 import {
   CreateSectionOutput,
@@ -11,6 +12,7 @@ export class FormsResolver {
   constructor(private readonly formsService: FormsService) {}
 
   @Mutation((returns) => CreateFormOutput)
+  @Type(['Free'])
   createForm(
     @Args('input') createFormInput: CreateFormInput,
   ): Promise<CreateFormOutput> {

@@ -6,7 +6,13 @@ import {
   CreateAccountOutput,
   CreateAccountInput,
 } from './dtos/create-account.dto';
-import { hash } from 'bcrypt';
+import {
+  FindUserByIdInput,
+  FindUserByIdOutput,
+} from './dtos/find-user-by-id.dto';
+import { LoginInput, LoginOutput } from './dtos/login.dto';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UsersService {
@@ -34,11 +40,45 @@ export class UsersService {
       await this.userModel.create({
         username,
         email,
-        password: await hash(password, 10),
+        password: await bcrypt.hash(password, 10),
         phoneNum,
       });
 
       return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async login({ email, password }: LoginInput): Promise<LoginOutput> {
+    try {
+      const user = await this.userModel.findOne({ email }, 'email password');
+      if (!user) {
+        return { ok: false, error: '이메일을 확인해주세요.' };
+      }
+
+      const isMatched = await bcrypt.compare(password, user.password);
+      if (!isMatched) {
+        return { ok: false, error: '비밀번호를 확인해주세요.' };
+      } else {
+        const token = jwt.sign(user._id.toString(), process.env.SECRET_KEY);
+        console.log(token);
+        return { ok: true, token };
+      }
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async findById(id: string): Promise<FindUserByIdOutput> {
+    try {
+      const user = await this.userModel.findById(id);
+
+      if (!user) {
+        return { ok: false, error: '유저를 찾을 수 없습니다.' };
+      }
+
+      return { ok: true, user };
     } catch (error) {
       return { ok: false, error };
     }

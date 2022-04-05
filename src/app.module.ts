@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,6 +10,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { FormsModule } from './forms/forms.module';
 import { QuestionsModule } from './questions/questions.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,11 +26,16 @@ import { QuestionsModule } from './questions/questions.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      context: ({ req }) => {
+        return { token: req.headers['x-jwt'] };
+      },
     }),
     UsersModule,
-    MongooseModule.forRoot(process.env.DB_URL),
+    //set DB logger(raw query), DB error/connect log
+    MongooseModule.forRoot(process.env.DB_URL, {}),
     FormsModule,
     QuestionsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
