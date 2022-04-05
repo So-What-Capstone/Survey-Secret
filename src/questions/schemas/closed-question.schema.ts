@@ -39,7 +39,7 @@ export class ClosedQuestion {
       {
         //unique동작 안함 좀 더 찾아보기
         no: { type: Number, unique: true },
-        content: { type: String },
+        choice: { type: String },
       },
     ],
     required: true,
@@ -62,6 +62,10 @@ export class ClosedQuestion {
     required: true,
   })
   type?: ClosedQuestionType;
+
+  @Field((type) => Number)
+  @Prop({ type: Number, unique: true })
+  order: Number;
 }
 
 export const ClosedQuestionSchema =
