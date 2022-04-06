@@ -17,6 +17,14 @@ import {
   OpenedQuestion,
   OpenedQuestionDocument,
 } from './schemas/opened-question.schema';
+import {
+  CreateLinearQuestionInput,
+  CreateLinearQuestionOutput,
+} from './dtos/create-linear-question.dto';
+import {
+  LinearQuestion,
+  LinearQuestionDocument,
+} from './schemas/linear-question.schema';
 
 @Injectable()
 export class QuestionsService {
@@ -25,6 +33,8 @@ export class QuestionsService {
     private readonly closedQuestionModel: Model<ClosedQuestionDocument>,
     @InjectModel(OpenedQuestion.name)
     private readonly openedQuestionModel: Model<OpenedQuestionDocument>,
+    @InjectModel(LinearQuestion.name)
+    private readonly linearQuestionModel: Model<LinearQuestionDocument>,
   ) {}
 
   async createClosedQuestion(
@@ -51,6 +61,19 @@ export class QuestionsService {
         createOpenedQuestionInput,
       );
 
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async createLinearQuestion(
+    createLinearQuestionInput: CreateLinearQuestionInput,
+  ): Promise<CreateLinearQuestionOutput> {
+    try {
+      const linearQuestion = await this.linearQuestionModel.create(
+        createLinearQuestionInput,
+      );
       return { ok: true };
     } catch (error) {
       return { ok: false, error };

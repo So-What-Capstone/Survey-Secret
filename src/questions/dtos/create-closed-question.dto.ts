@@ -8,6 +8,7 @@ export class CreateClosedQuestionInput extends PickType(ClosedQuestion, [
   'choices',
   'description',
   'required',
+  'order',
   'type',
 ]) {}
 

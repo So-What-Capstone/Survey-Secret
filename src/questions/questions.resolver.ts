@@ -4,6 +4,10 @@ import {
   CreateClosedQuestionOutput,
 } from './dtos/create-closed-question.dto';
 import {
+  CreateLinearQuestionInput,
+  CreateLinearQuestionOutput,
+} from './dtos/create-linear-question.dto';
+import {
   CreateOpenedQuestionInput,
   CreateOpenedQuestionOutput,
 } from './dtos/create-opened-question.dto';
@@ -28,6 +32,15 @@ export class QuestionsResolver {
   ): Promise<CreateOpenedQuestionOutput> {
     return this.questionsService.createOpenedQuestion(
       createOpenedQuestionInput,
+    );
+  }
+
+  @Mutation((returns) => CreateLinearQuestionOutput)
+  createLinearQuestion(
+    @Args('input') createLinearQuestionInput: CreateLinearQuestionInput,
+  ): Promise<CreateLinearQuestionOutput> {
+    return this.questionsService.createLinearQuestion(
+      createLinearQuestionInput,
     );
   }
 }

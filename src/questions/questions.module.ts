@@ -12,6 +12,10 @@ import {
   OpenedQuestion,
   OpenedQuestionSchema,
 } from './schemas/opened-question.schema';
+import {
+  LinearQuestion,
+  LinearQuestionSchema,
+} from './schemas/linear-question.schema';
 
 @Module({
   imports: [
@@ -23,6 +27,10 @@ import {
       {
         name: OpenedQuestion.name,
         schema: OpenedQuestionSchema,
+      },
+      {
+        name: LinearQuestion.name,
+        schema: LinearQuestionSchema,
       },
       {
         name: Section.name,

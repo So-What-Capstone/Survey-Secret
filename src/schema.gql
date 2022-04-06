@@ -89,6 +89,11 @@ type CreateClosedQuestionOutput {
   error: String
 }
 
+type CreateLinearQuestionOutput {
+  ok: Boolean!
+  error: String
+}
+
 type CreateOpenedQuestionOutput {
   ok: Boolean!
   error: String
@@ -110,6 +115,7 @@ type Mutation {
   createSection(input: CreateSectionInput!): CreateSectionOutput!
   createClosedQuestion(input: CreateClosedQuestionInput!): CreateClosedQuestionOutput!
   createOpenedQuestion(input: CreateOpenedQuestionInput!): CreateOpenedQuestionOutput!
+  createLinearQuestion(input: CreateLinearQuestionInput!): CreateLinearQuestionOutput!
 }
 
 input CreateAccountInput {
@@ -139,6 +145,7 @@ input CreateClosedQuestionInput {
   content: String!
   description: String
   required: Boolean
+  order: Float
   choices: [ClosedQuestionChoiceTypeInput!]!
   type: ClosedQuestionType
 }
@@ -157,6 +164,7 @@ input CreateOpenedQuestionInput {
   content: String!
   description: String
   required: Boolean
+  order: Float
   type: OpenedQuestionType
 }
 
@@ -166,4 +174,15 @@ enum OpenedQuestionType {
   Time
   Address
   File
+}
+
+input CreateLinearQuestionInput {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float
+  leftRange: Float!
+  rightRange: Float!
+  leftLabel: String
+  rightLabel: String
 }

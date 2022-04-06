@@ -5,6 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { schemaOptionExceptDate } from '../../common/schemas/option.schema';
 import { Question } from './question.schema';
 
 export enum OpenedQuestionType {
@@ -21,7 +22,7 @@ export type OpenedQuestionDocument = OpenedQuestion & Document;
 
 @InputType('OpenedQuestionInputType', { isAbstract: true })
 @ObjectType()
-@Schema({ autoIndex: true })
+@Schema(schemaOptionExceptDate)
 export class OpenedQuestion extends Question {
   @Field((type) => OpenedQuestionType, { nullable: true })
   @Prop({

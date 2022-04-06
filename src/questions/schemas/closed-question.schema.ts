@@ -5,6 +5,7 @@ import {
   Field,
 } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { schemaOptionExceptDate } from '../../common/schemas/option.schema';
 import { Question } from './question.schema';
 
 export enum ClosedQuestionType {
@@ -28,7 +29,7 @@ export class ClosedQuestionChoiceType {
 
 @InputType('ClosedQuestionInputType', { isAbstract: true })
 @ObjectType()
-@Schema({ autoIndex: true })
+@Schema(schemaOptionExceptDate)
 export class ClosedQuestion extends Question {
   @Field((type) => [ClosedQuestionChoiceType])
   @Prop({

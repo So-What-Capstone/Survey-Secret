@@ -7,6 +7,7 @@ export class CreateOpenedQuestionInput extends PickType(OpenedQuestion, [
   'content',
   'description',
   'required',
+  'order',
   'type',
 ]) {}
 

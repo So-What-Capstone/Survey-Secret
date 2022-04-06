@@ -15,7 +15,8 @@ export class Question {
   @Prop({ type: Boolean, default: false })
   required?: boolean;
 
-  @Field((type) => Number)
-  @Prop({ type: Number, unique: true })
-  order: Number;
+  //왜 order가 default값이 1로 해야함??
+  @Field((type) => Number, { nullable: true })
+  @Prop({ type: Number, required: true, default: 1 })
+  order?: Number;
 }
