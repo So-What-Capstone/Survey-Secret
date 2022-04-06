@@ -4,6 +4,10 @@ import {
   CreateClosedQuestionOutput,
 } from './dtos/create-closed-question.dto';
 import {
+  CreateGridQuestionInput,
+  CreateGridQuestionOutput,
+} from './dtos/create-grid-question.dto';
+import {
   CreateLinearQuestionInput,
   CreateLinearQuestionOutput,
 } from './dtos/create-linear-question.dto';
@@ -42,5 +46,12 @@ export class QuestionsResolver {
     return this.questionsService.createLinearQuestion(
       createLinearQuestionInput,
     );
+  }
+
+  @Mutation((returns) => CreateGridQuestionOutput)
+  createGridQuestion(
+    @Args('input') createGridQuestionInput: CreateGridQuestionInput,
+  ): Promise<CreateGridQuestionOutput> {
+    return this.questionsService.createGridQuestion(createGridQuestionInput);
   }
 }

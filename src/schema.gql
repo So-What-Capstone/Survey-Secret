@@ -89,6 +89,11 @@ type CreateClosedQuestionOutput {
   error: String
 }
 
+type CreateGridQuestionOutput {
+  ok: Boolean!
+  error: String
+}
+
 type CreateLinearQuestionOutput {
   ok: Boolean!
   error: String
@@ -116,6 +121,7 @@ type Mutation {
   createClosedQuestion(input: CreateClosedQuestionInput!): CreateClosedQuestionOutput!
   createOpenedQuestion(input: CreateOpenedQuestionInput!): CreateOpenedQuestionOutput!
   createLinearQuestion(input: CreateLinearQuestionInput!): CreateLinearQuestionOutput!
+  createGridQuestion(input: CreateGridQuestionInput!): CreateGridQuestionOutput!
 }
 
 input CreateAccountInput {
@@ -185,4 +191,19 @@ input CreateLinearQuestionInput {
   rightRange: Float!
   leftLabel: String
   rightLabel: String
+}
+
+input CreateGridQuestionInput {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float
+  rowContent: [String!]
+  colContent: [String!]
+  type: GridQuestionType
+}
+
+enum GridQuestionType {
+  One
+  Multiple
 }
