@@ -8,6 +8,10 @@ import {
 } from './schemas/closed-question.schema';
 import { Section } from '../forms/schemas/section.schema';
 import { SectionSchema } from './../forms/schemas/section.schema';
+import {
+  OpenedQuestion,
+  OpenedQuestionSchema,
+} from './schemas/opened-question.schema';
 
 @Module({
   imports: [
@@ -15,6 +19,10 @@ import { SectionSchema } from './../forms/schemas/section.schema';
       {
         name: ClosedQuestion.name,
         schema: ClosedQuestionSchema,
+      },
+      {
+        name: OpenedQuestion.name,
+        schema: OpenedQuestionSchema,
       },
       {
         name: Section.name,

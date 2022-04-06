@@ -89,6 +89,11 @@ type CreateClosedQuestionOutput {
   error: String
 }
 
+type CreateOpenedQuestionOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   test: Boolean!
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
@@ -104,6 +109,7 @@ type Mutation {
   createForm(input: CreateFormInput!): CreateFormOutput!
   createSection(input: CreateSectionInput!): CreateSectionOutput!
   createClosedQuestion(input: CreateClosedQuestionInput!): CreateClosedQuestionOutput!
+  createOpenedQuestion(input: CreateOpenedQuestionInput!): CreateOpenedQuestionOutput!
 }
 
 input CreateAccountInput {
@@ -131,9 +137,9 @@ input CreateSectionInput {
 
 input CreateClosedQuestionInput {
   content: String!
-  choices: [ClosedQuestionChoiceTypeInput!]!
   description: String
   required: Boolean
+  choices: [ClosedQuestionChoiceTypeInput!]!
   type: ClosedQuestionType
 }
 
@@ -145,4 +151,19 @@ input ClosedQuestionChoiceTypeInput {
 enum ClosedQuestionType {
   One
   Multiple
+}
+
+input CreateOpenedQuestionInput {
+  content: String!
+  description: String
+  required: Boolean
+  type: OpenedQuestionType
+}
+
+enum OpenedQuestionType {
+  Default
+  Date
+  Time
+  Address
+  File
 }

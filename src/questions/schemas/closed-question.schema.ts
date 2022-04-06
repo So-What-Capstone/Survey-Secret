@@ -5,6 +5,7 @@ import {
   Field,
 } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Question } from './question.schema';
 
 export enum ClosedQuestionType {
   One = 'One',
@@ -28,11 +29,7 @@ export class ClosedQuestionChoiceType {
 @InputType('ClosedQuestionInputType', { isAbstract: true })
 @ObjectType()
 @Schema({ autoIndex: true })
-export class ClosedQuestion {
-  @Field((type) => String)
-  @Prop({ type: String, trim: true, required: true })
-  content: string;
-
+export class ClosedQuestion extends Question {
   @Field((type) => [ClosedQuestionChoiceType])
   @Prop({
     type: [
@@ -46,14 +43,6 @@ export class ClosedQuestion {
   })
   choices: ClosedQuestionChoiceType[];
 
-  @Field((type) => String, { nullable: true })
-  @Prop({ type: String, trim: true })
-  description?: string;
-
-  @Field((type) => Boolean, { nullable: true })
-  @Prop({ type: Boolean, default: false })
-  required?: boolean;
-
   @Field((type) => ClosedQuestionType, { nullable: true })
   @Prop({
     type: String,
@@ -62,10 +51,6 @@ export class ClosedQuestion {
     required: true,
   })
   type?: ClosedQuestionType;
-
-  @Field((type) => Number)
-  @Prop({ type: Number, unique: true })
-  order: Number;
 }
 
 export const ClosedQuestionSchema =
