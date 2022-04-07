@@ -104,6 +104,11 @@ type CreateOpenedQuestionOutput {
   error: String
 }
 
+type CreatePersonalQuestionOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   test: Boolean!
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
@@ -122,6 +127,7 @@ type Mutation {
   createOpenedQuestion(input: CreateOpenedQuestionInput!): CreateOpenedQuestionOutput!
   createLinearQuestion(input: CreateLinearQuestionInput!): CreateLinearQuestionOutput!
   createGridQuestion(input: CreateGridQuestionInput!): CreateGridQuestionOutput!
+  createPersonalQuestion(input: CreatePersonalQuestionInput!): CreatePersonalQuestionOutput!
 }
 
 input CreateAccountInput {
@@ -206,4 +212,19 @@ input CreateGridQuestionInput {
 enum GridQuestionType {
   One
   Multiple
+}
+
+input CreatePersonalQuestionInput {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float
+  encoded: Boolean!
+  type: PersonalQuestionType!
+}
+
+enum PersonalQuestionType {
+  Phone
+  Address
+  Email
 }

@@ -34,6 +34,15 @@ import {
   GridQuestionDocument,
 } from './schemas/grid-question.scheam';
 
+import {
+  CreatePersonalQuestionOutput,
+  CreatePersonalQuestionInput,
+} from './dtos/create-personal-question.dto';
+import {
+  PersonalQuestion,
+  PersonalQuestionDocument,
+} from './schemas/personal-question.schema';
+
 @Injectable()
 export class QuestionsService {
   constructor(
@@ -45,6 +54,8 @@ export class QuestionsService {
     private readonly linearQuestionModel: Model<LinearQuestionDocument>,
     @InjectModel(GridQuestion.name)
     private readonly gridQuestionModel: Model<GridQuestionDocument>,
+    @InjectModel(PersonalQuestion.name)
+    private readonly personalQuestionModel: Model<PersonalQuestionDocument>,
   ) {}
 
   async createClosedQuestion(
@@ -98,6 +109,19 @@ export class QuestionsService {
         createGridQuestionInput,
       );
 
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async createPersonalQuestion(
+    createPersonalQuestionInput: CreatePersonalQuestionInput,
+  ): Promise<CreatePersonalQuestionOutput> {
+    try {
+      const PersonalQuestion = this.personalQuestionModel.create(
+        createPersonalQuestionInput,
+      );
       return { ok: true };
     } catch (error) {
       return { ok: false, error };

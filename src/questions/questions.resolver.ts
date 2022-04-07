@@ -15,6 +15,10 @@ import {
   CreateOpenedQuestionInput,
   CreateOpenedQuestionOutput,
 } from './dtos/create-opened-question.dto';
+import {
+  CreatePersonalQuestionOutput,
+  CreatePersonalQuestionInput,
+} from './dtos/create-personal-question.dto';
 import { QuestionsService } from './questions.service';
 
 @Resolver()
@@ -53,5 +57,14 @@ export class QuestionsResolver {
     @Args('input') createGridQuestionInput: CreateGridQuestionInput,
   ): Promise<CreateGridQuestionOutput> {
     return this.questionsService.createGridQuestion(createGridQuestionInput);
+  }
+
+  @Mutation((returns) => CreatePersonalQuestionOutput)
+  createPersonalQuestion(
+    @Args('input') createPersonalQuestionInput: CreatePersonalQuestionInput,
+  ): Promise<CreatePersonalQuestionOutput> {
+    return this.questionsService.createPersonalQuestion(
+      createPersonalQuestionInput,
+    );
   }
 }

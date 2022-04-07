@@ -20,6 +20,10 @@ import {
   GridQuestion,
   GridQuestionSchema,
 } from './schemas/grid-question.scheam';
+import {
+  PersonalQuestion,
+  PersonalQuestionSchema,
+} from './schemas/personal-question.schema';
 
 @Module({
   imports: [
@@ -39,6 +43,10 @@ import {
       {
         name: GridQuestion.name,
         schema: GridQuestionSchema,
+      },
+      {
+        name: PersonalQuestion.name,
+        schema: PersonalQuestionSchema,
       },
       {
         name: Section.name,
