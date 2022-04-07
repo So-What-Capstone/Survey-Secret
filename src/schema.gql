@@ -2,18 +2,102 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ClosedQuestionChoiceType {
+  no: Float!
+  choice: String!
+}
+
 type Section {
   createdAt: DateTime!
   updatedAt: DateTime!
   title: String!
   order: Float!
   form: Form!
+  questions: [QuestionUnion!]
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+union QuestionUnion = ClosedQuestion | GridQuestion | LinearQuestion | OpenedQuestion | PersonalQuestion
+
+type ClosedQuestion {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float
+  section: Section!
+  choices: [ClosedQuestionChoiceType!]!
+  type: ClosedQuestionType
+}
+
+enum ClosedQuestionType {
+  One
+  Multiple
+}
+
+type GridQuestion {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float
+  section: Section!
+  rowContent: [String!]
+  colContent: [String!]
+  type: GridQuestionType
+}
+
+enum GridQuestionType {
+  One
+  Multiple
+}
+
+type LinearQuestion {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float
+  section: Section!
+  leftRange: Float!
+  rightRange: Float!
+  leftLabel: String
+  rightLabel: String
+}
+
+type OpenedQuestion {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float
+  section: Section!
+  type: OpenedQuestionType
+}
+
+enum OpenedQuestionType {
+  Default
+  Date
+  Time
+  Address
+  File
+}
+
+type PersonalQuestion {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float
+  section: Section!
+  encoded: Boolean!
+  type: PersonalQuestionType!
+}
+
+enum PersonalQuestionType {
+  Phone
+  Address
+  Email
+}
 
 type Form {
   createdAt: DateTime!
@@ -77,11 +161,6 @@ type CreateFormOutput {
 type CreateSectionOutput {
   ok: Boolean!
   error: String
-}
-
-type ClosedQuestionChoiceType {
-  no: Float!
-  choice: String!
 }
 
 type CreateClosedQuestionOutput {
@@ -160,16 +239,12 @@ input CreateClosedQuestionInput {
   order: Float
   choices: [ClosedQuestionChoiceTypeInput!]!
   type: ClosedQuestionType
+  sectionId: String!
 }
 
 input ClosedQuestionChoiceTypeInput {
   no: Float!
   choice: String!
-}
-
-enum ClosedQuestionType {
-  One
-  Multiple
 }
 
 input CreateOpenedQuestionInput {
@@ -178,14 +253,6 @@ input CreateOpenedQuestionInput {
   required: Boolean
   order: Float
   type: OpenedQuestionType
-}
-
-enum OpenedQuestionType {
-  Default
-  Date
-  Time
-  Address
-  File
 }
 
 input CreateLinearQuestionInput {
@@ -209,11 +276,6 @@ input CreateGridQuestionInput {
   type: GridQuestionType
 }
 
-enum GridQuestionType {
-  One
-  Multiple
-}
-
 input CreatePersonalQuestionInput {
   content: String!
   description: String
@@ -221,10 +283,4 @@ input CreatePersonalQuestionInput {
   order: Float
   encoded: Boolean!
   type: PersonalQuestionType!
-}
-
-enum PersonalQuestionType {
-  Phone
-  Address
-  Email
 }

@@ -1,4 +1,4 @@
-import { InputType, ObjectType, PickType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
 import { ClosedQuestion } from '../schemas/closed-question.schema';
 import { CoreOutput } from './../../common/dtos/output.dto';
 
@@ -10,7 +10,10 @@ export class CreateClosedQuestionInput extends PickType(ClosedQuestion, [
   'required',
   'order',
   'type',
-]) {}
+]) {
+  @Field((type) => String)
+  sectionId: string;
+}
 
 @ObjectType()
 export class CreateClosedQuestionOutput extends CoreOutput {}

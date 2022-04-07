@@ -42,6 +42,7 @@ import {
   PersonalQuestion,
   PersonalQuestionDocument,
 } from './schemas/personal-question.schema';
+import { Section, SectionDocument } from '../forms/schemas/section.schema';
 
 @Injectable()
 export class QuestionsService {
@@ -56,17 +57,32 @@ export class QuestionsService {
     private readonly gridQuestionModel: Model<GridQuestionDocument>,
     @InjectModel(PersonalQuestion.name)
     private readonly personalQuestionModel: Model<PersonalQuestionDocument>,
+    @InjectModel(Section.name)
+    private readonly sectionModel: Model<SectionDocument>,
   ) {}
 
   async createClosedQuestion(
     createClosedQuestionInput: CreateClosedQuestionInput,
   ): Promise<CreateClosedQuestionOutput> {
     try {
-      const closedQuestion = await this.closedQuestionModel.create(
-        createClosedQuestionInput,
-      );
+      const section = await this.sectionModel
+        .findOne({ _id: createClosedQuestionInput.sectionId })
+        .populate('questions.question');
 
-      console.log(closedQuestion);
+      if (!section) {
+        return { ok: false, error: '섹션을 찾을 수 없습니다.' };
+      }
+
+      const closedQuestion = await this.closedQuestionModel.create({
+        ...createClosedQuestionInput,
+        section,
+      });
+
+      section.questions.push({
+        question: closedQuestion,
+        type: 'ClosedQuestion',
+      });
+      await section.save();
 
       return { ok: true };
     } catch (error) {
