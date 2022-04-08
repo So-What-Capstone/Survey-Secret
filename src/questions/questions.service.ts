@@ -98,6 +98,10 @@ export class QuestionsService {
         _id: createOpenedQuestionInput.sectionId,
       });
 
+      if (!section) {
+        return { ok: false, error: '섹션을 찾을 수 없습니다.' };
+      }
+
       const openedQuestion = await this.openedQuestionModel.create({
         ...createOpenedQuestionInput,
         section,
@@ -120,9 +124,25 @@ export class QuestionsService {
     createLinearQuestionInput: CreateLinearQuestionInput,
   ): Promise<CreateLinearQuestionOutput> {
     try {
+      const section = await this.sectionModel.findOne({
+        _id: createLinearQuestionInput.sectionId,
+      });
+
+      if (!section) {
+        return { ok: false, error: '섹션을 찾을 수 없습니다.' };
+      }
+
       const linearQuestion = await this.linearQuestionModel.create(
         createLinearQuestionInput,
       );
+
+      section.questions.push({
+        question: linearQuestion,
+        type: 'LinearQuestion',
+      });
+
+      await section.save();
+
       return { ok: true };
     } catch (error) {
       return { ok: false, error };
@@ -133,9 +153,23 @@ export class QuestionsService {
     createGridQuestionInput: CreateGridQuestionInput,
   ): Promise<CreateGridQuestionOutput> {
     try {
-      const gridQuestion = this.gridQuestionModel.create(
+      const section = await this.sectionModel.findOne({
+        _id: createGridQuestionInput.sectionId,
+      });
+
+      if (!section) {
+        return { ok: false, error: '섹션을 찾을 수 없습니다.' };
+      }
+
+      const gridQuestion = await this.gridQuestionModel.create(
         createGridQuestionInput,
       );
+
+      section.questions.push({
+        question: gridQuestion,
+        type: 'GridQuestion',
+      });
+      await section.save();
 
       return { ok: true };
     } catch (error) {
@@ -147,9 +181,25 @@ export class QuestionsService {
     createPersonalQuestionInput: CreatePersonalQuestionInput,
   ): Promise<CreatePersonalQuestionOutput> {
     try {
-      const PersonalQuestion = this.personalQuestionModel.create(
+      const section = await this.sectionModel.findOne({
+        _id: createPersonalQuestionInput.sectionId,
+      });
+
+      if (!section) {
+        return { ok: false, error: '섹션을 찾을 수 없습니다.' };
+      }
+
+      const personalQuestion = await this.personalQuestionModel.create(
         createPersonalQuestionInput,
       );
+
+      section.questions.push({
+        question: personalQuestion,
+        type: 'PersonalQuestion',
+      });
+
+      await section.save();
+
       return { ok: true };
     } catch (error) {
       return { ok: false, error };
