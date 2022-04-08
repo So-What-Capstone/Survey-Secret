@@ -1,10 +1,11 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { QuestionType, QuestionUnion } from '../../questions/question.typeDefs';
+import { QuestionType } from '../../questions/question.typeDefs';
 import { CoreSchema } from './../../common/schemas/core.schema';
 import { schemaOption } from './../../common/schemas/option.schema';
 import { Form } from './form.schema';
+import { QuestionUnionType } from './../../questions/question.typeDefs';
 
 export type SectionDocument = Section & Document;
 
@@ -24,7 +25,7 @@ export class Section extends CoreSchema {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Form', required: true })
   form: Form;
 
-  @Field((type) => [QuestionUnion], { nullable: true })
+  @Field((type) => [QuestionUnionType], { nullable: true })
   @Prop({
     type: [
       {

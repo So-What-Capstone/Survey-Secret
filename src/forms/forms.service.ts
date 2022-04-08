@@ -10,6 +10,8 @@ import {
   CreateSectionOutput,
 } from './dtos/create-section.dto';
 import { Section, SectionDocument } from './schemas/section.schema';
+import { FindSectionByIdOutput } from './dtos/find-section-by-id';
+import { ClosedQuestion } from 'src/questions/schemas/closed-question.schema';
 
 @Injectable()
 export class FormsService {
@@ -59,6 +61,22 @@ export class FormsService {
       await form.save();
 
       return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async findSectionById(sectionId: string): Promise<FindSectionByIdOutput> {
+    try {
+      const section = await this.sectionModel
+        .findOne({ _id: sectionId })
+        .populate('questions.question');
+
+      if (!section) {
+        return { ok: false, error: '섹션을 찾을 수 없습니다.' };
+      }
+
+      return { ok: true, section };
     } catch (error) {
       return { ok: false, error };
     }

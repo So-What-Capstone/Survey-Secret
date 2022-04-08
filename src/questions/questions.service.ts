@@ -65,9 +65,9 @@ export class QuestionsService {
     createClosedQuestionInput: CreateClosedQuestionInput,
   ): Promise<CreateClosedQuestionOutput> {
     try {
-      const section = await this.sectionModel
-        .findOne({ _id: createClosedQuestionInput.sectionId })
-        .populate('questions.question');
+      const section = await this.sectionModel.findOne({
+        _id: createClosedQuestionInput.sectionId,
+      });
 
       if (!section) {
         return { ok: false, error: '섹션을 찾을 수 없습니다.' };
@@ -94,9 +94,21 @@ export class QuestionsService {
     createOpenedQuestionInput: CreateOpenedQuestionInput,
   ): Promise<CreateOpenedQuestionOutput> {
     try {
-      const openedQuestion = await this.openedQuestionModel.create(
-        createOpenedQuestionInput,
-      );
+      const section = await this.sectionModel.findOne({
+        _id: createOpenedQuestionInput.sectionId,
+      });
+
+      const openedQuestion = await this.openedQuestionModel.create({
+        ...createOpenedQuestionInput,
+        section,
+      });
+
+      section.questions.push({
+        question: openedQuestion,
+        type: 'OpenedQuestion',
+      });
+
+      await section.save();
 
       return { ok: true };
     } catch (error) {

@@ -1,16 +1,18 @@
-import { InputType, ObjectType, PickType } from '@nestjs/graphql';
+import {
+  InputType,
+  ObjectType,
+  PickType,
+  IntersectionType,
+} from '@nestjs/graphql';
 import { PersonalQuestion } from '../schemas/personal-question.schema';
 import { CoreOutput } from '../../common/dtos/output.dto';
+import { CreateQuestionInput } from './create-question.dto';
 
 @InputType()
-export class CreatePersonalQuestionInput extends PickType(PersonalQuestion, [
-  'content',
-  'description',
-  'required',
-  'order',
-  'type',
-  'encoded',
-]) {}
+export class CreatePersonalQuestionInput extends IntersectionType(
+  CreateQuestionInput,
+  PickType(PersonalQuestion, ['type', 'encoded']),
+) {}
 
 @ObjectType()
 export class CreatePersonalQuestionOutput extends CoreOutput {}

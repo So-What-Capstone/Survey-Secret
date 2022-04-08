@@ -1,10 +1,14 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { Type } from '../auth/type.decorator';
 import { CreateFormOutput, CreateFormInput } from './dtos/craete-form.dto';
 import {
   CreateSectionOutput,
   CreateSectionInput,
 } from './dtos/create-section.dto';
+import {
+  FindSectionByIdInput,
+  FindSectionByIdOutput,
+} from './dtos/find-section-by-id';
 import { FormsService } from './forms.service';
 
 @Resolver()
@@ -24,5 +28,12 @@ export class FormsResolver {
     @Args('input') createSectionInput: CreateSectionInput,
   ): Promise<CreateSectionOutput> {
     return this.formsService.createSection(createSectionInput);
+  }
+
+  @Query((returns) => FindSectionByIdOutput)
+  findSectionById(
+    @Args('input') { sectionId }: FindSectionByIdInput,
+  ): Promise<FindSectionByIdOutput> {
+    return this.formsService.findSectionById(sectionId);
   }
 }
