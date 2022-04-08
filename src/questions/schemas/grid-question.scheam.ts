@@ -7,6 +7,7 @@ import {
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { schemaOptionExceptDate } from 'src/common/schemas/option.schema';
 import { Question } from './question.schema';
+import { IsEnum } from 'class-validator';
 
 export enum GridQuestionType {
   One = 'One',
@@ -36,6 +37,7 @@ export class GridQuestion extends Question {
     default: GridQuestionType.One,
     required: true,
   })
+  @IsEnum(GridQuestionType)
   type?: GridQuestionType;
 }
 

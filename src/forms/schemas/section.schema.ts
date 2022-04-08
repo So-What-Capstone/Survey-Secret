@@ -6,6 +6,7 @@ import { CoreSchema } from './../../common/schemas/core.schema';
 import { schemaOption } from './../../common/schemas/option.schema';
 import { Form } from './form.schema';
 import { QuestionUnionType } from './../../questions/question.typeDefs';
+import { IsNumber, IsString, MaxLength } from 'class-validator';
 
 export type SectionDocument = Section & Document;
 
@@ -14,11 +15,14 @@ export type SectionDocument = Section & Document;
 @Schema(schemaOption)
 export class Section extends CoreSchema {
   @Field((type) => String)
-  @Prop({ type: String, required: true, trim: true, max: 50 })
+  @Prop({ type: String, required: true, trim: true, maxlength: 50 })
+  @IsString()
+  @MaxLength(50)
   title: string;
 
   @Field((type) => Number)
   @Prop({ type: Number })
+  @IsNumber()
   order: number;
 
   @Field((type) => Form)

@@ -41,7 +41,7 @@ export class User extends CoreSchema {
   //for graphql type
   @Field((type) => String)
   //for mongoDB type
-  @Prop({ type: String, required: true, trim: true })
+  @Prop({ type: String, required: true, trim: true, maxlength: 20 })
   //for class validator, input값 들어오면 string인지 체킹하고 아니면 서버로 오기전에 그냥 리턴
   @IsString()
   username: string;
@@ -65,8 +65,11 @@ export class User extends CoreSchema {
     required: true,
     unique: true,
     trim: true,
+    minlength: 5,
+    maxlength: 30,
   })
   @IsEmail()
+  @Length(5, 30)
   email: string;
 
   @Field((type) => String)
@@ -84,16 +87,18 @@ export class User extends CoreSchema {
   @IsEnum(UserType)
   type: UserType;
 
-  @Field((type) => Int)
+  @Field((type) => Int, { nullable: true })
   @Prop({ type: Number, default: 0, required: true })
   @IsInt()
-  coin: number;
+  coin?: number;
 
   //값이 안들어와도 되는 경우에는 graphql에서 nullable option 넣고, typescript에도 ? 꼭 맞춰주셔야 됩니다!
   @Field((type) => String, { nullable: true })
   @Prop({ type: String }) //default : AWS 기본 프로필사진 링크
+  @IsString()
   avatarImg?: string;
 
+  //소유한 forms
   @Field((type) => [Form], { nullable: true })
   @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Form' })
   forms?: Form[];

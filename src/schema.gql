@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type ClosedQuestionChoiceType {
+type ClosedQuestionChoice {
   no: Float!
   choice: String!
 }
@@ -20,7 +20,7 @@ type ClosedQuestion {
   required: Boolean
   order: Float
   section: Section!
-  choices: [ClosedQuestionChoiceType!]!
+  choices: [ClosedQuestionChoice!]!
   type: ClosedQuestionType
 }
 
@@ -130,7 +130,7 @@ type User {
   email: String!
   password: String!
   type: UserType!
-  coin: Int!
+  coin: Int
   avatarImg: String
   forms: [Form!]
 }
@@ -254,11 +254,11 @@ input CreateClosedQuestionInput {
   required: Boolean
   order: Float
   sectionId: String!
-  choices: [ClosedQuestionChoiceTypeInput!]!
+  choices: [ClosedQuestionChoiceInputType!]!
   type: ClosedQuestionType
 }
 
-input ClosedQuestionChoiceTypeInput {
+input ClosedQuestionChoiceInputType {
   no: Float!
   choice: String!
 }

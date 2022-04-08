@@ -33,13 +33,13 @@ export type FormDocument = Form & Document;
 @Schema(schemaOption)
 export class Form extends CoreSchema {
   @Field((type) => String)
-  @Prop({ type: String, required: true, trim: true, max: 50 })
+  @Prop({ type: String, required: true, trim: true, maxlength: 50 })
   @IsString()
   @MaxLength(50)
   title: string;
 
   @Field((type) => String, { nullable: true })
-  @Prop({ type: String, max: 300 })
+  @Prop({ type: String, maxlength: 300 })
   @IsString()
   @MaxLength(300)
   @IsOptional()

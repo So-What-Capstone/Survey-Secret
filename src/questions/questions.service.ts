@@ -132,9 +132,10 @@ export class QuestionsService {
         return { ok: false, error: '섹션을 찾을 수 없습니다.' };
       }
 
-      const linearQuestion = await this.linearQuestionModel.create(
-        createLinearQuestionInput,
-      );
+      const linearQuestion = await this.linearQuestionModel.create({
+        ...createLinearQuestionInput,
+        section,
+      });
 
       section.questions.push({
         question: linearQuestion,
@@ -161,9 +162,10 @@ export class QuestionsService {
         return { ok: false, error: '섹션을 찾을 수 없습니다.' };
       }
 
-      const gridQuestion = await this.gridQuestionModel.create(
-        createGridQuestionInput,
-      );
+      const gridQuestion = await this.gridQuestionModel.create({
+        ...createGridQuestionInput,
+        section,
+      });
 
       section.questions.push({
         question: gridQuestion,
@@ -189,9 +191,10 @@ export class QuestionsService {
         return { ok: false, error: '섹션을 찾을 수 없습니다.' };
       }
 
-      const personalQuestion = await this.personalQuestionModel.create(
-        createPersonalQuestionInput,
-      );
+      const personalQuestion = await this.personalQuestionModel.create({
+        ...createPersonalQuestionInput,
+        section,
+      });
 
       section.questions.push({
         question: personalQuestion,

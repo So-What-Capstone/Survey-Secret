@@ -5,6 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsEnum, IsOptional } from 'class-validator';
 import { schemaOptionExceptDate } from '../../common/schemas/option.schema';
 import { Question } from './question.schema';
 
@@ -31,6 +32,8 @@ export class OpenedQuestion extends Question {
     default: OpenedQuestionType.Default,
     required: true,
   })
+  @IsEnum(OpenedQuestionType)
+  @IsOptional()
   type?: OpenedQuestionType;
 }
 
