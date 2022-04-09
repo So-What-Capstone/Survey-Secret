@@ -13,11 +13,13 @@ import {
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { MailsService } from './../mails/mails.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    private readonly mailsService: MailsService,
   ) {}
 
   async createAccount({
