@@ -13,6 +13,7 @@ import { QuestionsModule } from './questions/questions.module';
 import { AuthModule } from './auth/auth.module';
 import { MailsModule } from './mails/mails.module';
 import { SubmissionsModule } from './submissions/submissions.module';
+import { AnswersModule } from './answers/answers.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { SubmissionsModule } from './submissions/submissions.module';
       domain: process.env.MAIL_DOMAIN,
     }),
     SubmissionsModule,
+    AnswersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

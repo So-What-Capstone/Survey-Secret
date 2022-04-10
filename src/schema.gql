@@ -7,13 +7,6 @@ type ClosedQuestionChoice {
   choice: String!
 }
 
-type QuestionUnionType {
-  question: QuestionUnion!
-  type: String!
-}
-
-union QuestionUnion = ClosedQuestion | GridQuestion | LinearQuestion | OpenedQuestion | PersonalQuestion
-
 type ClosedQuestion {
   content: String!
   description: String
@@ -28,6 +21,13 @@ enum ClosedQuestionType {
   One
   Multiple
 }
+
+type QuestionUnionType {
+  question: QuestionUnion!
+  type: String!
+}
+
+union QuestionUnion = ClosedQuestion | GridQuestion | LinearQuestion | OpenedQuestion | PersonalQuestion
 
 type GridQuestion {
   content: String!
@@ -213,6 +213,11 @@ type CreateSubmissionOutput {
   error: String
 }
 
+type CreateClosedAnswerOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   test: Boolean!
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
@@ -238,6 +243,7 @@ type Mutation {
   createGridQuestion(input: CreateGridQuestionInput!): CreateGridQuestionOutput!
   createPersonalQuestion(input: CreatePersonalQuestionInput!): CreatePersonalQuestionOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
+  createClosedAnswer(input: CreateClosedAnswerInput!): CreateClosedAnswerOutput!
 }
 
 input CreateAccountInput {
@@ -322,4 +328,10 @@ input CreatePersonalQuestionInput {
 
 input CreateSubmissionInput {
   formId: String!
+}
+
+input CreateClosedAnswerInput {
+  no: [Float!]!
+  submissionId: String!
+  questionId: String!
 }
