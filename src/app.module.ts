@@ -12,6 +12,7 @@ import { FormsModule } from './forms/forms.module';
 import { QuestionsModule } from './questions/questions.module';
 import { AuthModule } from './auth/auth.module';
 import { MailsModule } from './mails/mails.module';
+import { SubmissionsModule } from './submissions/submissions.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MailsModule } from './mails/mails.module';
       fromEmail: process.env.MAIL_FROM_EMAIL,
       domain: process.env.MAIL_DOMAIN,
     }),
+    SubmissionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -104,6 +104,13 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Submission {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  respondent: User
+  form: Form!
+}
+
 type Form {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -115,6 +122,7 @@ type Form {
   privacyExpiredAt: DateTime
   owner: User!
   sections: [Section!]
+  submissions: [Submission!]
 }
 
 enum FormState {
@@ -200,6 +208,11 @@ type CreatePersonalQuestionOutput {
   error: String
 }
 
+type CreateSubmissionOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   test: Boolean!
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
@@ -224,6 +237,7 @@ type Mutation {
   createLinearQuestion(input: CreateLinearQuestionInput!): CreateLinearQuestionOutput!
   createGridQuestion(input: CreateGridQuestionInput!): CreateGridQuestionOutput!
   createPersonalQuestion(input: CreatePersonalQuestionInput!): CreatePersonalQuestionOutput!
+  createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
 }
 
 input CreateAccountInput {
@@ -304,4 +318,8 @@ input CreatePersonalQuestionInput {
   sectionId: String!
   encoded: Boolean!
   type: PersonalQuestionType!
+}
+
+input CreateSubmissionInput {
+  formId: String!
 }
