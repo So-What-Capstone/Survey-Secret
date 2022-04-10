@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/user.schema';
+import { User } from './schemas/user.schema';
 import { UserSchema } from './schemas/user.schema';
 import { UsersService } from './users.service';
 import { UsersResolver } from './users.resolver';
+import {
+  Verification,
+  VerificationSchema,
+} from './schemas/verification.schema';
 
 @Module({
   imports: [
@@ -11,6 +15,10 @@ import { UsersResolver } from './users.resolver';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: Verification.name,
+        schema: VerificationSchema,
       },
     ]),
   ],

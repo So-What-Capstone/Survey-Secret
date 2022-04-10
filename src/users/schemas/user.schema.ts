@@ -18,6 +18,7 @@ import mongoose from 'mongoose';
 import { Form } from '../../forms/schemas/form.schema';
 import { CoreSchema } from './../../common/schemas/core.schema';
 import { schemaOption } from './../../common/schemas/option.schema';
+import { Verification } from './verification.schema';
 
 //enum type 정의
 export enum UserType {
@@ -102,6 +103,10 @@ export class User extends CoreSchema {
   @Field((type) => [Form], { nullable: true })
   @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Form' })
   forms?: Form[];
+
+  @Field((type) => Boolean, { nullable: true })
+  @Prop({ type: Boolean, required: true, default: false })
+  isVerified?: boolean;
 }
 
 //class를 토대로 schema를 생성합니다.

@@ -14,12 +14,19 @@ import { LoginInput, LoginOutput } from './dtos/login.dto';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { MailsService } from './../mails/mails.service';
+import {
+  Verification,
+  VerificationDocument,
+} from './schemas/verification.schema';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     private readonly mailsService: MailsService,
+    @InjectModel(Verification.name)
+    private readonly verificationModel: Model<VerificationDocument>,
   ) {}
 
   async createAccount({
@@ -39,12 +46,23 @@ export class UsersService {
         return { ok: false, error: '이미 사용중인 이메일입니다.' };
       }
 
-      await this.userModel.create({
+      const user = await this.userModel.create({
         username,
         email,
         password: await bcrypt.hash(password, 10),
         phoneNum,
       });
+
+      //email authentication
+      const verification = await this.verificationModel.create({
+        code: v4(),
+        user,
+      });
+
+      await this.mailsService.sendVerificationEmail(
+        user.email,
+        verification.code,
+      );
 
       return { ok: true };
     } catch (error) {
@@ -81,6 +99,7 @@ export class UsersService {
       }
 
       return { ok: true, user };
+      return { ok: true };
     } catch (error) {
       return { ok: false, error };
     }

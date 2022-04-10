@@ -27,7 +27,7 @@ export class MailsService {
         from: `${this.options.fromEmail}@${this.options.domain}`,
         to,
         subject,
-        template: 'email_auth',
+        template,
       };
 
       emailVars.forEach(

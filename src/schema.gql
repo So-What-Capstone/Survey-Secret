@@ -133,6 +133,7 @@ type User {
   coin: Int
   avatarImg: String
   forms: [Form!]
+  isVerified: Boolean
 }
 
 enum UserType {
