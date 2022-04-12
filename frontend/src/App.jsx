@@ -11,7 +11,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/*" element={<Main />} />
         </Routes>
-
       </BrowserRouter>
     </div>
   );
