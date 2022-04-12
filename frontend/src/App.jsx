@@ -1,10 +1,6 @@
-import React from 'react';
-import './App.css';
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-} from "react-router-dom";
+import React from "react";
+import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Main, Login } from "./pages";
 
 function App() {
