@@ -22,6 +22,8 @@ import {
   LinearAnswer,
   LinearAnswerSchema,
 } from './schemas/linear-answer.schema';
+import { SubmissionsModule } from './../submissions/submissions.module';
+import { QuestionsModule } from './../questions/questions.module';
 
 @Module({
   imports: [
@@ -47,6 +49,8 @@ import {
         schema: LinearAnswerSchema,
       },
     ]),
+    SubmissionsModule,
+    QuestionsModule,
   ],
   providers: [AnswersService, AnswersResolver],
   exports: [AnswersService],

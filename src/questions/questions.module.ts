@@ -24,6 +24,7 @@ import {
   PersonalQuestion,
   PersonalQuestionSchema,
 } from './schemas/personal-question.schema';
+import { FormsModule } from './../forms/forms.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import {
         schema: SectionSchema,
       },
     ]),
+    FormsModule,
   ],
   providers: [QuestionsService, QuestionsResolver],
   exports: [QuestionsService],

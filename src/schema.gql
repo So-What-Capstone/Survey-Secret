@@ -34,6 +34,23 @@ type LinearQuestion {
   rightLabel: String
 }
 
+type OpenedQuestion {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float
+  section: Section!
+  type: OpenedQuestionType
+}
+
+enum OpenedQuestionType {
+  Default
+  Date
+  Time
+  Address
+  File
+}
+
 type QuestionUnionType {
   question: QuestionUnion!
   type: String!
@@ -55,23 +72,6 @@ type GridQuestion {
 enum GridQuestionType {
   One
   Multiple
-}
-
-type OpenedQuestion {
-  content: String!
-  description: String
-  required: Boolean
-  order: Float
-  section: Section!
-  type: OpenedQuestionType
-}
-
-enum OpenedQuestionType {
-  Default
-  Date
-  Time
-  Address
-  File
 }
 
 type PersonalQuestion {
@@ -223,6 +223,11 @@ type CreateLinearAnswerOutput {
   error: String
 }
 
+type CreateOpenedAnswerOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   test: Boolean!
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
@@ -250,6 +255,7 @@ type Mutation {
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   createClosedAnswer(input: CreateClosedAnswerInput!): CreateClosedAnswerOutput!
   createLinearAnswer(input: CreateLinearAnswerInput!): CreateLinearAnswerOutput!
+  createOpenedAnswer(input: CreateOpenedAnswerInput!): CreateOpenedAnswerOutput!
 }
 
 input CreateAccountInput {
@@ -344,6 +350,12 @@ input CreateClosedAnswerInput {
 
 input CreateLinearAnswerInput {
   no: Float!
+  submissionId: String!
+  questionId: String!
+}
+
+input CreateOpenedAnswerInput {
+  content: String
   submissionId: String!
   questionId: String!
 }

@@ -8,6 +8,10 @@ import {
   CreateLinearAnswerInput,
   CreateLinearAnswerOutput,
 } from './dtos/create-linear-answer.dto';
+import {
+  CreateOpenedAnswerInput,
+  CreateOpenedAnswerOutput,
+} from './dtos/create-opened-answer.dto';
 
 @Resolver()
 export class AnswersResolver {
@@ -25,5 +29,12 @@ export class AnswersResolver {
     @Args('input') createLinearAnswerInput: CreateLinearAnswerInput,
   ): Promise<CreateLinearAnswerOutput> {
     return this.answersService.createLinearAnswer(createLinearAnswerInput);
+  }
+
+  @Mutation((returns) => CreateOpenedAnswerOutput)
+  createOpenedAnswer(
+    @Args('input') createOpenedAnswerInput: CreateOpenedAnswerInput,
+  ): Promise<CreateOpenedAnswerOutput> {
+    return this.answersService.createOpenedAnswer(createOpenedAnswerInput);
   }
 }

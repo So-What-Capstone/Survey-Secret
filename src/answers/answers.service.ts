@@ -29,6 +29,12 @@ import {
   LinearQuestion,
   LinearQuestionDocument,
 } from '../questions/schemas/linear-question.schema';
+import {
+  CreateOpenedAnswerInput,
+  CreateOpenedAnswerOutput,
+} from './dtos/create-opened-answer.dto';
+import { SubmissionsService } from './../submissions/submissions.service';
+import { QuestionsService } from './../questions/questions.service';
 
 @Injectable()
 export class AnswersService {
@@ -43,6 +49,8 @@ export class AnswersService {
     private readonly linearAnswerModel: Model<LinearAnswerDocument>,
     @InjectModel(LinearQuestion.name)
     private readonly linearQuestionModel: Model<LinearQuestionDocument>,
+    private readonly submissionsService: SubmissionsService,
+    private readonly questionsService: QuestionsService,
   ) {}
 
   async createClosedAnswer({
@@ -51,9 +59,9 @@ export class AnswersService {
     questionId,
   }: CreateClosedAnswerInput): Promise<CreateClosedAnswerOutput> {
     try {
-      const submission = await this.submissionModel.findOne({
-        _id: submissionId,
-      });
+      const { submission } = await this.submissionsService.findSubmissionById(
+        submissionId,
+      );
 
       //create submission과 create closed question이 한번에 실행이 되어야 해서 이 상황까지 안 올듯
       if (!submission) {
@@ -88,10 +96,9 @@ export class AnswersService {
     questionId,
   }: CreateLinearAnswerInput): Promise<CreateLinearAnswerOutput> {
     try {
-      const submission = await this.submissionModel.findOne({
-        _id: submissionId,
-      });
-
+      const { submission } = await this.submissionsService.findSubmissionById(
+        submissionId,
+      );
       if (!submission) {
         return { ok: false, error: '다시 시도해 주십시오' };
       }
@@ -108,6 +115,26 @@ export class AnswersService {
         submission,
         linearQuestion,
       });
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async createOpenedAnswer({
+    content,
+    submissionId,
+    questionId,
+  }: CreateOpenedAnswerInput): Promise<CreateOpenedAnswerOutput> {
+    try {
+      const { submission } = await this.submissionsService.findSubmissionById(
+        submissionId,
+      );
+
+      if (!submission) {
+        return { ok: false, error: '다시 시도해 주십시오' };
+      }
 
       return { ok: true };
     } catch (error) {

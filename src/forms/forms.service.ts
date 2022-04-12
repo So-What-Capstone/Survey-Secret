@@ -12,6 +12,7 @@ import {
 import { Section, SectionDocument } from './schemas/section.schema';
 import { FindSectionByIdOutput } from './dtos/find-section-by-id';
 import { ClosedQuestion } from 'src/questions/schemas/closed-question.schema';
+import { QuestionType } from 'src/questions/question.typeDefs';
 
 @Injectable()
 export class FormsService {
@@ -72,6 +73,25 @@ export class FormsService {
         .findOne({ _id: sectionId })
         .populate('questions.question');
 
+      if (!section) {
+        return { ok: false, error: '섹션을 찾을 수 없습니다.' };
+      }
+
+      return { ok: true, section };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async findSectionByIdAndUpdateQuestions(
+    sectionId: string,
+    question: QuestionType,
+  ) {
+    try {
+      const section = await this.sectionModel.findOneAndUpdate(
+        { _id: sectionId },
+        { $push: { questions: question } },
+      );
       if (!section) {
         return { ok: false, error: '섹션을 찾을 수 없습니다.' };
       }
