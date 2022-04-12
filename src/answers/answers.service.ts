@@ -35,6 +35,15 @@ import {
 } from './dtos/create-opened-answer.dto';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { QuestionsService } from './../questions/questions.service';
+import {
+  OpenedAnswer,
+  OpenedAnswerDocument,
+} from './schemas/opened-answer.schema';
+import {
+  OpenedQuestion,
+  OpenedQuestionDocument,
+} from './../questions/schemas/opened-question.schema';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class AnswersService {
@@ -49,6 +58,13 @@ export class AnswersService {
     private readonly linearAnswerModel: Model<LinearAnswerDocument>,
     @InjectModel(LinearQuestion.name)
     private readonly linearQuestionModel: Model<LinearQuestionDocument>,
+
+    @InjectModel(OpenedAnswer.name)
+    private readonly openedAnswerModel: Model<OpenedAnswerDocument>,
+
+    @InjectModel(OpenedQuestion.name)
+    private readonly openedQuestionModel: Model<OpenedQuestionDocument>,
+
     private readonly submissionsService: SubmissionsService,
     private readonly questionsService: QuestionsService,
   ) {}
@@ -135,6 +151,19 @@ export class AnswersService {
       if (!submission) {
         return { ok: false, error: '다시 시도해 주십시오' };
       }
+
+      const openedQuestion = await this.openedQuestionModel.findOne({
+        _id: questionId,
+      });
+      if (!openedQuestion) {
+        return { ok: false, error: '없는 질문입니다.' };
+      }
+
+      const openedAnswer = await this.openedAnswerModel.create({
+        content,
+        submission,
+        openedQuestion,
+      });
 
       return { ok: true };
     } catch (error) {

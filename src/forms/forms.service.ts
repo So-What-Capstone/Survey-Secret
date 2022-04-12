@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Form, FormDocument } from './schemas/form.schema';
 import { Model } from 'mongoose';
 import { CreateFormInput, CreateFormOutput } from './dtos/craete-form.dto';
@@ -13,6 +13,7 @@ import { Section, SectionDocument } from './schemas/section.schema';
 import { FindSectionByIdOutput } from './dtos/find-section-by-id';
 import { ClosedQuestion } from 'src/questions/schemas/closed-question.schema';
 import { QuestionType } from 'src/questions/question.typeDefs';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class FormsService {
@@ -21,22 +22,29 @@ export class FormsService {
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     @InjectModel(Section.name)
     private readonly sectionModel: Model<SectionDocument>,
+    @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
   async createForm(
+    user: User,
     createFormInput: CreateFormInput,
   ): Promise<CreateFormOutput> {
     try {
-      //testing user, 나중에는 로그인한 유저를 넣을 것
-      const user = await this.userModel.findOne({ username: 'a' });
+      const session = await this.connection.startSession();
 
-      const form = await this.formModel.create({
-        ...createFormInput,
-        owner: user,
+      await session.withTransaction(async () => {
+        const form = await this.formModel.create({
+          ...createFormInput,
+          owner: user,
+        });
+        //if(not ~ ) : throw Exception
+
+        await this.userModel.updateOne(
+          { _id: user._id },
+          { $push: { forms: form } },
+        );
       });
-
-      user.forms.push(form);
-      await user.save();
+      session.endSession();
 
       return { ok: true };
     } catch (error) {

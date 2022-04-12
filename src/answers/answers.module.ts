@@ -24,6 +24,14 @@ import {
 } from './schemas/linear-answer.schema';
 import { SubmissionsModule } from './../submissions/submissions.module';
 import { QuestionsModule } from './../questions/questions.module';
+import {
+  OpenedAnswer,
+  OpenedAnswerSchema,
+} from './schemas/opened-answer.schema';
+import {
+  OpenedQuestion,
+  OpenedQuestionSchema,
+} from './../questions/schemas/opened-question.schema';
 
 @Module({
   imports: [
@@ -47,6 +55,14 @@ import { QuestionsModule } from './../questions/questions.module';
       {
         name: LinearAnswer.name,
         schema: LinearAnswerSchema,
+      },
+      {
+        name: OpenedAnswer.name,
+        schema: OpenedAnswerSchema,
+      },
+      {
+        name: OpenedQuestion.name,
+        schema: OpenedQuestionSchema,
       },
     ]),
     SubmissionsModule,

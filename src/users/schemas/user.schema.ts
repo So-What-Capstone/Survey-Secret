@@ -38,6 +38,7 @@ export type UserDocument = User & Document;
 @Schema(schemaOption)
 export class User extends CoreSchema {
   //id는 mongoose 자동생성 id 사용(_id)
+  _id: mongoose.Schema.Types.ObjectId;
 
   //for graphql type
   @Field((type) => String)

@@ -9,6 +9,9 @@
 1. PORT = 3000/4000등 원하는 포트번호 적으시면 됩니다.
 2. DB_URL = mongo DB 주소
 3. SECRET_KEY = TOKEN KEY
+4. MAIL_API_KEY
+5. MAIL_DOMAIN
+6. MAIL_FROM_EMAIL : MAILGUN API 관련 키들 입니다.
 
 ### playground
 
@@ -46,6 +49,12 @@
 - Any인 경우, 로그인 한 회원 누구나 사용 가능한 resolver
 - ["Free","Premium"]인 경우, Admin을 제외한 회원 사용 가능 resolver
 - 예시 -> forms.resolver.ts 의 createForm()
+
+### AuthUser 사용법
+
+- Resolver의 input에 @AuthUser() user:User 을 선언하시면 현재 로그인한 user를 얻을 수 있습니다
+- request header에 토큰 키는 "x-jwt" 입니다.
+- graphql context에서 "user"로 저장되어 있는 user를 불러오는 역할을 합니다.
 
 </pre>
 

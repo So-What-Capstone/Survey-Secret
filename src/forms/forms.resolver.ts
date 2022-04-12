@@ -1,4 +1,5 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
+import { AuthUser } from '../auth/auth-user.decorator';
 import { Type } from '../auth/type.decorator';
 import { CreateFormOutput, CreateFormInput } from './dtos/craete-form.dto';
 import {
@@ -10,6 +11,7 @@ import {
   FindSectionByIdOutput,
 } from './dtos/find-section-by-id';
 import { FormsService } from './forms.service';
+import { User } from './../users/schemas/user.schema';
 
 @Resolver()
 export class FormsResolver {
@@ -18,9 +20,10 @@ export class FormsResolver {
   @Mutation((returns) => CreateFormOutput)
   @Type(['Free'])
   createForm(
+    @AuthUser() user: User,
     @Args('input') createFormInput: CreateFormInput,
   ): Promise<CreateFormOutput> {
-    return this.formsService.createForm(createFormInput);
+    return this.formsService.createForm(user, createFormInput);
   }
 
   @Mutation((returns) => CreateSectionOutput)
