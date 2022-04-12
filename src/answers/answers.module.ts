@@ -14,6 +14,14 @@ import {
   ClosedQuestion,
   ClosedQuestionSchema,
 } from '../questions/schemas/closed-question.schema';
+import {
+  LinearQuestionSchema,
+  LinearQuestion,
+} from './../questions/schemas/linear-question.schema';
+import {
+  LinearAnswer,
+  LinearAnswerSchema,
+} from './schemas/linear-answer.schema';
 
 @Module({
   imports: [
@@ -29,6 +37,14 @@ import {
       {
         name: ClosedQuestion.name,
         schema: ClosedQuestionSchema,
+      },
+      {
+        name: LinearQuestion.name,
+        schema: LinearQuestionSchema,
+      },
+      {
+        name: LinearAnswer.name,
+        schema: LinearAnswerSchema,
       },
     ]),
   ],
