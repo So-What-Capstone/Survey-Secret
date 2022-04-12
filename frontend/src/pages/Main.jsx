@@ -9,7 +9,7 @@ function Main() {
     return (
         <div>
             <Menu />
-            <p>main</p>
+            
             <MainContent/>
             <Routes>
                 <Route path="test" element={<p>test</p>} />
