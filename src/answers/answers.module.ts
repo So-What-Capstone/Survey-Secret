@@ -34,40 +34,7 @@ import {
 } from './../questions/schemas/opened-question.schema';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      {
-        name: Submission.name,
-        schema: SubmissionSchema,
-      },
-      {
-        name: ClosedAnswer.name,
-        schema: ClosedAnswerSchema,
-      },
-      {
-        name: ClosedQuestion.name,
-        schema: ClosedQuestionSchema,
-      },
-      {
-        name: LinearQuestion.name,
-        schema: LinearQuestionSchema,
-      },
-      {
-        name: LinearAnswer.name,
-        schema: LinearAnswerSchema,
-      },
-      {
-        name: OpenedAnswer.name,
-        schema: OpenedAnswerSchema,
-      },
-      {
-        name: OpenedQuestion.name,
-        schema: OpenedQuestionSchema,
-      },
-    ]),
-    SubmissionsModule,
-    QuestionsModule,
-  ],
+  imports: [SubmissionsModule, QuestionsModule],
   providers: [AnswersService, AnswersResolver],
   exports: [AnswersService],
 })

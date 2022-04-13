@@ -20,7 +20,6 @@ export type GridQuestionDocument = GridQuestion & Document;
 
 @InputType('GridQuestionInputType', { isAbstract: true })
 @ObjectType()
-@Schema(schemaOptionExceptDate)
 export class GridQuestion extends Question {
   @Field((type) => [String], { nullable: true })
   @Prop({ type: [{ type: String, trim: true }] })

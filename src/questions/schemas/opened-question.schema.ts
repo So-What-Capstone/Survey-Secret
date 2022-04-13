@@ -23,7 +23,6 @@ export type OpenedQuestionDocument = OpenedQuestion & Document;
 
 @InputType('OpenedQuestionInputType', { isAbstract: true })
 @ObjectType()
-@Schema(schemaOptionExceptDate)
 export class OpenedQuestion extends Question {
   @Field((type) => OpenedQuestionType, { nullable: true })
   @Prop({

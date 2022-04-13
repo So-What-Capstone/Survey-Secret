@@ -30,11 +30,39 @@ export class FormsService {
     createFormInput: CreateFormInput,
   ): Promise<CreateFormOutput> {
     try {
+      let sections = [];
+
+      for (const {
+        title,
+        closed,
+        opened,
+        grid,
+        linear,
+        personal,
+      } of createFormInput.sections) {
+        const questions = [
+          ...(closed ? closed : []),
+          ...(opened ? opened : []),
+          ...(grid ? grid : []),
+          ...(linear ? linear : []),
+          ...(personal ? personal : []),
+        ];
+
+        const section = {
+          title,
+          questions,
+        };
+        sections.push(section);
+      }
+
+      //Transaction(multi-document)
       const session = await this.connection.startSession();
 
       await session.withTransaction(async () => {
         const form = await this.formModel.create({
-          ...createFormInput,
+          title: createFormInput.title,
+          description: createFormInput.description,
+          sections,
           owner: user,
         });
         //if(not ~ ) : throw Exception
@@ -52,54 +80,12 @@ export class FormsService {
     }
   }
 
-  async createSection({
-    formId,
-    order,
-    title,
-  }: CreateSectionInput): Promise<CreateSectionOutput> {
-    try {
-      const form = await this.formModel.findOne({ _id: formId });
-
-      const section = await this.sectionModel.create({
-        title,
-        form,
-        order,
-      });
-
-      form.sections.push(section);
-      await form.save();
-
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, error };
-    }
-  }
-
   async findSectionById(sectionId: string): Promise<FindSectionByIdOutput> {
     try {
       const section = await this.sectionModel
         .findOne({ _id: sectionId })
         .populate('questions.question');
 
-      if (!section) {
-        return { ok: false, error: '섹션을 찾을 수 없습니다.' };
-      }
-
-      return { ok: true, section };
-    } catch (error) {
-      return { ok: false, error };
-    }
-  }
-
-  async findSectionByIdAndUpdateQuestions(
-    sectionId: string,
-    question: QuestionType,
-  ) {
-    try {
-      const section = await this.sectionModel.findOneAndUpdate(
-        { _id: sectionId },
-        { $push: { questions: question } },
-      );
       if (!section) {
         return { ok: false, error: '섹션을 찾을 수 없습니다.' };
       }

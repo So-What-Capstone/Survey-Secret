@@ -3,23 +3,35 @@ import { GridQuestion } from './schemas/grid-question.scheam';
 import { LinearQuestion } from './schemas/linear-question.schema';
 import { OpenedQuestion } from './schemas/opened-question.schema';
 import { PersonalQuestion } from './schemas/personal-question.schema';
-import { createUnionType, Field, InputType, ObjectType } from '@nestjs/graphql';
+import {
+  createUnionType,
+  Field,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 //공통 말고, 전체 question type
-export type QuestionType = {
-  type:
-    | 'ClosedQuestion'
-    | 'GridQuestion'
-    | 'LinearQuestion'
-    | 'OpenedQuestion'
-    | 'PersonalQuestion';
+
+export class IQuestion {
+  type: 'Closed' | 'Grid' | 'Linear' | 'Opened' | 'Personal';
   question:
     | ClosedQuestion
     | GridQuestion
     | LinearQuestion
     | OpenedQuestion
     | PersonalQuestion;
-};
+}
+
+export enum QuestionType {
+  Closed = 'Closed',
+  Grid = 'Grid',
+  Linear = 'Linear',
+  Opened = 'Opened',
+  Personal = 'Personal',
+}
+
+registerEnumType(QuestionType, { name: 'QuestionType' });
 
 export const QuestionUnion = createUnionType({
   name: 'QuestionUnion',
@@ -52,6 +64,6 @@ export class QuestionUnionType {
   @Field((type) => QuestionUnion)
   question: typeof QuestionUnion;
 
-  @Field((type) => String)
+  @Field((type) => QuestionType)
   type: string;
 }

@@ -7,12 +7,18 @@ type ClosedQuestionChoice {
   choice: String!
 }
 
+type QuestionUnionType {
+  question: QuestionUnion!
+  type: QuestionType!
+}
+
+union QuestionUnion = ClosedQuestion | GridQuestion | LinearQuestion | OpenedQuestion | PersonalQuestion
+
 type ClosedQuestion {
   content: String!
   description: String
   required: Boolean
-  order: Float
-  section: Section!
+  order: Float!
   choices: [ClosedQuestionChoice!]!
   type: ClosedQuestionType
 }
@@ -22,12 +28,26 @@ enum ClosedQuestionType {
   Multiple
 }
 
+type GridQuestion {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float!
+  rowContent: [String!]
+  colContent: [String!]
+  type: GridQuestionType
+}
+
+enum GridQuestionType {
+  One
+  Multiple
+}
+
 type LinearQuestion {
   content: String!
   description: String
   required: Boolean
-  order: Float
-  section: Section!
+  order: Float!
   leftRange: Float!
   rightRange: Float!
   leftLabel: String
@@ -38,8 +58,7 @@ type OpenedQuestion {
   content: String!
   description: String
   required: Boolean
-  order: Float
-  section: Section!
+  order: Float!
   type: OpenedQuestionType
 }
 
@@ -51,35 +70,11 @@ enum OpenedQuestionType {
   File
 }
 
-type QuestionUnionType {
-  question: QuestionUnion!
-  type: String!
-}
-
-union QuestionUnion = ClosedQuestion | GridQuestion | LinearQuestion | OpenedQuestion | PersonalQuestion
-
-type GridQuestion {
-  content: String!
-  description: String
-  required: Boolean
-  order: Float
-  section: Section!
-  rowContent: [String!]
-  colContent: [String!]
-  type: GridQuestionType
-}
-
-enum GridQuestionType {
-  One
-  Multiple
-}
-
 type PersonalQuestion {
   content: String!
   description: String
   required: Boolean
-  order: Float
-  section: Section!
+  order: Float!
   encoded: Boolean!
   type: PersonalQuestionType!
 }
@@ -90,12 +85,18 @@ enum PersonalQuestionType {
   Email
 }
 
+enum QuestionType {
+  Closed
+  Grid
+  Linear
+  Opened
+  Personal
+}
+
 type Section {
   createdAt: DateTime!
   updatedAt: DateTime!
-  title: String!
-  order: Float!
-  form: Form!
+  title: String
   questions: [QuestionUnionType!]
 }
 
@@ -103,13 +104,6 @@ type Section {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
-
-type Submission {
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  respondent: User
-  form: Form!
-}
 
 type Form {
   createdAt: DateTime!
@@ -122,7 +116,6 @@ type Form {
   privacyExpiredAt: DateTime
   owner: User!
   sections: [Section!]
-  submissions: [Submission!]
 }
 
 enum FormState {
@@ -172,58 +165,13 @@ type CreateFormOutput {
   error: String
 }
 
-type CreateSectionOutput {
-  ok: Boolean!
-  error: String
-}
-
 type FindSectionByIdOutput {
   ok: Boolean!
   error: String
   section: Section
 }
 
-type CreateClosedQuestionOutput {
-  ok: Boolean!
-  error: String
-}
-
-type CreateGridQuestionOutput {
-  ok: Boolean!
-  error: String
-}
-
-type CreateLinearQuestionOutput {
-  ok: Boolean!
-  error: String
-}
-
-type CreateOpenedQuestionOutput {
-  ok: Boolean!
-  error: String
-}
-
-type CreatePersonalQuestionOutput {
-  ok: Boolean!
-  error: String
-}
-
 type CreateSubmissionOutput {
-  ok: Boolean!
-  error: String
-}
-
-type CreateClosedAnswerOutput {
-  ok: Boolean!
-  error: String
-}
-
-type CreateLinearAnswerOutput {
-  ok: Boolean!
-  error: String
-}
-
-type CreateOpenedAnswerOutput {
   ok: Boolean!
   error: String
 }
@@ -246,16 +194,7 @@ type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
-  createSection(input: CreateSectionInput!): CreateSectionOutput!
-  createClosedQuestion(input: CreateClosedQuestionInput!): CreateClosedQuestionOutput!
-  createOpenedQuestion(input: CreateOpenedQuestionInput!): CreateOpenedQuestionOutput!
-  createLinearQuestion(input: CreateLinearQuestionInput!): CreateLinearQuestionOutput!
-  createGridQuestion(input: CreateGridQuestionInput!): CreateGridQuestionOutput!
-  createPersonalQuestion(input: CreatePersonalQuestionInput!): CreatePersonalQuestionOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
-  createClosedAnswer(input: CreateClosedAnswerInput!): CreateClosedAnswerOutput!
-  createLinearAnswer(input: CreateLinearAnswerInput!): CreateLinearAnswerOutput!
-  createOpenedAnswer(input: CreateOpenedAnswerInput!): CreateOpenedAnswerOutput!
 }
 
 input CreateAccountInput {
@@ -273,20 +212,41 @@ input LoginInput {
 input CreateFormInput {
   title: String!
   description: String
+  sections: [CreateSectionInput!]!
 }
 
 input CreateSectionInput {
-  title: String!
-  order: Float!
-  formId: String!
+  title: String
+  opened: [CreateOpenedQuestionInput!]
+  closed: [CreateClosedQuestionInput!]
+  grid: [CreateGridQuestionInput!]
+  personal: [CreatePersonalQuestionInput!]
+  linear: [CreateLinearQuestionInput!]
 }
 
-input CreateClosedQuestionInput {
+input CreateOpenedQuestionInput {
+  question: CreateOpenedQuestionInputType!
+  type: QuestionType!
+}
+
+input CreateOpenedQuestionInputType {
   content: String!
   description: String
   required: Boolean
-  order: Float
-  sectionId: String!
+  order: Float!
+  type: OpenedQuestionType
+}
+
+input CreateClosedQuestionInput {
+  question: CreateClosedQuestionInputType!
+  type: QuestionType!
+}
+
+input CreateClosedQuestionInputType {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float!
   choices: [ClosedQuestionChoiceInputType!]!
   type: ClosedQuestionType
 }
@@ -296,66 +256,51 @@ input ClosedQuestionChoiceInputType {
   choice: String!
 }
 
-input CreateOpenedQuestionInput {
-  content: String!
-  description: String
-  required: Boolean
-  order: Float
-  sectionId: String!
-  type: OpenedQuestionType
-}
-
-input CreateLinearQuestionInput {
-  content: String!
-  description: String
-  required: Boolean
-  order: Float
-  sectionId: String!
-  leftRange: Float!
-  rightRange: Float!
-  leftLabel: String
-  rightLabel: String
-}
-
 input CreateGridQuestionInput {
+  question: CreateGridQuestionInputType!
+  type: QuestionType!
+}
+
+input CreateGridQuestionInputType {
   content: String!
   description: String
   required: Boolean
-  order: Float
-  sectionId: String!
+  order: Float!
   rowContent: [String!]
   colContent: [String!]
   type: GridQuestionType
 }
 
 input CreatePersonalQuestionInput {
+  question: CreatePersonalQuestionInputType!
+  type: QuestionType!
+}
+
+input CreatePersonalQuestionInputType {
   content: String!
   description: String
   required: Boolean
-  order: Float
-  sectionId: String!
+  order: Float!
   encoded: Boolean!
   type: PersonalQuestionType!
 }
 
+input CreateLinearQuestionInput {
+  question: CreateLinearQuestionInputType!
+  type: QuestionType!
+}
+
+input CreateLinearQuestionInputType {
+  content: String!
+  description: String
+  required: Boolean
+  order: Float!
+  leftRange: Float!
+  rightRange: Float!
+  leftLabel: String
+  rightLabel: String
+}
+
 input CreateSubmissionInput {
   formId: String!
-}
-
-input CreateClosedAnswerInput {
-  no: [Float!]!
-  submissionId: String!
-  questionId: String!
-}
-
-input CreateLinearAnswerInput {
-  no: Float!
-  submissionId: String!
-  questionId: String!
-}
-
-input CreateOpenedAnswerInput {
-  content: String
-  submissionId: String!
-  questionId: String!
 }

@@ -20,7 +20,6 @@ export type PersonalQuestionDocument = PersonalQuestion & Document;
 
 @InputType('PersonalQuestionInputType', { isAbstract: true })
 @ObjectType()
-@Schema(schemaOptionExceptDate)
 export class PersonalQuestion extends Question {
   @Field((type) => Boolean)
   @Prop({ type: Boolean, required: true, default: true })

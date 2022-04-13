@@ -8,7 +8,6 @@ export type LinearQuestionDocument = LinearQuestion & Document;
 
 @InputType('LinearQuestionInputType', { isAbstract: true })
 @ObjectType()
-@Schema(schemaOptionExceptDate)
 export class LinearQuestion extends Question {
   @Field((type) => Number)
   @Prop({ type: Number, required: true })

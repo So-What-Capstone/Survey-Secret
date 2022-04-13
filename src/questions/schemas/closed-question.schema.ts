@@ -30,7 +30,6 @@ export class ClosedQuestionChoice {
 
 @InputType('ClosedQuestionInputType', { isAbstract: true })
 @ObjectType()
-@Schema(schemaOptionExceptDate)
 export class ClosedQuestion extends Question {
   @Field((type) => [ClosedQuestionChoice])
   @Prop({

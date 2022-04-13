@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Prop } from '@nestjs/mongoose';
+import { Prop, Schema } from '@nestjs/mongoose';
 import {
   IsOptional,
   IsString,
@@ -32,14 +32,13 @@ export class Question {
   @IsOptional()
   required?: boolean;
 
-  //왜 order가 default값이 1로 해야함??
-  @Field((type) => Number, { nullable: true })
-  @Prop({ type: Number, required: true, default: 1 })
+  @Field((type) => Number)
+  @Prop({ type: Number, required: true, index: true })
   @IsNumber()
   @IsOptional()
-  order?: Number;
+  order: Number;
 
-  @Field((type) => Section)
-  @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
-  section: Section;
+  // @Field((type) => Section)
+  // @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
+  // section: Section;
 }

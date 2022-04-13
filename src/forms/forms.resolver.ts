@@ -26,13 +26,6 @@ export class FormsResolver {
     return this.formsService.createForm(user, createFormInput);
   }
 
-  @Mutation((returns) => CreateSectionOutput)
-  createSection(
-    @Args('input') createSectionInput: CreateSectionInput,
-  ): Promise<CreateSectionOutput> {
-    return this.formsService.createSection(createSectionInput);
-  }
-
   @Query((returns) => FindSectionByIdOutput)
   findSectionById(
     @Args('input') { sectionId }: FindSectionByIdInput,

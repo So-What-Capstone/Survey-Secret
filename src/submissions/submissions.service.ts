@@ -28,7 +28,7 @@ export class SubmissionsService {
         form,
       });
 
-      form.submissions.push(submission);
+      // form.submissions.push(submission);
       await form.save();
 
       return { ok: true };

@@ -9,19 +9,19 @@ export type LinearAnswerDocument = LinearAnswer & Document;
 
 @InputType('LinearAnswerInput', { isAbstract: true })
 @ObjectType()
-@Schema(schemaOptionExceptDate)
+// @Schema(schemaOptionExceptDate)
 export class LinearAnswer extends Answer {
   @Field((type) => Number)
   @Prop({ type: Number })
   no: number;
 
-  @Field((type) => LinearQuestion)
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'LinearQuestion',
-    required: true,
-  })
-  linearQuestion: LinearQuestion;
+  // @Field((type) => LinearQuestion)
+  // @Prop({
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'LinearQuestion',
+  //   required: true,
+  // })
+  // linearQuestion: LinearQuestion;
 }
 
 export const LinearAnswerSchema = SchemaFactory.createForClass(LinearAnswer);

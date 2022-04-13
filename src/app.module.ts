@@ -39,7 +39,7 @@ import { AnswersModule } from './answers/answers.module';
 
     UsersModule,
     //set DB logger(raw query), DB error/connect log
-    MongooseModule.forRoot(process.env.DB_URL, {}),
+    MongooseModule.forRoot(process.env.DB_URL),
     FormsModule,
     QuestionsModule,
     AuthModule,

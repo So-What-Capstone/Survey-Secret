@@ -3,16 +3,27 @@ import {
   ObjectType,
   PickType,
   IntersectionType,
+  Field,
 } from '@nestjs/graphql';
 import { CoreOutput } from './../../common/dtos/output.dto';
 import { OpenedQuestion } from './../schemas/opened-question.schema';
-import { CreateQuestionInput } from './create-question.dto';
+import { CommonCreateQuestionInput } from './create-question.dto';
+import { QuestionType } from 'src/questions/question.typeDefs';
 
 @InputType()
-export class CreateOpenedQuestionInput extends IntersectionType(
-  CreateQuestionInput,
+export class CreateOpenedQuestionInputType extends IntersectionType(
+  CommonCreateQuestionInput,
   PickType(OpenedQuestion, ['type']),
 ) {}
+
+@InputType()
+export class CreateOpenedQuestionInput {
+  @Field((type) => CreateOpenedQuestionInputType)
+  question: CreateOpenedQuestionInputType;
+
+  @Field((type) => QuestionType)
+  type: string;
+}
 
 @ObjectType()
 export class CreateOpenedQuestionOutput extends CoreOutput {}

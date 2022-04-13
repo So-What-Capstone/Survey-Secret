@@ -16,7 +16,7 @@ import {
 import { User } from '../../users/schemas/user.schema';
 import mongoose from 'mongoose';
 import { schemaOption } from './../../common/schemas/option.schema';
-import { Section } from './section.schema';
+import { Section, SectionSchema } from './section.schema';
 import { Submission } from '../../submissions/schemas/submission.schema';
 
 export enum FormState {
@@ -74,12 +74,8 @@ export class Form extends CoreSchema {
   owner: User;
 
   @Field((type) => [Section], { nullable: true })
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Section' })
+  @Prop({ type: [SectionSchema] })
   sections?: Section[];
-
-  @Field((type) => [Submission], { nullable: true })
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Submission' })
-  submissions?: Submission[];
 }
 
 export const FormSchema = SchemaFactory.createForClass(Form);

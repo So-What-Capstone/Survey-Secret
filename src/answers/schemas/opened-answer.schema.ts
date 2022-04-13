@@ -9,19 +9,19 @@ export type OpenedAnswerDocument = OpenedAnswer & Document;
 
 @InputType('OpenedAnswerInput', { isAbstract: true })
 @ObjectType()
-@Schema(schemaOptionExceptDate)
+// @Schema(schemaOptionExceptDate)
 export class OpenedAnswer extends Answer {
   @Field((type) => String, { nullable: true })
   @Prop({ type: String, trim: true })
   content?: string;
 
-  @Field((type) => OpenedQuestion)
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'OpenedQuestion',
-    required: true,
-  })
-  openedQuestion: OpenedQuestion;
+  // @Field((type) => OpenedQuestion)
+  // @Prop({
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'OpenedQuestion',
+  //   required: true,
+  // })
+  // openedQuestion: OpenedQuestion;
 }
 
 export const OpenedAnswerSchema = SchemaFactory.createForClass(OpenedAnswer);

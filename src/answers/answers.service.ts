@@ -47,127 +47,107 @@ import mongoose from 'mongoose';
 
 @Injectable()
 export class AnswersService {
-  constructor(
-    @InjectModel(ClosedAnswer.name)
-    private readonly closedAnswerModel: Model<ClosedAnswerDocument>,
-    @InjectModel(Submission.name)
-    private readonly submissionModel: Model<SubmissionDocument>,
-    @InjectModel(ClosedQuestion.name)
-    private readonly closedQuestionModel: Model<ClosedQuestionDocument>,
-    @InjectModel(LinearAnswer.name)
-    private readonly linearAnswerModel: Model<LinearAnswerDocument>,
-    @InjectModel(LinearQuestion.name)
-    private readonly linearQuestionModel: Model<LinearQuestionDocument>,
+  constructor() {}
 
-    @InjectModel(OpenedAnswer.name)
-    private readonly openedAnswerModel: Model<OpenedAnswerDocument>,
+  // async createClosedAnswer({
+  //   no,
+  //   submissionId,
+  //   questionId,
+  // }: CreateClosedAnswerInput): Promise<CreateClosedAnswerOutput> {
+  //   try {
+  //     const { submission } = await this.submissionsService.findSubmissionById(
+  //       submissionId,
+  //     );
 
-    @InjectModel(OpenedQuestion.name)
-    private readonly openedQuestionModel: Model<OpenedQuestionDocument>,
+  //     //create submission과 create closed question이 한번에 실행이 되어야 해서 이 상황까지 안 올듯
+  //     if (!submission) {
+  //       return { ok: false, error: '다시 시도해 주십시오' };
+  //     }
 
-    private readonly submissionsService: SubmissionsService,
-    private readonly questionsService: QuestionsService,
-  ) {}
+  //     const closedQuestion = await this.closedQuestionModel.findOne({
+  //       _id: questionId,
+  //     });
 
-  async createClosedAnswer({
-    no,
-    submissionId,
-    questionId,
-  }: CreateClosedAnswerInput): Promise<CreateClosedAnswerOutput> {
-    try {
-      const { submission } = await this.submissionsService.findSubmissionById(
-        submissionId,
-      );
+  //     if (!closedQuestion) {
+  //       return { ok: false, error: '없는 질문입니다.' };
+  //     }
 
-      //create submission과 create closed question이 한번에 실행이 되어야 해서 이 상황까지 안 올듯
-      if (!submission) {
-        return { ok: false, error: '다시 시도해 주십시오' };
-      }
+  //     const closedAnswer = await this.closedAnswerModel.create({
+  //       no,
+  //       submission,
+  //       closedQuestion,
+  //     });
 
-      const closedQuestion = await this.closedQuestionModel.findOne({
-        _id: questionId,
-      });
+  //     //add answer to submission
 
-      if (!closedQuestion) {
-        return { ok: false, error: '없는 질문입니다.' };
-      }
+  //     return { ok: true };
+  //   } catch (error) {
+  //     return { ok: false, error };
+  //   }
+  // }
 
-      const closedAnswer = await this.closedAnswerModel.create({
-        no,
-        submission,
-        closedQuestion,
-      });
+  // async createLinearAnswer({
+  //   no,
+  //   submissionId,
+  //   questionId,
+  // }: CreateLinearAnswerInput): Promise<CreateLinearAnswerOutput> {
+  //   try {
+  //     const { submission } = await this.submissionsService.findSubmissionById(
+  //       submissionId,
+  //     );
+  //     if (!submission) {
+  //       return { ok: false, error: '다시 시도해 주십시오' };
+  //     }
 
-      //add answer to submission
+  //     const linearQuestion = await this.linearQuestionModel.findOne({
+  //       _id: questionId,
+  //     });
+  //     if (!linearQuestion) {
+  //       return { ok: false, error: '없는 질문입니다.' };
+  //     }
 
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, error };
-    }
-  }
+  //     const linearAnswer = await this.linearAnswerModel.create({
+  //       no,
+  //       submission,
+  //       linearQuestion,
+  //     });
 
-  async createLinearAnswer({
-    no,
-    submissionId,
-    questionId,
-  }: CreateLinearAnswerInput): Promise<CreateLinearAnswerOutput> {
-    try {
-      const { submission } = await this.submissionsService.findSubmissionById(
-        submissionId,
-      );
-      if (!submission) {
-        return { ok: false, error: '다시 시도해 주십시오' };
-      }
+  //     return { ok: true };
+  //   } catch (error) {
+  //     return { ok: false, error };
+  //   }
+  // }
 
-      const linearQuestion = await this.linearQuestionModel.findOne({
-        _id: questionId,
-      });
-      if (!linearQuestion) {
-        return { ok: false, error: '없는 질문입니다.' };
-      }
+  // async createOpenedAnswer({
+  //   content,
+  //   submissionId,
+  //   questionId,
+  // }: CreateOpenedAnswerInput): Promise<CreateOpenedAnswerOutput> {
+  //   try {
+  //     const { submission } = await this.submissionsService.findSubmissionById(
+  //       submissionId,
+  //     );
 
-      const linearAnswer = await this.linearAnswerModel.create({
-        no,
-        submission,
-        linearQuestion,
-      });
+  //     if (!submission) {
+  //       return { ok: false, error: '다시 시도해 주십시오' };
+  //     }
 
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, error };
-    }
-  }
+  //     const openedQuestion = await this.openedQuestionModel.findOne({
+  //       _id: questionId,
+  //     });
+  //     if (!openedQuestion) {
+  //       return { ok: false, error: '없는 질문입니다.' };
+  //     }
 
-  async createOpenedAnswer({
-    content,
-    submissionId,
-    questionId,
-  }: CreateOpenedAnswerInput): Promise<CreateOpenedAnswerOutput> {
-    try {
-      const { submission } = await this.submissionsService.findSubmissionById(
-        submissionId,
-      );
+  //     const openedAnswer = await this.openedAnswerModel.create({
+  //       content,
+  //       submission,
+  //       openedQuestion,
+  //     });
 
-      if (!submission) {
-        return { ok: false, error: '다시 시도해 주십시오' };
-      }
-
-      const openedQuestion = await this.openedQuestionModel.findOne({
-        _id: questionId,
-      });
-      if (!openedQuestion) {
-        return { ok: false, error: '없는 질문입니다.' };
-      }
-
-      const openedAnswer = await this.openedAnswerModel.create({
-        content,
-        submission,
-        openedQuestion,
-      });
-
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, error };
-    }
-  }
+  //     return { ok: true };
+  //   } catch (error) {
+  //     return { ok: false, error };
+  //   }
+  // }
 }
