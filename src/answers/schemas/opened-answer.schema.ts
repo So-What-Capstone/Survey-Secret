@@ -7,7 +7,7 @@ import mongoose from 'mongoose';
 
 export type OpenedAnswerDocument = OpenedAnswer & Document;
 
-@InputType('OpenedAnswerInput', { isAbstract: true })
+@InputType('OpenedAnswerInputType', { isAbstract: true })
 @ObjectType()
 // @Schema(schemaOptionExceptDate)
 export class OpenedAnswer extends Answer {

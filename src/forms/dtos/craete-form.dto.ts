@@ -11,8 +11,8 @@ import { CreateSectionInput } from './create-section.dto';
 
 @InputType()
 export class CreateFormInput extends PickType(Form, ['title', 'description']) {
-  @Field((type) => [CreateSectionInput])
-  sections: CreateSectionInput[];
+  @Field((type) => [CreateSectionInput], { nullable: true })
+  sections?: CreateSectionInput[];
 }
 
 @ObjectType()

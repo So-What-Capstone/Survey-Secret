@@ -6,14 +6,24 @@ import {
   ObjectType,
 } from '@nestjs/graphql';
 import { LinearAnswer } from '../schemas/linear-answer.schema';
-import { CreateAnswerInput } from './create-answer.dto';
+import { CommonCreateAnswerInput } from './common-create-answer.dto';
 import { CoreOutput } from './../../common/dtos/output.dto';
+import { QuestionType } from 'src/questions/question.typeDefs';
 
 @InputType()
-export class CreateLinearAnswerInput extends IntersectionType(
+export class CreateLinearAnswerInputType extends IntersectionType(
   PickType(LinearAnswer, ['no']),
-  CreateAnswerInput,
+  CommonCreateAnswerInput,
 ) {}
+
+@InputType()
+export class CreateLinearAnswerInput {
+  @Field((type) => CreateLinearAnswerInputType)
+  answer: CreateLinearAnswerInputType;
+
+  @Field((type) => QuestionType)
+  type: string;
+}
 
 @ObjectType()
 export class CreateLinearAnswerOutput extends CoreOutput {}

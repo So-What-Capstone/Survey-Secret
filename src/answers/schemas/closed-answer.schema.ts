@@ -7,9 +7,8 @@ import { Answer } from './answer.schema';
 
 export type ClosedAnswerDocument = ClosedAnswer & Document;
 
-@InputType('ClosedAnswerInput', { isAbstract: true })
+@InputType('ClosedAnswerInputType', { isAbstract: true })
 @ObjectType()
-// @Schema(schemaOptionExceptDate)
 export class ClosedAnswer extends Answer {
   @Field((type) => [Number])
   @Prop({ type: [Number] })

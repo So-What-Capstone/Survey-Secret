@@ -12,8 +12,8 @@ import { QuestionType } from 'src/questions/question.typeDefs';
 
 @InputType()
 export class CreateClosedQuestionInputType extends IntersectionType(
-  CommonCreateQuestionInput,
   PickType(ClosedQuestion, ['choices', 'type']),
+  CommonCreateQuestionInput,
 ) {}
 
 @InputType()

@@ -8,7 +8,7 @@ import {
 import { CoreOutput } from './../../common/dtos/output.dto';
 import { OpenedQuestion } from './../schemas/opened-question.schema';
 import { CommonCreateQuestionInput } from './create-question.dto';
-import { QuestionType } from 'src/questions/question.typeDefs';
+import { QuestionType } from '../../questions/question.typeDefs';
 
 @InputType()
 export class CreateOpenedQuestionInputType extends IntersectionType(

@@ -18,18 +18,37 @@ export class SubmissionsService {
     private readonly formModel: Model<FormDocument>,
   ) {}
 
-  async createSubmission({
-    formId,
-  }: CreateSubmissionInput): Promise<CreateSubmissionOutput> {
+  async createSubmission(
+    createSubmissionInput: CreateSubmissionInput,
+  ): Promise<CreateSubmissionOutput> {
     try {
-      const form = await this.formModel.findById(formId);
+      const form = await this.formModel.findById(createSubmissionInput.formId);
+
+      let answers = [];
+      for (const {
+        closed,
+        opened,
+        linear,
+        grid,
+        personal,
+      } of createSubmissionInput.answers) {
+        answers = [
+          ...(closed ? closed : []),
+          ...(opened ? opened : []),
+          ...(linear ? linear : []),
+
+          ...(grid ? grid : []),
+          ...(personal ? personal : []),
+        ];
+      }
 
       const submission = await this.submissionModel.create({
         form,
+        answers,
       });
 
-      // form.submissions.push(submission);
-      await form.save();
+      // // form.submissions.push(submission);
+      // await form.save();
 
       return { ok: true };
     } catch (error) {

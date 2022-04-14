@@ -7,7 +7,7 @@ import { LinearQuestion } from '../../questions/schemas/linear-question.schema';
 
 export type LinearAnswerDocument = LinearAnswer & Document;
 
-@InputType('LinearAnswerInput', { isAbstract: true })
+@InputType('LinearAnswerInputType', { isAbstract: true })
 @ObjectType()
 // @Schema(schemaOptionExceptDate)
 export class LinearAnswer extends Answer {

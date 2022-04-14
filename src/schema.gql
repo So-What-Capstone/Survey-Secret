@@ -171,6 +171,43 @@ type FindSectionByIdOutput {
   section: Section
 }
 
+type GridAnswerContent {
+  rowNo: Float!
+  colNo: Float!
+}
+
+type AnswerUnionType {
+  answer: AnswerUnion!
+  type: QuestionType!
+}
+
+union AnswerUnion = ClosedAnswer | GridAnswer | LinearAnswer | OpenedAnswer | PersonalAnswer
+
+type ClosedAnswer {
+  _id: String!
+  no: [Float!]!
+}
+
+type GridAnswer {
+  _id: String!
+  content: [GridAnswerContent!]
+}
+
+type LinearAnswer {
+  _id: String!
+  no: Float!
+}
+
+type OpenedAnswer {
+  _id: String!
+  content: String
+}
+
+type PersonalAnswer {
+  _id: String!
+  content: String
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -212,7 +249,7 @@ input LoginInput {
 input CreateFormInput {
   title: String!
   description: String
-  sections: [CreateSectionInput!]!
+  sections: [CreateSectionInput!]
 }
 
 input CreateSectionInput {
@@ -243,12 +280,12 @@ input CreateClosedQuestionInput {
 }
 
 input CreateClosedQuestionInputType {
+  choices: [ClosedQuestionChoiceInputType!]!
+  type: ClosedQuestionType
   content: String!
   description: String
   required: Boolean
   order: Float!
-  choices: [ClosedQuestionChoiceInputType!]!
-  type: ClosedQuestionType
 }
 
 input ClosedQuestionChoiceInputType {
@@ -303,4 +340,68 @@ input CreateLinearQuestionInputType {
 
 input CreateSubmissionInput {
   formId: String!
+  answers: [CreateAnswerInput!]
+}
+
+input CreateAnswerInput {
+  opened: [CreateOpenedAnswerInput!]
+  closed: [CreateClosedAnswerInput!]
+  linear: [CreateLinearAnswerInput!]
+  grid: [CreateGridAnswerInput!]
+  personal: [CreatePersonalAnswerInput!]
+}
+
+input CreateOpenedAnswerInput {
+  answer: CreateOpenedAnswerInputType!
+  type: QuestionType!
+}
+
+input CreateOpenedAnswerInputType {
+  content: String
+  questionId: String
+}
+
+input CreateClosedAnswerInput {
+  answer: CreateClosedAnswerInputType!
+  type: QuestionType!
+}
+
+input CreateClosedAnswerInputType {
+  no: [Float!]!
+  questionId: String
+}
+
+input CreateLinearAnswerInput {
+  answer: CreateLinearAnswerInputType!
+  type: QuestionType!
+}
+
+input CreateLinearAnswerInputType {
+  no: Float!
+  questionId: String
+}
+
+input CreateGridAnswerInput {
+  answer: CreateGridAnswerInputType!
+  type: QuestionType!
+}
+
+input CreateGridAnswerInputType {
+  content: [GridAnswerContentInputType!]
+  questionId: String
+}
+
+input GridAnswerContentInputType {
+  rowNo: Float!
+  colNo: Float!
+}
+
+input CreatePersonalAnswerInput {
+  answer: CreatePersonalAnswerInputType!
+  type: QuestionType!
+}
+
+input CreatePersonalAnswerInputType {
+  questionId: String
+  content: String
 }

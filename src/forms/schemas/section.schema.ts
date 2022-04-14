@@ -21,6 +21,7 @@ export class Section {
   @MaxLength(50)
   title?: string;
 
+  //schema 생성 후 연결하면 _id 생김
   @Field((type) => [QuestionUnionType], { nullable: true })
   @Prop({})
   questions?: IQuestion[];
