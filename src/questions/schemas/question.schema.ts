@@ -7,8 +7,6 @@ import {
   IsNumber,
   MaxLength,
 } from 'class-validator';
-import mongoose from 'mongoose';
-import { Section } from '../../forms/schemas/section.schema';
 
 //question마다 공통으로 가지는 class
 @ObjectType()
@@ -36,7 +34,7 @@ export class Question {
   @Prop({ type: Number, required: true, index: true })
   @IsNumber()
   @IsOptional()
-  order: Number;
+  order: number;
 
   // @Field((type) => Section)
   // @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })

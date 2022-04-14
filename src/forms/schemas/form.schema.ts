@@ -17,7 +17,6 @@ import { User } from '../../users/schemas/user.schema';
 import mongoose from 'mongoose';
 import { schemaOption } from './../../common/schemas/option.schema';
 import { Section, SectionSchema } from './section.schema';
-import { Submission } from '../../submissions/schemas/submission.schema';
 
 export enum FormState {
   Ready = 'Ready',
@@ -33,6 +32,9 @@ export type FormDocument = Form & Document;
 @ObjectType()
 @Schema(schemaOption)
 export class Form extends CoreSchema {
+  @Field((type) => String)
+  _id: mongoose.Schema.Types.ObjectId;
+
   @Field((type) => String)
   @Prop({ type: String, required: true, trim: true, maxlength: 50 })
   @IsString()

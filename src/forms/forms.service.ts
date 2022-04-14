@@ -48,6 +48,14 @@ export class FormsService {
           ...(personal ? personal : []),
         ];
 
+        // find more faster algorithm....
+        // consider using DB middleware(before insert)
+        questions.sort(
+          ({ question: { order } }, { question: { order: order2 } }) => {
+            return order - order2;
+          },
+        );
+
         const section = {
           title,
           questions,
@@ -65,6 +73,7 @@ export class FormsService {
           sections,
           owner: user,
         });
+
         //if(not ~ ) : throw Exception
 
         await this.userModel.updateOne(
@@ -82,9 +91,13 @@ export class FormsService {
 
   async findSectionById(sectionId: string): Promise<FindSectionByIdOutput> {
     try {
-      const section = await this.sectionModel
-        .findOne({ _id: sectionId })
-        .populate('questions.question');
+      const { sections } = await this.formModel
+        .findOne()
+        .where('sections._id')
+        .equals(sectionId)
+        .select('sections');
+
+      const section = sections[0];
 
       if (!section) {
         return { ok: false, error: '섹션을 찾을 수 없습니다.' };
