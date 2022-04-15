@@ -11,8 +11,8 @@ import {
 } from './dtos/create-section.dto';
 import { Section, SectionDocument } from './schemas/section.schema';
 import { FindSectionByIdOutput } from './dtos/find-section-by-id';
-import { ClosedQuestion } from 'src/questions/schemas/closed-question.schema';
-import { QuestionType } from 'src/questions/question.typeDefs';
+import { ClosedQuestion } from 'src/forms/questions/schemas/closed-question.schema';
+import { QuestionType } from 'src/forms/questions/question.typeDefs';
 import mongoose from 'mongoose';
 
 @Injectable()

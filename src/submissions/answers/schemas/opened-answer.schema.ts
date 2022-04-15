@@ -2,7 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { schemaOptionExceptDate } from 'src/common/schemas/option.schema';
 import { Answer } from './answer.schema';
-import { OpenedQuestion } from './../../questions/schemas/opened-question.schema';
+import { OpenedQuestion } from '../../../forms/questions/schemas/opened-question.schema';
 import mongoose from 'mongoose';
 
 export type OpenedAnswerDocument = OpenedAnswer & Document;

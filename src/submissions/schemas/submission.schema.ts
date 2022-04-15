@@ -6,7 +6,7 @@ import { schemaOption } from './../../common/schemas/option.schema';
 import { User } from '../../users/schemas/user.schema';
 import mongoose from 'mongoose';
 import { Form } from './../../forms/schemas/form.schema';
-import { AnswerUnionType, IAnswer } from '../../answers/answer.typeDefs';
+import { AnswerUnionType } from '../answers/answer.typeDefs';
 
 export type SubmissionDocument = Submission & Document;
 
@@ -28,7 +28,7 @@ export class Submission extends CoreSchema {
 
   @Field((type) => [AnswerUnionType], { nullable: true })
   @Prop({})
-  answers?: IAnswer[];
+  answers?: AnswerUnionType[];
 }
 
 export const SubmissionSchema = SchemaFactory.createForClass(Submission);

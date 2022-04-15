@@ -5,7 +5,7 @@ import {
   Field,
 } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { schemaOptionExceptDate } from '../../common/schemas/option.schema';
+import { schemaOptionExceptDate } from '../../../common/schemas/option.schema';
 import { Question } from './question.schema';
 import { IsEnum } from 'class-validator';
 import mongoose from 'mongoose';

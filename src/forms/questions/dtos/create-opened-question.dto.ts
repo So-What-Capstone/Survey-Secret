@@ -5,10 +5,10 @@ import {
   IntersectionType,
   Field,
 } from '@nestjs/graphql';
-import { CoreOutput } from './../../common/dtos/output.dto';
-import { OpenedQuestion } from './../schemas/opened-question.schema';
-import { CommonCreateQuestionInput } from './create-question.dto';
-import { QuestionType } from '../../questions/question.typeDefs';
+import { CoreOutput } from '../../../common/dtos/output.dto';
+import { OpenedQuestion } from '../schemas/opened-question.schema';
+import { CommonCreateQuestionInput } from './common-create-question.dto';
+import { QuestionType } from '../question.typeDefs';
 
 @InputType()
 export class CreateOpenedQuestionInputType extends IntersectionType(

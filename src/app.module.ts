@@ -9,11 +9,11 @@ import * as Joi from 'joi';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { FormsModule } from './forms/forms.module';
-import { QuestionsModule } from './questions/questions.module';
+import { QuestionsModule } from './forms/questions/questions.module';
 import { AuthModule } from './auth/auth.module';
 import { MailsModule } from './mails/mails.module';
 import { SubmissionsModule } from './submissions/submissions.module';
-import { AnswersModule } from './answers/answers.module';
+import { AnswersModule } from './submissions/answers/answers.module';
 
 @Module({
   imports: [

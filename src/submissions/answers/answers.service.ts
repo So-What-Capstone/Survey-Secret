@@ -1,49 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import {
-  ClosedAnswer,
-  ClosedAnswerDocument,
-} from './schemas/closed-answer.schema';
-import { Model } from 'mongoose';
-import {
-  CreateClosedAnswerInput,
-  CreateClosedAnswerOutput,
-} from './dtos/create-closed-answer.dto';
-import {
-  Submission,
-  SubmissionDocument,
-} from '../submissions/schemas/submission.schema';
-import {
-  ClosedQuestion,
-  ClosedQuestionDocument,
-} from '../questions/schemas/closed-question.schema';
-import {
-  CreateLinearAnswerInput,
-  CreateLinearAnswerOutput,
-} from './dtos/create-linear-answer.dto';
-import {
-  LinearAnswer,
-  LinearAnswerDocument,
-} from './schemas/linear-answer.schema';
-import {
-  LinearQuestion,
-  LinearQuestionDocument,
-} from '../questions/schemas/linear-question.schema';
-import {
-  CreateOpenedAnswerInput,
-  CreateOpenedAnswerOutput,
-} from './dtos/create-opened-answer.dto';
-import { SubmissionsService } from './../submissions/submissions.service';
-import { QuestionsService } from './../questions/questions.service';
-import {
-  OpenedAnswer,
-  OpenedAnswerDocument,
-} from './schemas/opened-answer.schema';
-import {
-  OpenedQuestion,
-  OpenedQuestionDocument,
-} from './../questions/schemas/opened-question.schema';
-import mongoose from 'mongoose';
 
 @Injectable()
 export class AnswersService {

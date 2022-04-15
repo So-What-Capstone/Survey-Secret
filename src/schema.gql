@@ -340,10 +340,10 @@ input CreateLinearQuestionInputType {
 
 input CreateSubmissionInput {
   formId: String!
-  answers: [CreateAnswerInput!]
+  answers: [CreateAnswersInput!]
 }
 
-input CreateAnswerInput {
+input CreateAnswersInput {
   opened: [CreateOpenedAnswerInput!]
   closed: [CreateClosedAnswerInput!]
   linear: [CreateLinearAnswerInput!]

@@ -1,9 +1,11 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { IQuestion, QuestionType } from '../../questions/question.typeDefs';
 import { schemaOptionExceptDate } from './../../common/schemas/option.schema';
-import { QuestionUnionType } from './../../questions/question.typeDefs';
+import {
+  QuestionType,
+  QuestionUnionType,
+} from '../questions/question.typeDefs';
 import { IsString, MaxLength } from 'class-validator';
 
 export type SectionDocument = Section & Document;
@@ -24,7 +26,7 @@ export class Section {
   //schema 생성 후 연결하면 _id 생김
   @Field((type) => [QuestionUnionType], { nullable: true })
   @Prop({})
-  questions?: IQuestion[];
+  questions?: QuestionUnionType[];
 
   //add trigger ID
 }

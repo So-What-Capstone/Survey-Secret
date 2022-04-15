@@ -1,9 +1,9 @@
 import { InputType, ObjectType, Field } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { schemaOptionExceptDate } from '../../common/schemas/option.schema';
+import { schemaOptionExceptDate } from '../../../common/schemas/option.schema';
 import mongoose from 'mongoose';
 import { Answer } from './answer.schema';
-import { LinearQuestion } from '../../questions/schemas/linear-question.schema';
+import { LinearQuestion } from '../../../forms/questions/schemas/linear-question.schema';
 
 export type LinearAnswerDocument = LinearAnswer & Document;
 

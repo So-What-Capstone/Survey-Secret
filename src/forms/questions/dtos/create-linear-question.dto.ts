@@ -6,9 +6,9 @@ import {
   Field,
 } from '@nestjs/graphql';
 import { LinearQuestion } from '../schemas/linear-question.schema';
-import { CoreOutput } from './../../common/dtos/output.dto';
-import { CommonCreateQuestionInput } from './create-question.dto';
-import { QuestionType } from 'src/questions/question.typeDefs';
+import { CoreOutput } from '../../../common/dtos/output.dto';
+import { CommonCreateQuestionInput } from './common-create-question.dto';
+import { QuestionType } from 'src/forms/questions/question.typeDefs';
 
 @InputType()
 export class CreateLinearQuestionInputType extends IntersectionType(

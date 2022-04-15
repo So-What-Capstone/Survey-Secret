@@ -1,7 +1,7 @@
 import { Field, InputType, IntersectionType, PickType } from '@nestjs/graphql';
-import { CommonCreateAnswerInput } from './common-create-answer.dto';
-import { PersonalAnswer } from './../schemas/personal-answer.schema';
-import { QuestionType } from 'src/questions/question.typeDefs';
+import { QuestionType } from '../../../../forms/questions/question.typeDefs';
+import { CommonCreateAnswerInput } from '../common-create-answer.dto';
+import { PersonalAnswer } from '../../schemas/personal-answer.schema';
 
 @InputType()
 export class CreatePersonalAnswerInputType extends IntersectionType(

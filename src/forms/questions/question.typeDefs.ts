@@ -18,17 +18,6 @@ export enum QuestionType {
   Personal = 'Personal',
 }
 
-export class IQuestion {
-  // type: 'Closed' | 'Grid' | 'Linear' | 'Opened' | 'Personal';
-  type: QuestionType;
-  question:
-    | ClosedQuestion
-    | GridQuestion
-    | LinearQuestion
-    | OpenedQuestion
-    | PersonalQuestion;
-}
-
 registerEnumType(QuestionType, { name: 'QuestionType' });
 
 export const QuestionUnion = createUnionType({
@@ -63,5 +52,5 @@ export class QuestionUnionType {
   question: typeof QuestionUnion;
 
   @Field((type) => QuestionType)
-  type: string;
+  type: QuestionType;
 }

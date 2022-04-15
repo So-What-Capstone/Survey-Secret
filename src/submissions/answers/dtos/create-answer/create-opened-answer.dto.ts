@@ -5,10 +5,10 @@ import {
   ObjectType,
   PickType,
 } from '@nestjs/graphql';
-import { OpenedAnswer } from '../schemas/opened-answer.schema';
-import { CommonCreateAnswerInput } from './common-create-answer.dto';
-import { CoreOutput } from './../../common/dtos/output.dto';
-import { QuestionType } from '../../questions/question.typeDefs';
+import { OpenedAnswer } from '../../schemas/opened-answer.schema';
+import { CoreOutput } from '../../../../common/dtos/output.dto';
+import { QuestionType } from '../../../../forms/questions/question.typeDefs';
+import { CommonCreateAnswerInput } from '../common-create-answer.dto';
 
 @InputType()
 export class CreateOpenedAnswerInputType extends IntersectionType(
