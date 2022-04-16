@@ -99,6 +99,56 @@ type Section {
   questions: [QuestionUnionType!]
 }
 
+type GridAnswerContent {
+  rowNo: Float!
+  colNo: Float!
+}
+
+type AnswerUnionType {
+  answer: AnswerUnion!
+  type: QuestionType!
+}
+
+union AnswerUnion = ClosedAnswer | GridAnswer | LinearAnswer | OpenedAnswer | PersonalAnswer
+
+type ClosedAnswer {
+  _id: String!
+  no: [Float!]!
+}
+
+type GridAnswer {
+  _id: String!
+  content: [GridAnswerContent!]
+}
+
+type LinearAnswer {
+  _id: String!
+  no: Float!
+}
+
+type OpenedAnswer {
+  _id: String!
+  content: String
+}
+
+type PersonalAnswer {
+  _id: String!
+  content: String
+}
+
+type Submission {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  respondent: User
+  form: Form!
+  answers: [AnswerUnionType!]
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Form {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -111,12 +161,8 @@ type Form {
   privacyExpiredAt: DateTime
   owner: User!
   sections: [Section!]
+  submissions: [Submission!]
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 enum FormState {
   Ready
@@ -169,43 +215,6 @@ type FindSectionByIdOutput {
   ok: Boolean!
   error: String
   section: Section
-}
-
-type GridAnswerContent {
-  rowNo: Float!
-  colNo: Float!
-}
-
-type AnswerUnionType {
-  answer: AnswerUnion!
-  type: QuestionType!
-}
-
-union AnswerUnion = ClosedAnswer | GridAnswer | LinearAnswer | OpenedAnswer | PersonalAnswer
-
-type ClosedAnswer {
-  _id: String!
-  no: [Float!]!
-}
-
-type GridAnswer {
-  _id: String!
-  content: [GridAnswerContent!]
-}
-
-type LinearAnswer {
-  _id: String!
-  no: Float!
-}
-
-type OpenedAnswer {
-  _id: String!
-  content: String
-}
-
-type PersonalAnswer {
-  _id: String!
-  content: String
 }
 
 type CreateSubmissionOutput {

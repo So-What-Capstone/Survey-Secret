@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Form, FormDocument } from './schemas/form.schema';
+import { Form, FormDocument, FormSchema } from './schemas/form.schema';
 import { Model } from 'mongoose';
 import { CreateFormInput, CreateFormOutput } from './dtos/craete-form.dto';
 import { User } from '../users/schemas/user.schema';
@@ -20,9 +20,8 @@ export class FormsService {
   constructor(
     @InjectModel(Form.name) private readonly formModel: Model<FormDocument>,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-    @InjectModel(Section.name)
-    private readonly sectionModel: Model<SectionDocument>,
-    @InjectConnection() private readonly connection: mongoose.Connection,
+    @InjectConnection()
+    private readonly connection: mongoose.Connection,
   ) {}
 
   async createForm(
