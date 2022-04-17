@@ -7,6 +7,7 @@ import { User } from '../../users/schemas/user.schema';
 import mongoose from 'mongoose';
 import { Form } from './../../forms/schemas/form.schema';
 import { AnswerUnionType } from '../answers/answer.typeDefs';
+import { QuestionType } from '../../forms/questions/question.typeDefs';
 
 export type SubmissionDocument = Submission & Document;
 
@@ -27,7 +28,14 @@ export class Submission extends CoreSchema {
   form: Form;
 
   @Field((type) => [AnswerUnionType], { nullable: true })
-  @Prop({})
+  @Prop({
+    type: [
+      {
+        answer: { type: mongoose.Schema.Types.Mixed },
+        type: { type: String, enum: QuestionType },
+      },
+    ],
+  })
   answers?: AnswerUnionType[];
 }
 

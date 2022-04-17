@@ -15,6 +15,22 @@ export const AnswerUnion = createUnionType({
     OpenedAnswer,
     PersonalAnswer,
   ],
+  resolveType: (obj) => {
+    console.log(obj);
+    if (obj.question.choices) {
+      return ClosedAnswer;
+    } else if (obj.question.rowContent) {
+      return GridAnswer;
+    } else if (obj.question.leftRange) {
+      return LinearAnswer;
+    } else if (obj.question.encoded) {
+      return PersonalAnswer;
+    } else if (obj.question.type) {
+      return OpenedAnswer;
+    } else {
+      return null;
+    }
+  },
 });
 
 @ObjectType()

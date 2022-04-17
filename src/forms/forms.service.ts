@@ -5,14 +5,7 @@ import { Model } from 'mongoose';
 import { CreateFormInput, CreateFormOutput } from './dtos/craete-form.dto';
 import { User } from '../users/schemas/user.schema';
 import { UserDocument } from '../users/schemas/user.schema';
-import {
-  CreateSectionInput,
-  CreateSectionOutput,
-} from './dtos/create-section.dto';
-import { Section, SectionDocument } from './schemas/section.schema';
 import { FindSectionByIdOutput } from './dtos/find-section-by-id';
-import { ClosedQuestion } from 'src/forms/questions/schemas/closed-question.schema';
-import { QuestionType } from 'src/forms/questions/question.typeDefs';
 import mongoose from 'mongoose';
 
 @Injectable()

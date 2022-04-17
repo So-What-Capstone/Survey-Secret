@@ -10,6 +10,7 @@ type ClosedQuestionChoice {
 type QuestionUnionType {
   question: QuestionUnion!
   type: QuestionType!
+  _id: String!
 }
 
 union QuestionUnion = ClosedQuestion | GridQuestion | LinearQuestion | OpenedQuestion | PersonalQuestion
@@ -112,27 +113,27 @@ type AnswerUnionType {
 union AnswerUnion = ClosedAnswer | GridAnswer | LinearAnswer | OpenedAnswer | PersonalAnswer
 
 type ClosedAnswer {
-  _id: String!
+  question: QuestionUnion!
   no: [Float!]!
 }
 
 type GridAnswer {
-  _id: String!
+  question: QuestionUnion!
   content: [GridAnswerContent!]
 }
 
 type LinearAnswer {
-  _id: String!
+  question: QuestionUnion!
   no: Float!
 }
 
 type OpenedAnswer {
-  _id: String!
+  question: QuestionUnion!
   content: String
 }
 
 type PersonalAnswer {
-  _id: String!
+  question: QuestionUnion!
   content: String
 }
 
@@ -222,10 +223,17 @@ type CreateSubmissionOutput {
   error: String
 }
 
+type FindSubmissionByIdOutput {
+  ok: Boolean!
+  error: String
+  submission: Submission
+}
+
 type Query {
   test: Boolean!
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
+  findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
 }
 
 input FindUserByIdInput {
@@ -234,6 +242,10 @@ input FindUserByIdInput {
 
 input FindSectionByIdInput {
   sectionId: String!
+}
+
+input FindSubmissionByIdInput {
+  submissionId: String!
 }
 
 type Mutation {
@@ -367,7 +379,7 @@ input CreateOpenedAnswerInput {
 
 input CreateOpenedAnswerInputType {
   content: String
-  questionId: String
+  questionId: String!
 }
 
 input CreateClosedAnswerInput {
@@ -377,7 +389,7 @@ input CreateClosedAnswerInput {
 
 input CreateClosedAnswerInputType {
   no: [Float!]!
-  questionId: String
+  questionId: String!
 }
 
 input CreateLinearAnswerInput {
@@ -387,7 +399,7 @@ input CreateLinearAnswerInput {
 
 input CreateLinearAnswerInputType {
   no: Float!
-  questionId: String
+  questionId: String!
 }
 
 input CreateGridAnswerInput {
@@ -397,7 +409,7 @@ input CreateGridAnswerInput {
 
 input CreateGridAnswerInputType {
   content: [GridAnswerContentInputType!]
-  questionId: String
+  questionId: String!
 }
 
 input GridAnswerContentInputType {
@@ -411,6 +423,6 @@ input CreatePersonalAnswerInput {
 }
 
 input CreatePersonalAnswerInputType {
-  questionId: String
+  questionId: String!
   content: String
 }

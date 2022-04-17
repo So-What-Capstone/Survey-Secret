@@ -53,4 +53,7 @@ export class QuestionUnionType {
 
   @Field((type) => QuestionType)
   type: QuestionType;
+
+  @Field((type) => String)
+  _id: string;
 }
