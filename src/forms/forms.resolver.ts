@@ -5,9 +5,13 @@ import { CreateFormOutput, CreateFormInput } from './dtos/craete-form.dto';
 import {
   FindSectionByIdInput,
   FindSectionByIdOutput,
-} from './dtos/find-section-by-id';
+} from './dtos/find-section-by-id.dto';
 import { FormsService } from './forms.service';
 import { User } from './../users/schemas/user.schema';
+import {
+  FindFormByIdInput,
+  FIndFormByIdOutput,
+} from './dtos/find-form-by-id.dto';
 
 @Resolver()
 export class FormsResolver {
@@ -27,5 +31,12 @@ export class FormsResolver {
     @Args('input') { sectionId }: FindSectionByIdInput,
   ): Promise<FindSectionByIdOutput> {
     return this.formsService.findSectionById(sectionId);
+  }
+
+  @Query((returns) => FIndFormByIdOutput)
+  findFormById(
+    @Args('input') findFormByIdInput: FindFormByIdInput,
+  ): Promise<FIndFormByIdOutput> {
+    return this.formsService.findFormById(findFormByIdInput.formId);
   }
 }

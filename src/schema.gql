@@ -218,6 +218,12 @@ type FindSectionByIdOutput {
   section: Section
 }
 
+type FIndFormByIdOutput {
+  ok: Boolean!
+  error: String
+  form: Form
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -233,6 +239,7 @@ type Query {
   test: Boolean!
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
+  findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
 }
 
@@ -242,6 +249,10 @@ input FindUserByIdInput {
 
 input FindSectionByIdInput {
   sectionId: String!
+}
+
+input FindFormByIdInput {
+  formId: String!
 }
 
 input FindSubmissionByIdInput {

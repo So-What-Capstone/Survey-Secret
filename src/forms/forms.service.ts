@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { flatten, Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Form, FormDocument, FormSchema } from './schemas/form.schema';
 import { Model } from 'mongoose';
 import { CreateFormInput, CreateFormOutput } from './dtos/craete-form.dto';
 import { User } from '../users/schemas/user.schema';
 import { UserDocument } from '../users/schemas/user.schema';
-import { FindSectionByIdOutput } from './dtos/find-section-by-id';
+import { FindSectionByIdOutput } from './dtos/find-section-by-id.dto';
 import mongoose from 'mongoose';
+import { FIndFormByIdOutput } from './dtos/find-form-by-id.dto';
 
 @Injectable()
 export class FormsService {
@@ -96,6 +97,23 @@ export class FormsService {
       }
 
       return { ok: true, section };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async findFormById(formId: string): Promise<FIndFormByIdOutput> {
+    try {
+      //not for see result(submissions)
+      const form = await this.formModel
+        .findOne({ _id: formId })
+        .populate('owner');
+
+      if (!form) {
+        return { ok: false, error: '폼을 찾을 수 없습니다.' };
+      }
+
+      return { ok: true, form };
     } catch (error) {
       return { ok: false, error };
     }
