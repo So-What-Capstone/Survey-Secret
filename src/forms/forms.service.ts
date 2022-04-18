@@ -84,17 +84,17 @@ export class FormsService {
 
   async findSectionById(sectionId: string): Promise<FindSectionByIdOutput> {
     try {
-      const { sections } = await this.formModel
+      const form = await this.formModel
         .findOne()
         .where('sections._id')
         .equals(sectionId)
         .select('sections');
 
-      const section = sections[0];
-
-      if (!section) {
+      if (!form) {
         return { ok: false, error: '섹션을 찾을 수 없습니다.' };
       }
+
+      const section = form.sections[0];
 
       return { ok: true, section };
     } catch (error) {
