@@ -37,6 +37,6 @@ export class UsersResolver {
   findUserById(
     @Args('input') { id }: FindUserByIdInput,
   ): Promise<FindUserByIdOutput> {
-    return this.usersService.findById(id);
+    return this.usersService.findUserById(id);
   }
 }

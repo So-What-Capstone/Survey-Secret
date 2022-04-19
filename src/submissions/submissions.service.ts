@@ -84,8 +84,6 @@ export class SubmissionsService {
           answers,
         });
 
-        console.log(submission.answers[0].answer.question);
-
         await this.formModel.updateOne(
           { _id: createSubmissionInput.formId },
           { $push: { submissions: submission } },
@@ -109,16 +107,15 @@ export class SubmissionsService {
         .equals(id)
         .populate('form');
       //form의 어느 정보까지 줄것인지 select
+      if (!submission) {
+        return { ok: false, error: '제출을 찾을 수 없습니다.' };
+      }
 
       if (
         submission.respondent?._id !== owner._id &&
         submission.form.owner._id.toString() !== owner._id.toString()
       ) {
         return { ok: false, error: '권한이 없습니다.' };
-      }
-
-      if (!submission) {
-        return { ok: false, error: '제출을 찾을 수 없습니다.' };
       }
 
       return { ok: true, submission };

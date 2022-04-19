@@ -82,7 +82,6 @@ export class UsersService {
         return { ok: false, error: '비밀번호를 확인해주세요.' };
       } else {
         const token = jwt.sign(user._id.toString(), process.env.SECRET_KEY);
-        console.log(token);
         return { ok: true, token };
       }
     } catch (error) {
@@ -90,7 +89,7 @@ export class UsersService {
     }
   }
 
-  async findById(id: string): Promise<FindUserByIdOutput> {
+  async findUserById(id: string): Promise<FindUserByIdOutput> {
     try {
       const user = await this.userModel.findById(id);
 
@@ -99,7 +98,6 @@ export class UsersService {
       }
 
       return { ok: true, user };
-      return { ok: true };
     } catch (error) {
       return { ok: false, error };
     }
