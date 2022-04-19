@@ -6,7 +6,7 @@ import {
   QuestionType,
   QuestionUnionType,
 } from '../questions/question.typeDefs';
-import { IsString, MaxLength } from 'class-validator';
+import { IsMongoId, IsString, MaxLength } from 'class-validator';
 import { QuestionUnion } from './../questions/question.typeDefs';
 
 export type SectionDocument = Section & Document;
@@ -16,6 +16,7 @@ export type SectionDocument = Section & Document;
 @Schema({ toJSON: { virtuals: true } })
 export class Section {
   @Field((type) => String)
+  @IsMongoId()
   _id: mongoose.Schema.Types.ObjectId;
 
   @Field((type) => String, { nullable: true })

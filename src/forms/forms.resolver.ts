@@ -12,6 +12,7 @@ import {
   FindFormByIdInput,
   FIndFormByIdOutput,
 } from './dtos/find-form-by-id.dto';
+import { DeleteFormOutput, DeleteFormInput } from './dtos/delete-form.dto';
 
 @Resolver()
 export class FormsResolver {
@@ -38,5 +39,14 @@ export class FormsResolver {
     @Args('input') findFormByIdInput: FindFormByIdInput,
   ): Promise<FIndFormByIdOutput> {
     return this.formsService.findFormById(findFormByIdInput.formId);
+  }
+
+  @Mutation((returns) => DeleteFormOutput)
+  @Type(['Any'])
+  deleteForm(
+    @AuthUser() owner: User,
+    @Args('input') deleteFormInput: DeleteFormInput,
+  ): Promise<DeleteFormOutput> {
+    return this.formsService.deleteForm(owner, deleteFormInput.formId);
   }
 }

@@ -56,13 +56,15 @@ export class SubmissionsService {
             return question._id.toString() === answer.questionId.toString();
           });
 
-          if (questionUnion.type !== type) {
-            return { ok: false, error: '문제와 답변의 타입이 다릅니다.' };
-          }
+          if (questionUnion) {
+            if (questionUnion.type !== type) {
+              return { ok: false, error: '문제와 답변의 타입이 다릅니다.' };
+            }
 
-          question = questionUnion.question;
-          if (question) {
-            break;
+            question = questionUnion.question;
+            if (question) {
+              break;
+            }
           }
         }
 

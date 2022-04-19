@@ -9,6 +9,7 @@ import {
 import {
   IsBoolean,
   IsEnum,
+  IsMongoId,
   IsOptional,
   IsString,
   MaxLength,
@@ -34,6 +35,7 @@ export type FormDocument = Form & Document;
 @Schema(schemaOption)
 export class Form extends CoreSchema {
   @Field((type) => String)
+  @IsMongoId()
   _id: mongoose.Schema.Types.ObjectId;
 
   @Field((type) => String)

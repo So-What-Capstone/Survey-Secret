@@ -8,12 +8,19 @@ import { UserDocument } from '../users/schemas/user.schema';
 import { FindSectionByIdOutput } from './dtos/find-section-by-id.dto';
 import mongoose from 'mongoose';
 import { FIndFormByIdOutput } from './dtos/find-form-by-id.dto';
+import { DeleteFormOutput } from './dtos/delete-form.dto';
+import {
+  Submission,
+  SubmissionDocument,
+} from '../submissions/schemas/submission.schema';
 
 @Injectable()
 export class FormsService {
   constructor(
     @InjectModel(Form.name) private readonly formModel: Model<FormDocument>,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Submission.name)
+    private readonly submissionModel: Model<SubmissionDocument>,
     @InjectConnection()
     private readonly connection: mongoose.Connection,
   ) {}
@@ -114,6 +121,31 @@ export class FormsService {
       }
 
       return { ok: true, form };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async deleteForm(owner: User, formId: string): Promise<DeleteFormOutput> {
+    try {
+      const session = await this.connection.startSession();
+
+      await session.withTransaction(async () => {
+        const form = await this.formModel.findOneAndDelete({ _id: formId });
+
+        if (form.owner._id.toString() !== owner._id.toString()) {
+          throw new Error('권한이 없습니다.');
+        }
+
+        if (!form) {
+          throw new Error('폼을 찾을 수 없습니다.');
+        }
+
+        await this.submissionModel.deleteMany({ form: formId });
+      });
+      session.endSession();
+
+      return { ok: true };
     } catch (error) {
       return { ok: false, error };
     }

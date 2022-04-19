@@ -1,10 +1,12 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsMongoId } from 'class-validator';
 import { CoreOutput } from '../../common/dtos/output.dto';
 import { Form } from '../schemas/form.schema';
 
 @InputType()
 export class FindFormByIdInput {
   @Field((type) => String)
+  @IsMongoId()
   formId: string;
 }
 

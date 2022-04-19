@@ -224,6 +224,11 @@ type FIndFormByIdOutput {
   form: Form
 }
 
+type DeleteFormOutput {
+  ok: Boolean!
+  error: String
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -263,6 +268,7 @@ type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
+  deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
 }
 
@@ -368,6 +374,10 @@ input CreateLinearQuestionInputType {
   rightRange: Float!
   leftLabel: String
   rightLabel: String
+}
+
+input DeleteFormInput {
+  formId: String!
 }
 
 input CreateSubmissionInput {
