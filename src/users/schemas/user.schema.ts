@@ -10,6 +10,7 @@ import {
   IsEmail,
   IsEnum,
   IsInt,
+  IsMongoId,
   IsOptional,
   IsString,
   Length,
@@ -38,6 +39,8 @@ export type UserDocument = User & Document;
 @Schema(schemaOption)
 export class User extends CoreSchema {
   //id는 mongoose 자동생성 id 사용(_id)
+  @Field((type) => String)
+  @IsMongoId()
   _id: mongoose.Schema.Types.ObjectId;
 
   //for graphql type

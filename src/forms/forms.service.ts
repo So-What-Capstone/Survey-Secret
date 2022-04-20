@@ -67,25 +67,29 @@ export class FormsService {
       const session = await this.connection.startSession();
 
       await session.withTransaction(async () => {
-        const form = await this.formModel.create({
-          title: createFormInput.title,
-          description: createFormInput.description,
-          sections,
-          owner: user,
-        });
+        const form = await this.formModel.create(
+          {
+            title: createFormInput.title,
+            description: createFormInput.description,
+            sections,
+            owner: user,
+          },
+          { session },
+        );
 
         //if(not ~ ) : throw Exception
 
         await this.userModel.updateOne(
           { _id: user._id },
           { $push: { forms: form } },
+          { session },
         );
       });
-      session.endSession();
+      await session.endSession();
 
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 
@@ -131,23 +135,38 @@ export class FormsService {
       const session = await this.connection.startSession();
 
       await session.withTransaction(async () => {
-        const form = await this.formModel.findOneAndDelete({ _id: formId });
-
-        if (form.owner._id.toString() !== owner._id.toString()) {
-          throw new Error('권한이 없습니다.');
-        }
+        const form = await this.formModel.findOneAndDelete(
+          { _id: formId },
+          { session },
+        );
 
         if (!form) {
           throw new Error('폼을 찾을 수 없습니다.');
         }
 
-        await this.submissionModel.deleteMany({ form: formId });
+        if (form.owner._id.toString() !== owner._id.toString()) {
+          throw new Error('권한이 없습니다.');
+        }
+
+        //owner의 소유 forms에서 제거
+
+        const deleteSubmissions = await this.submissionModel.deleteMany(
+          { form: formId },
+          { session },
+        );
+        const deleteFormInUser = await this.formModel.updateOne(
+          { _id: owner._id },
+          { $pull: { forms: formId } },
+          { session },
+        );
+
+        // Promise.all([deleteSubmissions, deleteFormInUser]);
       });
-      session.endSession();
+      await session.endSession();
 
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 }

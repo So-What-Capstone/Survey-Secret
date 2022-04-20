@@ -173,6 +173,7 @@ enum FormState {
 type User {
   createdAt: DateTime!
   updatedAt: DateTime!
+  _id: String!
   username: String!
   phoneNum: String
   email: String!

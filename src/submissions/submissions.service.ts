@@ -81,20 +81,25 @@ export class SubmissionsService {
       const session = await this.connection.startSession();
 
       await session.withTransaction(async () => {
-        const submission = await this.submissionModel.create({
-          form,
-          answers,
-        });
+        const submission = await this.submissionModel.create(
+          {
+            form,
+            answers,
+          },
+          { session },
+        );
 
         await this.formModel.updateOne(
           { _id: createSubmissionInput.formId },
           { $push: { submissions: submission } },
+          { session },
         );
       });
+      await session.endSession();
 
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 
@@ -122,7 +127,7 @@ export class SubmissionsService {
 
       return { ok: true, submission };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 }

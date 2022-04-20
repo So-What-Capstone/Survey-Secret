@@ -56,6 +56,12 @@
 - request header에 토큰 키는 "x-jwt" 입니다.
 - graphql context에서 "user"로 저장되어 있는 user를 불러오는 역할을 합니다.
 
+### Transaction 들어간 연산
+
+- 로컬 환경에서 테스팅하려면 별도로 replica set config가 필요합니다.
+- https://www.npmjs.com/package/run-rs -> config 하는 법
+- 귀찮으면 제가 mongo atlas URL만든 거 있는데 그거 카톡으로 요청하시면 됩니다
+
 </pre>
 
 <p align="center">
