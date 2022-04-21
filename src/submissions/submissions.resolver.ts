@@ -11,17 +11,25 @@ import {
 } from './dtos/find-submission-by-id.dto';
 import { SubmissionsService } from './submissions.service';
 import { User } from './../users/schemas/user.schema';
+import {
+  DeleteSubmissionInput,
+  DeleteSubmissionOutput,
+} from './dtos/delete-submission.dto';
 
 @Resolver()
 export class SubmissionsResolver {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
   @Mutation((returns) => CreateSubmissionOutput)
-  @Type(['Free', 'Premium'])
+  @Type(['NotLoggedIn'])
   createSubmission(
+    @AuthUser() respondent: User,
     @Args('input') createSubmissionInput: CreateSubmissionInput,
   ): Promise<CreateSubmissionOutput> {
-    return this.submissionsService.createSubmission(createSubmissionInput);
+    return this.submissionsService.createSubmission(
+      respondent,
+      createSubmissionInput,
+    );
   }
 
   @Query((returns) => FindSubmissionByIdOutput)
@@ -33,6 +41,18 @@ export class SubmissionsResolver {
     return this.submissionsService.findSubmissionById(
       owner,
       findSubmissionByIdInput.submissionId,
+    );
+  }
+
+  @Mutation((returns) => DeleteSubmissionOutput)
+  @Type(['Any'])
+  deleteSubmission(
+    @AuthUser() owner: User,
+    @Args('input') deleteSubmissionInput: DeleteSubmissionInput,
+  ): Promise<DeleteSubmissionOutput> {
+    return this.submissionsService.deleteSubmission(
+      owner,
+      deleteSubmissionInput.submissionId,
     );
   }
 }

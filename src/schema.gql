@@ -140,6 +140,7 @@ type PersonalAnswer {
 type Submission {
   createdAt: DateTime!
   updatedAt: DateTime!
+  _id: String!
   respondent: User
   form: Form!
   answers: [AnswerUnionType!]
@@ -241,6 +242,11 @@ type FindSubmissionByIdOutput {
   submission: Submission
 }
 
+type DeleteSubmissionOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   test: Boolean!
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
@@ -271,6 +277,7 @@ type Mutation {
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
+  deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
 }
 
 input CreateAccountInput {
@@ -447,4 +454,8 @@ input CreatePersonalAnswerInput {
 input CreatePersonalAnswerInputType {
   questionId: String!
   content: String
+}
+
+input DeleteSubmissionInput {
+  submissionId: String!
 }

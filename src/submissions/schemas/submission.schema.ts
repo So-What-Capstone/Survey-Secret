@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 import { Form } from './../../forms/schemas/form.schema';
 import { AnswerUnionType } from '../answers/answer.typeDefs';
 import { QuestionType } from '../../forms/questions/question.typeDefs';
+import { IsMongoId } from 'class-validator';
 
 export type SubmissionDocument = Submission & Document;
 
@@ -15,6 +16,10 @@ export type SubmissionDocument = Submission & Document;
 @ObjectType()
 @Schema(schemaOption)
 export class Submission extends CoreSchema {
+  @Field((type) => String)
+  @IsMongoId()
+  _id: mongoose.Schema.Types.ObjectId;
+
   @Field((type) => User, { nullable: true })
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   respondent?: User;

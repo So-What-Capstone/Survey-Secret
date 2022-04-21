@@ -39,13 +39,17 @@ export class AuthGuard implements CanActivate {
 
         gqlContext['user'] = user;
 
-        if (types.includes('Any')) {
+        if (types.includes('Any') || types.includes('NotLoggedIn')) {
           return true;
         }
 
         return types.includes(user.type);
       } else {
-        return false;
+        if (types.includes('NotLoggedIn')) {
+          return true;
+        } else {
+          return false;
+        }
       }
     } else {
       return false;

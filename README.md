@@ -47,6 +47,7 @@
 - Type의 종류로는 Any, Free, Premium, Admin 등이 있습니다.
 - @Type을 생략하면 비로그인 회원도 사용할 수 있습니다.
 - Any인 경우, 로그인 한 회원 누구나 사용 가능한 resolver
+- NotLoggedIn인 경우, 로그인 안 할수도 할 수도 있음(createSubmission 같은 경우)
 - ["Free","Premium"]인 경우, Admin을 제외한 회원 사용 가능 resolver
 - 예시 -> forms.resolver.ts 의 createForm()
 

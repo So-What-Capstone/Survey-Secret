@@ -154,13 +154,13 @@ export class FormsService {
           { form: formId },
           { session },
         );
-        const deleteFormInUser = await this.formModel.updateOne(
+        const deleteFormInUser = await this.userModel.updateOne(
           { _id: owner._id },
           { $pull: { forms: formId } },
           { session },
         );
 
-        // Promise.all([deleteSubmissions, deleteFormInUser]);
+        Promise.all([deleteSubmissions, deleteFormInUser]);
       });
       await session.endSession();
 

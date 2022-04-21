@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Submission, SubmissionSchema } from './schemas/submission.schema';
 import { SubmissionsResolver } from './submissions.resolver';
 import { Form, FormSchema } from './../forms/schemas/form.schema';
+import { User, UserSchema } from '../users/schemas/user.schema';
 
 @Module({
   imports: [
@@ -15,6 +16,10 @@ import { Form, FormSchema } from './../forms/schemas/form.schema';
       {
         name: Form.name,
         schema: FormSchema,
+      },
+      {
+        name: User.name,
+        schema: UserSchema,
       },
     ]),
   ],
