@@ -13,6 +13,8 @@ import {
   Submission,
   SubmissionDocument,
 } from '../submissions/schemas/submission.schema';
+import { EditFormOutput, EditFormInput } from './dtos/edit-form.dto';
+import { CreateSectionInput } from './dtos/create-section.dto';
 
 @Injectable()
 export class FormsService {
@@ -25,55 +27,64 @@ export class FormsService {
     private readonly connection: mongoose.Connection,
   ) {}
 
+  //graphqlInput(opened,closed,....) to Mongo Entity(questions : [])
+  preprocessSections(sectionInput: CreateSectionInput[]) {
+    let sections = [];
+
+    for (const {
+      title,
+      closed,
+      opened,
+      grid,
+      linear,
+      personal,
+    } of sectionInput) {
+      const questions = [
+        ...(closed ? closed : []),
+        ...(opened ? opened : []),
+        ...(grid ? grid : []),
+        ...(linear ? linear : []),
+        ...(personal ? personal : []),
+      ];
+
+      // find more faster algorithm....
+      // consider using DB middleware(before insert)
+      questions.sort(
+        ({ question: { order } }, { question: { order: order2 } }) => {
+          return order - order2;
+        },
+      );
+
+      const section = {
+        title,
+        questions,
+      };
+      sections.push(section);
+    }
+
+    return sections;
+  }
+
   async createForm(
     user: User,
     createFormInput: CreateFormInput,
   ): Promise<CreateFormOutput> {
     try {
-      let sections = [];
-
-      for (const {
-        title,
-        closed,
-        opened,
-        grid,
-        linear,
-        personal,
-      } of createFormInput.sections) {
-        const questions = [
-          ...(closed ? closed : []),
-          ...(opened ? opened : []),
-          ...(grid ? grid : []),
-          ...(linear ? linear : []),
-          ...(personal ? personal : []),
-        ];
-
-        // find more faster algorithm....
-        // consider using DB middleware(before insert)
-        questions.sort(
-          ({ question: { order } }, { question: { order: order2 } }) => {
-            return order - order2;
-          },
-        );
-
-        const section = {
-          title,
-          questions,
-        };
-        sections.push(section);
-      }
+      let sections = this.preprocessSections(createFormInput.sections);
 
       //Transaction(multi-document)
       const session = await this.connection.startSession();
 
       await session.withTransaction(async () => {
         const form = await this.formModel.create(
-          {
-            title: createFormInput.title,
-            description: createFormInput.description,
-            sections,
-            owner: user,
-          },
+          [
+            {
+              title: createFormInput.title,
+              description: createFormInput.description,
+              sections,
+              owner: user,
+            },
+          ],
           { session },
         );
 
@@ -89,6 +100,7 @@ export class FormsService {
 
       return { ok: true };
     } catch (error) {
+      console.error(error);
       return { ok: false, error: error.message };
     }
   }
@@ -167,6 +179,45 @@ export class FormsService {
       return { ok: true };
     } catch (error) {
       return { ok: false, error: error.message };
+    }
+  }
+
+  async editForm(
+    owner: User,
+    { formId, title, description, sections: sectionInput }: EditFormInput,
+  ): Promise<EditFormOutput> {
+    try {
+      //변수명 고치기
+      let sections;
+      if (sectionInput) {
+        sections = this.preprocessSections(sectionInput);
+      }
+
+      //title, description, sections
+      let form = await this.formModel.findOne({ _id: formId });
+
+      if (!form) {
+        throw new Error('폼을 찾을 수 없습니다.');
+      }
+
+      if (form.owner._id.toString() !== owner._id.toString()) {
+        throw new Error('권한이 없습니다.');
+      }
+
+      await this.formModel.updateOne(
+        { _id: formId },
+        {
+          $set: {
+            sections: sectionInput ? sections : undefined,
+            title: title ? title : undefined,
+            description: description ? description : undefined,
+          },
+        },
+      );
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
     }
   }
 }

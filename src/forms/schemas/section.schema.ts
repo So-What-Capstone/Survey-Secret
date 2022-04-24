@@ -1,13 +1,11 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { schemaOptionExceptDate } from './../../common/schemas/option.schema';
 import {
   QuestionType,
   QuestionUnionType,
 } from '../questions/question.typeDefs';
 import { IsMongoId, IsString, MaxLength } from 'class-validator';
-import { QuestionUnion } from './../questions/question.typeDefs';
 
 export type SectionDocument = Section & Document;
 
@@ -20,7 +18,7 @@ export class Section {
   _id: mongoose.Schema.Types.ObjectId;
 
   @Field((type) => String, { nullable: true })
-  @Prop({ type: String, required: true, trim: true, maxlength: 50 })
+  @Prop({ type: String, trim: true, maxlength: 50 })
   @IsString()
   @MaxLength(50)
   title?: string;

@@ -231,6 +231,11 @@ type DeleteFormOutput {
   error: String
 }
 
+type EditFormOutput {
+  ok: Boolean!
+  error: String
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -276,6 +281,7 @@ type Mutation {
   login(input: LoginInput!): LoginOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
+  editForm(input: EditFormInput!): EditFormOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
 }
@@ -385,6 +391,13 @@ input CreateLinearQuestionInputType {
 }
 
 input DeleteFormInput {
+  formId: String!
+}
+
+input EditFormInput {
+  title: String
+  description: String
+  sections: [CreateSectionInput!]
   formId: String!
 }
 

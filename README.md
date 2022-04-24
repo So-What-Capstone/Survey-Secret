@@ -63,6 +63,14 @@
 - https://www.npmjs.com/package/run-rs -> config 하는 법
 - 귀찮으면 제가 mongo atlas URL만든 거 있는데 그거 카톡으로 요청하시면 됩니다
 
+### editForm
+
+- form의 요소중 title, description, sections중 보낼 것만 보내면 됩니다.
+- 예를 들어서 title은 바꾸고 description, sections는 유지하고 싶으면 title만 보내면 됩니다.
+- sections을 보내고 싶으면 sections을 보내면 되는데, 주의할 점은 sections 전체 내용을 보내셔야 합니다.
+- sections의 question의 일부분만 바꾸고 싶어도 전체를 보내주셔야 합니다.
+- 성능이 안나온다면 추후에 questionId를 전달해서 question만 바꾸는 API도 제작하겠습니다.
+
 </pre>
 
 <p align="center">

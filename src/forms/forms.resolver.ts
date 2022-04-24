@@ -13,13 +13,14 @@ import {
   FIndFormByIdOutput,
 } from './dtos/find-form-by-id.dto';
 import { DeleteFormOutput, DeleteFormInput } from './dtos/delete-form.dto';
+import { EditFormInput, EditFormOutput } from './dtos/edit-form.dto';
 
 @Resolver()
 export class FormsResolver {
   constructor(private readonly formsService: FormsService) {}
 
   @Mutation((returns) => CreateFormOutput)
-  @Type(['Free'])
+  @Type(['Free', 'Premium'])
   createForm(
     @AuthUser() user: User,
     @Args('input') createFormInput: CreateFormInput,
@@ -42,11 +43,20 @@ export class FormsResolver {
   }
 
   @Mutation((returns) => DeleteFormOutput)
-  @Type(['Any'])
+  @Type(['Free', 'Premium'])
   deleteForm(
     @AuthUser() owner: User,
     @Args('input') deleteFormInput: DeleteFormInput,
   ): Promise<DeleteFormOutput> {
     return this.formsService.deleteForm(owner, deleteFormInput.formId);
+  }
+
+  @Mutation((returns) => EditFormOutput)
+  @Type(['Free', 'Premium'])
+  editForm(
+    @AuthUser() owner: User,
+    @Args('input') editFormInput: EditFormInput,
+  ): Promise<EditFormOutput> {
+    return this.formsService.editForm(owner, editFormInput);
   }
 }
