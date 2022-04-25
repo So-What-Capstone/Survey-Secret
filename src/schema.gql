@@ -168,6 +168,7 @@ type Form {
 
 enum FormState {
   Ready
+  InProgress
   Expired
 }
 
@@ -236,6 +237,13 @@ type EditFormOutput {
   error: String
 }
 
+type SearchFormsOutput {
+  ok: Boolean!
+  error: String
+  forms: [Form!]
+  lastId: String
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -257,6 +265,7 @@ type Query {
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
   findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!
+  searchForms(input: SearchFormsInput!): SearchFormsOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
 }
 
@@ -270,6 +279,11 @@ input FindSectionByIdInput {
 
 input FindFormByIdInput {
   formId: String!
+}
+
+input SearchFormsInput {
+  title: String!
+  lastId: String
 }
 
 input FindSubmissionByIdInput {

@@ -22,6 +22,7 @@ import { Submission } from '../../submissions/schemas/submission.schema';
 
 export enum FormState {
   Ready = 'Ready',
+  InProgress = 'InProgress',
   //뭐라 이름 지을지 모르겠네요...
   Expired = 'Expired',
 }

@@ -1,6 +1,11 @@
-import { flatten, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Form, FormDocument, FormSchema } from './schemas/form.schema';
+import {
+  Form,
+  FormDocument,
+  FormSchema,
+  FormState,
+} from './schemas/form.schema';
 import { Model } from 'mongoose';
 import { CreateFormInput, CreateFormOutput } from './dtos/craete-form.dto';
 import { User } from '../users/schemas/user.schema';
@@ -15,6 +20,7 @@ import {
 } from '../submissions/schemas/submission.schema';
 import { EditFormOutput, EditFormInput } from './dtos/edit-form.dto';
 import { CreateSectionInput } from './dtos/create-section.dto';
+import { SearchFormsInput, SearchFormsOutput } from './dtos/search-forms.dto';
 
 @Injectable()
 export class FormsService {
@@ -70,7 +76,7 @@ export class FormsService {
     createFormInput: CreateFormInput,
   ): Promise<CreateFormOutput> {
     try {
-      let sections = this.preprocessSections(createFormInput.sections);
+      const sections = this.preprocessSections(createFormInput.sections);
 
       //Transaction(multi-document)
       const session = await this.connection.startSession();
@@ -188,10 +194,9 @@ export class FormsService {
   ): Promise<EditFormOutput> {
     try {
       //변수명 고치기
-      let sections;
-      if (sectionInput) {
-        sections = this.preprocessSections(sectionInput);
-      }
+      const sections = sectionInput
+        ? this.preprocessSections(sectionInput)
+        : undefined;
 
       //title, description, sections
       let form = await this.formModel.findOne({ _id: formId });
@@ -216,6 +221,46 @@ export class FormsService {
       );
 
       return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  //set pagination
+  async searchForms({
+    title,
+    lastId,
+  }: SearchFormsInput): Promise<SearchFormsOutput> {
+    try {
+      const pageSize = 3;
+      let forms = [];
+
+      if (lastId === undefined) {
+        forms = await this.formModel
+          .find({
+            title: { $regex: new RegExp(title, 'i') },
+            state: FormState.InProgress,
+          })
+          .limit(pageSize);
+      } else {
+        forms = await this.formModel
+          .find({
+            title: { $regex: new RegExp(title, 'i') },
+            state: FormState.InProgress,
+            _id: { $gt: lastId },
+          })
+          .limit(pageSize);
+      }
+
+      // if (forms.length === 0) {
+      //   return { ok: false, error: '검색된 폼이 없습니다.' };
+      // }
+
+      return {
+        ok: true,
+        forms,
+        lastId: forms.length !== 0 ? forms.at(-1)._id : undefined,
+      };
     } catch (error) {
       return { ok: false, error };
     }
