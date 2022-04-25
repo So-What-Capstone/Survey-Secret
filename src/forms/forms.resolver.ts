@@ -15,6 +15,7 @@ import {
 import { DeleteFormOutput, DeleteFormInput } from './dtos/delete-form.dto';
 import { EditFormInput, EditFormOutput } from './dtos/edit-form.dto';
 import { SearchFormsInput, SearchFormsOutput } from './dtos/search-forms.dto';
+import { GetFormsInput, GetFormsOutput } from './dtos/get-forms.dto';
 
 @Resolver()
 export class FormsResolver {
@@ -66,5 +67,12 @@ export class FormsResolver {
     @Args('input') searchFormsInput: SearchFormsInput,
   ): Promise<SearchFormsOutput> {
     return this.formsService.searchForms(searchFormsInput);
+  }
+
+  @Query((returns) => GetFormsOutput)
+  getForms(
+    @Args('input') getFormsInput: GetFormsInput,
+  ): Promise<GetFormsOutput> {
+    return this.formsService.getForms(getFormsInput);
   }
 }

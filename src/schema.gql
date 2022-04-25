@@ -244,6 +244,13 @@ type SearchFormsOutput {
   lastId: String
 }
 
+type GetFormsOutput {
+  ok: Boolean!
+  error: String
+  lastId: String
+  forms: [Form!]
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -266,6 +273,7 @@ type Query {
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
   findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!
   searchForms(input: SearchFormsInput!): SearchFormsOutput!
+  getForms(input: GetFormsInput!): GetFormsOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
 }
 
@@ -283,6 +291,10 @@ input FindFormByIdInput {
 
 input SearchFormsInput {
   title: String!
+  lastId: String
+}
+
+input GetFormsInput {
   lastId: String
 }
 

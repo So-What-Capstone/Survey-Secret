@@ -21,6 +21,7 @@ import {
 import { EditFormOutput, EditFormInput } from './dtos/edit-form.dto';
 import { CreateSectionInput } from './dtos/create-section.dto';
 import { SearchFormsInput, SearchFormsOutput } from './dtos/search-forms.dto';
+import { GetFormsInput, GetFormsOutput } from './dtos/get-forms.dto';
 
 @Injectable()
 export class FormsService {
@@ -232,29 +233,46 @@ export class FormsService {
     lastId,
   }: SearchFormsInput): Promise<SearchFormsOutput> {
     try {
+      //for testing
       const pageSize = 3;
-      let forms = [];
 
-      if (lastId === undefined) {
-        forms = await this.formModel
-          .find({
-            title: { $regex: new RegExp(title, 'i') },
-            state: FormState.InProgress,
-          })
-          .limit(pageSize);
-      } else {
-        forms = await this.formModel
-          .find({
-            title: { $regex: new RegExp(title, 'i') },
-            state: FormState.InProgress,
-            _id: { $gt: lastId },
-          })
-          .limit(pageSize);
-      }
+      const forms = await this.formModel
+        .find({
+          $and: [
+            { title: { $regex: new RegExp(title, 'i') } },
+            { state: FormState.InProgress },
+            lastId ? { _id: { $gt: lastId } } : {},
+          ],
+        })
+        .limit(pageSize);
 
       // if (forms.length === 0) {
       //   return { ok: false, error: '검색된 폼이 없습니다.' };
       // }
+
+      return {
+        ok: true,
+        forms,
+        lastId: forms.length !== 0 ? forms.at(-1)._id : undefined,
+      };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async getForms({ lastId }: GetFormsInput): Promise<GetFormsOutput> {
+    try {
+      //for testing
+      const pageSize = 3;
+
+      const forms = await this.formModel
+        .find({
+          $and: [
+            lastId ? { _id: { $gt: lastId } } : {},
+            { state: FormState.InProgress },
+          ],
+        })
+        .limit(pageSize);
 
       return {
         ok: true,
