@@ -33,7 +33,6 @@ export class Question {
   @Field((type) => Number)
   @Prop({ type: Number, required: true, index: true })
   @IsNumber()
-  @IsOptional()
   order: number;
 
   // @Field((type) => Section)
