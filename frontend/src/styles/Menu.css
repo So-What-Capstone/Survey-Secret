@@ -1,13 +1,12 @@
 /* reference: https://intrepidgeeks.com/tutorial/implement-htmlcssdropdown-list-animation*/
 
-
 .dropDown {
-    display: inline-block;
-    width: 100vw;
-    /*width: 200px 처럼 사용자가 직접 너비를 지정할 수도 있다.*/
+  display: inline-block;
+  width: 100vw;
+  /*width: 200px 처럼 사용자가 직접 너비를 지정할 수도 있다.*/
 }
 .dropDown:hover .subMenu {
-    display: block;
+  display: block;
 }
 /*
 .dropDown:hover {} 까지만 하면
@@ -17,125 +16,114 @@
 */
 
 .dropDown-btn {
-    /*부모의 길이를 상속 받음, 유동적 길이 변경 가능*/
-    width: inherit;
-    padding: 0.5rem;
-    background: #E2D784;
-    border: none; /*기본 음영효과 제거*/
-    outline: none; /*버튼 클릭 시 음영효과 제거*/
-    cursor: pointer;
-    color: black;
+  /*부모의 길이를 상속 받음, 유동적 길이 변경 가능*/
+  width: inherit;
+  padding: 0.5rem;
+  background: #0a182d;
+  border: none; /*기본 음영효과 제거*/
+  outline: none; /*버튼 클릭 시 음영효과 제거*/
+  cursor: pointer;
+  color: white;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.icon{
-    min-width:fit-content;
-
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-.menu-titles{
-    display:flex;
-    flex-direction: row;
-    width: 100vw;
-    max-width: 100vw;
-    justify-content: center;
+.icon {
+  min-width: fit-content;
 }
-.menu-title{
-    display:flex;
-    justify-content: center;
-    width: 10rem;
-}
-.menu-title:hover{
-    display:flex;
-    justify-content: center;
-    width: 10rem;
-}
-.login-menus{
-    display: flex;
-    min-width: fit-content;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-.nickname{
-    width: 5rem;
-    margin-right: 0.5rem;
-}
-.login-logout{
-    width: 4rem;
-    margin-right: 0.5rem;
 
+.menu-titles {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  max-width: 100vw;
+  justify-content: center;
 }
-.mypage{
-    width: 5rem;
-    margin-right: 0.5rem;
-
+.menu-title {
+  display: flex;
+  justify-content: center;
+  width: 10rem;
+}
+.menu-title:hover {
+  display: flex;
+  justify-content: center;
+  width: 10rem;
+}
+.login-menus {
+  display: flex;
+  min-width: fit-content;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.nickname {
+  width: 5rem;
+  margin-right: 0.5rem;
+}
+.login-logout {
+  width: 4rem;
+  margin-right: 0.5rem;
+}
+.mypage {
+  width: 5rem;
+  margin-right: 0.5rem;
 }
 
 .subMenu {
-    display: none; /*처음에 안보이게*/
-    width: 100%;
-    background-color: #E2D784AF;
-    border: 1px solid #eee;
-    box-shadow: 0 0 10px rgba(0,0,0,0.17);
+  display: none; /*처음에 안보이게*/
+  width: 100%;
+  background-color: #0a182d;
+  border: 1px solid #eee;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.17);
 
-    
-    position: absolute;
-    z-index: 100;
+  position: absolute;
+  z-index: 100;
 }
 
-.container-sub{
-    display:flex;
-    flex-direction: row;
-    width: 100%;
-    padding: 0.5rem;
-    max-width: 100vw;
-    /* justify-content: center; */
-    justify-content: space-between;
-
+.container-sub {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 0.5rem;
+  max-width: 100vw;
+  /* justify-content: center; */
+  justify-content: space-between;
 }
 
-.icon-sub{
-    min-width:fit-content;
-
+.icon-sub {
+  min-width: fit-content;
 }
 
-.menu-lists{
-    display:flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: flex-start;
+.menu-lists {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-.menu-list{
-    display:flex;
-    justify-content: center;
-    width: 10rem;
-    flex-direction: column;
+.menu-list {
+  display: flex;
+  justify-content: center;
+  width: 10rem;
+  flex-direction: column;
 }
-
 
 .list-item {
-    /* display: block; a 태그는 가로배치 이므로 세로배치로 변경 */
-    width: 10rem;
-    text-align: center;
-    color: black;
-    margin-top: 0.3rem;
-    margin-bottom: 0.3rem;
-    border-radius: 1rem;
-    
+  /* display: block; a 태그는 가로배치 이므로 세로배치로 변경 */
+  width: 10rem;
+  text-align: center;
+  color: white;
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  border-radius: 1rem;
 }
-.list-item:hover{
-    background-color: #E2D784CF;
-}
-
-.empty-box{
-    display: block;
-    width: 15.5rem;
-
+.list-item:hover {
+  background-color: #e2d784cf;
 }
 
-
+.empty-box {
+  display: block;
+  width: 15.5rem;
+}

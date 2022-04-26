@@ -9,7 +9,8 @@ export function SurveyIcon({ title, color_idx, link }) {
   return (
     <a href={link} title={title}>
       <div className={color_box_name}>
-        <div className="white-box">{title}</div>
+        {title}
+        {/* <div className="white-box"></div> */}
       </div>
     </a>
   );
