@@ -58,6 +58,7 @@ export class User extends CoreSchema {
     sparse: true,
     default: null,
     match: /^[0-9]{11}$/,
+    select: false,
   })
   @IsString()
   @Length(11, 11)
@@ -78,7 +79,7 @@ export class User extends CoreSchema {
   email: string;
 
   @Field((type) => String)
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: true, select: false })
   @IsString()
   password: string;
 

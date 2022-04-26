@@ -6,10 +6,7 @@ import {
   CreateAccountOutput,
   CreateAccountInput,
 } from './dtos/create-account.dto';
-import {
-  FindUserByIdInput,
-  FindUserByIdOutput,
-} from './dtos/find-user-by-id.dto';
+import { FindUserByIdOutput } from './dtos/find-user-by-id.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -19,6 +16,7 @@ import {
   VerificationDocument,
 } from './schemas/verification.schema';
 import { v4 } from 'uuid';
+import { EditUserInput, EditUserOutput } from './dtos/edit-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -98,6 +96,30 @@ export class UsersService {
       }
 
       return { ok: true, user };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async editUser(
+    user: User,
+    { username, password, phoneNum, avatarImg }: EditUserInput,
+  ): Promise<EditUserOutput> {
+    try {
+      await this.userModel.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+            username: username ? username : undefined,
+            password: password ? await bcrypt.hash(password, 10) : undefined,
+            //need phone verification
+            phoneNum: phoneNum ? phoneNum : undefined,
+            avatarImg: avatarImg ? avatarImg : undefined,
+          },
+        },
+      );
+
+      return { ok: true };
     } catch (error) {
       return { ok: false, error };
     }

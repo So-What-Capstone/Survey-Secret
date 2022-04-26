@@ -210,6 +210,11 @@ type LoginOutput {
   token: String
 }
 
+type EditUserOutput {
+  ok: Boolean!
+  error: String
+}
+
 type CreateFormOutput {
   ok: Boolean!
   error: String
@@ -305,6 +310,7 @@ input FindSubmissionByIdInput {
 type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
+  editUser(input: EditUserInput!): EditUserOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!
@@ -322,6 +328,13 @@ input CreateAccountInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input EditUserInput {
+  username: String
+  phoneNum: String
+  password: String
+  avatarImg: String
 }
 
 input CreateFormInput {

@@ -11,6 +11,9 @@ import {
 } from './dtos/find-user-by-id.dto';
 import { Type } from '../auth/type.decorator';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
+import { EditUserInput, EditUserOutput } from './dtos/edit-user.dto';
+import { User } from './schemas/user.schema';
+import { AuthUser } from '../auth/auth-user.decorator';
 
 @Resolver()
 export class UsersResolver {
@@ -38,5 +41,14 @@ export class UsersResolver {
     @Args('input') { id }: FindUserByIdInput,
   ): Promise<FindUserByIdOutput> {
     return this.usersService.findUserById(id);
+  }
+
+  @Mutation((returns) => EditUserOutput)
+  @Type(['Any'])
+  editUser(
+    @AuthUser() user: User,
+    @Args('input') editUserInput: EditUserInput,
+  ): Promise<EditUserOutput> {
+    return this.usersService.editUser(user, editUserInput);
   }
 }
