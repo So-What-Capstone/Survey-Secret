@@ -310,7 +310,7 @@ input FindSubmissionByIdInput {
 type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
-  editUser(input: EditUserInput!): EditUserOutput!
+  editUser(input: EditUserInput!, file: Upload!): EditUserOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!
@@ -334,8 +334,10 @@ input EditUserInput {
   username: String
   phoneNum: String
   password: String
-  avatarImg: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input CreateFormInput {
   title: String!

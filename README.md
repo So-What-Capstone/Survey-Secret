@@ -71,6 +71,11 @@
 - sections의 question의 일부분만 바꾸고 싶어도 전체를 보내주셔야 합니다.
 - 성능이 안나온다면 추후에 questionId를 전달해서 question만 바꾸는 API도 제작하겠습니다.
 
+### 나중에 할일
+
+1. AWS ACL등 권한, 암호화 등에 대해서 조작 필요
+2. 기본 프로필 사진 구해서 회원가입 시 연결
+
 </pre>
 
 <p align="center">

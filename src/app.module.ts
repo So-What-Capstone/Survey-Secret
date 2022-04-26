@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -14,6 +14,8 @@ import { AuthModule } from './auth/auth.module';
 import { MailsModule } from './mails/mails.module';
 import { SubmissionsModule } from './submissions/submissions.module';
 import { AnswersModule } from './submissions/answers/answers.module';
+import { graphqlUploadExpress } from 'graphql-upload';
+import { UploaderModule } from './uploader/uploader.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { AnswersModule } from './submissions/answers/answers.module';
         MAIL_API_KEY: Joi.string().required(),
         MAIL_FROM_EMAIL: Joi.string().required(),
         MAIL_DOMAIN: Joi.string().required(),
+        AWS_KEY: Joi.string().required(),
+        AWS_SECRET: Joi.string().required(),
       }),
     }),
 
@@ -50,8 +54,13 @@ import { AnswersModule } from './submissions/answers/answers.module';
     }),
     SubmissionsModule,
     AnswersModule,
+    UploaderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(graphqlUploadExpress()).forRoutes('graphql');
+  }
+}

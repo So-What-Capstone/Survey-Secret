@@ -17,6 +17,8 @@ import {
 } from './schemas/verification.schema';
 import { v4 } from 'uuid';
 import { EditUserInput, EditUserOutput } from './dtos/edit-user.dto';
+import { UploaderService } from './../uploader/uploader.service';
+import { FileUpload } from 'graphql-upload';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +27,7 @@ export class UsersService {
     private readonly mailsService: MailsService,
     @InjectModel(Verification.name)
     private readonly verificationModel: Model<VerificationDocument>,
+    private readonly uploaderService: UploaderService,
   ) {}
 
   async createAccount({
@@ -103,9 +106,19 @@ export class UsersService {
 
   async editUser(
     user: User,
-    { username, password, phoneNum, avatarImg }: EditUserInput,
+    { username, password, phoneNum }: EditUserInput,
+    avatarImg: FileUpload,
   ): Promise<EditUserOutput> {
     try {
+      let avatarImgUrl: string;
+      if (avatarImg) {
+        avatarImgUrl = await this.uploaderService.uploadToS3(
+          avatarImg,
+          user._id.toString(),
+          'Users',
+        );
+      }
+
       await this.userModel.updateOne(
         { _id: user._id },
         {
@@ -114,7 +127,7 @@ export class UsersService {
             password: password ? await bcrypt.hash(password, 10) : undefined,
             //need phone verification
             phoneNum: phoneNum ? phoneNum : undefined,
-            avatarImg: avatarImg ? avatarImg : undefined,
+            avatarImg: avatarImgUrl,
           },
         },
       );

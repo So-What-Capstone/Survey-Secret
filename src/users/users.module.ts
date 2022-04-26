@@ -8,6 +8,7 @@ import {
   Verification,
   VerificationSchema,
 } from './schemas/verification.schema';
+import { UploaderModule } from './../uploader/uploader.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import {
         schema: VerificationSchema,
       },
     ]),
+    UploaderModule,
   ],
   providers: [UsersService, UsersResolver],
   exports: [UsersService],
