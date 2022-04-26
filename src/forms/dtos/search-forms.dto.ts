@@ -9,7 +9,7 @@ export class SearchFormsInput extends PickType(Form, ['title']) {
   @Field((type) => String, { nullable: true })
   @IsMongoId()
   @IsOptional()
-  lastId?: ObjectId;
+  lastId?: string;
 }
 
 @ObjectType()
@@ -20,5 +20,5 @@ export class SearchFormsOutput extends CoreOutput {
   @Field((type) => String, { nullable: true })
   @IsOptional()
   @IsMongoId()
-  lastId?: ObjectId;
+  lastId?: string;
 }

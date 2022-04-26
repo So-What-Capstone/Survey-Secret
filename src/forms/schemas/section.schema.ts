@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import {
@@ -15,7 +15,7 @@ export type SectionDocument = Section & Document;
 export class Section {
   @Field((type) => String)
   @IsMongoId()
-  _id: mongoose.Schema.Types.ObjectId;
+  _id: string;
 
   @Field((type) => String, { nullable: true })
   @Prop({ type: String, trim: true, maxlength: 50 })

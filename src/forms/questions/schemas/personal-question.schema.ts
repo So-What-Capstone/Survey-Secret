@@ -4,9 +4,8 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { IsBoolean, IsEnum } from 'class-validator';
-import { schemaOptionExceptDate } from '../../../common/schemas/option.schema';
 import { Question } from './question.schema';
 
 export enum PersonalQuestionType {

@@ -4,11 +4,9 @@ import {
   ObjectType,
   Field,
 } from '@nestjs/graphql';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { schemaOptionExceptDate } from '../../../common/schemas/option.schema';
+import { Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Question } from './question.schema';
 import { IsEnum } from 'class-validator';
-import mongoose from 'mongoose';
 
 export enum ClosedQuestionType {
   One = 'One',

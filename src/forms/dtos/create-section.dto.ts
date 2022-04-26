@@ -1,10 +1,4 @@
-import {
-  Field,
-  InputType,
-  ObjectType,
-  PickType,
-  IntersectionType,
-} from '@nestjs/graphql';
+import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
 import { CreateGridQuestionInput } from '../questions/dtos/create-grid-question.dto';
 import { CreateLinearQuestionInput } from '../questions/dtos/create-linear-question.dto';
 import { CreatePersonalQuestionInput } from '../questions/dtos/create-personal-question.dto';

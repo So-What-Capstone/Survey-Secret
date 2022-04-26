@@ -1,7 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { Observable } from 'rxjs';
 import { UsersService } from './../users/users.service';
 import { AllowedTypes } from './type.decorator';
 import * as jwt from 'jsonwebtoken';

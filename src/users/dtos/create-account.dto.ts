@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
+import { InputType, ObjectType, PickType } from '@nestjs/graphql';
 import { User } from '../schemas/user.schema';
 import { CoreOutput } from './../../common/dtos/output.dto';
 

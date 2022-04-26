@@ -1,10 +1,4 @@
-import {
-  InputType,
-  ObjectType,
-  PickType,
-  IntersectionType,
-  Field,
-} from '@nestjs/graphql';
+import { InputType, ObjectType, PickType, Field } from '@nestjs/graphql';
 import { Form } from '../schemas/form.schema';
 import { CoreOutput } from './../../common/dtos/output.dto';
 import { CreateSectionInput } from './create-section.dto';

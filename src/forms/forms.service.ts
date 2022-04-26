@@ -256,7 +256,7 @@ export class FormsService {
       return {
         ok: true,
         forms,
-        lastId: forms.length !== 0 ? forms.at(-1)._id : undefined,
+        lastId: forms.length !== 0 ? forms.at(-1)._id.toString() : undefined,
       };
     } catch (error) {
       return { ok: false, error };
@@ -280,7 +280,7 @@ export class FormsService {
       return {
         ok: true,
         forms,
-        lastId: forms.length !== 0 ? forms.at(-1)._id : undefined,
+        lastId: forms.length !== 0 ? forms.at(-1)._id.toString() : undefined,
       };
     } catch (error) {
       return { ok: false, error };

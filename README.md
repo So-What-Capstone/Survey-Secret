@@ -75,6 +75,8 @@
 
 1. AWS ACL등 권한, 암호화 등에 대해서 조작 필요
 2. 기본 프로필 사진 구해서 회원가입 시 연결
+3. set DB logger(raw query), DB error/connect log
+4.
 
 </pre>
 

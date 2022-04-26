@@ -29,7 +29,7 @@ export const QuestionUnion = createUnionType({
     OpenedQuestion,
     PersonalQuestion,
   ],
-  resolveType: (obj, context, info) => {
+  resolveType: (obj) => {
     if (obj.choices) {
       return ClosedQuestion;
     } else if (obj.rowContent) {

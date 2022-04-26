@@ -1,4 +1,4 @@
-import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,11 +9,9 @@ import * as Joi from 'joi';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { FormsModule } from './forms/forms.module';
-import { QuestionsModule } from './forms/questions/questions.module';
 import { AuthModule } from './auth/auth.module';
 import { MailsModule } from './mails/mails.module';
 import { SubmissionsModule } from './submissions/submissions.module';
-import { AnswersModule } from './submissions/answers/answers.module';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { UploaderModule } from './uploader/uploader.module';
 
@@ -45,7 +43,6 @@ import { UploaderModule } from './uploader/uploader.module';
     //set DB logger(raw query), DB error/connect log
     MongooseModule.forRoot(process.env.DB_URL),
     FormsModule,
-    QuestionsModule,
     AuthModule,
     MailsModule.forRoot({
       apiKey: process.env.MAIL_API_KEY,
@@ -53,7 +50,6 @@ import { UploaderModule } from './uploader/uploader.module';
       domain: process.env.MAIL_DOMAIN,
     }),
     SubmissionsModule,
-    AnswersModule,
     UploaderModule,
   ],
   controllers: [AppController],

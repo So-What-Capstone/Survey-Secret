@@ -20,11 +20,6 @@ import { GraphQLUpload, FileUpload } from 'graphql-upload';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query((returns) => Boolean)
-  test() {
-    return true;
-  }
-
   @Mutation((returns) => CreateAccountOutput)
   createAccount(
     @Args('input') createAccountInput: CreateAccountInput,

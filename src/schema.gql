@@ -273,7 +273,6 @@ type DeleteSubmissionOutput {
 }
 
 type Query {
-  test: Boolean!
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
   findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!

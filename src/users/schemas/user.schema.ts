@@ -5,7 +5,7 @@ import {
   registerEnumType,
   Int,
 } from '@nestjs/graphql';
-import { Prop, Schema, SchemaFactory, SchemaOptions } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
   IsEmail,
   IsEnum,
@@ -19,7 +19,6 @@ import mongoose from 'mongoose';
 import { Form } from '../../forms/schemas/form.schema';
 import { CoreSchema } from './../../common/schemas/core.schema';
 import { schemaOption } from './../../common/schemas/option.schema';
-import { Verification } from './verification.schema';
 
 //enum type 정의
 export enum UserType {

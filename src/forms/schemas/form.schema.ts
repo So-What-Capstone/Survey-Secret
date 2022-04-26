@@ -23,7 +23,6 @@ import { Submission } from '../../submissions/schemas/submission.schema';
 export enum FormState {
   Ready = 'Ready',
   InProgress = 'InProgress',
-  //뭐라 이름 지을지 모르겠네요...
   Expired = 'Expired',
 }
 
@@ -37,7 +36,7 @@ export type FormDocument = Form & Document;
 export class Form extends CoreSchema {
   @Field((type) => String)
   @IsMongoId()
-  _id: mongoose.Schema.Types.ObjectId;
+  _id: string;
 
   @Field((type) => String)
   @Prop({ type: String, required: true, trim: true, maxlength: 50 })
