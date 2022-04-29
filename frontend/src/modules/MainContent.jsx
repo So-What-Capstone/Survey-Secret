@@ -1,6 +1,6 @@
 import React from "react";
-import { ClipTray } from "./Clips";
-import { SurveyIconsTray } from "./Surveys";
+import ClipTray from "./ClipTray";
+import SurveyIconsTray from "./SurveyIconsTray";
 import "../styles/MainContent.css";
 
 function MainContent() {
