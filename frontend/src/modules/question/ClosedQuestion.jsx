@@ -62,7 +62,6 @@ ClosedQuestion_mult.propTypes = {
 function ClosedQuestion_input({ title, choices, required }) {
   function RadioInput({ value }) {
     const last_idx = choices.length - 1;
-    console.log(last_idx);
 
     return (
       <Radio.Group name="radiogroup" value={value}>
