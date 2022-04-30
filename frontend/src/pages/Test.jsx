@@ -1,4 +1,6 @@
 import React from "react";
+import { useState } from "react";
+import EditQuestion from "../modules/question/EditQuestion";
 import {
   ClosedQuestion_mult,
   ClosedQuestion_one,
@@ -10,6 +12,33 @@ import { GridQuestion } from "../modules/Questions";
 import "../styles/Test.css";
 
 function Test() {
+  const [config1, setConfig1] = useState({
+    content: "나이는 얼마입니까?",
+    description: "만 나이로 답해주시기 바랍니다.",
+    required: true,
+    type: "closed",
+  });
+  const [data1, setData1] = useState({
+    choices: [
+      {
+        content: "응답하지 않음",
+        trigger: -1,
+      },
+      {
+        content: "10대",
+        trigger: -1,
+      },
+      {
+        content: "20대",
+        trigger: -1,
+      },
+      {
+        content: "30대 이상",
+        trigger: -1,
+      },
+    ],
+  });
+
   return (
     <div className="root-container">
       <div className="panel">
@@ -59,7 +88,16 @@ function Test() {
           ]}
         />
       </div>
-      <div className="panel">디자인 수정하기</div>
+      <div className="panel">
+        디자인 수정하기
+        <EditQuestion
+          sectionCount={1}
+          config={config1}
+          onConfigChange={(c) => setConfig1(c)}
+          data={data1}
+          onDataChange={(d) => setData1(d)}
+        ></EditQuestion>
+      </div>
     </div>
   );
 }
