@@ -18,10 +18,8 @@
 
 .loginInputField {
     margin: 1vw;
-    border-top: 0px;
-    border-left: 0px;
-    border-right: 0px;
-    border-bottom: 1px solid white;
+    border: solid white;
+    border-width: 0px 0px 1px 0px;
     background-color: #172a46;
     background-color: rgba(255, 255, 255, 0);
     width: 15vw;
