@@ -39,7 +39,7 @@ function Login() {
       </div>
       <div className="loginOther">
         <input type="button" value="회원가입" onClick={register} />
-        <input type="button" value="PW 찾기" />
+        <input type="button" value="PW 찾기" /*TODO: add callback to findPW*/ />
       </div>
     </div>
   );
