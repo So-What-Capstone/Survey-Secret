@@ -12,6 +12,10 @@ function Login() {
     let path = `/`;
     navigate(path);
   };
+  const findpw = () => {
+    let path = `/findpw`;
+    navigate(path);
+  };
   return (
     <div className="login">
       <div>
@@ -39,7 +43,7 @@ function Login() {
       </div>
       <div className="loginOther">
         <input type="button" value="회원가입" onClick={register} />
-        <input type="button" value="PW 찾기" /*TODO: add callback to findPW*/ />
+        <input type="button" value="PW 찾기" onClick={findpw} />
       </div>
     </div>
   );
