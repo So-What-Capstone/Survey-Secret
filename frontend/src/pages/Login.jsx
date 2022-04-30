@@ -34,7 +34,7 @@ function Login() {
           type="button"
           value="Login"
           className="loginSubmit"
-          onClick={login}
+          onClick={login} /*TODO: add login logic*/
         />
       </div>
       <div className="loginOther">
