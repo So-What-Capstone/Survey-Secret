@@ -4,6 +4,7 @@ import {
   ClosedQuestion_one,
   ClosedQuestion_input,
 } from "../modules/Questions";
+import { OpenedQuestion } from "../modules/Questions";
 import "../styles/Test.css";
 
 function Test() {
@@ -22,6 +23,14 @@ function Test() {
         <ClosedQuestion_input
           title="동아리에게 바라는 점은?"
           choices={["멋진 선배", "개쩌는 경험", "잦은 회식", "기타 입력"]}
+        />
+        <OpenedQuestion
+          title="차기 회장으로 추천하는 사람을 알려주세요."
+          isLong={false}
+        />
+        <OpenedQuestion
+          title="로봇과 인간의 미래에 대해서 어떻게 생각하는지 알려주세요."
+          isLong={true}
         />
       </div>
 
