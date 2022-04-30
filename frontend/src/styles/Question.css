@@ -1,0 +1,17 @@
+.question-panel {
+  display: flex;
+  flex-direction: column;
+  margin: 2%;
+  padding: 2%;
+  width: 92%;
+  height: fit-content;
+  overflow: hidden;
+}
+
+.question-title {
+  font-size: 1rem;
+  color: black;
+  width: 100%;
+  height: fit-content;
+  padding-bottom: 1rem;
+}
