@@ -1,13 +1,30 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { Question } from './question.schema';
+import { virtualSchemaOption } from './../../../common/schemas/option.schema';
+import { QuestionType } from '../question.typeDefs';
 
 export type LinearQuestionDocument = LinearQuestion & Document;
 
 @InputType('LinearQuestionInputType', { isAbstract: true })
 @ObjectType()
-export class LinearQuestion extends Question {
+@Schema(virtualSchemaOption)
+export class LinearQuestion {
+  @Field((type) => String)
+  content: string;
+
+  @Field((type) => QuestionType)
+  kind: QuestionType;
+
+  @Field((type) => String, { nullable: true })
+  description?: string;
+
+  @Field((type) => Boolean, { nullable: true })
+  required?: boolean;
+
+  @Field((type) => Number)
+  order: number;
+
   @Field((type) => Number)
   @Prop({ type: Number, required: true })
   @IsNumber()

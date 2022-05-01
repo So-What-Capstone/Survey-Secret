@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import {
-  Form,
-  FormDocument,
-  FormSchema,
-  FormState,
-} from './schemas/form.schema';
+import { Form, FormDocument, FormState } from './schemas/form.schema';
 import { Model } from 'mongoose';
 import { CreateFormInput, CreateFormOutput } from './dtos/craete-form.dto';
 import { User } from '../users/schemas/user.schema';
@@ -28,6 +23,7 @@ export class FormsService {
   constructor(
     @InjectModel(Form.name) private readonly formModel: Model<FormDocument>,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+
     @InjectModel(Submission.name)
     private readonly submissionModel: Model<SubmissionDocument>,
     @InjectConnection()
@@ -46,6 +42,15 @@ export class FormsService {
       linear,
       personal,
     } of sectionInput) {
+      // let questions = [];
+
+      // if (closed) {
+      //   for (let question of closed) {
+      //     const closedQuestion = new this.closedQuestionModel(question);
+      //     questions.push(closedQuestion);
+      //   }
+      // }
+
       const questions = [
         ...(closed ? closed : []),
         ...(opened ? opened : []),
@@ -56,14 +61,12 @@ export class FormsService {
 
       // find more faster algorithm....
       // consider using DB middleware(before insert)
-      questions.sort(
-        ({ question: { order } }, { question: { order: order2 } }) => {
-          if (order === order2) {
-            throw new Error('순서가 중복되었습니다.');
-          }
-          return order - order2;
-        },
-      );
+      questions.sort(({ order }, { order: order2 }) => {
+        if (order === order2) {
+          throw new Error('순서가 중복되었습니다.');
+        }
+        return order - order2;
+      });
 
       const section = {
         title,
@@ -82,6 +85,7 @@ export class FormsService {
     try {
       const sections = this.preprocessSections(createFormInput.sections);
 
+      console.log(sections);
       //Transaction(multi-document)
       const session = await this.connection.startSession();
 

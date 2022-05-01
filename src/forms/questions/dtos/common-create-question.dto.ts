@@ -7,4 +7,5 @@ export class CommonCreateQuestionInput extends PickType(Question, [
   'description',
   'required',
   'order',
+  'kind',
 ]) {}

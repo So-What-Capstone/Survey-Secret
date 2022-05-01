@@ -3,12 +3,7 @@ import { GridQuestion } from './schemas/grid-question.scheam';
 import { LinearQuestion } from './schemas/linear-question.schema';
 import { OpenedQuestion } from './schemas/opened-question.schema';
 import { PersonalQuestion } from './schemas/personal-question.schema';
-import {
-  createUnionType,
-  Field,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { createUnionType, registerEnumType } from '@nestjs/graphql';
 
 export enum QuestionType {
   Closed = 'Closed',
@@ -30,30 +25,18 @@ export const QuestionUnion = createUnionType({
     PersonalQuestion,
   ],
   resolveType: (obj) => {
-    if (obj.choices) {
-      return ClosedQuestion;
-    } else if (obj.rowContent) {
-      return GridQuestion;
-    } else if (obj.leftRange) {
-      return LinearQuestion;
-    } else if (obj.encoded) {
-      return PersonalQuestion;
-    } else if (obj.type) {
-      return OpenedQuestion;
+    if (obj.kind === QuestionType.Closed) {
+      return 'ClosedQuestion';
+    } else if (obj.kind === QuestionType.Grid) {
+      return 'GridQuestion';
+    } else if (obj.kind === QuestionType.Linear) {
+      return 'LinearQuestion';
+    } else if (obj.kind === QuestionType.Personal) {
+      return 'PersonalQuestion';
+    } else if (obj.kind === QuestionType.Opened) {
+      return 'OpenedQuestion';
     } else {
       return null;
     }
   },
 });
-
-@ObjectType()
-export class QuestionUnionType {
-  @Field((type) => QuestionUnion)
-  question: typeof QuestionUnion;
-
-  @Field((type) => QuestionType)
-  type: QuestionType;
-
-  @Field((type) => String)
-  _id: string;
-}

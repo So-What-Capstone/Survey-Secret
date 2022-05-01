@@ -59,20 +59,18 @@ export class SubmissionsService {
       for (const { answer, type } of answers) {
         let question: typeof QuestionUnion;
         for (const section of form.sections) {
-          const questionUnion = section.questions.find((question) => {
-            return question._id.toString() === answer.questionId.toString();
-          });
-
-          if (questionUnion) {
-            if (questionUnion.type !== type) {
-              return { ok: false, error: '문제와 답변의 타입이 다릅니다.' };
-            }
-
-            question = questionUnion.question;
-            if (question) {
-              break;
-            }
-          }
+          // const questionUnion = section.questions.find((question) => {
+          //   return question._id.toString() === answer.questionId.toString();
+          // });
+          // if (questionUnion) {
+          //   // if (questionUnion.type !== type) {
+          //   //   return { ok: false, error: '문제와 답변의 타입이 다릅니다.' };
+          //   // }
+          //   question = questionUnion.question;
+          //   if (question) {
+          //     break;
+          //   }
+          // }
         }
 
         //for debug

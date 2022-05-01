@@ -4,9 +4,11 @@ import {
   ObjectType,
   Field,
 } from '@nestjs/graphql';
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Question } from './question.schema';
-import { IsEnum } from 'class-validator';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsEnum, IsMongoId } from 'class-validator';
+import mongoose from 'mongoose';
+import { virtualSchemaOption } from './../../../common/schemas/option.schema';
+import { QuestionType } from '../question.typeDefs';
 
 export enum ClosedQuestionType {
   One = 'One',
@@ -25,18 +27,42 @@ export class ClosedQuestionChoice {
 
   @Field((type) => String)
   choice: string;
+
+  @Field((type) => String, { nullable: true })
+  @IsMongoId()
+  activatedSection?: string;
 }
 
 @InputType('ClosedQuestionInputType', { isAbstract: true })
 @ObjectType()
-export class ClosedQuestion extends Question {
+@Schema(virtualSchemaOption)
+export class ClosedQuestion {
+  @Field((type) => String)
+  content: string;
+
+  @Field((type) => QuestionType)
+  kind: QuestionType;
+
+  @Field((type) => String, { nullable: true })
+  description?: string;
+
+  @Field((type) => Boolean, { nullable: true })
+  required?: boolean;
+
+  @Field((type) => Number)
+  order: number;
+
   @Field((type) => [ClosedQuestionChoice])
   @Prop({
     type: [
       {
         //unique동작 안함 좀 더 찾아보기
-        no: { type: Number, unique: true, required: true },
+        no: { type: Number, required: true },
         choice: { type: String, required: true },
+        activatedSection: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Section',
+        },
       },
     ],
     required: true,

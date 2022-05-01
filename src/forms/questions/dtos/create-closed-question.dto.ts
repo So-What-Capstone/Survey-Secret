@@ -11,19 +11,10 @@ import { CommonCreateQuestionInput } from './common-create-question.dto';
 import { QuestionType } from 'src/forms/questions/question.typeDefs';
 
 @InputType()
-export class CreateClosedQuestionInputType extends IntersectionType(
+export class CreateClosedQuestionInput extends IntersectionType(
   PickType(ClosedQuestion, ['choices', 'type']),
   CommonCreateQuestionInput,
 ) {}
-
-@InputType()
-export class CreateClosedQuestionInput {
-  @Field((type) => CreateClosedQuestionInputType)
-  question: CreateClosedQuestionInputType;
-
-  @Field((type) => QuestionType)
-  type: string;
-}
 
 @ObjectType()
 export class CreateClosedQuestionOutput extends CoreOutput {}

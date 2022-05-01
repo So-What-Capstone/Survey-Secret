@@ -5,3 +5,7 @@ export const schemaOption: SchemaOptions = {
 };
 
 export const schemaOptionExceptDate: SchemaOptions = {};
+
+export const virtualSchemaOption: SchemaOptions = {
+  toJSON: { virtuals: true },
+};

@@ -1,11 +1,14 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import {
-  QuestionType,
-  QuestionUnionType,
-} from '../questions/question.typeDefs';
+import { QuestionType, QuestionUnion } from '../questions/question.typeDefs';
 import { IsMongoId, IsString, MaxLength } from 'class-validator';
+import { ClosedQuestionSchema } from './../questions/schemas/closed-question.schema';
+import { OpenedQuestionSchema } from '../questions/schemas/opened-question.schema';
+import { GridQuestionSchema } from '../questions/schemas/grid-question.scheam';
+import { LinearQuestionSchema } from '../questions/schemas/linear-question.schema';
+import { PersonalQuestionSchema } from '../questions/schemas/personal-question.schema';
+import { QuestionSchema } from '../questions/schemas/question.schema';
 
 export type SectionDocument = Section & Document;
 
@@ -23,20 +26,28 @@ export class Section {
   @MaxLength(50)
   title?: string;
 
-  //mongoDB union type 없음
-  //DB에서 validate불가능... question validate할 수 있는 방법 찾아보기
-  @Field((type) => [QuestionUnionType], { nullable: true })
+  @Field((type) => [QuestionUnion])
   @Prop({
-    type: [
-      {
-        question: { type: mongoose.Schema.Types.Mixed },
-        type: { type: String, enum: QuestionType },
-      },
-    ],
+    type: [QuestionSchema],
+    required: true,
   })
-  questions?: QuestionUnionType[];
+  questions: typeof QuestionUnion[];
 
   //add trigger ID
 }
 
 export const SectionSchema = SchemaFactory.createForClass(Section);
+
+//question discriminator 등록
+const questionsArraySchema = SectionSchema.path(
+  'questions',
+) as mongoose.Schema.Types.DocumentArray;
+
+questionsArraySchema.discriminator(QuestionType.Closed, ClosedQuestionSchema);
+questionsArraySchema.discriminator(QuestionType.Opened, OpenedQuestionSchema);
+questionsArraySchema.discriminator(QuestionType.Grid, GridQuestionSchema);
+questionsArraySchema.discriminator(
+  QuestionType.Personal,
+  PersonalQuestionSchema,
+);
+questionsArraySchema.discriminator(QuestionType.Linear, LinearQuestionSchema);

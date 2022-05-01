@@ -4,9 +4,10 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Question } from './question.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsEnum } from 'class-validator';
+import { virtualSchemaOption } from './../../../common/schemas/option.schema';
+import { QuestionType } from '../question.typeDefs';
 
 export enum GridQuestionType {
   One = 'One',
@@ -19,7 +20,23 @@ export type GridQuestionDocument = GridQuestion & Document;
 
 @InputType('GridQuestionInputType', { isAbstract: true })
 @ObjectType()
-export class GridQuestion extends Question {
+@Schema(virtualSchemaOption)
+export class GridQuestion {
+  @Field((type) => String)
+  content: string;
+
+  @Field((type) => QuestionType)
+  kind: QuestionType;
+
+  @Field((type) => String)
+  description?: string;
+
+  @Field((type) => Boolean, { nullable: true })
+  required?: boolean;
+
+  @Field((type) => Number)
+  order: number;
+
   @Field((type) => [String], { nullable: true })
   @Prop({ type: [{ type: String, trim: true }] })
   rowContent?: string[];

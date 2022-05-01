@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Prop } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { virtualSchemaOption } from './../../../common/schemas/option.schema';
 import {
   IsOptional,
   IsString,
@@ -7,15 +8,21 @@ import {
   IsNumber,
   MaxLength,
 } from 'class-validator';
+import { QuestionType } from '../question.typeDefs';
 
 //question마다 공통으로 가지는 class
 @ObjectType()
+@Schema({ ...virtualSchemaOption, discriminatorKey: 'kind' })
 export class Question {
   @Field((type) => String)
   @Prop({ type: String, trim: true, required: true, maxlength: 300 })
   @MaxLength(300)
   @IsString()
   content: string;
+
+  @Field((type) => QuestionType)
+  @Prop({ type: String, required: true, enum: QuestionType })
+  kind: QuestionType;
 
   @Field((type) => String, { nullable: true })
   @Prop({ type: String, trim: true, maxlength: 300 })
@@ -31,11 +38,9 @@ export class Question {
   required?: boolean;
 
   @Field((type) => Number)
-  @Prop({ type: Number, required: true, index: true })
+  @Prop({ type: Number })
   @IsNumber()
   order: number;
-
-  // @Field((type) => Section)
-  // @Prop({ type: mongoose.Schema.Types.ObjectId, required: true })
-  // section: Section;
 }
+
+export const QuestionSchema = SchemaFactory.createForClass(Question);

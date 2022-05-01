@@ -11,19 +11,10 @@ import { CommonCreateQuestionInput } from './common-create-question.dto';
 import { QuestionType } from 'src/forms/questions/question.typeDefs';
 
 @InputType()
-export class CreateGridQuestionInputType extends IntersectionType(
+export class CreateGridQuestionInput extends IntersectionType(
   CommonCreateQuestionInput,
   PickType(GridQuestion, ['rowContent', 'colContent', 'type']),
 ) {}
-
-@InputType()
-export class CreateGridQuestionInput {
-  @Field((type) => CreateGridQuestionInputType)
-  question: CreateGridQuestionInputType;
-
-  @Field((type) => QuestionType)
-  type: string;
-}
 
 @ObjectType()
 export class CreateGridQuestionOutput extends CoreOutput {}

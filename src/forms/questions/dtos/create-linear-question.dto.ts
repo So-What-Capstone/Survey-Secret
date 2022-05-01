@@ -11,7 +11,7 @@ import { CommonCreateQuestionInput } from './common-create-question.dto';
 import { QuestionType } from 'src/forms/questions/question.typeDefs';
 
 @InputType()
-export class CreateLinearQuestionInputType extends IntersectionType(
+export class CreateLinearQuestionInput extends IntersectionType(
   CommonCreateQuestionInput,
   PickType(LinearQuestion, [
     'leftLabel',
@@ -20,15 +20,6 @@ export class CreateLinearQuestionInputType extends IntersectionType(
     'rightRange',
   ]),
 ) {}
-
-@InputType()
-export class CreateLinearQuestionInput {
-  @Field((type) => CreateLinearQuestionInputType)
-  question: CreateLinearQuestionInputType;
-
-  @Field((type) => QuestionType)
-  type: string;
-}
 
 @ObjectType()
 export class CreateLinearQuestionOutput extends CoreOutput {}
