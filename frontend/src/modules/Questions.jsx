@@ -19,12 +19,4 @@
 
 */
 
-export * from "./question/ClosedQuestion";
-export { default as LinearQuestion } from "./question/LinearQuestion";
-export { default as GridQuestion } from "./question/GridQuestion";
-export { default as OpenedQuestion } from "./question/OpenedQuestion";
-// export { default as PhoneQuestion } from "./question/PhoneQuestion";
-// export { default as EmailQuestion } from "./question/EmailQuestion";
-// export { default as AddressQuestion } from "./question/AddressQuestion";
-// export { default as DateQuestion } from "./question/DateQuestion";
 // export { default as FileQuestion } from "./question/FileQuestion";
