@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { Slider, InputNumber } from "antd";
 function LinearQuestion({
   title,
+  disc,
   leftEnd,
   rightEnd,
   leftLabel,
@@ -18,6 +19,8 @@ function LinearQuestion({
   return (
     <div className="question-panel">
       <div className="question-title"> {title} </div>
+      <div className="question-discription"> {disc} </div>
+
       <div className="components">
         <div className="slider-container">
           <div className="slider">
@@ -48,6 +51,7 @@ function LinearQuestion({
 
 LinearQuestion.propTypes = {
   title: PropTypes.string,
+  disc: PropTypes.string,
   leftEnd: PropTypes.number,
   rightEnd: PropTypes.number,
   leftLabel: PropTypes.string,

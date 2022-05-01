@@ -2,7 +2,7 @@ import React from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
 import { Radio, Space, Checkbox, Input } from "antd";
-function ClosedQuestion_one({ title, choices, required }) {
+function ClosedQuestion_one({ title, disc, choices, required }) {
   function RadioChoices() {
     return (
       <Radio.Group name="radiogroup" defaultValue={0}>
@@ -19,6 +19,8 @@ function ClosedQuestion_one({ title, choices, required }) {
   return (
     <div className="question-panel">
       <div className="question-title"> {title} </div>
+      <div className="question-discription"> {disc} </div>
+
       <RadioChoices />
     </div>
   );
@@ -26,11 +28,12 @@ function ClosedQuestion_one({ title, choices, required }) {
 
 ClosedQuestion_one.propTypes = {
   title: PropTypes.string,
+  disc: PropTypes.string,
   choices: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
 };
 
-function ClosedQuestion_mult({ title, choices, required }) {
+function ClosedQuestion_mult({ title, disc, choices, required }) {
   function CheckChoices() {
     return (
       <Checkbox.Group>
@@ -48,6 +51,7 @@ function ClosedQuestion_mult({ title, choices, required }) {
   return (
     <div className="question-panel">
       <div className="question-title"> {title} </div>
+      <div className="question-discription"> {disc} </div>
       <CheckChoices />
     </div>
   );
@@ -55,11 +59,12 @@ function ClosedQuestion_mult({ title, choices, required }) {
 
 ClosedQuestion_mult.propTypes = {
   title: PropTypes.string,
+  disc: PropTypes.string,
   choices: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
 };
 
-function ClosedQuestion_input({ title, choices, required }) {
+function ClosedQuestion_input({ title, disc, choices, required }) {
   function RadioInput({ value }) {
     const last_idx = choices.length - 1;
 
@@ -84,6 +89,7 @@ function ClosedQuestion_input({ title, choices, required }) {
   return (
     <div className="question-panel">
       <div className="question-title"> {title} </div>
+      <div className="question-discription"> {disc} </div>
       <RadioInput value={3} />
     </div>
   );
@@ -91,6 +97,7 @@ function ClosedQuestion_input({ title, choices, required }) {
 
 ClosedQuestion_input.propTypes = {
   title: PropTypes.string,
+  disc: PropTypes.string,
   choices: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
 };

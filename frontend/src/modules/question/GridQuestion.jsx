@@ -4,7 +4,7 @@ import "../../styles/GridQuestion.css";
 
 import PropTypes from "prop-types";
 import { Row, Col, Radio } from "antd";
-function GridQuestion({ title, rowLabels, colLabels, required }) {
+function GridQuestion({ title, disc, rowLabels, colLabels, required }) {
   const val_lst = colLabels.map((val, idx) => idx);
   const num_col = colLabels.length;
   var text_span = 9;
@@ -56,6 +56,8 @@ function GridQuestion({ title, rowLabels, colLabels, required }) {
   return (
     <div className="question-panel">
       <div className="question-title"> {title} </div>
+      <div className="question-discription"> {disc} </div>
+
       <FirstLine />
       {rowLabels.map((label, idx) => (
         <Line key={idx} label={label} />
@@ -66,6 +68,8 @@ function GridQuestion({ title, rowLabels, colLabels, required }) {
 
 GridQuestion.propTypes = {
   title: PropTypes.string,
+  disc: PropTypes.string,
+
   rowLabels: PropTypes.arrayOf(PropTypes.string),
   colLabels: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
