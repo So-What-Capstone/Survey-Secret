@@ -1,10 +1,26 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { QuestionUnion } from './../../../forms/questions/question.typeDefs';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
+import { virtualSchemaOption } from 'src/common/schemas/option.schema';
+import { IsEnum, IsMongoId } from 'class-validator';
+import {
+  QuestionType,
+  QuestionUnion,
+} from './../../../forms/questions/question.typeDefs';
 
 @ObjectType()
+@Schema({ ...virtualSchemaOption, discriminatorKey: 'kind' })
 export class Answer {
-  //Answer에서 특정 QUestion을 접근할 일이 있을지?
-  //1. Question Obj 저장, 2. QuestionId만 저장
-  @Field((type) => QuestionUnion)
-  question: typeof QuestionUnion;
+  //ref에 ClosedQuestion등 세부적으로 저장되는지 보기
+  @Field((type) => String)
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Question' })
+  @IsMongoId()
+  question: string;
+
+  @Field((type) => QuestionType)
+  @Prop({ type: String, required: true, enum: QuestionType })
+  @IsEnum(QuestionType)
+  kind: QuestionType;
 }
+
+export const AnswerSchema = SchemaFactory.createForClass(Answer);

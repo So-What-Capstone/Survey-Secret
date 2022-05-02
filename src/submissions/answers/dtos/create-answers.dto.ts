@@ -8,17 +8,17 @@ import { CreatePersonalAnswerInput } from './create-answer/create-personal-answe
 @InputType()
 export class CreateAnswersInput {
   @Field((type) => [CreateOpenedAnswerInput], { nullable: true })
-  opened?: CreateOpenedAnswerInput[];
+  Opened?: CreateOpenedAnswerInput[];
 
   @Field((type) => [CreateClosedAnswerInput], { nullable: true })
-  closed?: CreateClosedAnswerInput[];
+  Closed?: CreateClosedAnswerInput[];
 
   @Field((type) => [CreateLinearAnswerInput], { nullable: true })
-  linear?: CreateLinearAnswerInput[];
+  Linear?: CreateLinearAnswerInput[];
 
   @Field((type) => [CreateGridAnswerInput], { nullable: true })
-  grid?: CreateGridAnswerInput[];
+  Grid?: CreateGridAnswerInput[];
 
   @Field((type) => [CreatePersonalAnswerInput], { nullable: true })
-  personal?: CreatePersonalAnswerInput[];
+  Personal?: CreatePersonalAnswerInput[];
 }

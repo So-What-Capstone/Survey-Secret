@@ -26,15 +26,15 @@ export const QuestionUnion = createUnionType({
   ],
   resolveType: (obj) => {
     if (obj.kind === QuestionType.Closed) {
-      return 'ClosedQuestion';
+      return ClosedQuestion;
     } else if (obj.kind === QuestionType.Grid) {
-      return 'GridQuestion';
+      return GridQuestion;
     } else if (obj.kind === QuestionType.Linear) {
-      return 'LinearQuestion';
+      return LinearQuestion;
     } else if (obj.kind === QuestionType.Personal) {
-      return 'PersonalQuestion';
+      return PersonalQuestion;
     } else if (obj.kind === QuestionType.Opened) {
-      return 'OpenedQuestion';
+      return OpenedQuestion;
     } else {
       return null;
     }

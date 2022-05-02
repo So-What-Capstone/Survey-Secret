@@ -17,6 +17,7 @@ type Section {
 union QuestionUnion = ClosedQuestion | GridQuestion | LinearQuestion | OpenedQuestion | PersonalQuestion
 
 type ClosedQuestion {
+  _id: String!
   content: String!
   kind: QuestionType!
   description: String
@@ -40,6 +41,7 @@ enum ClosedQuestionType {
 }
 
 type GridQuestion {
+  _id: String!
   content: String!
   kind: QuestionType!
   description: String!
@@ -56,6 +58,7 @@ enum GridQuestionType {
 }
 
 type LinearQuestion {
+  _id: String!
   content: String!
   kind: QuestionType!
   description: String
@@ -68,6 +71,7 @@ type LinearQuestion {
 }
 
 type OpenedQuestion {
+  _id: String!
   content: String!
   kind: QuestionType!
   description: String
@@ -85,6 +89,7 @@ enum OpenedQuestionType {
 }
 
 type PersonalQuestion {
+  _id: String!
   content: String!
   kind: QuestionType!
   description: String!
@@ -105,51 +110,51 @@ type GridAnswerContent {
   colNo: Float!
 }
 
-type AnswerUnionType {
-  answer: AnswerUnion!
-  type: QuestionType!
-}
-
-union AnswerUnion = ClosedAnswer | GridAnswer | LinearAnswer | OpenedAnswer | PersonalAnswer
-
-type ClosedAnswer {
-  question: QuestionUnion!
-  no: [Float!]!
-}
-
-type GridAnswer {
-  question: QuestionUnion!
-  content: [GridAnswerContent!]
-}
-
-type LinearAnswer {
-  question: QuestionUnion!
-  no: Float!
-}
-
-type OpenedAnswer {
-  question: QuestionUnion!
-  content: String
-}
-
-type PersonalAnswer {
-  question: QuestionUnion!
-  content: String
-}
-
 type Submission {
   createdAt: DateTime!
   updatedAt: DateTime!
   _id: String!
   respondent: User
   form: Form!
-  answers: [AnswerUnionType!]
+  answers: [AnswerUnion!]!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+union AnswerUnion = ClosedAnswer | GridAnswer | LinearAnswer | OpenedAnswer | PersonalAnswer
+
+type ClosedAnswer {
+  question: String!
+  kind: QuestionType!
+  no: [Float!]!
+}
+
+type GridAnswer {
+  question: String!
+  kind: QuestionType!
+  content: [GridAnswerContent!]
+}
+
+type LinearAnswer {
+  question: String!
+  kind: QuestionType!
+  no: Float!
+}
+
+type OpenedAnswer {
+  question: String!
+  kind: QuestionType!
+  content: String
+}
+
+type PersonalAnswer {
+  question: String!
+  kind: QuestionType!
+  content: String
+}
 
 type Form {
   createdAt: DateTime!
@@ -428,51 +433,35 @@ input CreateSubmissionInput {
 }
 
 input CreateAnswersInput {
-  opened: [CreateOpenedAnswerInput!]
-  closed: [CreateClosedAnswerInput!]
-  linear: [CreateLinearAnswerInput!]
-  grid: [CreateGridAnswerInput!]
-  personal: [CreatePersonalAnswerInput!]
+  Opened: [CreateOpenedAnswerInput!]
+  Closed: [CreateClosedAnswerInput!]
+  Linear: [CreateLinearAnswerInput!]
+  Grid: [CreateGridAnswerInput!]
+  Personal: [CreatePersonalAnswerInput!]
 }
 
 input CreateOpenedAnswerInput {
-  answer: CreateOpenedAnswerInputType!
-  type: QuestionType!
-}
-
-input CreateOpenedAnswerInputType {
   content: String
-  questionId: String!
+  question: String!
+  kind: QuestionType!
 }
 
 input CreateClosedAnswerInput {
-  answer: CreateClosedAnswerInputType!
-  type: QuestionType!
-}
-
-input CreateClosedAnswerInputType {
   no: [Float!]!
-  questionId: String!
+  question: String!
+  kind: QuestionType!
 }
 
 input CreateLinearAnswerInput {
-  answer: CreateLinearAnswerInputType!
-  type: QuestionType!
-}
-
-input CreateLinearAnswerInputType {
   no: Float!
-  questionId: String!
+  question: String!
+  kind: QuestionType!
 }
 
 input CreateGridAnswerInput {
-  answer: CreateGridAnswerInputType!
-  type: QuestionType!
-}
-
-input CreateGridAnswerInputType {
   content: [GridAnswerContentInputType!]
-  questionId: String!
+  question: String!
+  kind: QuestionType!
 }
 
 input GridAnswerContentInputType {
@@ -481,12 +470,8 @@ input GridAnswerContentInputType {
 }
 
 input CreatePersonalAnswerInput {
-  answer: CreatePersonalAnswerInputType!
-  type: QuestionType!
-}
-
-input CreatePersonalAnswerInputType {
-  questionId: String!
+  question: String!
+  kind: QuestionType!
   content: String
 }
 

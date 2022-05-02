@@ -44,14 +44,14 @@ export class AuthGuard implements CanActivate {
 
         return types.includes(user.type);
       } else {
-        if (types.includes('NotLoggedIn')) {
-          return true;
-        } else {
-          return false;
-        }
+        return false;
       }
     } else {
-      return false;
+      if (types.includes('NotLoggedIn')) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 }

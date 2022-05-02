@@ -4,12 +4,23 @@ import { schemaOptionExceptDate } from '../../../common/schemas/option.schema';
 import mongoose from 'mongoose';
 import { ClosedQuestion } from '../../../forms/questions/schemas/closed-question.schema';
 import { Answer } from './answer.schema';
+import { virtualSchemaOption } from './../../../common/schemas/option.schema';
+import { QuestionType } from '../../../forms/questions/question.typeDefs';
+import { IsEnum } from 'class-validator';
 
 export type ClosedAnswerDocument = ClosedAnswer & Document;
 
 @InputType('ClosedAnswerInputType', { isAbstract: true })
 @ObjectType()
-export class ClosedAnswer extends Answer {
+@Schema(virtualSchemaOption)
+export class ClosedAnswer {
+  @Field((type) => String)
+  question: string;
+
+  @Field((type) => QuestionType)
+  @IsEnum(QuestionType)
+  kind: QuestionType;
+
   @Field((type) => [Number])
   @Prop({ type: [Number] })
   no: number[];

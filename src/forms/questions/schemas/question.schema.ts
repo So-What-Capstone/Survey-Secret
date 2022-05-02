@@ -7,6 +7,7 @@ import {
   IsBoolean,
   IsNumber,
   MaxLength,
+  IsEnum,
 } from 'class-validator';
 import { QuestionType } from '../question.typeDefs';
 
@@ -15,6 +16,9 @@ import { QuestionType } from '../question.typeDefs';
 @Schema({ ...virtualSchemaOption, discriminatorKey: 'kind' })
 export class Question {
   @Field((type) => String)
+  _id: string;
+
+  @Field((type) => String)
   @Prop({ type: String, trim: true, required: true, maxlength: 300 })
   @MaxLength(300)
   @IsString()
@@ -22,6 +26,7 @@ export class Question {
 
   @Field((type) => QuestionType)
   @Prop({ type: String, required: true, enum: QuestionType })
+  @IsEnum(QuestionType)
   kind: QuestionType;
 
   @Field((type) => String, { nullable: true })

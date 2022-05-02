@@ -31,56 +31,69 @@ export class SubmissionsService {
   //submission에도 order를 넣어야할지?
   async createSubmission(
     respondent: User,
-    createSubmissionInput: CreateSubmissionInput,
+    { formId, answers: answersInput }: CreateSubmissionInput,
   ): Promise<CreateSubmissionOutput> {
     try {
-      const form = await this.formModel.findById(createSubmissionInput.formId);
+      const form = await this.formModel.findById(formId);
       if (!form) {
         return { ok: false, error: '폼을 찾을 수 없습니다.' };
       }
 
+      // for (const {
+      //   closed,
+      //   opened,
+      //   linear,
+      //   grid,
+      //   personal,
+      // } of createSubmissionInput.answers) {
+      //   answers = [
+      //     ...(closed ? closed : []),
+      //     ...(opened ? opened : []),
+      //     ...(linear ? linear : []),
+      //     ...(grid ? grid : []),
+      //     ...(personal ? personal : []),
+      //   ];
+      // }
+
       let answers = [];
-      for (const {
-        closed,
-        opened,
-        linear,
-        grid,
-        personal,
-      } of createSubmissionInput.answers) {
-        answers = [
-          ...(closed ? closed : []),
-          ...(opened ? opened : []),
-          ...(linear ? linear : []),
-          ...(grid ? grid : []),
-          ...(personal ? personal : []),
-        ];
+
+      //for testing
+      for (const questionType of answersInput) {
+        for (const key in questionType) {
+          for (const answer of questionType[key]) {
+            if (answer.kind !== key) {
+              return { ok: false, error: '쿼리 잘못보냈음' };
+            } else {
+              answers.push(answer);
+            }
+          }
+        }
       }
 
-      for (const { answer, type } of answers) {
+      console.log(answers);
+
+      for (const answer of answers) {
         let question: typeof QuestionUnion;
         for (const section of form.sections) {
-          // const questionUnion = section.questions.find((question) => {
-          //   return question._id.toString() === answer.questionId.toString();
-          // });
-          // if (questionUnion) {
-          //   // if (questionUnion.type !== type) {
-          //   //   return { ok: false, error: '문제와 답변의 타입이 다릅니다.' };
-          //   // }
-          //   question = questionUnion.question;
-          //   if (question) {
-          //     break;
-          //   }
-          // }
+          //모든 question을 DB요청하는 것보다는 DB요청 한번만...
+          const questionUnion = section.questions.find((question) => {
+            return question._id.toString() === answer.question.toString();
+          });
+          if (questionUnion) {
+            if (questionUnion.kind !== answer.kind) {
+              return { ok: false, error: '문제와 답변의 타입이 다릅니다.' };
+            }
+            question = questionUnion;
+            if (question) {
+              break;
+            }
+          }
         }
 
         //for debug
         if (!question) {
           return { ok: false, error: '없는 질문에 대한 답변입니다.' };
         }
-
-        //1.question전체를 저장할지? 2.ref로 저장할지?
-        delete answer.questionId;
-        answer.question = question;
       }
 
       const session = await this.connection.startSession();
@@ -98,7 +111,7 @@ export class SubmissionsService {
         );
 
         await this.formModel.updateOne(
-          { _id: createSubmissionInput.formId },
+          { _id: formId },
           { $push: { submissions: submission } },
           { session },
         );
@@ -120,15 +133,12 @@ export class SubmissionsService {
         .findOne()
         .where('_id')
         .equals(id)
-        .populate('form');
+        .populate('form')
+        .populate('answers');
       //form의 어느 정보까지 줄것인지 select
       if (!submission) {
         return { ok: false, error: '제출을 찾을 수 없습니다.' };
       }
-
-      console.log(submission);
-      console.log(submission.respondent);
-      console.log(owner);
 
       if (
         submission.respondent?._id.toString() !== owner._id.toString() &&

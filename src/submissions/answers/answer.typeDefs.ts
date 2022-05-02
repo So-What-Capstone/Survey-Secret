@@ -16,28 +16,18 @@ export const AnswerUnion = createUnionType({
     PersonalAnswer,
   ],
   resolveType: (obj) => {
-    console.log(obj);
-    if (obj.question.choices) {
+    if (obj.kind === QuestionType.Closed) {
       return ClosedAnswer;
-    } else if (obj.question.rowContent) {
+    } else if (obj.kind === QuestionType.Grid) {
       return GridAnswer;
-    } else if (obj.question.leftRange) {
+    } else if (obj.kind === QuestionType.Linear) {
       return LinearAnswer;
-    } else if (obj.question.encoded) {
+    } else if (obj.kind === QuestionType.Personal) {
       return PersonalAnswer;
-    } else if (obj.question.type) {
+    } else if (obj.kind === QuestionType.Opened) {
       return OpenedAnswer;
     } else {
       return null;
     }
   },
 });
-
-@ObjectType()
-export class AnswerUnionType {
-  @Field((type) => AnswerUnion)
-  answer: typeof AnswerUnion;
-
-  @Field((type) => QuestionType)
-  type: string;
-}

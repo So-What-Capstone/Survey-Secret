@@ -1,6 +1,9 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Answer } from './answer.schema';
-import { Prop } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { virtualSchemaOption } from './../../../common/schemas/option.schema';
+import { QuestionType } from '../../../forms/questions/question.typeDefs';
+import { IsEnum } from 'class-validator';
 
 @InputType('GridAnswerContentInputType', { isAbstract: true })
 @ObjectType()
@@ -14,7 +17,15 @@ export class GridAnswerContent {
 
 @InputType('GridAnswerInputType', { isAbstract: true })
 @ObjectType()
-export class GridAnswer extends Answer {
+@Schema(virtualSchemaOption)
+export class GridAnswer {
+  @Field((type) => String)
+  question: string;
+
+  @Field((type) => QuestionType)
+  @IsEnum(QuestionType)
+  kind: QuestionType;
+
   @Field((type) => [GridAnswerContent], { nullable: true })
   @Prop({
     type: [
@@ -26,3 +37,5 @@ export class GridAnswer extends Answer {
   })
   content: GridAnswerContent[];
 }
+
+export const GridAnswerSchema = SchemaFactory.createForClass(GridAnswer);

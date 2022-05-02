@@ -23,6 +23,9 @@ export type GridQuestionDocument = GridQuestion & Document;
 @Schema(virtualSchemaOption)
 export class GridQuestion {
   @Field((type) => String)
+  _id: string;
+
+  @Field((type) => String)
   content: string;
 
   @Field((type) => QuestionType)

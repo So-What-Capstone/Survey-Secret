@@ -23,6 +23,9 @@ export type PersonalQuestionDocument = PersonalQuestion & Document;
 @Schema(virtualSchemaOption)
 export class PersonalQuestion {
   @Field((type) => String)
+  _id: string;
+
+  @Field((type) => String)
   content: string;
 
   @Field((type) => QuestionType)

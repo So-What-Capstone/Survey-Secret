@@ -42,15 +42,6 @@ export class FormsService {
       linear,
       personal,
     } of sectionInput) {
-      // let questions = [];
-
-      // if (closed) {
-      //   for (let question of closed) {
-      //     const closedQuestion = new this.closedQuestionModel(question);
-      //     questions.push(closedQuestion);
-      //   }
-      // }
-
       const questions = [
         ...(closed ? closed : []),
         ...(opened ? opened : []),

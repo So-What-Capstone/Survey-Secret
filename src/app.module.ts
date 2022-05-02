@@ -30,6 +30,8 @@ import { UploaderModule } from './uploader/uploader.module';
         AWS_SECRET: Joi.string().required(),
       }),
     }),
+    //set DB logger(raw query), DB error/connect log
+    MongooseModule.forRoot(process.env.DB_URL),
 
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -40,8 +42,6 @@ import { UploaderModule } from './uploader/uploader.module';
     }),
 
     UsersModule,
-    //set DB logger(raw query), DB error/connect log
-    MongooseModule.forRoot(process.env.DB_URL),
     FormsModule,
     AuthModule,
     MailsModule.forRoot({

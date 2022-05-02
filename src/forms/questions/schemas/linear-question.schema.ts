@@ -11,6 +11,9 @@ export type LinearQuestionDocument = LinearQuestion & Document;
 @Schema(virtualSchemaOption)
 export class LinearQuestion {
   @Field((type) => String)
+  _id: string;
+
+  @Field((type) => String)
   content: string;
 
   @Field((type) => QuestionType)

@@ -26,6 +26,9 @@ export type OpenedQuestionDocument = OpenedQuestion & Document;
 @Schema(virtualSchemaOption)
 export class OpenedQuestion {
   @Field((type) => String)
+  _id: string;
+
+  @Field((type) => String)
   content: string;
 
   @Field((type) => QuestionType)

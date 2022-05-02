@@ -1,7 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, PickType } from '@nestjs/graphql';
+import { Answer } from '../schemas/answer.schema';
 
 @InputType()
-export class CommonCreateAnswerInput {
-  @Field((type) => String)
-  questionId: string;
-}
+export class CommonCreateAnswerInput extends PickType(Answer, [
+  'kind',
+  'question',
+]) {}

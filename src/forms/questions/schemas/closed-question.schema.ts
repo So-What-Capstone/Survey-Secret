@@ -38,6 +38,9 @@ export class ClosedQuestionChoice {
 @Schema(virtualSchemaOption)
 export class ClosedQuestion {
   @Field((type) => String)
+  _id: string;
+
+  @Field((type) => String)
   content: string;
 
   @Field((type) => QuestionType)
