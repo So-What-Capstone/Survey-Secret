@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
 import { Input, Select, Space, Cascader } from "antd";
@@ -14,22 +14,20 @@ const mail_postfix = [
   "@nate.com",
   "@uos.ac.kr",
 ];
-function PhoneQuestion({
-  title,
-  disc,
-  isEncrypted,
-  exp_date,
-  value,
-  required,
-}) {
+function PhoneQuestion({ config, value }) {
+  const [content] = useState(config.content);
+  const [description] = useState(config.description);
+  const [isEncrypted] = useState(config.isEncrypted);
+  const [exp_date] = useState(config.exp_date);
+  const [required] = useState(config.required);
   let info = "";
   if (isEncrypted) info += privacy_info;
   if (exp_date) info += exp_info_1 + exp_date + exp_info_2;
 
   return (
     <div className="question-panel">
-      <div className="question-title"> {title} </div>
-      <div className="question-discription"> {disc} </div>
+      <label className="question-title"> {content} </label>
+      <label className="question-discription"> {description} </label>
       {info ? <div className="question-discription"> {info} </div> : null}
 
       <Input maxLength={13} type="text" />
@@ -38,22 +36,22 @@ function PhoneQuestion({
 }
 
 PhoneQuestion.propTypes = {
-  title: PropTypes.string,
-  disc: PropTypes.string,
-  exp_date: PropTypes.string,
-  isEncrypted: PropTypes.bool,
+  config: PropTypes.shape({
+    content: PropTypes.string,
+    description: PropTypes.string,
+    isEncrypted: PropTypes.bool,
+    exp_date: PropTypes.string,
+    required: PropTypes.bool,
+  }),
   value: PropTypes.string,
-  required: PropTypes.bool,
 };
 
-function EmailQuestion({
-  title,
-  disc,
-  isEncrypted,
-  exp_date,
-  value,
-  required,
-}) {
+function EmailQuestion({ config, value }) {
+  const [content] = useState(config.content);
+  const [description] = useState(config.description);
+  const [isEncrypted] = useState(config.isEncrypted);
+  const [exp_date] = useState(config.exp_date);
+  const [required] = useState(config.required);
   let info = "";
   if (isEncrypted) info += privacy_info;
   if (exp_date) info += exp_info_1 + exp_date + exp_info_2;
@@ -69,8 +67,8 @@ function EmailQuestion({
   );
   return (
     <div className="question-panel">
-      <div className="question-title"> {title} </div>
-      <div className="question-discription"> {disc} </div>
+      <label className="question-title"> {content} </label>
+      <label className="question-discription"> {description} </label>
       {info ? <div className="question-discription"> {info} </div> : null}
 
       <Input addonAfter={selectAfter} />
@@ -79,11 +77,13 @@ function EmailQuestion({
 }
 
 EmailQuestion.propTypes = {
-  title: PropTypes.string,
-  disc: PropTypes.string,
-  exp_date: PropTypes.string,
-  isEncrypted: PropTypes.bool,
+  config: PropTypes.shape({
+    content: PropTypes.string,
+    description: PropTypes.string,
+    isEncrypted: PropTypes.bool,
+    exp_date: PropTypes.string,
+    required: PropTypes.bool,
+  }),
   value: PropTypes.string,
-  required: PropTypes.bool,
 };
 export { PhoneQuestion, EmailQuestion };

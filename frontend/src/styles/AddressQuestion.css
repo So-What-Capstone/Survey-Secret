@@ -1,6 +1,7 @@
 .code-line {
   display: flex;
   flex-flow: row wrap;
+  width: 100%;
   margin-bottom: 2%;
 }
 

@@ -1,12 +1,15 @@
-import React from "react";
+import { React, useState } from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
 import { DatePicker } from "antd";
-function DateQuestion({ title, disc, required }) {
+function DateQuestion({ config }) {
+  const [content] = useState(config.content);
+  const [description] = useState(config.description);
+  const [required] = useState(config.required);
   return (
     <div className="question-panel">
-      <div className="question-title"> {title} </div>
-      <div className="question-discription"> {disc} </div>
+      <label className="question-title"> {content} </label>
+      <label className="question-discription"> {description} </label>
       <DatePicker
         style={{ width: "50%" }}
         placeholder="날짜를 선택해 주세요."
@@ -16,10 +19,11 @@ function DateQuestion({ title, disc, required }) {
 }
 
 DateQuestion.propTypes = {
-  title: PropTypes.string,
-  disc: PropTypes.string,
-  isLong: PropTypes.bool,
-  required: PropTypes.bool,
+  config: PropTypes.shape({
+    content: PropTypes.string,
+    description: PropTypes.string,
+    required: PropTypes.bool,
+  }),
 };
 
 export default DateQuestion;

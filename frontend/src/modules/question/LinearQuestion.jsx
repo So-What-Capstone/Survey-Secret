@@ -3,23 +3,21 @@ import "../../styles/Question.css";
 import "../../styles/LinearQuestion.css";
 import PropTypes from "prop-types";
 import { Slider, InputNumber } from "antd";
-function LinearQuestion({
-  title,
-  disc,
-  leftEnd,
-  rightEnd,
-  leftLabel,
-  rightLabel,
-  value,
-  required,
-}) {
+function LinearQuestion({ config, value }) {
+  const [content] = useState(config.content);
+  const [description] = useState(config.description);
+  const [leftEnd] = useState(config.leftEnd);
+  const [rightEnd] = useState(config.rightEnd);
+  const [leftLabel] = useState(config.leftLabel);
+  const [rightLabel] = useState(config.rightLabel);
+  const [required] = useState(config.required);
   const [numVal, setNumVal] = useState(0);
   const onChange = (x) => setNumVal(x);
 
   return (
     <div className="question-panel">
-      <div className="question-title"> {title} </div>
-      <div className="question-discription"> {disc} </div>
+      <label className="question-title"> {content} </label>
+      <label className="question-discription"> {description} </label>
 
       <div className="components">
         <div className="slider-container">
@@ -50,14 +48,16 @@ function LinearQuestion({
 }
 
 LinearQuestion.propTypes = {
-  title: PropTypes.string,
-  disc: PropTypes.string,
-  leftEnd: PropTypes.number,
-  rightEnd: PropTypes.number,
-  leftLabel: PropTypes.string,
-  rightLabel: PropTypes.string,
+  config: PropTypes.shape({
+    content: PropTypes.string,
+    description: PropTypes.string,
+    leftEnd: PropTypes.number,
+    rightEnd: PropTypes.number,
+    leftLabel: PropTypes.string,
+    rightLabel: PropTypes.string,
+    required: PropTypes.bool,
+  }),
   value: PropTypes.number,
-  required: PropTypes.bool,
 };
 
 export default LinearQuestion;

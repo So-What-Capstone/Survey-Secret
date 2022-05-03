@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
 import { Radio, Space, Checkbox, Input } from "antd";
-function ClosedQuestion_one({ title, disc, choices, required }) {
+
+function ClosedQuestion_one({ config }) {
+  const [content] = useState(config.content);
+  const [description] = useState(config.description);
+  const [choices] = useState(config.choices);
+  const [required] = useState(config.required);
+
   function RadioChoices() {
     return (
       <Radio.Group name="radiogroup" defaultValue={0}>
@@ -18,8 +24,8 @@ function ClosedQuestion_one({ title, disc, choices, required }) {
   }
   return (
     <div className="question-panel">
-      <div className="question-title"> {title} </div>
-      <div className="question-discription"> {disc} </div>
+      <label className="question-title"> {content} </label>
+      <label className="question-discription"> {description} </label>
 
       <RadioChoices />
     </div>
@@ -27,13 +33,19 @@ function ClosedQuestion_one({ title, disc, choices, required }) {
 }
 
 ClosedQuestion_one.propTypes = {
-  title: PropTypes.string,
-  disc: PropTypes.string,
-  choices: PropTypes.arrayOf(PropTypes.string),
-  required: PropTypes.bool,
+  config: PropTypes.shape({
+    content: PropTypes.string,
+    description: PropTypes.string,
+    choices: PropTypes.arrayOf(PropTypes.string),
+    required: PropTypes.bool,
+  }),
 };
 
-function ClosedQuestion_mult({ title, disc, choices, required }) {
+function ClosedQuestion_mult({ config }) {
+  const [content] = useState(config.content);
+  const [description] = useState(config.description);
+  const [choices] = useState(config.choices);
+  const [required] = useState(config.required);
   function CheckChoices() {
     return (
       <Checkbox.Group>
@@ -50,21 +62,27 @@ function ClosedQuestion_mult({ title, disc, choices, required }) {
 
   return (
     <div className="question-panel">
-      <div className="question-title"> {title} </div>
-      <div className="question-discription"> {disc} </div>
+      <label className="question-title"> {content} </label>
+      <label className="question-discription"> {description} </label>
       <CheckChoices />
     </div>
   );
 }
 
 ClosedQuestion_mult.propTypes = {
-  title: PropTypes.string,
-  disc: PropTypes.string,
-  choices: PropTypes.arrayOf(PropTypes.string),
-  required: PropTypes.bool,
+  config: PropTypes.shape({
+    content: PropTypes.string,
+    description: PropTypes.string,
+    choices: PropTypes.arrayOf(PropTypes.string),
+    required: PropTypes.bool,
+  }),
 };
 
-function ClosedQuestion_input({ title, disc, choices, required }) {
+function ClosedQuestion_input({ config }) {
+  const [content] = useState(config.content);
+  const [description] = useState(config.description);
+  const [choices] = useState(config.choices);
+  const [required] = useState(config.required);
   function RadioInput({ value }) {
     const last_idx = choices.length - 1;
 
@@ -88,18 +106,20 @@ function ClosedQuestion_input({ title, disc, choices, required }) {
   };
   return (
     <div className="question-panel">
-      <div className="question-title"> {title} </div>
-      <div className="question-discription"> {disc} </div>
+      <label className="question-title"> {content} </label>
+      <label className="question-discription"> {description} </label>
       <RadioInput value={3} />
     </div>
   );
 }
 
 ClosedQuestion_input.propTypes = {
-  title: PropTypes.string,
-  disc: PropTypes.string,
-  choices: PropTypes.arrayOf(PropTypes.string),
-  required: PropTypes.bool,
+  config: PropTypes.shape({
+    content: PropTypes.string,
+    description: PropTypes.string,
+    choices: PropTypes.arrayOf(PropTypes.string),
+    required: PropTypes.bool,
+  }),
 };
 
 export { ClosedQuestion_one, ClosedQuestion_mult, ClosedQuestion_input };

@@ -1,10 +1,16 @@
-import React from "react";
+import { React, useState } from "react";
 import "../../styles/Question.css";
 import "../../styles/GridQuestion.css";
 
 import PropTypes from "prop-types";
 import { Row, Col, Radio } from "antd";
-function GridQuestion({ title, disc, rowLabels, colLabels, required }) {
+function GridQuestion({ config }) {
+  const [content] = useState(config.content);
+  const [description] = useState(config.description);
+  const [rowLabels] = useState(config.rowLabels);
+  const [colLabels] = useState(config.colLabels);
+  const [required] = useState(config.required);
+
   const val_lst = colLabels.map((val, idx) => idx);
   const num_col = colLabels.length;
   var text_span = 9;
@@ -55,8 +61,8 @@ function GridQuestion({ title, disc, rowLabels, colLabels, required }) {
 
   return (
     <div className="question-panel">
-      <div className="question-title"> {title} </div>
-      <div className="question-discription"> {disc} </div>
+      <label className="question-title"> {content} </label>
+      <label className="question-discription"> {description} </label>
 
       <FirstLine />
       {rowLabels.map((label, idx) => (
@@ -67,12 +73,13 @@ function GridQuestion({ title, disc, rowLabels, colLabels, required }) {
 }
 
 GridQuestion.propTypes = {
-  title: PropTypes.string,
-  disc: PropTypes.string,
-
-  rowLabels: PropTypes.arrayOf(PropTypes.string),
-  colLabels: PropTypes.arrayOf(PropTypes.string),
-  required: PropTypes.bool,
+  config: PropTypes.shape({
+    content: PropTypes.string,
+    description: PropTypes.string,
+    rowLabels: PropTypes.arrayOf(PropTypes.string),
+    colLabels: PropTypes.arrayOf(PropTypes.string),
+    required: PropTypes.bool,
+  }),
 };
 
 export default GridQuestion;

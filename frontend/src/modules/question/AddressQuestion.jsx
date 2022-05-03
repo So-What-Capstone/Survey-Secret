@@ -4,7 +4,11 @@ import { Button, Input } from "antd";
 import DaumPostCode from "react-daum-postcode";
 import "../../styles/Question.css";
 import "../../styles/AddressQuestion.css";
-function AddressQuestion({ title, disc, required }) {
+function AddressQuestion({ config }) {
+  const [content] = useState(config.content);
+  const [description] = useState(config.description);
+  const [required] = useState(config.required);
+
   const [address, setAddress] = useState({
     addr: "",
     extra_addr: "",
@@ -50,15 +54,13 @@ function AddressQuestion({ title, disc, required }) {
   };
   return (
     <div className="question-panel">
-      <div className="question-title"> {title} </div>
-      <div className="question-discription"> {disc} </div>
+      <label className="question-title"> {content} </label>
+      <label className="question-discription"> {description} </label>
       <div className="code-line">
-        <Input
-          className="code-input"
-          placeholder="우편번호"
-          readOnly={true}
-          value={address.code}
-        />
+        <div className="code-input">
+          <Input placeholder="우편번호" readOnly={true} value={address.code} />
+        </div>
+
         <Button
           className="code-button"
           onClick={onPostCodeClicked}
@@ -78,18 +80,16 @@ function AddressQuestion({ title, disc, required }) {
         {show_postcode ? <DaumPostCode onComplete={onComplete} /> : null}
       </div>
       <div className="address-line">
-        <Input
-          className="addr-input"
-          placeholder="주소"
-          readOnly={true}
-          value={address.addr}
-        />
-        <Input
-          className="extra-addr-input"
-          placeholder="상세주소"
-          readOnly={true}
-          value={address.extra_addr}
-        />
+        <div className="addr-input">
+          <Input placeholder="주소" readOnly={true} value={address.addr} />
+        </div>
+        <div className="extra-addr-input">
+          <Input
+            placeholder="상세주소"
+            readOnly={true}
+            value={address.extra_addr}
+          />
+        </div>
       </div>
       <Input className="detail-addr-input" placeholder="직접입력" />
     </div>
@@ -97,10 +97,11 @@ function AddressQuestion({ title, disc, required }) {
 }
 
 AddressQuestion.propTypes = {
-  title: PropTypes.string,
-  disc: PropTypes.string,
-  isLong: PropTypes.bool,
-  required: PropTypes.bool,
+  config: PropTypes.shape({
+    content: PropTypes.string,
+    description: PropTypes.string,
+    required: PropTypes.bool,
+  }),
 };
 
 export default AddressQuestion;
