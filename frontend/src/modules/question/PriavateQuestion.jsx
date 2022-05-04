@@ -51,7 +51,7 @@ PhoneQuestion.propTypes = {
   setValue: PropTypes.func,
 };
 
-function EmailQuestion({ config, value }) {
+function EmailQuestion({ config, value, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [isEncrypted] = useState(config.isEncrypted);
@@ -61,8 +61,35 @@ function EmailQuestion({ config, value }) {
   if (isEncrypted) info += privacy_info;
   if (exp_date) info += exp_info_1 + exp_date + exp_info_2;
   const { Option } = Select;
+
+  const onDomainChanged = (e) => {
+    let idx = e;
+    let domain = "";
+    if (0 < idx && idx < mail_postfix.length) {
+      domain = mail_postfix[idx];
+    } else {
+      idx = 0;
+    }
+    setValue({
+      ...value,
+      domain_idx: idx,
+      domain: domain,
+    });
+  };
+
+  const onMailChanged = (e) => {
+    let mail = e.target.value;
+    setValue({
+      ...value,
+      id: mail,
+    });
+  };
   const selectAfter = (
-    <Select defaultValue="직접입력" className="select-after">
+    <Select
+      className="select-after"
+      value={value.domain_idx}
+      onChange={onDomainChanged}
+    >
       {mail_postfix.map((val, idx) => (
         <Option key={idx} value={idx}>
           {val}
@@ -76,7 +103,11 @@ function EmailQuestion({ config, value }) {
       <label className="question-discription"> {description} </label>
       {info ? <div className="question-discription"> {info} </div> : null}
 
-      <Input addonAfter={selectAfter} />
+      <Input
+        addonAfter={selectAfter}
+        value={value.id}
+        onChange={onMailChanged}
+      />
     </div>
   );
 }
@@ -89,6 +120,11 @@ EmailQuestion.propTypes = {
     exp_date: PropTypes.string,
     required: PropTypes.bool,
   }),
-  value: PropTypes.string,
+  value: PropTypes.shape({
+    id: PropTypes.string,
+    domain_idx: PropTypes.number,
+    domain: PropTypes.string,
+  }),
+  setValue: PropTypes.func,
 };
 export { PhoneQuestion, EmailQuestion };

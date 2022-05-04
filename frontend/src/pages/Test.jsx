@@ -19,6 +19,7 @@ function Test() {
   const [shortOpen, setShort] = useState("");
   const [longOpen, setLong] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState({ id: "", domain_idx: 0, domain: "" });
 
   return (
     <div className="root-container">
@@ -44,7 +45,11 @@ function Test() {
           value={phone}
           setValue={setPhone}
         />
-        <EmailQuestion config={configs.email_config} />
+        <EmailQuestion
+          config={configs.email_config}
+          value={email}
+          setValue={setEmail}
+        />
         <DateQuestion config={configs.date_config} />
         <AddressQuestion config={configs.addr_config} />
       </div>
