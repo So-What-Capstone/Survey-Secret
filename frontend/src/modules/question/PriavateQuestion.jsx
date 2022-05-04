@@ -14,7 +14,7 @@ const mail_postfix = [
   "@nate.com",
   "@uos.ac.kr",
 ];
-function PhoneQuestion({ config, value }) {
+function PhoneQuestion({ config, value, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [isEncrypted] = useState(config.isEncrypted);
@@ -24,13 +24,17 @@ function PhoneQuestion({ config, value }) {
   if (isEncrypted) info += privacy_info;
   if (exp_date) info += exp_info_1 + exp_date + exp_info_2;
 
+  const onChange = (e) => {
+    let v = e.target.value;
+    setValue(v);
+  };
   return (
     <div className="question-panel">
       <label className="question-title"> {content} </label>
       <label className="question-discription"> {description} </label>
       {info ? <div className="question-discription"> {info} </div> : null}
 
-      <Input maxLength={13} type="text" />
+      <Input maxLength={13} type="text" value={value} onChange={onChange} />
     </div>
   );
 }
@@ -44,6 +48,7 @@ PhoneQuestion.propTypes = {
     required: PropTypes.bool,
   }),
   value: PropTypes.string,
+  setValue: PropTypes.func,
 };
 
 function EmailQuestion({ config, value }) {

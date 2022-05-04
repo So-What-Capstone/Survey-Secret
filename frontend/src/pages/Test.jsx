@@ -18,6 +18,7 @@ import * as configs from "../modules/question/test_config";
 function Test() {
   const [shortOpen, setShort] = useState("");
   const [longOpen, setLong] = useState("");
+  const [phone, setPhone] = useState("");
 
   return (
     <div className="root-container">
@@ -38,7 +39,11 @@ function Test() {
         />
         <LinearQuestion config={configs.linear_config} />
         <GridQuestion config={configs.grid_config} />
-        <PhoneQuestion config={configs.phone_config} />
+        <PhoneQuestion
+          config={configs.phone_config}
+          value={phone}
+          setValue={setPhone}
+        />
         <EmailQuestion config={configs.email_config} />
         <DateQuestion config={configs.date_config} />
         <AddressQuestion config={configs.addr_config} />
