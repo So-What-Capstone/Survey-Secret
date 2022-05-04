@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/Test.css";
 import {
   ClosedQuestion_one,
@@ -16,6 +16,9 @@ import {
 import * as configs from "../modules/question/test_config";
 
 function Test() {
+  const [shortOpen, setShort] = useState("");
+  const [longOpen, setLong] = useState("");
+
   return (
     <div className="root-container">
       <div className="panel">
@@ -23,8 +26,16 @@ function Test() {
         <ClosedQuestion_one config={configs.closed_config} />
         <ClosedQuestion_mult config={configs.closed_config_mult} />
         <ClosedQuestion_input config={configs.closed_config_input} />
-        <OpenedQuestion config={configs.opened_config1} />
-        <OpenedQuestion config={configs.opened_config2} />
+        <OpenedQuestion
+          config={configs.opened_config1}
+          value={shortOpen}
+          setValue={setShort}
+        />
+        <OpenedQuestion
+          config={configs.opened_config2}
+          value={longOpen}
+          setValue={setLong}
+        />
         <LinearQuestion config={configs.linear_config} />
         <GridQuestion config={configs.grid_config} />
         <PhoneQuestion config={configs.phone_config} />
