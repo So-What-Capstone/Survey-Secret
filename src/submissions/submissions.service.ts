@@ -10,7 +10,10 @@ import { Form, FormDocument } from '../forms/schemas/form.schema';
 import { FindSubmissionByIdOutput } from './dtos/find-submission-by-id.dto';
 import mongoose from 'mongoose';
 import { User, UserDocument } from '../users/schemas/user.schema';
-import { QuestionUnion } from './../forms/questions/question.typeDefs';
+import {
+  QuestionType,
+  QuestionUnion,
+} from './../forms/questions/question.typeDefs';
 import { DeleteSubmissionOutput } from './dtos/delete-submission.dto';
 
 @Injectable()
@@ -31,7 +34,7 @@ export class SubmissionsService {
   //submission에도 order를 넣어야할지?
   async createSubmission(
     respondent: User,
-    { formId, answers: answersInput }: CreateSubmissionInput,
+    { formId, sections }: CreateSubmissionInput,
   ): Promise<CreateSubmissionOutput> {
     try {
       const form = await this.formModel.findById(formId);
@@ -39,60 +42,61 @@ export class SubmissionsService {
         return { ok: false, error: '폼을 찾을 수 없습니다.' };
       }
 
-      // for (const {
-      //   closed,
-      //   opened,
-      //   linear,
-      //   grid,
-      //   personal,
-      // } of createSubmissionInput.answers) {
-      //   answers = [
-      //     ...(closed ? closed : []),
-      //     ...(opened ? opened : []),
-      //     ...(linear ? linear : []),
-      //     ...(grid ? grid : []),
-      //     ...(personal ? personal : []),
-      //   ];
-      // }
-
       let answers = [];
 
-      //for testing
-      for (const questionType of answersInput) {
-        for (const key in questionType) {
-          for (const answer of questionType[key]) {
-            if (answer.kind !== key) {
-              return { ok: false, error: '쿼리 잘못보냈음' };
-            } else {
-              answers.push(answer);
+      for (let { sectionId, answers: answersInput } of sections) {
+        //폼 내부에 섹션 find
+        const section = form.sections.find(
+          (section) => section._id.toString() === sectionId.toString(),
+        );
+
+        if (!section) {
+          return { ok: false, error: '존재하지 않는 섹션입니다.' };
+        }
+
+        //for testing
+        for (const answerInput of answersInput) {
+          for (const key in answerInput) {
+            for (const answer of answerInput[key]) {
+              if (answer.kind !== key) {
+                return { ok: false, error: '쿼리 잘못보냈음' };
+              } else {
+                //섹션 내부에 질문 있는지 체크
+                const questionExists = section.questions.find(
+                  (question) =>
+                    question._id.toString() === answer.question.toString(),
+                );
+
+                if (questionExists) {
+                  if (questionExists.kind !== answer.kind) {
+                    return {
+                      ok: false,
+                      error: '문제와 답변의 타입이 다릅니다.',
+                    };
+                  } else {
+                    answers.push(answer);
+                  }
+                } else {
+                  return { ok: false, error: '없는 질문에 대한 답변입니다.' };
+                }
+              }
             }
           }
         }
-      }
 
-      console.log(answers);
+        const requiredQuestions = section.questions.filter(
+          (question) => question.required === true,
+        );
 
-      for (const answer of answers) {
-        let question: typeof QuestionUnion;
-        for (const section of form.sections) {
-          //모든 question을 DB요청하는 것보다는 DB요청 한번만...
-          const questionUnion = section.questions.find((question) => {
-            return question._id.toString() === answer.question.toString();
-          });
-          if (questionUnion) {
-            if (questionUnion.kind !== answer.kind) {
-              return { ok: false, error: '문제와 답변의 타입이 다릅니다.' };
-            }
-            question = questionUnion;
-            if (question) {
-              break;
-            }
+        //여기 줄이는 법 생각해보자 계속 N^2연산이 들어감
+        for (let requiredQuestion of requiredQuestions) {
+          const exists = answers.find(
+            (answer) =>
+              answer.question.toString() === requiredQuestion._id.toString(),
+          );
+          if (!exists) {
+            return { ok: false, error: '필수 답변 질문이 없습니다.' };
           }
-        }
-
-        //for debug
-        if (!question) {
-          return { ok: false, error: '없는 질문에 대한 답변입니다.' };
         }
       }
 
@@ -133,8 +137,8 @@ export class SubmissionsService {
         .findOne()
         .where('_id')
         .equals(id)
-        .populate('form')
-        .populate('answers');
+        .populate('form');
+
       //form의 어느 정보까지 줄것인지 select
       if (!submission) {
         return { ok: false, error: '제출을 찾을 수 없습니다.' };

@@ -127,7 +127,7 @@ export class UsersService {
             password: password ? await bcrypt.hash(password, 10) : undefined,
             //need phone verification
             phoneNum: phoneNum ? phoneNum : undefined,
-            avatarImg: avatarImgUrl,
+            avatarImg: avatarImg ? avatarImgUrl : undefined,
           },
         },
       );
