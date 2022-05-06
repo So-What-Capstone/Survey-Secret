@@ -8,8 +8,7 @@
     flex-direction: column;
     border: 1px solid #65FFDC;
     padding: 70px;
-    background-color: #0a182d;
-    background-color: rgba(0x17,0x2a,0x46,0.25);
+    background-color: #0a182db2;
     color: white;
 }
 
