@@ -1,19 +1,17 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Input } from "antd";
 import DaumPostCode from "react-daum-postcode";
 import "../../styles/Question.css";
 import "../../styles/AddressQuestion.css";
+
 function AddressQuestion({ config, value, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [required] = useState(config.required);
-
-  // const [address, setAddress] = useState({
-  //   addr: "",
-  //   extra_addr: "",
-  //   code: "",
-  // });
+  useEffect((e) => {
+    setValue({ ...value, isValid: !required });
+  }, []);
   const [show_postcode, setShowPostCode] = useState(false);
   const onComplete = (data) => {
     var addr = "";
@@ -33,10 +31,12 @@ function AddressQuestion({ config, value, setValue }) {
         extraAddr = " (" + extraAddr + ")";
       }
     }
+    let isValid = required ? Boolean(data.zonecode) : true;
     setValue({
       zip_code: data.zonecode,
       address: addr,
       address_detail: extraAddr,
+      isValid: isValid,
     });
     setShowPostCode(false);
   };
@@ -49,6 +49,7 @@ function AddressQuestion({ config, value, setValue }) {
       zip_code: "",
       address: "",
       address_detail: "",
+      isValid: !required,
     });
   };
   const onAddrDetailChanged = (e) => {
@@ -110,6 +111,7 @@ AddressQuestion.propTypes = {
     zip_code: PropTypes.string,
     address: PropTypes.string,
     address_detail: PropTypes.string,
+    isValid: PropTypes.bool,
   }),
   setValue: PropTypes.func,
 };

@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
 import { DatePicker } from "antd";
@@ -8,18 +8,22 @@ function DateQuestion({ config, value, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [required] = useState(config.required);
+  useEffect(() => {
+    setValue({ ...value, isValid: !required });
+  }, []);
   const onChange = (e) => {
-    if (e === null) {
-      setValue({
-        date_str: "",
-        moment: null,
-      });
-    } else {
-      setValue({
-        date_str: e.format("YYYY-MM-DD"),
-        moment: e,
-      });
+    let date_str = "";
+    let moment = null;
+    if (e !== null) {
+      date_str = e.format("YYYY-MM-DD");
+      moment = e;
     }
+    let isValid = required ? Boolean(date_str) : true;
+    setValue({
+      date_str: date_str,
+      moment: moment,
+      isValid: isValid,
+    });
   };
   return (
     <div className="question-panel">
@@ -44,6 +48,7 @@ DateQuestion.propTypes = {
   value: PropTypes.shape({
     date_str: PropTypes.string,
     moment: PropTypes.any,
+    isValid: PropTypes.bool,
   }),
   setValue: PropTypes.func,
 };

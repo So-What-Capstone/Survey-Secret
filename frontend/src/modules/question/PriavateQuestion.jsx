@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
 import { Input, Select, Space, Cascader } from "antd";
@@ -23,10 +23,14 @@ function PhoneQuestion({ config, value, setValue }) {
   let info = "";
   if (isEncrypted) info += privacy_info;
   if (exp_date) info += exp_info_1 + exp_date + exp_info_2;
-
+  useEffect(() => {
+    setValue({ ...value, isValid: !required });
+  }, []);
   const onChange = (e) => {
     let v = e.target.value;
-    setValue(v.replace(/[^0-9]/g, ""));
+    v = v.replace(/[^0-9]/g, "");
+    let isValid = required ? Boolean(v) : true;
+    setValue({ data: v, isValid: isValid });
   };
 
   return (
@@ -35,7 +39,12 @@ function PhoneQuestion({ config, value, setValue }) {
       <label className="question-discription"> {description} </label>
       {info ? <div className="question-discription"> {info} </div> : null}
 
-      <Input maxLength={13} type="text" value={value} onChange={onChange} />
+      <Input
+        maxLength={13}
+        type="text"
+        value={value.data}
+        onChange={onChange}
+      />
     </div>
   );
 }
@@ -48,7 +57,7 @@ PhoneQuestion.propTypes = {
     exp_date: PropTypes.string,
     required: PropTypes.bool,
   }),
-  value: PropTypes.string,
+  value: PropTypes.shape({ data: PropTypes.string, isVaid: PropTypes.bool }),
   setValue: PropTypes.func,
 };
 
@@ -62,6 +71,9 @@ function EmailQuestion({ config, value, setValue }) {
   if (isEncrypted) info += privacy_info;
   if (exp_date) info += exp_info_1 + exp_date + exp_info_2;
   const { Option } = Select;
+  useEffect(() => {
+    setValue({ ...value, isValid: !required });
+  }, []);
 
   const onDomainChanged = (e) => {
     let idx = e;
@@ -80,9 +92,11 @@ function EmailQuestion({ config, value, setValue }) {
 
   const onMailChanged = (e) => {
     let mail = e.target.value;
+    let isValid = required ? Boolean(mail) : true;
     setValue({
       ...value,
       id: mail,
+      isValid: isValid,
     });
   };
   const selectAfter = (
@@ -125,6 +139,7 @@ EmailQuestion.propTypes = {
     id: PropTypes.string,
     domain_idx: PropTypes.number,
     domain: PropTypes.string,
+    isValid: PropTypes.bool,
   }),
   setValue: PropTypes.func,
 };

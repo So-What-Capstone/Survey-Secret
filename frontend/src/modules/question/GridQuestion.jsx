@@ -19,16 +19,23 @@ function GridQuestion({ config, value, setValue }) {
     text_span = 5;
   }
   useEffect(() => {
-    if (value.length !== rowLabels.length) {
-      setValue(rowLabels.map(() => -1));
+    let data = value.data;
+    if (value.data.length !== rowLabels.length) {
+      data = rowLabels.map(() => -1);
     }
+    setValue({ data: data, isValid: !required });
   }, []);
 
   const onChange = (e, rowNum) => {
     let val = e.target.value;
-    let newVal = value.slice();
+    let newVal = value.data.slice();
     newVal[rowNum] = val;
-    setValue(newVal);
+    let isValid = true;
+    if (required) {
+      let valid_list = newVal.filter((v) => v >= 0);
+      isValid = valid_list.length === rowLabels.length;
+    }
+    setValue({ data: newVal, isValid: isValid });
   };
   function FirstLine() {
     return (
@@ -54,7 +61,7 @@ function GridQuestion({ config, value, setValue }) {
         <Col span={24 - text_span}>
           <Radio.Group
             className="radio-group"
-            value={value[rowNum]}
+            value={value.data[rowNum]}
             onChange={(e) => onChange(e, rowNum)}
           >
             <Row>
@@ -95,7 +102,10 @@ GridQuestion.propTypes = {
     colLabels: PropTypes.arrayOf(PropTypes.string),
     required: PropTypes.bool,
   }),
-  value: PropTypes.arrayOf(PropTypes.number),
+  value: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.number),
+    isValid: PropTypes.bool,
+  }),
   setValue: PropTypes.func,
 };
 

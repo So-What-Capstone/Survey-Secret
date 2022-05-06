@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../styles/Question.css";
 import "../../styles/LinearQuestion.css";
 import PropTypes from "prop-types";
 import { Slider, InputNumber } from "antd";
+
 function LinearQuestion({ config, value, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
@@ -11,8 +12,14 @@ function LinearQuestion({ config, value, setValue }) {
   const [leftLabel] = useState(config.leftLabel);
   const [rightLabel] = useState(config.rightLabel);
   const [required] = useState(config.required);
+  useEffect((e) => {
+    setValue({
+      ...value,
+      isValid: true,
+    });
+  }, []);
   const onChange = (x) => {
-    setValue(x);
+    setValue({ data: x, isValid: true });
   };
 
   return (
@@ -26,7 +33,7 @@ function LinearQuestion({ config, value, setValue }) {
             <Slider
               min={leftEnd}
               max={rightEnd}
-              value={value}
+              value={value.data}
               onChange={onChange}
             />
           </div>
@@ -39,7 +46,7 @@ function LinearQuestion({ config, value, setValue }) {
           <InputNumber
             min={leftEnd}
             max={rightEnd}
-            value={value}
+            value={value.data}
             onChange={onChange}
           />
         </div>
@@ -58,7 +65,7 @@ LinearQuestion.propTypes = {
     rightLabel: PropTypes.string,
     required: PropTypes.bool,
   }),
-  value: PropTypes.number,
+  value: PropTypes.shape({ data: PropTypes.number, isValid: PropTypes.bool }),
   setValue: PropTypes.func,
 };
 

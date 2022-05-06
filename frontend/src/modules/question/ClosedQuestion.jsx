@@ -8,12 +8,15 @@ function ClosedQuestion_one({ config, value, setValue }) {
   const [description] = useState(config.description);
   const [choices] = useState(config.choices);
   const [required] = useState(config.required);
-  const selected = value.length > 0 ? value[0] : -1;
-  // useEffect((e) => {
-  //   if (value.length !== 1) setValue([-1]);
-  // }, []);
+  const selected = value.data.length > 0 ? value.data[0] : -1;
+  useEffect((e) => {
+    setValue({ ...value, isValid: !required });
+  }, []);
   const onChange = (e) => {
-    setValue([e.target.value]);
+    const v = e.target.value;
+    if (v >= 0) {
+      setValue({ data: [v], isValid: true });
+    }
   };
 
   function RadioChoices() {
@@ -46,7 +49,10 @@ ClosedQuestion_one.propTypes = {
     choices: PropTypes.arrayOf(PropTypes.string),
     required: PropTypes.bool,
   }),
-  value: PropTypes.arrayOf(PropTypes.number),
+  value: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.number),
+    isValid: PropTypes.bool,
+  }),
   setValue: PropTypes.func,
 };
 
@@ -55,13 +61,17 @@ function ClosedQuestion_mult({ config, value, setValue }) {
   const [description] = useState(config.description);
   const [choices] = useState(config.choices);
   const [required] = useState(config.required);
-
+  useEffect((e) => {
+    setValue({ ...value, isValid: !required });
+  }, []);
   const onChange = (e) => {
-    setValue(e.slice());
+    const data = e.slice();
+    const isValid = required ? data.length > 0 : true;
+    setValue({ data: data, isValid: isValid });
   };
   function CheckChoices() {
     return (
-      <Checkbox.Group onChange={onChange} value={value}>
+      <Checkbox.Group onChange={onChange} value={value.data}>
         <Space direction="vertical">
           {choices.map((val, idx) => (
             <Checkbox key={idx} value={idx}>
@@ -88,8 +98,12 @@ ClosedQuestion_mult.propTypes = {
     description: PropTypes.string,
     choices: PropTypes.arrayOf(PropTypes.string),
     required: PropTypes.bool,
+    isValid: PropTypes.bool,
   }),
-  value: PropTypes.arrayOf(PropTypes.number),
+  value: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.number),
+    isValid: PropTypes.bool,
+  }),
   setValue: PropTypes.func,
 };
 

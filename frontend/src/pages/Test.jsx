@@ -16,19 +16,29 @@ import {
 import * as configs from "../modules/question/test_config";
 
 function Test() {
-  const [shortOpen, setShort] = useState("");
-  const [longOpen, setLong] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState({ id: "", domain_idx: 0, domain: "" });
-  const [closed1, setClosed1] = useState([]);
-  const [closed2, setClosed2] = useState([]);
-  const [linear, setLinear] = useState(0);
-  const [grid, setGrid] = useState([]);
-  const [date, setDate] = useState({ date_str: "", moment: null });
+  const [shortOpen, setShort] = useState({ data: "", isValid: false });
+  const [longOpen, setLong] = useState({ data: "", isValid: false });
+  const [phone, setPhone] = useState({ data: "", isValid: false });
+  const [email, setEmail] = useState({
+    id: "",
+    domain_idx: 0,
+    domain: "",
+    isValid: false,
+  });
+  const [closed1, setClosed1] = useState({ data: [], isValid: false });
+  const [closed2, setClosed2] = useState({ data: [], isValid: false });
+  const [linear, setLinear] = useState({ data: 0, isValid: false });
+  const [grid, setGrid] = useState({ data: [], isValid: false });
+  const [date, setDate] = useState({
+    date_str: "",
+    moment: null,
+    isValid: false,
+  });
   const [addr, setAddr] = useState({
     zip_code: "",
     address: "",
     address_detail: "",
+    isValid: false,
   });
 
   return (

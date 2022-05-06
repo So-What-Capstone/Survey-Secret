@@ -28,7 +28,7 @@ export const opened_config1 = {
 export const opened_config2 = {
   content: "로봇과 인간의 미래에 대해서 어떻게 생각하는지 알려주세요.",
   description: "인간동물원",
-  isLong: false,
+  isLong: true,
   required: false,
 };
 
