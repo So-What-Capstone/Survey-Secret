@@ -26,8 +26,9 @@ function PhoneQuestion({ config, value, setValue }) {
 
   const onChange = (e) => {
     let v = e.target.value;
-    setValue(v);
+    setValue(v.replace(/[^0-9]/g, ""));
   };
+
   return (
     <div className="question-panel">
       <label className="question-title"> {content} </label>
