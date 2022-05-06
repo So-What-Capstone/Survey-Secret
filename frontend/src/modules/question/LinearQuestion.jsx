@@ -3,7 +3,7 @@ import "../../styles/Question.css";
 import "../../styles/LinearQuestion.css";
 import PropTypes from "prop-types";
 import { Slider, InputNumber } from "antd";
-function LinearQuestion({ config, value }) {
+function LinearQuestion({ config, value, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [leftEnd] = useState(config.leftEnd);
@@ -11,8 +11,9 @@ function LinearQuestion({ config, value }) {
   const [leftLabel] = useState(config.leftLabel);
   const [rightLabel] = useState(config.rightLabel);
   const [required] = useState(config.required);
-  const [numVal, setNumVal] = useState(0);
-  const onChange = (x) => setNumVal(x);
+  const onChange = (x) => {
+    setValue(x);
+  };
 
   return (
     <div className="question-panel">
@@ -25,7 +26,7 @@ function LinearQuestion({ config, value }) {
             <Slider
               min={leftEnd}
               max={rightEnd}
-              value={numVal}
+              value={value}
               onChange={onChange}
             />
           </div>
@@ -38,7 +39,7 @@ function LinearQuestion({ config, value }) {
           <InputNumber
             min={leftEnd}
             max={rightEnd}
-            value={numVal}
+            value={value}
             onChange={onChange}
           />
         </div>
@@ -58,6 +59,7 @@ LinearQuestion.propTypes = {
     required: PropTypes.bool,
   }),
   value: PropTypes.number,
+  setValue: PropTypes.func,
 };
 
 export default LinearQuestion;

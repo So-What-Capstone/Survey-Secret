@@ -1,10 +1,10 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import "../../styles/Question.css";
 import "../../styles/GridQuestion.css";
 
 import PropTypes from "prop-types";
 import { Row, Col, Radio } from "antd";
-function GridQuestion({ config }) {
+function GridQuestion({ config, value, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [rowLabels] = useState(config.rowLabels);
@@ -18,7 +18,18 @@ function GridQuestion({ config }) {
   if (num_col > 5) {
     text_span = 5;
   }
+  useEffect(() => {
+    if (value.length !== rowLabels.length) {
+      setValue(rowLabels.map(() => -1));
+    }
+  }, []);
 
+  const onChange = (e, rowNum) => {
+    let val = e.target.value;
+    let newVal = value.slice();
+    newVal[rowNum] = val;
+    setValue(newVal);
+  };
   function FirstLine() {
     return (
       <Row>
@@ -35,18 +46,21 @@ function GridQuestion({ config }) {
       </Row>
     );
   }
-
-  function Line({ label }) {
+  function Line({ rowNum, label }) {
     return (
       <Row>
         <Col span={text_span}> {label}</Col>
 
         <Col span={24 - text_span}>
-          <Radio.Group className="radio-group">
+          <Radio.Group
+            className="radio-group"
+            value={value[rowNum]}
+            onChange={(e) => onChange(e, rowNum)}
+          >
             <Row>
               {val_lst.map((idx) => (
                 <Col key={idx} span={radio_span} className="col">
-                  <Radio value={idx} />
+                  <Radio key={idx} value={idx} />
                 </Col>
               ))}
             </Row>
@@ -56,6 +70,7 @@ function GridQuestion({ config }) {
     );
   }
   Line.propTypes = {
+    rowNum: PropTypes.number,
     label: PropTypes.string,
   };
 
@@ -66,7 +81,7 @@ function GridQuestion({ config }) {
 
       <FirstLine />
       {rowLabels.map((label, idx) => (
-        <Line key={idx} label={label} />
+        <Line key={idx} rowNum={idx} label={label} />
       ))}
     </div>
   );
@@ -80,6 +95,8 @@ GridQuestion.propTypes = {
     colLabels: PropTypes.arrayOf(PropTypes.string),
     required: PropTypes.bool,
   }),
+  value: PropTypes.arrayOf(PropTypes.number),
+  setValue: PropTypes.func,
 };
 
 export default GridQuestion;
