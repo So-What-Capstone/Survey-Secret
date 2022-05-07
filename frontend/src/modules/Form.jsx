@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import Section from "./Section";
 import "../styles/Form.css";
 import {
   ClosedQuestion_one, // 0

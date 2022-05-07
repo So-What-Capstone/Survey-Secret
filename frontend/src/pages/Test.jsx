@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "../styles/Test.css";
 
 import * as configs from "../modules/question/test_config";
-import Section from "../modules/Section";
 import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 
