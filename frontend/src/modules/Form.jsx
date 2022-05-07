@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Section from "./Section";
-import "../styles/Form";
+import "../styles/Form.css";
 
 export default function Form({ config }) {
   const id = config.id;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/Test.css";
 import {
   ClosedQuestion_one,
@@ -15,6 +15,7 @@ import {
 
 import * as configs from "../modules/question/test_config";
 import Section from "../modules/Section";
+import Form from "../modules/Form";
 
 function Test() {
   const [shortOpen, setShort] = useState(configs.shortOpen);
@@ -102,12 +103,18 @@ function Test() {
       },
     ],
   });
-
+  const [form1, setForm] = useState({
+    id: "form1",
+    title: "my form",
+    description: "form description",
+    sections: [section1],
+  });
   return (
     <div className="root-container">
       <div className="panel">
         미리보기
-        <Section config={section1} />
+        <Form config={form1} />
+        {/* <Section config={section1} /> */}
         {/* <ClosedQuestion_one
           config={configs.closed_config}
           value={closed1}
