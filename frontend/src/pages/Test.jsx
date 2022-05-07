@@ -1,102 +1,180 @@
-import React from "react";
-import { useState } from "react";
-import EditQuestion from "../modules/question/EditQuestion";
-import {
-  ClosedQuestion_mult,
-  ClosedQuestion_one,
-  ClosedQuestion_input,
-  LinearQuestion,
-} from "../modules/Questions";
-import { OpenedQuestion } from "../modules/Questions";
-import { GridQuestion } from "../modules/Questions";
+import React, { useEffect, useState } from "react";
 import "../styles/Test.css";
+import {
+  ClosedQuestion_one,
+  ClosedQuestion_mult,
+  ClosedQuestion_input,
+  OpenedQuestion,
+  LinearQuestion,
+  GridQuestion,
+  PhoneQuestion,
+  EmailQuestion,
+  DateQuestion,
+  AddressQuestion,
+} from "../modules/index.js";
+
+import * as configs from "../modules/question/test_config";
+import Form from "../modules/Form";
 
 function Test() {
-  const [config1, setConfig1] = useState({
-    content: "나이는 얼마입니까?",
-    description: "만 나이로 답해주시기 바랍니다.",
-    required: true,
-    type: "closed",
-  });
-  const [data1, setData1] = useState({
-    choices: [
+  const [shortOpen, setShort] = useState(configs.shortOpen);
+  const [longOpen, setLong] = useState(configs.longOpen);
+  const [phone, setPhone] = useState(configs.phone);
+  const [email, setEmail] = useState(configs.email);
+  const [closed1, setClosed1] = useState(configs.closed1);
+  const [closed2, setClosed2] = useState(configs.closed2);
+  const [linear, setLinear] = useState(configs.linear);
+  const [grid, setGrid] = useState(configs.grid);
+  const [date, setDate] = useState(configs.date);
+  const [addr, setAddr] = useState(configs.addr);
+
+  const [section1, setSection1] = useState({
+    id: "1",
+    title: "section1",
+    isActive: true,
+    nextSecId: "",
+    questions: [
       {
-        content: "응답하지 않음",
-        trigger: -1,
+        id: "0",
+        type: 0,
+        config: configs.closed_config,
+        setValue: setClosed1,
       },
       {
-        content: "10대",
-        trigger: -1,
+        id: "1",
+        type: 1,
+        config: configs.closed_config_mult,
+        setValue: setClosed2,
       },
       {
-        content: "20대",
-        trigger: -1,
+        id: "2",
+        type: 2,
+        config: configs.closed_config_input,
+        setValue: null,
       },
       {
-        content: "30대 이상",
-        trigger: -1,
+        id: "3",
+        type: 3,
+        config: configs.opened_config1,
+        setValue: setShort,
+      },
+      {
+        id: "4",
+        type: 3,
+        config: configs.opened_config2,
+        setValue: setLong,
+      },
+      {
+        id: "5",
+        type: 4,
+        config: configs.linear_config,
+        setValue: setLinear,
+      },
+      {
+        id: "6",
+        type: 5,
+        config: configs.grid_config,
+        setValue: setGrid,
+      },
+      {
+        id: "7",
+        type: 6,
+        config: configs.phone_config,
+        setValue: setPhone,
+      },
+      {
+        id: "8",
+        type: 7,
+        config: configs.email_config,
+        setValue: setEmail,
+      },
+      {
+        id: "9",
+        type: 8,
+        config: configs.date_config,
+        setValue: setDate,
+      },
+      {
+        id: "10",
+        type: 9,
+        config: configs.addr_config,
+        setValue: setAddr,
       },
     ],
   });
-
+  const [form1, setForm] = useState({
+    id: "form1",
+    title: "my form",
+    description: "form description",
+    sections: [section1],
+  });
   return (
     <div className="root-container">
       <div className="panel">
         미리보기
-        <ClosedQuestion_one
-          title="나이는 얼마입니까?"
-          choices={["응답하지 않음", "10대", "20대", "30대 이상"]}
+        <Form config={form1} />
+        {/* <Section config={section1} /> */}
+        {/* <ClosedQuestion_one
+          config={configs.closed_config}
+          value={closed1}
+          setValue={setClosed1}
         />
         <ClosedQuestion_mult
-          title="좋아하는 과일은?"
-          choices={["사과", "오렌지", "딸기"]}
+          config={configs.closed_config_mult}
+          value={closed2}
+          setValue={setClosed2}
         />
-        <ClosedQuestion_input
-          title="동아리에게 바라는 점은?"
-          choices={["멋진 선배", "개쩌는 경험", "잦은 회식", "기타 입력"]}
+        <ClosedQuestion_input config={configs.closed_config_input} />
+        <OpenedQuestion
+          config={configs.opened_config1}
+          value={shortOpen}
+          setValue={setShort}
         />
         <OpenedQuestion
-          title="차기 회장으로 추천하는 사람을 알려주세요."
-          isLong={false}
-        />
-        <OpenedQuestion
-          title="로봇과 인간의 미래에 대해서 어떻게 생각하는지 알려주세요."
-          isLong={true}
+          config={configs.opened_config2}
+          value={longOpen}
+          setValue={setLong}
         />
         <LinearQuestion
-          title="급식에 대해 얼마나 만족하나요?"
-          leftEnd={0}
-          rightEnd={10}
-          leftLabel="극히매우아주심히불만족"
-          rightLabel="만족"
+          config={configs.linear_config}
+          value={linear}
+          setValue={setLinear}
         />
         <GridQuestion
-          title="오늘의 컨디션 체크"
-          rowLabels={[
-            "냄새가 좋다",
-            "깔끔하다",
-            "당당하다",
-            "기운이 없다",
-            "행복하다",
-          ]}
-          colLabels={[
-            "매우 아니다",
-            "아니다",
-            "보통이다",
-            "그렇다",
-            "매우 그렇다",
-          ]}
+          config={configs.grid_config}
+          value={grid}
+          setValue={setGrid}
         />
+        <PhoneQuestion
+          config={configs.phone_config}
+          value={phone}
+          setValue={setPhone}
+        />
+        <EmailQuestion
+          config={configs.email_config}
+          value={email}
+          setValue={setEmail}
+        />
+        <DateQuestion
+          config={configs.date_config}
+          value={date}
+          setValue={setDate}
+        />
+        <AddressQuestion
+          config={configs.addr_config}
+          value={addr}
+          setValue={setAddr}
+        /> */}
       </div>
       <div className="panel">
-        디자인 수정하기
+        {/* 디자인 수정하기
         <EditQuestion
           sectionCount={1}
           config={config1}
           onConfigChange={(c) => setConfig1(c)}
           data={data1}
           onDataChange={(d) => setData1(d)}
-        ></EditQuestion>
+        ></EditQuestion> */}
       </div>
     </div>
   );
