@@ -19,3 +19,16 @@
   margin: 5%;
   background-color: #384d6d;
 }
+
+.list-item-template {
+  width: 100%;
+  padding: 1%;
+  border: 0;
+  outline: 0;
+}
+.list-item-template:hover {
+  background-color: #65ffdc50;
+}
+.selected {
+  background-color: #ffffff70;
+}

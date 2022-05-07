@@ -56,7 +56,6 @@ export default function Form({ _config }) {
   const description = _config.description;
   const [response, setResponse] = useState();
   const [config, setConfig] = useState(null);
-
   useEffect(() => {
     let myConfig = { ..._config };
     let myRes = {};
@@ -75,7 +74,7 @@ export default function Form({ _config }) {
     }
     setResponse(myRes);
     setConfig(myConfig);
-  }, []);
+  }, [_config]);
 
   if (config === null) {
     return null;

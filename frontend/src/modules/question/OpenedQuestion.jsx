@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 import { Input } from "antd";
 import { shortOpen } from "./test_config";
 function OpenedQuestion({ config, setValue }) {
-  const [content] = useState(config.content);
-  const [description] = useState(config.description);
-  const [isLong] = useState(config.isLong);
-  const [required] = useState(config.required);
+  const content = config.content;
+  const description = config.description;
+  const isLong = config.isLong;
+  const required = config.required;
   const { TextArea } = Input;
   const [internalVal, setInternal] = useState(shortOpen);
   useEffect((e) => {

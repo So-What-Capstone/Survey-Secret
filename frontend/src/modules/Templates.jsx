@@ -27,4 +27,42 @@ const empty = {
   ],
 };
 
-export const template_list = [empty];
+const simple_form = {
+  id: "",
+  title: "간단한 호구조사",
+  description: "가족 관계 조사입니다.",
+  sections: [
+    {
+      id: "",
+      title: "호구",
+      isActive: true,
+      nextSecId: "",
+      questions: [
+        {
+          id: "1",
+          type: 0,
+          config: {
+            content: "가족 구성원은 몇 명입니까?",
+            description: "본인을 포함한 세대원",
+            choices: ["1인", "2인", "3~5인", "6인 이상"],
+            required: false,
+          },
+          setValue: empty_func,
+        },
+        {
+          id: "2",
+          type: 6,
+          config: {
+            content: "휴대전화번호",
+            description: "추첨이벤트용입니다.",
+            isEncrypted: true,
+            exp_date: "2999-12-31",
+            required: false,
+          },
+          setValue: empty_func,
+        },
+      ],
+    },
+  ],
+};
+export const template_list = [empty, simple_form];

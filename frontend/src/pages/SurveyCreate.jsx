@@ -1,13 +1,23 @@
-import { Button, List } from "antd";
+import { Button, List, Radio, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/SurveyCreate.css";
 
 function SurveyCreate() {
-  const template_example_names = [template_list.map((v) => v.title)];
+  const template_example_names = template_list.map((v) => v.title);
   const my_templates = [];
+  const my_templates_names = [];
   const [selected_template, setSelected] = useState([0, -1]);
+  const unselected_item = "list-item-template";
+  const selected_item = "list-item-template selected";
+  const onExampleChange = (idx) => () => {
+    setSelected([idx, -1]);
+  };
+  const onMineChange = (idx) => () => {
+    setSelected([-1, idx]);
+  };
+
   return (
     <div className="content">
       <div className="select-template">
@@ -16,9 +26,19 @@ function SurveyCreate() {
           <div className="template-list">
             <List
               size="small"
-              bordered
               dataSource={template_example_names}
-              renderItem={(item) => <List.Item> {item} </List.Item>}
+              renderItem={(item, idx) => (
+                <button
+                  className={
+                    idx === selected_template[0]
+                      ? selected_item
+                      : unselected_item
+                  }
+                  onClick={onExampleChange(idx)}
+                >
+                  {item}
+                </button>
+              )}
             />
           </div>
         </div>
@@ -27,9 +47,19 @@ function SurveyCreate() {
           <div className="template-list">
             <List
               size="small"
-              bordered
-              dataSource={my_templates}
-              renderItem={(item) => <List.Item> {item} </List.Item>}
+              dataSource={my_templates_names}
+              renderItem={(item, idx) => (
+                <div
+                  className={
+                    idx === selected_template[0]
+                      ? selected_item
+                      : unselected_item
+                  }
+                  onClick={onMineChange(idx)}
+                >
+                  {item}
+                </div>
+              )}
             />
           </div>
         </div>
@@ -39,7 +69,13 @@ function SurveyCreate() {
           <label className="title-label">템플릿 미리보기</label>
           <Button>선택</Button>
         </div>
-        <Form _config={template_list[0]} />
+        <Form
+          _config={
+            selected_template[0] >= 0
+              ? template_list[selected_template[0]]
+              : my_templates[selected_template[1]]
+          }
+        />
       </div>
     </div>
   );

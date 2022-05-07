@@ -6,13 +6,13 @@ import { Slider, InputNumber } from "antd";
 import { linear } from "./test_config";
 
 function LinearQuestion({ config, setValue }) {
-  const [content] = useState(config.content);
-  const [description] = useState(config.description);
-  const [leftEnd] = useState(config.leftEnd);
-  const [rightEnd] = useState(config.rightEnd);
-  const [leftLabel] = useState(config.leftLabel);
-  const [rightLabel] = useState(config.rightLabel);
-  const [required] = useState(config.required);
+  const content = config.content;
+  const description = config.description;
+  const leftEnd = config.leftEnd;
+  const rightEnd = config.rightEnd;
+  const leftLabel = config.leftLabel;
+  const rightLabel = config.rightLabel;
+  const required = config.required;
   const [internalVal, setInternal] = useState(linear);
   useEffect((e) => {
     setInternal({

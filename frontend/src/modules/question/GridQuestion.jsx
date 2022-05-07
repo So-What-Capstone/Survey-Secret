@@ -6,11 +6,11 @@ import PropTypes from "prop-types";
 import { Row, Col, Radio } from "antd";
 import { grid } from "./test_config";
 function GridQuestion({ config, setValue }) {
-  const [content] = useState(config.content);
-  const [description] = useState(config.description);
-  const [rowLabels] = useState(config.rowLabels);
-  const [colLabels] = useState(config.colLabels);
-  const [required] = useState(config.required);
+  const content = config.content;
+  const description = config.description;
+  const rowLabels = config.rowLabels;
+  const colLabels = config.colLabels;
+  const required = config.required;
   const [internalVal, setInternal] = useState(grid);
 
   const val_lst = colLabels.map((val, idx) => idx);
