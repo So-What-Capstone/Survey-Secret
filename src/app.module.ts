@@ -14,6 +14,7 @@ import { MailsModule } from './mails/mails.module';
 import { SubmissionsModule } from './submissions/submissions.module';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { UploaderModule } from './uploader/uploader.module';
+import { StatModule } from './stat/stat.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { UploaderModule } from './uploader/uploader.module';
     }),
     SubmissionsModule,
     UploaderModule,
+    StatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

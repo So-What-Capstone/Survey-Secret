@@ -83,7 +83,7 @@ export class Form extends CoreSchema {
   sections?: Section[];
 
   @Field((type) => [Submission], { nullable: true })
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Submission' })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Submission' }] })
   submissions?: Submission[];
 }
 

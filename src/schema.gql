@@ -198,6 +198,11 @@ enum UserType {
   Admin
 }
 
+type CoreOutput {
+  ok: Boolean!
+  error: String
+}
+
 type CreateAccountOutput {
   ok: Boolean!
   error: String
@@ -284,6 +289,7 @@ type Query {
   searchForms(input: SearchFormsInput!): SearchFormsOutput!
   getForms(input: GetFormsInput!): GetFormsOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
+  getStat: CoreOutput!
 }
 
 input FindUserByIdInput {
