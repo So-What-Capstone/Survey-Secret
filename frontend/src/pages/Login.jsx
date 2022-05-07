@@ -30,18 +30,6 @@ function Login() {
   } = useForm({
     mode: "onChange",
   });
-  // const register = () => {
-  //   let path = `/register`;
-  //   navigate(path);
-  // };
-  // const login = () => {
-  //   let path = `/`;
-  //   navigate(path);
-  // };
-  // const findpw = () => {
-  //   let path = `/findpw`;
-  //   navigate(path);
-  // };
 
   const onCompleted = (data) => {
     const {
@@ -77,73 +65,77 @@ function Login() {
   };
 
   return (
-    <div className="login">
-      <div>
-        <h1>Survey Secret</h1>
-      </div>
-      <form className="loginForm" onSubmit={handleSubmit(onSubmitValid)}>
-        <input
-          {...register("email", {
-            required: "이메일 필요",
-            minLength: {
-              value: 10,
-              message: "(testing)이메일은 10자 이상...........",
-            },
-            // validation
-            // validate:{value:(currentValue)=>}
-          })}
-          onFocus={clearLoginError}
-          type="email"
-          placeholder="email"
-          hasError={
-            formState.errors?.email ? formState.errors?.email : undefined
-          }
-          className="loginInputField"
-        ></input>
+    <div className="loginContainer">
+      <div className="login">
+        <div>
+          <h1>Survey Secret</h1>
+        </div>
+        <form className="loginForm" onSubmit={handleSubmit(onSubmitValid)}>
+          <input
+            {...register("email", {
+              required: "이메일 필요",
+              minLength: {
+                value: 10,
+                message: "(testing)이메일은 10자 이상...........",
+              },
+              // validation
+              // validate:{value:(currentValue)=>}
+            })}
+            onFocus={clearLoginError}
+            type="email"
+            placeholder="email"
+            hasError={
+              formState.errors?.email ? formState.errors?.email : undefined
+            }
+            className="loginInputField"
+          ></input>
 
-        <FormError message={formState.errors?.email?.message} />
-        <input
-          {...register("password", {
-            required: "패스워드 필요",
-            minLength: { value: 2, message: "2자 이상..." },
-          })}
-          onFocus={clearLoginError}
-          type="password"
-          placeholder="Password"
-          className="loginInputField"
-          hasError={
-            formState.errors?.password ? formState.errors?.password : undefined
-          }
-        ></input>
-        <FormError message={formState.errors?.password?.message} />
+          <FormError message={formState.errors?.email?.message} />
+          <input
+            {...register("password", {
+              required: "패스워드 필요",
+              minLength: { value: 2, message: "2자 이상..." },
+            })}
+            onFocus={clearLoginError}
+            type="password"
+            placeholder="Password"
+            className="loginInputField"
+            hasError={
+              formState.errors?.password
+                ? formState.errors?.password
+                : undefined
+            }
+          ></input>
+          <FormError message={formState.errors?.password?.message} />
 
-        <input
-          type="submit"
-          value={loading ? "Loading..." : "LogIn"}
-          disabled={!formState.isValid || loading}
-          className={
-            !formState.isValid || loading
-              ? "loginSubmit-disabled"
-              : "loginSubmit"
-          }
-        ></input>
-        <FormError message={formState.errors?.result?.message} />
-      </form>
+          <input
+            type="submit"
+            value={loading ? "Loading" : "LogIn"}
+            disabled={!formState.isValid || loading}
+            className={
+              !formState.isValid || loading
+                ? "loginSubmit-disabled"
+                : "loginSubmit"
+            }
+          ></input>
+          <FormError message={formState.errors?.result?.message} />
+        </form>
 
-      <div className="bottomBox">
-        <span className="loginOther">
-          <Link to={"/register"}>Register</Link>
-        </span>
-        <span className="loginOther">
-          <Link to="/findpw">find Account</Link>
-        </span>
-      </div>
+        <div className="bottomBox">
+          <span className="loginOther">
+            <Link to={"/register"}>Register</Link>
+          </span>
+          <span className="loginOther">
+            <Link to="/findpw">find Account</Link>
+          </span>
+        </div>
 
-      {/*       
+        {/*       
       <div className="loginOther">
         <input type="button" value="회원가입" onClick={register} />
         <input type="button" value="PW 찾기" onClick={findpw} />
       </div> */}
+      </div>
     </div>
   );
 }
