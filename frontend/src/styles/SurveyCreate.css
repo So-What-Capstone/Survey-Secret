@@ -1,0 +1,21 @@
+.content {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.select-template {
+  width: 40%;
+  margin: 5%;
+  background-color: #384d6d;
+}
+
+.template-list {
+  width: 90%;
+  background-color: #ffffff50;
+}
+
+.preview {
+  width: 40%;
+  margin: 5%;
+  background-color: #384d6d;
+}

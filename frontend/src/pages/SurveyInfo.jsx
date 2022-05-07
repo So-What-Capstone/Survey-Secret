@@ -1,11 +1,7 @@
 import React from "react";
 
 function SurveyInfo() {
-  return (
-    <div>
-      <h1>Implement SurveyInfo hear...</h1>
-    </div>
-  );
+  return <div className="content"></div>;
 }
 
 export default SurveyInfo;
