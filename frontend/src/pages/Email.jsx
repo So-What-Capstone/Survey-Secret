@@ -9,6 +9,33 @@ function Email() {
     { title: "메일 서비스", link_enabled: false, link: "/", color_idx: 0 },
   ];
 
+  /* 설문 + 수신인 정보 raw data*/
+  const forms = [
+    {
+      id: 0,
+      title: "누가 젤 귀여운가?",
+      receivers: [
+        { id: 0, name: "카리나" },
+        { id: 1, name: "닝닝" },
+        { id: 2, name: "윈터" },
+        { id: 3, name: "지젤" },
+      ],
+    },
+    {
+      id: 1,
+      title: "누가 젤 예쁜가??",
+      receivers: [
+        { id: 0, name: "고다현" },
+        { id: 1, name: "김지윤" },
+        { id: 2, name: "윈터" },
+      ],
+    },
+  ];
+
+  /* 수신인 정보 */
+  const [selectedForm, setSelectedForm] = useState(forms[0]); //선택된 설문
+  const [checkedItems, setCheckedItems] = useState(new Set()); //체크된 수신자들(num(id)들의 배열)
+
   /* 이메일 발신 정보 */
   const [textTitle, setTextTitle] = useState("");
   const [textValue, setTextValue] = useState("");
@@ -22,6 +49,10 @@ function Email() {
   };
 
   const sendEmail = () => {
+    console.log(selectedForm.id);
+    checkedItems.forEach(function (value) {
+      console.log(value);
+    });
     console.log(textTitle + ", " + textValue);
     //send Email logic
   };
@@ -30,7 +61,13 @@ function Email() {
     <div className="con">
       <ClipTray clips={clips} />
       <div className="email-con">
-        <ContactList />
+        <ContactList
+          forms={forms}
+          selectedForm={selectedForm}
+          checkedItems={checkedItems}
+          setSelectedForm={setSelectedForm}
+          setCheckedItems={setCheckedItems}
+        />
         <div className="detail-panel">
           <div className="content-row">
             <div className="content-label">

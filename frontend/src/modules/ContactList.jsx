@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "../styles/ContactList.scss";
 import PropTypes from "prop-types";
-import { Select, MenuItem } from "@material-ui/core";
+import { Select, MenuItem } from "@mui/material";
 
 TableItem.propTypes = {
   num: PropTypes.number,
@@ -42,41 +42,26 @@ function TableItem({ num, name, checkedItemHandler, isAllChecked }) {
   );
 }
 
-function ContactList() {
-  /* 설문 + 수신인 정보 */
-  const forms = [
-    {
-      id: 0,
-      title: "누가 젤 귀여운가?",
-      receivers: [
-        { id: 0, name: "카리나" },
-        { id: 1, name: "닝닝" },
-        { id: 2, name: "윈터" },
-        { id: 3, name: "지젤" },
-      ],
-    },
-    {
-      id: 1,
-      title: "누가 젤 예쁜가??",
-      receivers: [
-        { id: 0, name: "고다현" },
-        { id: 1, name: "김지윤" },
-        { id: 2, name: "윈터" },
-      ],
-    },
-  ];
+ContactList.propTypes = {
+  forms: PropTypes.array,
+  selectedForm: PropTypes.object,
+  checkedItems: PropTypes.object,
+  setSelectedForm: PropTypes.func,
+  setCheckedItems: PropTypes.func,
+};
 
+function ContactList({
+  forms,
+  selectedForm,
+  checkedItems,
+  setSelectedForm,
+  setCheckedItems,
+}) {
   const handleFormChange = (event) => {
     const selectedId = event.target.value;
     setSelectedForm(forms.find((form) => form.id === selectedId));
     //setSelectedForm(event.target.value);
   };
-
-  //선택된 설문
-  const [selectedForm, setSelectedForm] = useState(forms[0]);
-
-  //체크된 수신자들(num(id)들의 배열)
-  const [checkedItems, setCheckedItems] = useState(new Set());
 
   //전체 체크 여부
   const [isAllChecked, setIsAllChecked] = useState(false);
@@ -90,10 +75,6 @@ function ContactList() {
     } else if (!isChecked && checkedItems.has(id)) {
       //체크 해제
       checkedItems.delete(id);
-      /*
-      setCheckedItems((prev) => {
-        return prev.filter((x) => x !== id);
-      });*/
     }
     //디버깅
     checkedItems.forEach(function (value) {
