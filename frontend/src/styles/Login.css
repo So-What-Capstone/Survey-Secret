@@ -1,49 +1,87 @@
 .login {
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateY(-50%) translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #65FFDC;
-    padding: 5vw;
-    background-color: #172a46;
-    background-color: rgba(0x17,0x2a,0x46,0.25);
-    color: white;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #65ffdc;
+  padding: 5vw;
+  background-color: #172a46;
+  background-color: rgba(0x17, 0x2a, 0x46, 0.25);
+  color: white;
 }
 
 .login h1 {
-    color: #65FFDC;
+  color: #65ffdc;
 }
 
 .loginInputField {
-    margin: 1vw;
-    border: solid white;
-    border-width: 0px 0px 1px 0px;
-    background-color: #172a46;
-    background-color: rgba(255, 255, 255, 0);
-    width: 15vw;
+  border: solid white;
+  border-width: 0px 0px 1px 0px;
+  background-color: #172a46;
+  background-color: rgba(255, 255, 255, 0);
+  width: 100%;
 }
 
-.loginSubmit input{
-    margin: 1vw;
-    background-color: #65FFDC;
-    border-radius: 10px;
-    color: #172a46;
-    font-size: 1.5vw;
-    width: 15vw;
-    filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
+.loginSubmit {
+  background-color: #65ffdc;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+  color: #172a46;
+  font-size: 15px;
+  width: 100%;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 }
 
-.loginOther input{
-    margin: 0.5vw;
-    border: 1px solid #65FFDC;
-    box-sizing: border-box;
-    border-radius: 7px;
-    background-color: #172a46;
-    background-color: rgba(255, 255, 255, 0);
-    width: 7vw;
-    color: #65FFDC;
-    font-size: 1vw;
+.loginSubmit-disabled {
+  background-color: #65ffdc;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+  color: #172a46;
+  font-size: 15px;
+  width: 100%;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  opacity: 0.2;
+}
+
+.bottomBox {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.loginOther {
+  width: 100%;
+  margin-top: 5px;
+  font-weight: 500;
+  border: 1px solid #65ffdc;
+  box-sizing: border-box;
+  border-radius: 7px;
+  color: #65ffdc;
+  font-size: 12px;
+}
+.loginOther a {
+  color: white;
+}
+.loginOther :hover {
+  color: tomato;
+}
+
+.loginForm {
+  flex-direction: column;
+  display: flex;
+}
+
+.formError {
+  color: tomato;
+  font-weight: 600;
+  font-size: 12px;
+  margin: 5px 0px 10px 0px;
 }
