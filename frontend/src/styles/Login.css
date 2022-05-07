@@ -1,0 +1,49 @@
+.login {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #65FFDC;
+    padding: 5vw;
+    background-color: #172a46;
+    background-color: rgba(0x17,0x2a,0x46,0.25);
+    color: white;
+}
+
+.login h1 {
+    color: #65FFDC;
+}
+
+.loginInputField {
+    margin: 1vw;
+    border: solid white;
+    border-width: 0px 0px 1px 0px;
+    background-color: #172a46;
+    background-color: rgba(255, 255, 255, 0);
+    width: 15vw;
+}
+
+.loginSubmit input{
+    margin: 1vw;
+    background-color: #65FFDC;
+    border-radius: 10px;
+    color: #172a46;
+    font-size: 1.5vw;
+    width: 15vw;
+    filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
+}
+
+.loginOther input{
+    margin: 0.5vw;
+    border: 1px solid #65FFDC;
+    box-sizing: border-box;
+    border-radius: 7px;
+    background-color: #172a46;
+    background-color: rgba(255, 255, 255, 0);
+    width: 7vw;
+    color: #65FFDC;
+    font-size: 1vw;
+}
