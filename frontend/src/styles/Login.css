@@ -76,6 +76,7 @@
 }
 .loginOther a {
   color: white;
+  padding: 0px 50px;
 }
 .loginOther :hover {
   color: tomato;

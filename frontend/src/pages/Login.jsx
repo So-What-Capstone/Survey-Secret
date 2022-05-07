@@ -83,7 +83,7 @@ function Login() {
             })}
             onFocus={clearLoginError}
             type="email"
-            placeholder="email"
+            placeholder="Email"
             hasError={
               formState.errors?.email ? formState.errors?.email : undefined
             }
@@ -126,7 +126,7 @@ function Login() {
             <Link to={"/register"}>Register</Link>
           </span>
           <span className="loginOther">
-            <Link to="/findpw">find Account</Link>
+            <Link to="/findpw">Find Account</Link>
           </span>
         </div>
 
