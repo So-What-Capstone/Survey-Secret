@@ -2,21 +2,28 @@ import React, { useEffect, useState } from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
 import { Input } from "antd";
-function OpenedQuestion({ config, value, setValue }) {
+import { shortOpen } from "./test_config";
+function OpenedQuestion({ config, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [isLong] = useState(config.isLong);
   const [required] = useState(config.required);
   const { TextArea } = Input;
+  const [internalVal, setInternal] = useState(shortOpen);
   useEffect((e) => {
+    setInternal({
+      ...internalVal,
+      isValid: !required,
+    });
     setValue({
-      ...value,
+      ...internalVal,
       isValid: !required,
     });
   }, []);
   const onChange = (e) => {
     const data = e.target.value;
     const isValid = required ? Boolean(data) : true;
+    setInternal({ data: data, isValid: isValid });
     setValue({ data: data, isValid: isValid });
   };
   return (
@@ -24,9 +31,9 @@ function OpenedQuestion({ config, value, setValue }) {
       <label className="question-title"> {content} </label>
       <label className="question-discription"> {description} </label>
       {isLong ? (
-        <TextArea rows={2} value={value.data} onChange={onChange} />
+        <TextArea rows={2} value={internalVal.data} onChange={onChange} />
       ) : (
-        <Input value={value.data} onChange={onChange} maxLength={500} />
+        <Input value={internalVal.data} onChange={onChange} maxLength={500} />
       )}
     </div>
   );
@@ -39,7 +46,6 @@ OpenedQuestion.propTypes = {
     isLong: PropTypes.bool,
     required: PropTypes.bool,
   }),
-  value: PropTypes.shape({ data: PropTypes.string, isValid: PropTypes.bool }),
   setValue: PropTypes.func,
 };
 

@@ -4,13 +4,16 @@ import { Button, Input } from "antd";
 import DaumPostCode from "react-daum-postcode";
 import "../../styles/Question.css";
 import "../../styles/AddressQuestion.css";
+import { addr } from "./test_config";
 
-function AddressQuestion({ config, value, setValue }) {
+function AddressQuestion({ config, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [required] = useState(config.required);
+  const [internalVal, setInternal] = useState(addr);
   useEffect((e) => {
-    setValue({ ...value, isValid: !required });
+    setInternal({ ...internalVal, isValid: !required });
+    setValue({ ...internalVal, isValid: !required });
   }, []);
   const [show_postcode, setShowPostCode] = useState(false);
   const onComplete = (data) => {
@@ -32,6 +35,12 @@ function AddressQuestion({ config, value, setValue }) {
       }
     }
     let isValid = required ? Boolean(data.zonecode) : true;
+    setInternal({
+      zip_code: data.zonecode,
+      address: addr,
+      address_detail: extraAddr,
+      isValid: isValid,
+    });
     setValue({
       zip_code: data.zonecode,
       address: addr,
@@ -45,6 +54,12 @@ function AddressQuestion({ config, value, setValue }) {
   };
   const onPostResetClicked = () => {
     setShowPostCode(false);
+    setInternal({
+      zip_code: "",
+      address: "",
+      address_detail: "",
+      isValid: !required,
+    });
     setValue({
       zip_code: "",
       address: "",
@@ -53,8 +68,12 @@ function AddressQuestion({ config, value, setValue }) {
     });
   };
   const onAddrDetailChanged = (e) => {
+    setInternal({
+      ...internalVal,
+      address_detail: e.target.value,
+    });
     setValue({
-      ...value,
+      ...internalVal,
       address_detail: e.target.value,
     });
   };
@@ -67,7 +86,7 @@ function AddressQuestion({ config, value, setValue }) {
           <Input
             placeholder="우편번호"
             readOnly={true}
-            value={value.zip_code}
+            value={internalVal.zip_code}
           />
         </div>
 
@@ -90,11 +109,11 @@ function AddressQuestion({ config, value, setValue }) {
         {show_postcode ? <DaumPostCode onComplete={onComplete} /> : null}
       </div>
       <div className="address-line">
-        <Input placeholder="주소" readOnly={true} value={value.address} />
+        <Input placeholder="주소" readOnly={true} value={internalVal.address} />
       </div>
       <Input
         placeholder="상세주소 (직접입력)"
-        value={value.address_detail}
+        value={internalVal.address_detail}
         onChange={onAddrDetailChanged}
       />
     </div>
@@ -106,12 +125,6 @@ AddressQuestion.propTypes = {
     content: PropTypes.string,
     description: PropTypes.string,
     required: PropTypes.bool,
-  }),
-  value: PropTypes.shape({
-    zip_code: PropTypes.string,
-    address: PropTypes.string,
-    address_detail: PropTypes.string,
-    isValid: PropTypes.bool,
   }),
   setValue: PropTypes.func,
 };

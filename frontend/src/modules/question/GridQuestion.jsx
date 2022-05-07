@@ -4,12 +4,14 @@ import "../../styles/GridQuestion.css";
 
 import PropTypes from "prop-types";
 import { Row, Col, Radio } from "antd";
-function GridQuestion({ config, value, setValue }) {
+import { grid } from "./test_config";
+function GridQuestion({ config, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [rowLabels] = useState(config.rowLabels);
   const [colLabels] = useState(config.colLabels);
   const [required] = useState(config.required);
+  const [internalVal, setInternal] = useState(grid);
 
   const val_lst = colLabels.map((val, idx) => idx);
   const num_col = colLabels.length;
@@ -18,23 +20,26 @@ function GridQuestion({ config, value, setValue }) {
   if (num_col > 5) {
     text_span = 5;
   }
+
   useEffect(() => {
-    let data = value.data;
-    if (value.data.length !== rowLabels.length) {
+    let data = internalVal.data;
+    if (internalVal.data.length !== rowLabels.length) {
       data = rowLabels.map(() => -1);
     }
+    setInternal({ data: data, isValid: !required });
     setValue({ data: data, isValid: !required });
   }, []);
 
   const onChange = (e, rowNum) => {
     let val = e.target.value;
-    let newVal = value.data.slice();
+    let newVal = internalVal.data.slice();
     newVal[rowNum] = val;
     let isValid = true;
     if (required) {
       let valid_list = newVal.filter((v) => v >= 0);
       isValid = valid_list.length === rowLabels.length;
     }
+    setInternal({ data: newVal, isValid: isValid });
     setValue({ data: newVal, isValid: isValid });
   };
   function FirstLine() {
@@ -61,7 +66,7 @@ function GridQuestion({ config, value, setValue }) {
         <Col span={24 - text_span}>
           <Radio.Group
             className="radio-group"
-            value={value.data[rowNum]}
+            value={internalVal.data[rowNum]}
             onChange={(e) => onChange(e, rowNum)}
           >
             <Row>
@@ -101,10 +106,6 @@ GridQuestion.propTypes = {
     rowLabels: PropTypes.arrayOf(PropTypes.string),
     colLabels: PropTypes.arrayOf(PropTypes.string),
     required: PropTypes.bool,
-  }),
-  value: PropTypes.shape({
-    data: PropTypes.arrayOf(PropTypes.number),
-    isValid: PropTypes.bool,
   }),
   setValue: PropTypes.func,
 };

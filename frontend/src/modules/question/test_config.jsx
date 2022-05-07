@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 export const closed_config = {
   content: "나이는 얼마입니까?",
   description: "성심껏 대답해주세요.",
@@ -77,3 +78,41 @@ export const addr_config = {
   description: "asdf",
   required: false,
 };
+
+// value forms
+export const shortOpen = { data: "", isValid: false };
+export const longOpen = { data: "", isValid: false };
+export const phone = { data: "", isValid: false };
+export const email = {
+  id: "",
+  domain_idx: 0,
+  domain: "",
+  isValid: false,
+};
+export const closed1 = { data: [], isValid: false };
+export const closed2 = { data: [], isValid: false };
+export const linear = { data: 0, isValid: false };
+export const grid = { data: [], isValid: false };
+export const date = {
+  date_str: "",
+  moment: null,
+  isValid: false,
+};
+export const addr = {
+  zip_code: "",
+  address: "",
+  address_detail: "",
+  isValid: false,
+};
+export const init_value = [
+  closed1,
+  closed1,
+  closed1,
+  shortOpen,
+  linear,
+  grid,
+  phone,
+  email,
+  date,
+  addr,
+];

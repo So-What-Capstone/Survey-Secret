@@ -2,20 +2,25 @@ import React, { useEffect, useState } from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
 import { Radio, Space, Checkbox, Input } from "antd";
+import { closed1 } from "./test_config";
 
-function ClosedQuestion_one({ config, value, setValue }) {
+function ClosedQuestion_one({ config, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [choices] = useState(config.choices);
   const [required] = useState(config.required);
-  const selected = value.data.length > 0 ? value.data[0] : -1;
+  const [internalVal, setInternal] = useState(closed1);
+  const selected = internalVal.data.length > 0 ? internalVal.data[0] : -1;
   useEffect((e) => {
-    setValue({ ...value, isValid: !required });
+    setInternal({ ...internalVal, isValid: !required });
+    setValue({ ...internalVal, isValid: !required });
   }, []);
   const onChange = (e) => {
     const v = e.target.value;
+    const temp = { data: [v], isValid: true };
     if (v >= 0) {
-      setValue({ data: [v], isValid: true });
+      setInternal(temp);
+      setValue(temp);
     }
   };
 
@@ -49,29 +54,28 @@ ClosedQuestion_one.propTypes = {
     choices: PropTypes.arrayOf(PropTypes.string),
     required: PropTypes.bool,
   }),
-  value: PropTypes.shape({
-    data: PropTypes.arrayOf(PropTypes.number),
-    isValid: PropTypes.bool,
-  }),
   setValue: PropTypes.func,
 };
 
-function ClosedQuestion_mult({ config, value, setValue }) {
+function ClosedQuestion_mult({ config, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [choices] = useState(config.choices);
   const [required] = useState(config.required);
+  const [internalVal, setInternal] = useState(closed1);
   useEffect((e) => {
-    setValue({ ...value, isValid: !required });
+    setInternal({ ...internalVal, isValid: !required });
+    setValue({ ...internalVal, isValid: !required });
   }, []);
   const onChange = (e) => {
     const data = e.slice();
     const isValid = required ? data.length > 0 : true;
+    setInternal({ data: data, isValid: isValid });
     setValue({ data: data, isValid: isValid });
   };
   function CheckChoices() {
     return (
-      <Checkbox.Group onChange={onChange} value={value.data}>
+      <Checkbox.Group onChange={onChange} value={internalVal.data}>
         <Space direction="vertical">
           {choices.map((val, idx) => (
             <Checkbox key={idx} value={idx}>
@@ -98,10 +102,6 @@ ClosedQuestion_mult.propTypes = {
     description: PropTypes.string,
     choices: PropTypes.arrayOf(PropTypes.string),
     required: PropTypes.bool,
-    isValid: PropTypes.bool,
-  }),
-  value: PropTypes.shape({
-    data: PropTypes.arrayOf(PropTypes.number),
     isValid: PropTypes.bool,
   }),
   setValue: PropTypes.func,

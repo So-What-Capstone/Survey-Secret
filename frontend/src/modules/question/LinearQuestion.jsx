@@ -3,8 +3,9 @@ import "../../styles/Question.css";
 import "../../styles/LinearQuestion.css";
 import PropTypes from "prop-types";
 import { Slider, InputNumber } from "antd";
+import { linear } from "./test_config";
 
-function LinearQuestion({ config, value, setValue }) {
+function LinearQuestion({ config, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [leftEnd] = useState(config.leftEnd);
@@ -12,13 +13,19 @@ function LinearQuestion({ config, value, setValue }) {
   const [leftLabel] = useState(config.leftLabel);
   const [rightLabel] = useState(config.rightLabel);
   const [required] = useState(config.required);
+  const [internalVal, setInternal] = useState(linear);
   useEffect((e) => {
+    setInternal({
+      ...internalVal,
+      isValid: true,
+    });
     setValue({
-      ...value,
+      ...internalVal,
       isValid: true,
     });
   }, []);
   const onChange = (x) => {
+    setInternal({ data: x, isValid: true });
     setValue({ data: x, isValid: true });
   };
 
@@ -33,7 +40,7 @@ function LinearQuestion({ config, value, setValue }) {
             <Slider
               min={leftEnd}
               max={rightEnd}
-              value={value.data}
+              value={internalVal.data}
               onChange={onChange}
             />
           </div>
@@ -46,7 +53,7 @@ function LinearQuestion({ config, value, setValue }) {
           <InputNumber
             min={leftEnd}
             max={rightEnd}
-            value={value.data}
+            value={internalVal.data}
             onChange={onChange}
           />
         </div>
@@ -65,7 +72,6 @@ LinearQuestion.propTypes = {
     rightLabel: PropTypes.string,
     required: PropTypes.bool,
   }),
-  value: PropTypes.shape({ data: PropTypes.number, isValid: PropTypes.bool }),
   setValue: PropTypes.func,
 };
 

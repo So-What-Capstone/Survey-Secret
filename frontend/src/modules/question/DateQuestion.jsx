@@ -3,13 +3,16 @@ import "../../styles/Question.css";
 import PropTypes from "prop-types";
 import { DatePicker } from "antd";
 import moment from "moment";
+import { date } from "./test_config";
 
-function DateQuestion({ config, value, setValue }) {
+function DateQuestion({ config, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
   const [required] = useState(config.required);
+  const [internalVal, setInternal] = useState(date);
   useEffect(() => {
-    setValue({ ...value, isValid: !required });
+    setInternal({ ...internalVal, isValid: !required });
+    setValue({ ...internalVal, isValid: !required });
   }, []);
   const onChange = (e) => {
     let date_str = "";
@@ -19,6 +22,11 @@ function DateQuestion({ config, value, setValue }) {
       moment = e;
     }
     let isValid = required ? Boolean(date_str) : true;
+    setInternal({
+      date_str: date_str,
+      moment: moment,
+      isValid: isValid,
+    });
     setValue({
       date_str: date_str,
       moment: moment,
@@ -33,7 +41,7 @@ function DateQuestion({ config, value, setValue }) {
         style={{ width: "50%" }}
         placeholder="날짜를 선택해 주세요."
         onChange={onChange}
-        value={value.moment}
+        value={internalVal.moment}
       />
     </div>
   );
@@ -44,11 +52,6 @@ DateQuestion.propTypes = {
     content: PropTypes.string,
     description: PropTypes.string,
     required: PropTypes.bool,
-  }),
-  value: PropTypes.shape({
-    date_str: PropTypes.string,
-    moment: PropTypes.any,
-    isValid: PropTypes.bool,
   }),
   setValue: PropTypes.func,
 };
