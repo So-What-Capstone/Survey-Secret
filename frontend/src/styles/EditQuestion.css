@@ -27,3 +27,19 @@
 .edit-opened-text {
   color: #8b8b8b;
 }
+
+.edit-linear-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.edit-linear-label {
+  white-space: nowrap;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.edit-linear-row span:first-child {
+  margin-left: 0;
+}

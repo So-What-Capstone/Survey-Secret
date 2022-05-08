@@ -11,6 +11,7 @@ import {
   EmailQuestion,
   DateQuestion,
   AddressQuestion,
+  EditQuestion,
 } from "../modules/index.js";
 
 import * as configs from "../modules/question/test_config";
@@ -102,79 +103,133 @@ function Test() {
       },
     ],
   });
+
   const [form1, setForm] = useState({
     id: "form1",
     title: "my form",
     description: "form description",
     sections: [section1],
   });
+
+  const [config1, setConfig1] = useState({
+    content: "나이가 어떻게 되시나요?",
+    description: "만 나이로 답해주시기 바랍니다.",
+    required: true,
+    type: "closed",
+  });
+
+  const [data1, setData1] = useState({
+    allowMultiple: false,
+    choices: [
+      {
+        content: "응답하지 않음",
+        trigger: -1,
+      },
+      {
+        content: "10대",
+        trigger: -1,
+      },
+      {
+        content: "20대",
+        trigger: -1,
+      },
+      {
+        content: "30대 이상",
+        trigger: -1,
+      },
+    ],
+  });
+
+  const [config2, setConfig2] = useState({
+    content: "동아리에 바라는 점은?",
+    description: "자유롭게 응답해주세요.",
+    required: true,
+    type: "closed",
+  });
+
+  const [data2, setData2] = useState({
+    allowMultiple: true,
+    choices: [
+      {
+        content: "멋진 선배",
+        trigger: -1,
+      },
+      {
+        content: "개쩌는 경험",
+        trigger: -1,
+      },
+      {
+        content: "잦은 회식",
+        trigger: -1,
+      },
+      {
+        content: "기타",
+        trigger: -1,
+      },
+    ],
+  });
+
+  const [config3, setConfig3] = useState({
+    content: "차기 회장으로 추천하는 사람을 알려주세요.",
+    description: "한 사람만 입력해주세요.",
+    required: true,
+    type: "opened",
+  });
+
+  const [data3, setData3] = useState({
+    allowMultiple: true,
+  });
+
+  const [config4, setConfig4] = useState({
+    content: "급식에 대해 얼마나 만족하나요?",
+    description: "솔직히 응답해주세요.",
+    required: true,
+    type: "linear",
+  });
+
+  const [data4, setData4] = useState({
+    leftRange: 0,
+    leftLabel: "극히 심히 불만족",
+    rightRange: 10,
+    rightLabel: "만족",
+  });
+
   return (
     <div className="root-container">
       <div className="panel">
         미리보기
         <Form config={form1} />
-        {/* <Section config={section1} /> */}
-        {/* <ClosedQuestion_one
-          config={configs.closed_config}
-          value={closed1}
-          setValue={setClosed1}
-        />
-        <ClosedQuestion_mult
-          config={configs.closed_config_mult}
-          value={closed2}
-          setValue={setClosed2}
-        />
-        <ClosedQuestion_input config={configs.closed_config_input} />
-        <OpenedQuestion
-          config={configs.opened_config1}
-          value={shortOpen}
-          setValue={setShort}
-        />
-        <OpenedQuestion
-          config={configs.opened_config2}
-          value={longOpen}
-          setValue={setLong}
-        />
-        <LinearQuestion
-          config={configs.linear_config}
-          value={linear}
-          setValue={setLinear}
-        />
-        <GridQuestion
-          config={configs.grid_config}
-          value={grid}
-          setValue={setGrid}
-        />
-        <PhoneQuestion
-          config={configs.phone_config}
-          value={phone}
-          setValue={setPhone}
-        />
-        <EmailQuestion
-          config={configs.email_config}
-          value={email}
-          setValue={setEmail}
-        />
-        <DateQuestion
-          config={configs.date_config}
-          value={date}
-          setValue={setDate}
-        />
-        <AddressQuestion
-          config={configs.addr_config}
-          value={addr}
-          setValue={setAddr}
-        /> */}
       </div>
       <div className="panel">
-        {/* 디자인 수정하기
+        디자인 수정하기
         <EditQuestion
           sectionCount={1}
           config={config1}
           onConfigChange={(c) => setConfig1(c)}
           data={data1}
           onDataChange={(d) => setData1(d)}
-        ></EditQuestion> */}
+        ></EditQuestion>
+        <EditQuestion
+          sectionCount={1}
+          config={config2}
+          onConfigChange={(c) => setConfig2(c)}
+          data={data2}
+          onDataChange={(d) => setData2(d)}
+        ></EditQuestion>
+        <EditQuestion
+          sectionCount={1}
+          config={config3}
+          onConfigChange={(c) => setConfig1(c)}
+          data={data3}
+          onDataChange={(d) => setData1(d)}
+        ></EditQuestion>
+        <EditQuestion
+          sectionCount={1}
+          config={config4}
+          onConfigChange={(c) => setConfig4(c)}
+          data={data4}
+          onDataChange={(d) => setData4(d)}
+        ></EditQuestion>
       </div>
     </div>
   );

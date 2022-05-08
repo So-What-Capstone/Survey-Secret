@@ -12,3 +12,4 @@ export { default as OpenedQuestion } from "./question/OpenedQuestion";
 export * from "./question/PriavateQuestion";
 export { default as DateQuestion } from "./question/DateQuestion";
 export { default as AddressQuestion } from "./question/AddressQuestion";
+export { default as EditQuestion } from "./question/EditQuestion";
