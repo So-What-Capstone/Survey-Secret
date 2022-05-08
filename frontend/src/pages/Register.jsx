@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/Register.css";
+import "../styles/Register.scss";
 
 function Register() {
   //중복 제출 방지
@@ -113,7 +113,7 @@ function Register() {
   };
 
   return (
-    <div className="register-container">
+    <div className="register-con">
       <div>
         <h1>Survey Secret</h1>
       </div>
