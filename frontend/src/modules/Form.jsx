@@ -76,23 +76,25 @@ export default function Form({ _config }) {
     setConfig(myConfig);
   }, [_config]);
 
-  if (config === null) {
+  if (config === null || config === undefined) {
     return null;
   }
   return (
-    <div className="form" id={id}>
+    <div className="form">
       <label className="form-title"> {title} </label>
-      <label className="form-desc"> {description}</label>
-      {/* section */}
-      {config.sections.map((v, i) => (
-        <div key={v.id} className="section">
-          <label className="section-title">{v.title}</label>
-          {/* question */}
-          {v.questions.map((qprops, idx) => (
-            <Question key={qprops.id} qprops={qprops} />
-          ))}
-        </div>
-      ))}
+      <div className="form-container">
+        <label className="form-desc"> {description}</label>
+        {/* section */}
+        {config.sections.map((v) => (
+          <div key={v.id} className="section">
+            <label className="section-title">{v.title}</label>
+            {/* question */}
+            {v.questions.map((qprops) => (
+              <Question key={qprops.id} qprops={qprops} />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

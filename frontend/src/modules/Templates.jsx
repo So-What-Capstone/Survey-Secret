@@ -65,4 +65,76 @@ const simple_form = {
     },
   ],
 };
-export const template_list = [empty, simple_form];
+
+const simple_form2 = {
+  id: "",
+  title:
+    "아주아주아주 간단한 설문조사 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  description:
+    "설문 설명 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  sections: [
+    {
+      id: "",
+      title: "호구",
+      isActive: true,
+      nextSecId: "",
+      questions: [
+        {
+          id: "1",
+          type: 0,
+          config: {
+            content: "가족 구성원은 몇 명입니까?",
+            description: "본인을 포함한 세대원",
+            choices: ["1인", "2인", "3~5인", "6인 이상"],
+            required: false,
+          },
+          setValue: empty_func,
+        },
+        {
+          id: "2",
+          type: 6,
+          config: {
+            content: "휴대전화번호",
+            description: "추첨이벤트용입니다.",
+            isEncrypted: true,
+            exp_date: "2999-12-31",
+            required: false,
+          },
+          setValue: empty_func,
+        },
+      ],
+    },
+    {
+      id: "",
+      title: "호구",
+      isActive: true,
+      nextSecId: "",
+      questions: [
+        {
+          id: "3",
+          type: 0,
+          config: {
+            content: "가족 구성원은 몇 명입니까?",
+            description: "본인을 포함한 세대원",
+            choices: ["1인", "2인", "3~5인", "6인 이상"],
+            required: false,
+          },
+          setValue: empty_func,
+        },
+        {
+          id: "4",
+          type: 6,
+          config: {
+            content: "휴대전화번호",
+            description: "추첨이벤트용입니다.",
+            isEncrypted: true,
+            exp_date: "2999-12-31",
+            required: false,
+          },
+          setValue: empty_func,
+        },
+      ],
+    },
+  ],
+};
+export const template_list = [empty, simple_form, simple_form2];

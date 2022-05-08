@@ -1,0 +1,67 @@
+.info-btn {
+  background-color: #65ffdc;
+  border: 0;
+  outline: 0;
+  width: 98%;
+  min-height: 2.5rem;
+  height: fit-content;
+  margin: 1%;
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.info-right-panel {
+  width: 40%;
+  max-width: 50%;
+  min-height: 100%;
+}
+
+.setting-panel-title-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 2%;
+}
+.setting-btns {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.setting-panel {
+  width: 100%;
+  height: max-content;
+  padding: 4%;
+  background-color: #384d6d;
+  border-radius: 1rem;
+}
+.setting-save-btn {
+  width: 4.5rem;
+  /* padding-left: 5%;
+  padding-right: 5%; */
+  margin-right: 5%;
+  height: fit-content;
+  border: 0;
+  outline: 0;
+  border-radius: 0.5rem;
+  background-color: #65ffdc;
+  cursor: pointer;
+}
+
+.setting-panel-title {
+  color: #65ffdc;
+  width: fit-content;
+}
+.setting-content {
+  width: 100%;
+  padding: 5%;
+  background-color: #ffffff20;
+  border-radius: 1rem;
+}
+.setting-line {
+  width: 100%;
+  margin-bottom: 5%;
+}
+
+.setting-label {
+  color: #ccd6f6;
+}

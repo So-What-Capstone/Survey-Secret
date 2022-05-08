@@ -42,32 +42,40 @@ function SurveyCreate() {
             />
           </div>
         </div>
+
         <div className="my-templates">
           <label className="title-label"> 내가 만들었던 템플릿 가져오기</label>
           <div className="template-list">
-            <List
-              size="small"
-              dataSource={my_templates_names}
-              renderItem={(item, idx) => (
-                <div
-                  className={
-                    idx === selected_template[0]
-                      ? selected_item
-                      : unselected_item
-                  }
-                  onClick={onMineChange(idx)}
-                >
-                  {item}
-                </div>
-              )}
-            />
+            {my_templates_names.length === 0 ? (
+              <div className="list-item-template">
+                {" "}
+                이전에 만든 설문이 없습니다.{" "}
+              </div>
+            ) : (
+              <List
+                size="small"
+                dataSource={my_templates_names}
+                renderItem={(item, idx) => (
+                  <div
+                    className={
+                      idx === selected_template[0]
+                        ? selected_item
+                        : unselected_item
+                    }
+                    onClick={onMineChange(idx)}
+                  >
+                    {item}
+                  </div>
+                )}
+              />
+            )}
           </div>
         </div>
       </div>
       <div className="preview">
         <div className="panel-title">
           <label className="title-label">템플릿 미리보기</label>
-          <Button>선택</Button>
+          <button className="template-select-btn">선택</button>
         </div>
         <Form
           _config={
