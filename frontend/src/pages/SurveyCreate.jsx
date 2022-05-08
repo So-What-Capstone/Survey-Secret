@@ -20,7 +20,12 @@ function SurveyCreate() {
     setSelected([-1, idx]);
   };
   const saveAndDesign = () => {
-    navigate("/my-survey/design/");
+    // new_form = copy(the configuration of the selected template)
+    // send a request to make new survey(form)
+    // get the result(new form's id) of the request
+    // make new config for the new form
+    // make url: /my-syrvey/design?survey={id}
+    navigate("/my-survey/design");
   };
   return (
     <div className="content">
@@ -79,7 +84,9 @@ function SurveyCreate() {
       <div className="preview">
         <div className="panel-title">
           <label className="title-label">템플릿 미리보기</label>
-          <button className="template-select-btn">선택</button>
+          <button className="template-select-btn" onClick={saveAndDesign}>
+            선택
+          </button>
         </div>
         <Form
           _config={
