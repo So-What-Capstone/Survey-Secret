@@ -3,21 +3,25 @@ import React, { useEffect, useState } from "react";
 import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/SurveyCreate.css";
-
+import { useNavigate } from "react-router-dom";
 function SurveyCreate() {
+  const navigate = useNavigate();
   const template_example_names = template_list.map((v) => v.title);
   const my_templates = [];
   const my_templates_names = [];
   const [selected_template, setSelected] = useState([0, -1]);
   const unselected_item = "list-item-template";
   const selected_item = "list-item-template selected";
+
   const onExampleChange = (idx) => () => {
     setSelected([idx, -1]);
   };
   const onMineChange = (idx) => () => {
     setSelected([-1, idx]);
   };
-
+  const saveAndDesign = () => {
+    navigate("/my-survey/design/");
+  };
   return (
     <div className="content">
       <div className="select-template">

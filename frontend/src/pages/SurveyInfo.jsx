@@ -16,15 +16,20 @@ function SurveyInfo() {
     isPromoted: false,
     privacyExpiredAt: null,
     createdAt: moment(),
-    openingAt: moment(),
+    openingAt: null,
     closingAt: moment(),
     updatedAt: moment(),
+    url: "in-sang",
   });
+  const editEnabled = form_minor_config.state === 0;
+  const p_exp_enabled =
+    form_minor_config.privacyExpiredAt !== null && editEnabled;
+  const isOpeingSet = form_minor_config.openingAt !== null;
   const showResult = () => {
     navigate("/my-survey/result/list");
   };
   const editDesign = () => {
-    navigate("/my-survey/design/");
+    if (editEnabled) navigate("/my-survey/design/");
   };
   const onTitleChange = (e) => {
     setFormConfig({
@@ -39,7 +44,13 @@ function SurveyInfo() {
       description: e.target.value,
     });
   };
-
+  const onOpeningEnabledChange = (e) => {
+    let openingAt = null;
+    if (e.target.checked) {
+      openingAt = moment();
+    }
+    setFormMinorConfig({ ...form_minor_config, openingAt: openingAt });
+  };
   const onOpeningChange = (e, isDate) => {
     let mm = form_minor_config.openingAt;
     if (isDate) {
@@ -64,9 +75,9 @@ function SurveyInfo() {
       closingAt: mm,
     });
   };
-  const onPrivacyCheckChange = () => {
+  const onPrivacyCheckChange = (e) => {
     let new_p_exp = null;
-    if (form_minor_config.privacyExpiredAt === null)
+    if (e.target.checked)
       new_p_exp = form_minor_config.closingAt.add(3, "months");
 
     setFormMinorConfig({
@@ -95,7 +106,6 @@ function SurveyInfo() {
       isPromoted: e.target.checked,
     });
   };
-  const p_exp_enabled = form_minor_config.privacyExpiredAt !== null;
   return (
     <div className="content">
       <div className="preview">
@@ -119,8 +129,20 @@ function SurveyInfo() {
           <div className="setting-panel-inner">
             <div className="setting-content">
               <div className="setting-line">
+                <label className="setting-label">설문 링크</label>
+                <Input
+                  value={"https://survey-secret/" + form_minor_config.url}
+                  disabled={!editEnabled}
+                  readOnly
+                />
+              </div>
+              <div className="setting-line">
                 <label className="setting-label">설문 제목</label>
-                <Input value={form_config.title} onChange={onTitleChange} />
+                <Input
+                  value={form_config.title}
+                  onChange={onTitleChange}
+                  disabled={!editEnabled}
+                />
               </div>
               <div className="setting-line">
                 <label className="setting-label">설문 설명</label>
@@ -128,12 +150,19 @@ function SurveyInfo() {
                   rows={3}
                   value={form_config.description}
                   onChange={onDescChange}
+                  disabled={!editEnabled}
                 />
               </div>
               <div className="setting-line">
                 <div className="setting-panel-title-container">
                   <label className="setting-label">설문 응답 시작 시간</label>
                 </div>
+                <Checkbox
+                  checked={isOpeingSet}
+                  onChange={onOpeningEnabledChange}
+                >
+                  응답 시작 시간 사용하기
+                </Checkbox>
                 <div className="date-time-picker">
                   <DatePicker
                     value={form_minor_config.openingAt}
@@ -173,6 +202,7 @@ function SurveyInfo() {
                 <Checkbox
                   checked={p_exp_enabled}
                   onChange={onPrivacyCheckChange}
+                  disabled={!editEnabled}
                 >
                   만료기한 설정
                 </Checkbox>
