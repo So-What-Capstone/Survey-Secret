@@ -15,7 +15,6 @@ function SurveyInfo() {
     state: 0, // 0: designing, 1: doing survey, 2: done survey
     isPromoted: false,
     privacyExpiredAt: null,
-    createdAt: moment(),
     openingAt: null,
     closingAt: moment(),
     updatedAt: moment(),
@@ -25,6 +24,7 @@ function SurveyInfo() {
   const p_exp_enabled =
     form_minor_config.privacyExpiredAt !== null && editEnabled;
   const isOpeingSet = form_minor_config.openingAt !== null;
+  const isClosingSet = form_minor_config.closingAt !== null;
   const showResult = () => {
     navigate("/my-survey/result/list");
   };
@@ -62,6 +62,13 @@ function SurveyInfo() {
       ...form_minor_config,
       openingAt: mm,
     });
+  };
+  const onClosingEnabledChange = (e) => {
+    let closingAt = null;
+    if (e.target.checked) {
+      closingAt = moment();
+    }
+    setFormMinorConfig({ ...form_minor_config, closingAt: closingAt });
   };
   const onClosingChange = (e, isDate) => {
     let mm = form_minor_config.closingAt;
@@ -179,6 +186,12 @@ function SurveyInfo() {
                 <div className="setting-panel-title-container">
                   <label className="setting-label">설문 응답 마감 시간</label>
                 </div>
+                <Checkbox
+                  checked={isClosingSet}
+                  onChange={onClosingEnabledChange}
+                >
+                  응답 시작 시간 사용하기
+                </Checkbox>
                 <div className="date-time-picker">
                   <DatePicker
                     value={form_minor_config.closingAt}
