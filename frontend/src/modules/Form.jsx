@@ -14,6 +14,7 @@ import {
   AddressQuestion, // 9
 } from "./index.js";
 import { init_value } from "./question/test_config";
+import moment from "moment";
 
 const questionTable = [
   ClosedQuestion_one,
@@ -51,9 +52,6 @@ Question.propTypes = {
 };
 
 export default function Form({ _config }) {
-  const id = _config.id;
-  const title = _config.title;
-  const description = _config.description;
   const [response, setResponse] = useState();
   const [config, setConfig] = useState(null);
   useEffect(() => {
@@ -81,9 +79,9 @@ export default function Form({ _config }) {
   }
   return (
     <div className="form">
-      <label className="form-title"> {title} </label>
+      <label className="form-title"> {config.title} </label>
       <div className="form-container">
-        <label className="form-desc"> {description}</label>
+        <label className="form-desc"> {config.description}</label>
         {/* section */}
         {config.sections.map((v) => (
           <div key={v.id} className="section">
