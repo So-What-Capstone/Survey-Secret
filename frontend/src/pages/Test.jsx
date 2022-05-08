@@ -194,6 +194,33 @@ function Test() {
     rightLabel: "만족",
   });
 
+  const [config5, setConfig5] = useState({
+    content: "오늘의 컨디션은 어떠신가요?",
+    description: "솔직히 응답해주세요.",
+    required: true,
+    type: "grid",
+  });
+
+  const [data5, setData5] = useState({
+    rowContent: [
+      "냄새가 좋다",
+      "깔끔하다",
+      "당당하다",
+      "기운이 없다",
+      "행복하다",
+    ],
+    colContent: ["매우 아니다", "아니다", "보통이다", "그렇다", "매우 그렇다"],
+  });
+
+  const [config6, setConfig6] = useState({
+    content: "휴대전화 번호를 입력해주세요.",
+    description: "이벤트 당첨시 연락을 드리기 위해 수집됩니다.",
+    required: true,
+    type: "phone",
+  });
+
+  const [data6, setData6] = useState({});
+
   return (
     <div className="root-container">
       <div className="panel">
@@ -229,6 +256,20 @@ function Test() {
           onConfigChange={(c) => setConfig4(c)}
           data={data4}
           onDataChange={(d) => setData4(d)}
+        ></EditQuestion>
+        <EditQuestion
+          sectionCount={1}
+          config={config5}
+          onConfigChange={(c) => setConfig5(c)}
+          data={data5}
+          onDataChange={(d) => setData5(d)}
+        ></EditQuestion>
+        <EditQuestion
+          sectionCount={1}
+          config={config6}
+          onConfigChange={(c) => setConfig6(c)}
+          data={data6}
+          onDataChange={(d) => setData6(d)}
         ></EditQuestion>
       </div>
     </div>

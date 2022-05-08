@@ -11,6 +11,10 @@ import {
   Menu,
   Checkbox,
   InputNumber,
+  Row,
+  Col,
+  Typography,
+  Alert,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -193,7 +197,7 @@ EditOpenedQuestion.propTypes = {
   onDataChange: PropTypes.func,
 };
 
-function EditLinearQuestion({ sectionCount, data, onDataChange }) {
+function EditLinearQuestion({ data, onDataChange }) {
   const [leftRange, setLeftRange] = useState(data.leftRange);
   const [rightRange, setRightRange] = useState(data.rightRange);
   const [leftLabel, setLeftLabel] = useState(data.leftLabel);
@@ -247,7 +251,6 @@ function EditLinearQuestion({ sectionCount, data, onDataChange }) {
 }
 
 EditLinearQuestion.propTypes = {
-  sectionCount: PropTypes.number,
   data: PropTypes.shape({
     leftRange: PropTypes.number,
     rightRange: PropTypes.number,
@@ -257,15 +260,185 @@ EditLinearQuestion.propTypes = {
   onDataChange: PropTypes.func,
 };
 
-function EditGridQuestion() {}
+// Used for EditGridQuestion
+function ListMaintainer({ title, list, onListChange }) {
+  const [choices, setChoices] = useState(list ? list : []);
 
-function EditPhoneQuestion() {}
+  function addChoice() {
+    let newChoices = [...choices, ""];
+    setChoices(newChoices);
+    onListChange(newChoices);
+  }
 
-function EditEmailQuestion() {}
+  const addChoiceBelow = (i) => () => {
+    let newChoices = [...choices];
+    newChoices.splice(i + 1, 0, "");
+    setChoices(newChoices);
+    onListChange(newChoices);
+  };
 
-function EditDateQuestion() {}
+  const moveUpward = (i) => () => {
+    if (i > 0) {
+      let newChoices = [...choices];
+      [newChoices[i - 1], newChoices[i]] = [newChoices[i], newChoices[i - 1]];
+      setChoices(newChoices);
+      onListChange(newChoices);
+    }
+  };
 
-function EditAddressQuestion() {}
+  const moveDownward = (i) => () => {
+    if (i + 1 < choices.length) {
+      let newChoices = [...choices];
+      [newChoices[i], newChoices[i + 1]] = [newChoices[i + 1], newChoices[i]];
+      setChoices(newChoices);
+      onListChange(newChoices);
+    }
+  };
+
+  const remove = (i) => () => {
+    let newChoices = [...choices];
+    newChoices.splice(i, 1);
+    setChoices(newChoices);
+    onListChange(newChoices);
+  };
+
+  const editContent = (i) => (event) => {
+    let newChoices = [...choices];
+    newChoices[i] = event.target.value;
+    setChoices(newChoices);
+    onListChange(newChoices);
+  };
+
+  return (
+    <Space className="listman-root" direction="vertical">
+      <Divider>{title}</Divider>
+      {choices.map((c, i) => (
+        <div key={i} className="listman-row">
+          <Input placeholder="내용" value={c} onChange={editContent(i)}></Input>
+          <Dropdown.Button
+            onClick={addChoiceBelow(i)}
+            overlay={
+              <Menu>
+                <Menu.Item onClick={moveDownward(i)}>아래로 이동</Menu.Item>
+                <Menu.Item onClick={moveUpward(i)}>위로 이동</Menu.Item>
+                <Menu.Item onClick={remove(i)}>삭제</Menu.Item>
+              </Menu>
+            }
+          >
+            <Tooltip title="아래에 새 선택지 추가">
+              <PlusOutlined />
+            </Tooltip>
+          </Dropdown.Button>
+        </div>
+      ))}
+      <Divider>
+        <Tooltip title="새 선택지 추가">
+          <Button shape="circle" icon={<PlusOutlined />} onClick={addChoice} />
+        </Tooltip>
+      </Divider>
+    </Space>
+  );
+}
+
+ListMaintainer.propTypes = {
+  title: PropTypes.string,
+  list: PropTypes.arrayOf(PropTypes.string),
+  onListChange: PropTypes.func,
+};
+
+function EditGridQuestion({ data, onDataChange }) {
+  const [rowContent, setRowContent] = useState(
+    data.rowContent ? data.rowContent : []
+  );
+  const [colContent, setColContent] = useState(
+    data.colContent ? data.colContent : []
+  );
+
+  function changeRowContent(list) {
+    setRowContent(list);
+    onDataChange({ ...data, rowContent: list });
+  }
+
+  function changeColContent(list) {
+    setColContent(list);
+    onDataChange({ ...data, colContent: list });
+  }
+
+  return (
+    <Row>
+      <Col span={10} offset={1}>
+        <ListMaintainer
+          title="행 내용"
+          list={rowContent}
+          onListChange={changeRowContent}
+        ></ListMaintainer>
+      </Col>
+      <Col span={10} offset={2}>
+        <ListMaintainer
+          title="열 내용"
+          list={colContent}
+          onListChange={changeColContent}
+        ></ListMaintainer>
+      </Col>
+    </Row>
+  );
+}
+
+EditGridQuestion.propTypes = {
+  data: PropTypes.shape({
+    rowContent: PropTypes.arrayOf(PropTypes.string),
+    colContent: PropTypes.arrayOf(PropTypes.string),
+  }),
+  onDataChange: PropTypes.func,
+};
+
+function EditPhoneQuestion() {
+  const info =
+    "피조사자가 응답한 내용은 암호화되어 서버에 저장되고, " +
+    "조사자는 피조사자의 전화번호를 직접 알 수 없습니다. " +
+    "피조사자에게 연락을 취해야 하는 경우 본 서비스의 " +
+    "문자 메세지 전송 기능을 이용하실 수 있습니다.";
+
+  return (
+    <div className="edit-body">
+      <div className="edit-opened-text">전화번호 응답</div>
+      <Alert
+        message="응답 데이터가 서버에 암호화되어 보호됩니다."
+        description={info}
+        type="info"
+        showIcon
+      ></Alert>
+    </div>
+  );
+}
+
+function EditEmailQuestion() {
+  const info =
+    "피조사자가 응답한 내용은 암호화되어 서버에 저장되고, " +
+    "조사자는 피조사자의 이메일 주소를 직접 알 수 없습니다. " +
+    "피조사자에게 연락을 취해야 하는 경우 본 서비스의 " +
+    "이메일 전송 기능을 이용하실 수 있습니다.";
+
+  return (
+    <div className="edit-body">
+      <div className="edit-opened-text">이메일 응답</div>
+      <Alert
+        message="응답 데이터가 서버에 암호화되어 보호됩니다."
+        description={info}
+        type="info"
+        showIcon
+      ></Alert>
+    </div>
+  );
+}
+
+function EditDateQuestion() {
+  return <div className="edit-body edit-opened-text">날짜 응답</div>;
+}
+
+function EditAddressQuestion() {
+  return <div className="edit-body edit-opened-text">주소 응답</div>;
+}
 
 const typeLabelMap = {
   closed: "객관식 문항",

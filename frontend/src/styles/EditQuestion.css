@@ -43,3 +43,12 @@
 .edit-linear-row span:first-child {
   margin-left: 0;
 }
+
+.listman-root {
+  width: 100%;
+}
+
+.listman-row {
+  display: flex;
+  flex-direction: row;
+}
