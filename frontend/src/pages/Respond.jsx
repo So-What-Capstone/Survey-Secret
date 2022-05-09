@@ -5,7 +5,7 @@ import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/Respond.css";
 
-const formId = "62790a9fa2b013e1c29571d7";
+const formId = "62797e7d52d860cef3a4f652";
 
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
@@ -113,6 +113,19 @@ function getQuestionType(question) {
   }
   return typecode;
 }
+function getQuestionKind(type) {
+  if (0 <= type && type <= 2) {
+    return "Closed";
+  } else if (type === 4) {
+    return "Linear";
+  } else if (type === 5) {
+    return "Grid";
+  } else if (type === 6 || type === 7) {
+    return "Personal";
+  } else {
+    return "Opened";
+  }
+}
 function getFormConfigFromDB(formId, data) {
   const form = data.findFormById.form;
   let sections = data.findFormById.form.sections;
@@ -193,6 +206,7 @@ function Respond() {
     variables: { formId },
     onCompleted: (data) => {
       console.log("Query Completed");
+      console.log("data", data);
       const config = getFormConfigFromDB(formId, data);
       setFormConfig(config);
     },
@@ -220,28 +234,82 @@ function Respond() {
   const [response, setResponse] = useState();
   const onSubmitClick = () => {
     // submit the response
-    let isValid = true;
-    for (const idx in response) {
-      if (!response[idx].isValid) {
-        isValid = false;
-        break;
-      }
-    }
 
-    //response => Submission.
-    createSubmission({
+    // check the validity of response
+    // let isValid = true;
+    // for (const idx in response) {
+    //   if (!response[idx].isValid) {
+    //     isValid = false;
+    //     break;
+    //   }
+    // }
+    let sub_secs = new Array(form_config.sections.length);
+    for (let i = 0; i < sub_secs.length; i++) {
+      let sec = form_config.sections[i];
+      sub_secs[i] = { sectionId: sec.id, answers: [] };
+
+      let answers = {
+        Closed: [],
+        Opened: [],
+        Linear: [],
+        Grid: [],
+        Personal: [],
+      };
+      for (let j = 0; j < sec.questions.length; j++) {
+        let q = sec.questions[j];
+        const type = q.type;
+        const kind = getQuestionKind(q.type);
+
+        let ansDic = { kind: kind, question: q.id };
+        let qVal = response[q.id];
+
+        if ((0 <= type && type <= 2) || type === 4) {
+          // Closed, Linear
+          ansDic["no"] = qVal.data;
+        } else if (type === 3 || type === 6 || type === 5) {
+          // Opened, Phone, grid
+          ansDic["content"] = qVal.data;
+        } else if (type === 7) {
+          // email
+          ansDic["content"] = qVal.id + qVal.domain;
+        } else if (type === 8) {
+          // date
+          ansDic["content"] = qVal.date_str;
+        } else if (type === 9) {
+          // address
+          ansDic["content"] =
+            qVal.zip_code + qVal.address + qVal.address_detail;
+        }
+        if (!ansDic.no && !ansDic.content) continue;
+        if (ansDic.no) {
+          if (ansDic.no.length === 0) continue;
+        }
+        answers[kind].push(ansDic);
+      }
+      sub_secs[i]["answers"] = [answers];
+    }
+    const submission = {
       variables: {
         request: {
-          formId: "62796414d8360fa79dec9954",
+          formId: form_config.id,
+          sections: sub_secs,
+        },
+      },
+    };
+    /* // example of submission
+    {
+      variables: {
+        request: {
+          formId: "62797e7d52d860cef3a4f652",
           sections: {
-            sectionId: "62796414d8360fa79dec9955",
+            sectionId: "62797e7d52d860cef3a4f653",
             answers: [
               {
                 Closed: [
                   {
-                    no: 1,
+                    no: [1, 2],
                     kind: "Closed",
-                    question: "62796414d8360fa79dec9956",
+                    question: "62797e7d52d860cef3a4f654",
                   },
                 ],
               },
@@ -249,9 +317,13 @@ function Respond() {
           },
         },
       },
-    });
+    }
+    */
 
-    console.log(response);
+    //response => Submission.
+    createSubmission(submission);
+
+    console.log("submission", submission);
     // if (isValid) {
     //   alert("제출되었습니다.");
     // } else {
