@@ -99,6 +99,7 @@ export class FormsService {
               privacyExpiredAt: createFormInput.privacyExpiredAt,
               expiredAt: createFormInput.expiredAt,
               sections,
+              state: createFormInput.state,
               owner: user,
             },
           ],
@@ -306,6 +307,17 @@ export class FormsService {
         forms,
         lastId: forms.length !== 0 ? forms.at(-1)._id.toString() : undefined,
       };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async getTemplates(user: User): Promise<GetFormsOutput> {
+    try {
+      const template = await this.formModel.find({
+        $and: [{ state: FormState.Template }, { owner: user._id }],
+      });
+      return { ok: true, forms: template };
     } catch (error) {
       return { ok: false, error: error.message };
     }

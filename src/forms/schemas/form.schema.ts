@@ -21,6 +21,7 @@ import { Section, SectionSchema } from './section.schema';
 import { Submission } from '../../submissions/schemas/submission.schema';
 
 export enum FormState {
+  Template = 'Template',
   Ready = 'Ready',
   InProgress = 'InProgress',
   Expired = 'Expired',
@@ -56,10 +57,10 @@ export class Form extends CoreSchema {
     type: String,
     enum: FormState,
     required: true,
-    default: FormState.Ready,
+    // default: FormState.Ready,
   })
   @IsEnum(FormState)
-  state: string;
+  state: FormState;
 
   @Field((type) => Boolean)
   @Prop({ type: Boolean, default: false })

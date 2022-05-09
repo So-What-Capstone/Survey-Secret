@@ -174,6 +174,7 @@ type Form {
 }
 
 enum FormState {
+  Template
   Ready
   InProgress
   Expired
@@ -297,6 +298,7 @@ type Query {
   findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!
   searchForms(input: SearchFormsInput!): SearchFormsOutput!
   getForms(input: GetFormsInput!): GetFormsOutput!
+  getTemplates: GetFormsOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
   getStat: CoreOutput!
 }
@@ -361,6 +363,7 @@ scalar Upload
 input CreateFormInput {
   title: String!
   description: String
+  state: FormState!
   expiredAt: DateTime
   privacyExpiredAt: DateTime
   sections: [CreateSectionInput!]
@@ -441,10 +444,10 @@ input DeleteFormInput {
 input EditFormInput {
   title: String
   description: String
+  state: FormState
   expiredAt: DateTime
   privacyExpiredAt: DateTime
   sections: [CreateSectionInput!]
-  state: FormState!
   representativeQuestion: String
   formId: String!
 }

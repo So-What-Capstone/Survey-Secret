@@ -9,6 +9,7 @@ export class CreateFormInput extends PickType(Form, [
   'description',
   'expiredAt',
   'privacyExpiredAt',
+  'state',
 ]) {
   @Field((type) => [CreateSectionInput], { nullable: true })
   sections?: CreateSectionInput[];

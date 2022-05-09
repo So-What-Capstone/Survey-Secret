@@ -75,4 +75,10 @@ export class FormsResolver {
   ): Promise<GetFormsOutput> {
     return this.formsService.getForms(getFormsInput);
   }
+
+  @Query((returns) => GetFormsOutput)
+  @Type(['Any'])
+  getTemplates(@AuthUser() user: User): Promise<GetFormsOutput> {
+    return this.formsService.getTemplates(user);
+  }
 }
