@@ -1,10 +1,21 @@
-import { Field, InputType, ObjectType, PartialType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  IntersectionType,
+  ObjectType,
+  PartialType,
+  PickType,
+} from '@nestjs/graphql';
 import { IsMongoId } from 'class-validator';
 import { CoreOutput } from '../../common/dtos/output.dto';
+import { Form } from '../schemas/form.schema';
 import { CreateFormInput } from './craete-form.dto';
 
 @InputType()
-export class EditFormInput extends PartialType(CreateFormInput) {
+export class EditFormInput extends IntersectionType(
+  PartialType(CreateFormInput),
+  PickType(Form, ['state', 'representativeQuestion']),
+) {
   @Field((type) => String)
   @IsMongoId()
   formId: string;

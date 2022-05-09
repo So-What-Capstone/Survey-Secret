@@ -444,6 +444,8 @@ input EditFormInput {
   expiredAt: DateTime
   privacyExpiredAt: DateTime
   sections: [CreateSectionInput!]
+  state: FormState!
+  representativeQuestion: String
   formId: String!
 }
 

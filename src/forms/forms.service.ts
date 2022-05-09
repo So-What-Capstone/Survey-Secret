@@ -208,6 +208,8 @@ export class FormsService {
       sections: sectionInput,
       privacyExpiredAt,
       expiredAt,
+      state,
+      representativeQuestion,
     }: EditFormInput,
   ): Promise<EditFormOutput> {
     try {
@@ -236,6 +238,10 @@ export class FormsService {
             description: description ? description : undefined,
             privacyExpiredAt: privacyExpiredAt ? privacyExpiredAt : undefined,
             expiredAt: expiredAt ? expiredAt : undefined,
+            state: state ? state : undefined,
+            representativeQuestion: representativeQuestion
+              ? representativeQuestion
+              : undefined,
           },
         },
       );
