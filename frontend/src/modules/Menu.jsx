@@ -50,18 +50,26 @@ function Menu() {
         </div>
         <div className="login-menus">
           <div className="nickname">
-            {!isLoggedIn ? "guest" : loggedInUser}님
+            {!isLoggedIn ? "Guest" : loggedInUser}님
           </div>
           {!isLoggedIn ? (
             <>
-              <Link to="/login">로그인</Link>
-              <div className="login-logout">
-                <Link to="/register">회원가입</Link>
+              <div
+                className="login-menus-button"
+                onClick={() => navigate("/login")}
+              >
+                로그인
+              </div>
+              <div
+                className="login-menus-button"
+                onClick={() => navigate("/register")}
+              >
+                회원가입
               </div>
             </>
           ) : (
-            <div className="login-logout">
-              <span onClick={logUserOut}>로그아웃</span>
+            <div className="login-menus-button" onClick={logUserOut}>
+              로그아웃
             </div>
           )}
         </div>
@@ -69,7 +77,10 @@ function Menu() {
 
       <div className="subMenu">
         <div className="container-sub">
-          <div className="icon-sub"> Survey Secret </div>
+          <div className="icon-sub">
+            <span>쉽고 안전한</span>
+            <span>온라인 설문조사 플랫폼</span>
+          </div>
           <div className="menu-lists">
             <div className="menu-list">
               <a className="list-item" onClick={move("/my-survey")}>
