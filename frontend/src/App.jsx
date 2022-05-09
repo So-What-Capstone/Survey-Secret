@@ -10,8 +10,8 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <div className="root">
-        <Menu></Menu>
         <BrowserRouter>
+          <Menu></Menu>
           {/* NOTE: 각 페이지의 디자인과 구현은 Figma를 참고해주세요. */}
           <Routes>
             <Route path="/" element={<Pages.Main />} />
