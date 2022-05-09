@@ -462,17 +462,11 @@ const typeCompMap = {
   address: EditAddressQuestion,
 };
 
-function EditQuestion({
-  sectionCount,
-  config,
-  data,
-  onConfigChange,
-  onDataChange,
-}) {
+function EditQuestion({ sectionCount, data, onDataChange, ...rprops }) {
   const [quesBody, setQuesBody] = useState(<React.Fragment></React.Fragment>);
-  const [content, setContent] = useState(config.content);
-  const [description, setDescription] = useState(config.description);
-  const [type, setType] = useState(config.type);
+  const [content, setContent] = useState(data.content);
+  const [description, setDescription] = useState(data.description);
+  const [type, setType] = useState(data.type);
 
   useEffect(() => {
     if (type in typeCompMap) {
@@ -491,24 +485,24 @@ function EditQuestion({
 
   function handleQuesTypeChange(typePair) {
     setType(typePair);
-    const newConfig = { ...config, type: typePair };
-    onConfigChange(newConfig);
+    const newConfig = { ...data, type: typePair };
+    onDataChange(newConfig);
   }
 
   function handleContentChange(e) {
     setContent(e.target.value);
-    const newConfig = { ...config, content: e.target.value };
-    onConfigChange(newConfig);
+    const newConfig = { ...data, content: e.target.value };
+    onDataChange(newConfig);
   }
 
   function handleDescriptionChange(e) {
     setDescription(e.target.value);
-    const newConfig = { ...config, description: e.target.value };
-    onConfigChange(newConfig);
+    const newConfig = { ...data, description: e.target.value };
+    onDataChange(newConfig);
   }
 
   return (
-    <Space className="edit-root" direction="vertical">
+    <Space className="edit-root" direction="vertical" {...rprops}>
       <Input
         placeholder="질문 내용"
         value={content}
@@ -538,14 +532,12 @@ function EditQuestion({
 
 EditQuestion.propTypes = {
   sectionCount: PropTypes.number,
-  config: PropTypes.shape({
+  data: PropTypes.shape({
     content: PropTypes.string,
     description: PropTypes.string,
     required: PropTypes.bool,
     type: PropTypes.string,
   }),
-  data: PropTypes.any,
-  onConfigChange: PropTypes.func,
   onDataChange: PropTypes.func,
 };
 

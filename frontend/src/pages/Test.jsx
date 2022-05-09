@@ -101,14 +101,11 @@ function Test() {
     sections: [section1],
   });
 
-  const [config1, setConfig1] = useState({
+  const [data1, setData1] = useState({
     content: "나이가 어떻게 되시나요?",
     description: "만 나이로 답해주시기 바랍니다.",
     required: true,
     type: "closed",
-  });
-
-  const [data1, setData1] = useState({
     allowMultiple: false,
     choices: [
       {
@@ -130,14 +127,11 @@ function Test() {
     ],
   });
 
-  const [config2, setConfig2] = useState({
+  const [data2, setData2] = useState({
     content: "동아리에 바라는 점은?",
     description: "자유롭게 응답해주세요.",
     required: true,
     type: "closed",
-  });
-
-  const [data2, setData2] = useState({
     allowMultiple: true,
     choices: [
       {
@@ -159,39 +153,30 @@ function Test() {
     ],
   });
 
-  const [config3, setConfig3] = useState({
+  const [data3, setData3] = useState({
     content: "차기 회장으로 추천하는 사람을 알려주세요.",
     description: "한 사람만 입력해주세요.",
     required: true,
     type: "opened",
-  });
-
-  const [data3, setData3] = useState({
     allowMultiple: true,
   });
 
-  const [config4, setConfig4] = useState({
+  const [data4, setData4] = useState({
     content: "급식에 대해 얼마나 만족하나요?",
     description: "솔직히 응답해주세요.",
     required: true,
     type: "linear",
-  });
-
-  const [data4, setData4] = useState({
     leftRange: 0,
     leftLabel: "극히 심히 불만족",
     rightRange: 10,
     rightLabel: "만족",
   });
 
-  const [config5, setConfig5] = useState({
+  const [data5, setData5] = useState({
     content: "오늘의 컨디션은 어떠신가요?",
     description: "솔직히 응답해주세요.",
     required: true,
     type: "grid",
-  });
-
-  const [data5, setData5] = useState({
     rowContent: [
       "냄새가 좋다",
       "깔끔하다",
@@ -202,14 +187,12 @@ function Test() {
     colContent: ["매우 아니다", "아니다", "보통이다", "그렇다", "매우 그렇다"],
   });
 
-  const [config6, setConfig6] = useState({
+  const [data6, setData6] = useState({
     content: "휴대전화 번호를 입력해주세요.",
     description: "이벤트 당첨시 연락을 드리기 위해 수집됩니다.",
     required: true,
     type: "phone",
   });
-
-  const [data6, setData6] = useState({});
 
   return (
     <div className="root-container">
@@ -222,43 +205,31 @@ function Test() {
         디자인 수정하기
         <EditQuestion
           sectionCount={1}
-          config={config1}
-          onConfigChange={(c) => setConfig1(c)}
           data={data1}
           onDataChange={(d) => setData1(d)}
         ></EditQuestion>
         <EditQuestion
           sectionCount={1}
-          config={config2}
-          onConfigChange={(c) => setConfig2(c)}
           data={data2}
           onDataChange={(d) => setData2(d)}
         ></EditQuestion>
         <EditQuestion
           sectionCount={1}
-          config={config3}
-          onConfigChange={(c) => setConfig1(c)}
           data={data3}
-          onDataChange={(d) => setData1(d)}
+          onDataChange={(d) => setData3(d)}
         ></EditQuestion>
         <EditQuestion
           sectionCount={1}
-          config={config4}
-          onConfigChange={(c) => setConfig4(c)}
           data={data4}
           onDataChange={(d) => setData4(d)}
         ></EditQuestion>
         <EditQuestion
           sectionCount={1}
-          config={config5}
-          onConfigChange={(c) => setConfig5(c)}
           data={data5}
           onDataChange={(d) => setData5(d)}
         ></EditQuestion>
         <EditQuestion
           sectionCount={1}
-          config={config6}
-          onConfigChange={(c) => setConfig6(c)}
           data={data6}
           onDataChange={(d) => setData6(d)}
         ></EditQuestion>
