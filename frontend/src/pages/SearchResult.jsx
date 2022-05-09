@@ -231,7 +231,7 @@ function SearchResult() {
                       primaryTypographyProps={{ fontSize: "0.8rem" }}
                     />
                     <ListItemText
-                      primary={"폼 만료일: " + form.expiredAt}
+                      primary={"폼 만료일: " + form.expiredAt.substring(0, 10)}
                       className="row-item"
                       primaryTypographyProps={{ fontSize: "0.8rem" }}
                     />

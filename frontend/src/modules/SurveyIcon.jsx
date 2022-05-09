@@ -14,7 +14,7 @@ export default function SurveyIcon({ title, des, exp, link }) {
   let expArray = "";
   let timeArray = "";
 
-  if (exp !== null) {
+  if (exp) {
     expArray = exp.split("T");
     timeArray = expArray[1].split(".");
   }

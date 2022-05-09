@@ -25,6 +25,7 @@ const FIND_FORM_BY_ID_QUERY = gql`
       ok
       error
       form {
+        _id
         title
         state
         createdAt
@@ -90,6 +91,15 @@ const FIND_FORM_BY_ID_QUERY = gql`
 const CREATE_FORM_MUTATION = gql`
   mutation createForm($request: CreateFormInput!) {
     createForm(input: $request) {
+      ok
+      error
+    }
+  }
+`;
+
+const DELETE_FORM_MUTATION = gql`
+  mutation deleteForm($formId: String!) {
+    deleteForm(input: { formId: $formId }) {
       ok
       error
     }
@@ -180,15 +190,37 @@ function SurveyDesign() {
           createForm: { ok, error },
         } = data;
         if (!ok) {
+          console.log("OK IS FALSE");
+          console.log(error);
           throw new Error(error);
         }
         console.log(data);
       },
       onError: (error) => {
-        console.log(error);
+        console.log("ONERROR");
+        console.log(error.clientErrors);
+        console.log(error.extraInfo);
+        console.log(error.graphQLErrors);
+        console.log(error.message);
+        console.log(error.name);
       },
     }
   );
+  const [deleteForm, { loading: deleteLoading }] = useMutation(
+    DELETE_FORM_MUTATION,
+    {
+      onCompleted: (data) => {
+        const {
+          deleteForm: { ok, error },
+        } = data;
+        if (!ok) {
+          throw new Error(error);
+        }
+        console.log("Delete Complete");
+      },
+    }
+  );
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [rawForm, setRawForm] = useState();
@@ -548,6 +580,13 @@ function SurveyDesign() {
     };
 
     console.log(newForm);
+    console.log(rawForm);
+    deleteForm({
+      variables: {
+        formId: rawForm._id,
+      },
+    });
+
     // 현재 newForm에 모두 들어있음.
     createForm({
       variables: {
