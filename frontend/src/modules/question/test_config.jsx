@@ -105,14 +105,14 @@ export const addr = {
   isValid: false,
 };
 export const init_value = [
-  closed1,
-  closed1,
-  closed1,
-  shortOpen,
-  linear,
-  grid,
-  phone,
-  email,
-  date,
-  addr,
+  closed1, // 0
+  closed1, // 1
+  closed1, // 2
+  shortOpen, //3
+  linear, //4
+  grid, //5
+  phone, //6
+  email, //7
+  date, //8
+  addr, //9
 ];
