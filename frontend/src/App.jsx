@@ -14,6 +14,7 @@ function App() {
           <Route path="/" element={<Pages.Main />} />
           <Route path="/login" element={<Pages.Login />} />
           <Route path="/register" element={<Pages.Register />} />
+          <Route path="/respond" element={<Pages.Respond />} />
           <Route path="/my-survey" element={<Pages.MySurvey />} />
           <Route path="/my-survey/create" element={<Pages.SurveyCreate />} />
           <Route path="/my-survey/design" element={<Pages.SurveyDesign />} />

@@ -74,7 +74,7 @@ Question.propTypes = {
   }),
 };
 
-export default function Form({ _config }) {
+export default function Form({ _config, _setResponse }) {
   const [response, setResponse] = useState();
   const [config, setConfig] = useState(null);
   const [secEnabled, setSecEnabled] = useState();
@@ -101,6 +101,10 @@ export default function Form({ _config }) {
     setConfig(myConfig);
     setSecEnabled(mySec);
   }, [_config]);
+
+  useEffect(() => {
+    _setResponse(response);
+  }, [response]);
 
   if (config === null || config === undefined) {
     return null;
@@ -141,4 +145,5 @@ Form.propTypes = {
     description: PropTypes.string,
     sections: PropTypes.arrayOf(PropTypes.any),
   }),
+  _setResponse: PropTypes.func,
 };
