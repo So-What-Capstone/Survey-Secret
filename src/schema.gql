@@ -25,7 +25,7 @@ type ClosedQuestion {
   required: Boolean
   order: Float!
   choices: [ClosedQuestionChoice!]!
-  type: ClosedQuestionType
+  closedType: ClosedQuestionType
 }
 
 enum QuestionType {
@@ -45,12 +45,12 @@ type GridQuestion {
   _id: String!
   content: String!
   kind: QuestionType!
-  description: String!
+  description: String
   required: Boolean
   order: Float!
   rowContent: [String!]
   colContent: [String!]
-  type: GridQuestionType
+  gridType: GridQuestionType
 }
 
 enum GridQuestionType {
@@ -78,7 +78,7 @@ type OpenedQuestion {
   description: String
   required: Boolean
   order: Float!
-  type: OpenedQuestionType
+  openedType: OpenedQuestionType
 }
 
 enum OpenedQuestionType {
@@ -93,7 +93,7 @@ type PersonalQuestion {
   _id: String!
   content: String!
   kind: QuestionType!
-  description: String!
+  description: String
   required: Boolean
   order: Float!
   encoded: Boolean!
@@ -382,12 +382,12 @@ input CreateOpenedQuestionInput {
   description: String
   required: Boolean
   order: Float!
-  type: OpenedQuestionType
+  openedType: OpenedQuestionType
 }
 
 input CreateClosedQuestionInput {
   choices: [ClosedQuestionChoiceInputType!]!
-  type: ClosedQuestionType
+  closedType: ClosedQuestionType
   content: String!
   kind: QuestionType!
   description: String
@@ -409,7 +409,7 @@ input CreateGridQuestionInput {
   order: Float!
   rowContent: [String!]
   colContent: [String!]
-  type: GridQuestionType
+  gridType: GridQuestionType
 }
 
 input CreatePersonalQuestionInput {

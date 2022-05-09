@@ -31,7 +31,7 @@ export class GridQuestion {
   @Field((type) => QuestionType)
   kind: QuestionType;
 
-  @Field((type) => String)
+  @Field((type) => String, { nullable: true })
   description?: string;
 
   @Field((type) => Boolean, { nullable: true })
@@ -56,7 +56,7 @@ export class GridQuestion {
     required: true,
   })
   @IsEnum(GridQuestionType)
-  type?: GridQuestionType;
+  gridType?: GridQuestionType;
 }
 
 export const GridQuestionSchema = SchemaFactory.createForClass(GridQuestion);

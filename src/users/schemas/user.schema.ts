@@ -55,7 +55,6 @@ export class User extends CoreSchema {
     type: String,
     unique: true,
     sparse: true,
-    default: null,
     match: /^[0-9]{11}$/,
     select: false,
   })

@@ -289,6 +289,7 @@ export class FormsService {
     try {
       //for testing
       const pageSize = 3;
+      console.log(lastId);
 
       const forms = await this.formModel
         .find({
@@ -297,6 +298,7 @@ export class FormsService {
             { state: FormState.InProgress },
           ],
         })
+        .populate('owner')
         .limit(pageSize);
 
       return {

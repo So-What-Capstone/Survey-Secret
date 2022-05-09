@@ -12,7 +12,7 @@ import { QuestionType } from 'src/forms/questions/question.typeDefs';
 
 @InputType()
 export class CreateClosedQuestionInput extends IntersectionType(
-  PickType(ClosedQuestion, ['choices', 'type']),
+  PickType(ClosedQuestion, ['choices', 'closedType']),
   CommonCreateQuestionInput,
 ) {}
 

@@ -13,7 +13,7 @@ import { QuestionType } from '../question.typeDefs';
 @InputType()
 export class CreateOpenedQuestionInput extends IntersectionType(
   CommonCreateQuestionInput,
-  PickType(OpenedQuestion, ['type']),
+  PickType(OpenedQuestion, ['openedType']),
 ) {}
 
 @ObjectType()

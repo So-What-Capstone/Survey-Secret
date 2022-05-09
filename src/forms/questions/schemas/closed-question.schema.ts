@@ -81,7 +81,7 @@ export class ClosedQuestion {
     required: true,
   })
   @IsEnum(ClosedQuestionType)
-  type?: ClosedQuestionType;
+  closedType?: ClosedQuestionType;
 }
 
 export const ClosedQuestionSchema =

@@ -52,7 +52,7 @@ export class OpenedQuestion {
   })
   @IsEnum(OpenedQuestionType)
   @IsOptional()
-  type?: OpenedQuestionType;
+  openedType?: OpenedQuestionType;
 }
 
 export const OpenedQuestionSchema =
