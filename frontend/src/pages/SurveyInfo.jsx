@@ -174,8 +174,13 @@ function SurveyInfo() {
                   <DatePicker
                     value={form_minor_config.openingAt}
                     onChange={(e) => onOpeningChange(e, true)}
+                    disabled={!isOpeingSet}
                   />{" "}
-                  <TimePicker value={form_minor_config.openingAt} />
+                  <TimePicker
+                    value={form_minor_config.openingAt}
+                    onChange={(e) => onOpeningChange(e, false)}
+                    disabled={!isOpeingSet}
+                  />
                   <button className="setting-save-btn" onClick={setOpeningNow}>
                     지금 시작
                   </button>
@@ -199,7 +204,7 @@ function SurveyInfo() {
                   />{" "}
                   <TimePicker
                     value={form_minor_config.closingAt}
-                    onChange={(e) => onClosingChange(e, true)}
+                    onChange={(e) => onClosingChange(e, false)}
                   />
                   <button className="setting-save-btn" onClick={setClosingNow}>
                     지금 마감
