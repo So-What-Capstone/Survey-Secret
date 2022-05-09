@@ -12,8 +12,63 @@ import {
   Divider,
   ListItemButton,
 } from "@mui/material";
+import { gql, useQuery } from "@apollo/client";
+
+const SEARCH_FORMS_QUERY = gql`
+  query searchForms($title: String!) {
+    searchForms(input: { title: $title }) {
+      ok
+      error
+      forms {
+        _id
+        title
+        description
+        expiredAt
+        privacyExpiredAt
+        owner {
+          username
+        }
+      }
+      lastId
+    }
+  }
+`;
 
 function SearchResult() {
+  const [forms, setForms] = useState([
+    {
+      id: "1",
+      title: "폼제목1",
+      description: "폼설명어라어리어ㅏㄹ너ㅣㅇㄹ1",
+      expiredAt: "2022-3-20",
+      privacyExpiredAt: "2999/12/12",
+      owner: "김태리",
+    },
+    {
+      id: "2",
+      title: "폼제목2",
+      description: "폼설명어라vdfzzzzzzzㄹ1",
+      expiredAt: "2022-3-14",
+      privacyExpiredAt: "2999/11/12",
+      owner: "김태링",
+    },
+    {
+      id: "2",
+      title: "폼제목3",
+      description: "폼설명어라어리어ㅏㄹ너ㅣㅇㄹ1",
+      expiredAt: "2022-3-15",
+      privacyExpiredAt: "2999/12/13",
+      owner: "김태랑",
+    },
+    {
+      id: "3",
+      title: "폼제목3",
+      description: "폼설명어라어리어ㅏㄹ너ㅣㅇㄹ1",
+      expiredAt: "2022-3-16",
+      privacyExpiredAt: "2999/12/10",
+      owner: "김태령",
+    },
+  ]);
   const [selectedForm, setSelectedForm] = useState("");
   const [selectedSort, setSelectedSort] = useState(0);
   const [searchedForms, setSearchedForms] = useState([]); //검색결과 form들
@@ -36,6 +91,21 @@ function SearchResult() {
   }, [searchParams]);
 
   const [searchedText, setSearchedText] = useState(searchParams);
+
+  const { loading, data, error } = useQuery(SEARCH_FORMS_QUERY, {
+    variables: { title: searchParams.get("value") },
+    onCompleted: (data) => {
+      let {
+        searchForms: { ok, error, forms },
+      } = data;
+
+      if (!ok) {
+        throw new Error(error);
+      } else {
+        setForms(forms);
+      }
+    },
+  });
 
   const handleSearchedText = (e) => {
     setSearchedText(e.target.value);
@@ -91,41 +161,6 @@ function SearchResult() {
     { idx: 2, type: "개인정보 파기일 빠른순" },
     { idx: 3, type: "개인정보 파기일 느린순" },
   ];
-
-  const [forms, setForms] = useState([
-    {
-      id: "1",
-      title: "폼제목1",
-      description: "폼설명어라어리어ㅏㄹ너ㅣㅇㄹ1",
-      expiredAt: "2022-3-20",
-      privacyExpiredAt: "2999/12/12",
-      owner: "김태리",
-    },
-    {
-      id: "2",
-      title: "폼제목2",
-      description: "폼설명어라vdfzzzzzzzㄹ1",
-      expiredAt: "2022-3-14",
-      privacyExpiredAt: "2999/11/12",
-      owner: "김태링",
-    },
-    {
-      id: "2",
-      title: "폼제목3",
-      description: "폼설명어라어리어ㅏㄹ너ㅣㅇㄹ1",
-      expiredAt: "2022-3-15",
-      privacyExpiredAt: "2999/12/13",
-      owner: "김태랑",
-    },
-    {
-      id: "3",
-      title: "폼제목3",
-      description: "폼설명어라어리어ㅏㄹ너ㅣㅇㄹ1",
-      expiredAt: "2022-3-16",
-      privacyExpiredAt: "2999/12/10",
-      owner: "김태령",
-    },
-  ]);
 
   return (
     <div className="search-result-con">
@@ -191,7 +226,7 @@ function SearchResult() {
                   </div>
                   <div className="content-row info">
                     <ListItemText
-                      primary={"폼 제작자: " + form.owner}
+                      primary={"폼 제작자: " + form.owner.username}
                       className="row-item"
                       primaryTypographyProps={{ fontSize: "0.8rem" }}
                     />
@@ -201,7 +236,10 @@ function SearchResult() {
                       primaryTypographyProps={{ fontSize: "0.8rem" }}
                     />
                     <ListItemText
-                      primary={"개인정보 파기일: " + form.privacyExpiredAt}
+                      primary={
+                        "개인정보 파기일: " +
+                        form.privacyExpiredAt.substring(0, 10)
+                      }
                       className="row-item"
                       primaryTypographyProps={{ fontSize: "0.8rem" }}
                     />

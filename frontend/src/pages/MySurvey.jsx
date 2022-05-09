@@ -32,7 +32,9 @@ const ME_QUERY = gql`
       error
       user {
         forms {
+          _id
           title
+          description
           state
         }
       }
