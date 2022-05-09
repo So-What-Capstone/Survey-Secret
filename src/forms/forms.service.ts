@@ -86,6 +86,8 @@ export class FormsService {
             {
               title: createFormInput.title,
               description: createFormInput.description,
+              privacyExpiredAt: createFormInput.privacyExpiredAt,
+              expiredAt: createFormInput.expiredAt,
               sections,
               owner: user,
             },
@@ -189,7 +191,14 @@ export class FormsService {
 
   async editForm(
     owner: User,
-    { formId, title, description, sections: sectionInput }: EditFormInput,
+    {
+      formId,
+      title,
+      description,
+      sections: sectionInput,
+      privacyExpiredAt,
+      expiredAt,
+    }: EditFormInput,
   ): Promise<EditFormOutput> {
     try {
       //변수명 고치기
@@ -215,6 +224,8 @@ export class FormsService {
             sections: sectionInput ? sections : undefined,
             title: title ? title : undefined,
             description: description ? description : undefined,
+            privacyExpiredAt: privacyExpiredAt ? privacyExpiredAt : undefined,
+            expiredAt: expiredAt ? expiredAt : undefined,
           },
         },
       );

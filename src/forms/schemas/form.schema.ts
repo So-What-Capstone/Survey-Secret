@@ -85,6 +85,10 @@ export class Form extends CoreSchema {
   @Field((type) => [Submission], { nullable: true })
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Submission' }] })
   submissions?: Submission[];
+
+  @Field((type) => String, { nullable: true })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Question' })
+  representativeQuestion?: string;
 }
 
 export const FormSchema = SchemaFactory.createForClass(Form);

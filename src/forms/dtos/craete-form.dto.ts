@@ -4,7 +4,12 @@ import { CoreOutput } from './../../common/dtos/output.dto';
 import { CreateSectionInput } from './create-section.dto';
 
 @InputType()
-export class CreateFormInput extends PickType(Form, ['title', 'description']) {
+export class CreateFormInput extends PickType(Form, [
+  'title',
+  'description',
+  'expiredAt',
+  'privacyExpiredAt',
+]) {
   @Field((type) => [CreateSectionInput], { nullable: true })
   sections?: CreateSectionInput[];
 }

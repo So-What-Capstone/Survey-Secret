@@ -169,6 +169,7 @@ type Form {
   owner: User!
   sections: [Section!]
   submissions: [Submission!]
+  representativeQuestion: String
 }
 
 enum FormState {
@@ -352,6 +353,8 @@ scalar Upload
 input CreateFormInput {
   title: String!
   description: String
+  expiredAt: DateTime
+  privacyExpiredAt: DateTime
   sections: [CreateSectionInput!]
 }
 
@@ -429,6 +432,8 @@ input DeleteFormInput {
 input EditFormInput {
   title: String
   description: String
+  expiredAt: DateTime
+  privacyExpiredAt: DateTime
   sections: [CreateSectionInput!]
   formId: String!
 }
