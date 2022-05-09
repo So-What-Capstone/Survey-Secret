@@ -102,10 +102,9 @@ function parseClosedQuestion(sections, ques) {
     type: "closed",
     allowMultiple: ques.closedType === "One" ? false : true,
     choices: ques.choices.map((ch) => {
-      let triggerSect = sections.find((s) => s._id === ch.activatedSection);
       return {
         content: ch.choice,
-        trigger: triggerSect ? sections.indexOf(triggerSect) : -1,
+        trigger: ch.activatedSection ? ch.activatedSection : -1,
       };
     }),
   };
@@ -184,6 +183,9 @@ function SurveyDesign() {
           throw new Error(error);
         }
         console.log(data);
+      },
+      onError: (error) => {
+        console.log(error);
       },
     }
   );
@@ -418,7 +420,8 @@ function SurveyDesign() {
 
   function save() {
     let newForm = {
-      ...rawForm,
+      title: title,
+      state: "Template",
       sections: sections.map((sect, i) => {
         let opened = [],
           closed = [],
@@ -427,7 +430,7 @@ function SurveyDesign() {
           linear = [];
 
         sect.questions.forEach((ques, j) => {
-          if (sect.type === "closed") {
+          if (ques.type === "closed") {
             closed.push({
               order: j,
               required: ques.required,
@@ -442,13 +445,13 @@ function SurveyDesign() {
                   activatedSection:
                     ch.trigger === -1 || sections.length <= ch.trigger
                       ? null
-                      : sections[ch.trigger]._id,
+                      : ch.trigger,
                 };
               }),
             });
           }
 
-          if (sect.type === "opened") {
+          if (ques.type === "opened") {
             opened.push({
               openedType: "Default",
               order: j,
@@ -459,7 +462,7 @@ function SurveyDesign() {
             });
           }
 
-          if (sect.type === "linear") {
+          if (ques.type === "linear") {
             linear.push({
               leftRange: ques.leftRange,
               rightRange: ques.rightRange,
@@ -473,7 +476,7 @@ function SurveyDesign() {
             });
           }
 
-          if (sect.type === "grid") {
+          if (ques.type === "grid") {
             grid.push({
               gridType: "One",
               colContent: ques.colContent,
@@ -486,7 +489,7 @@ function SurveyDesign() {
             });
           }
 
-          if (sect.type === "phone") {
+          if (ques.type === "phone") {
             personal.push({
               type: "Phone",
               encoded: true,
@@ -498,7 +501,7 @@ function SurveyDesign() {
             });
           }
 
-          if (sect.type === "email") {
+          if (ques.type === "email") {
             personal.push({
               type: "Email",
               encoded: true,
@@ -510,7 +513,7 @@ function SurveyDesign() {
             });
           }
 
-          if (sect.type === "date") {
+          if (ques.type === "date") {
             opened.push({
               openedType: "Date",
               order: j,
@@ -521,7 +524,7 @@ function SurveyDesign() {
             });
           }
 
-          if (sect.type === "address") {
+          if (ques.type === "address") {
             opened.push({
               openedType: "Address",
               order: j,
@@ -534,7 +537,6 @@ function SurveyDesign() {
         });
 
         return {
-          ...sect,
           order: i,
           opened: opened,
           closed: closed,
@@ -545,7 +547,13 @@ function SurveyDesign() {
       }),
     };
 
+    console.log(newForm);
     // 현재 newForm에 모두 들어있음.
+    createForm({
+      variables: {
+        requests: newForm,
+      },
+    });
   }
 
   function saveWorks() {
