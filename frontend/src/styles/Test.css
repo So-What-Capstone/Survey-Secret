@@ -1,0 +1,15 @@
+.root-container {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  min-height: 50vh;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  margin: 2vw;
+  width: 46vw;
+  min-height: 100%;
+  background-color: white;
+}

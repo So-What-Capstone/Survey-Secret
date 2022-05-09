@@ -1,0 +1,34 @@
+.code-line {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  margin-bottom: 2%;
+}
+
+.code-input {
+  width: 30%;
+  margin-right: 2%;
+}
+
+.code-button {
+  width: fit-content;
+  margin-right: 2%;
+}
+
+.address-line {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 2%;
+}
+
+.addr-input {
+  width: 55%;
+  max-width: 100%;
+  margin-right: 2%;
+}
+.extra-addr-input {
+  width: 40%;
+  max-width: 100%;
+}

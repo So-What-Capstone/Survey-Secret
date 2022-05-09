@@ -1,0 +1,11 @@
+.survey-tray-container {
+  border-radius: 0.5rem;
+  background-color: #ffffff20;
+  width: 96%;
+  margin: 2%;
+  padding: 2%;
+}
+
+.mysurvey-label {
+  color: #ccd6f6;
+}
