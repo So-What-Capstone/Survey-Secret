@@ -25,6 +25,7 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
   const [choices, setChoices] = useState(data.choices ? data.choices : []);
   const [triggerOptions, setTriggerOptions] = useState([]);
   const [allowMultiple, setAllowMultiple] = useState(data.allowMultiple);
+  const [showTriggerSelect, setShowTriggerSelect] = useState(false);
 
   function getTriggerLabel(trigger) {
     if (trigger === -1) {
@@ -109,6 +110,12 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
       <Checkbox checked={allowMultiple} onChange={handleCheckboxChange}>
         복수 선택 허용
       </Checkbox>
+      <Checkbox
+        checked={showTriggerSelect}
+        onChange={(event) => setShowTriggerSelect(event.target.checked)}
+      >
+        선택지 트리거 설정 보이기
+      </Checkbox>
 
       {choices.map((c, i) => (
         <div key={i} className="edit-closed-row">
@@ -118,18 +125,20 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
             value={c.content}
             onChange={editContent(i)}
             addonAfter={
-              <Select
-                value={c.trigger}
-                placement="bottomRight"
-                dropdownMatchSelectWidth={false}
-                onChange={handleTriggerChange(i)}
-              >
-                {triggerOptions.map((p) => (
-                  <Option key={"option" + p[0]} value={p[0]}>
-                    {p[1]}
-                  </Option>
-                ))}
-              </Select>
+              showTriggerSelect ? (
+                <Select
+                  value={c.trigger}
+                  placement="bottomRight"
+                  dropdownMatchSelectWidth={false}
+                  onChange={handleTriggerChange(i)}
+                >
+                  {triggerOptions.map((p) => (
+                    <Option key={"option" + p[0]} value={p[0]}>
+                      {p[1]}
+                    </Option>
+                  ))}
+                </Select>
+              ) : null
             }
           ></Input>
           <Dropdown.Button

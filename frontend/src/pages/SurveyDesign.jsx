@@ -4,15 +4,15 @@ import "../styles/SurveyDesign.css";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import addrImage from "../resources/addr.svg";
-import emailImage from "../resources/email.svg";
-import gridImage from "../resources/grid.svg";
-import linearImage from "../resources/linear.svg";
-import longImage from "../resources/long.svg";
-import multImage from "../resources/mult.svg";
-import oneImage from "../resources/one.svg";
-import phoneImage from "../resources/phone.svg";
-import shortImage from "../resources/short.svg";
+import addrImage from "../resources/addr.png";
+import emailImage from "../resources/email.png";
+import gridImage from "../resources/grid.png";
+import linearImage from "../resources/linear.png";
+import longImage from "../resources/long.png";
+import multImage from "../resources/mult.png";
+import oneImage from "../resources/one.png";
+import phoneImage from "../resources/phone.png";
+import shortImage from "../resources/short.png";
 import { EditQuestion } from "../modules";
 
 const dummyData = [
@@ -192,7 +192,7 @@ function SurveyDesign() {
         <div className="design-preview-body">
           {sections.map((sect, i) => (
             <div className="design-section" key={`sect-${i}`}>
-              <Divider>{`섹션 시작 - "${sect.title}"`}</Divider>
+              <Divider>{`${i + 1}번째 섹션 시작 - "${sect.title}"`}</Divider>
               {sect.questions.map((ques, j) => (
                 <EditQuestion
                   onFocus={() => {
@@ -204,7 +204,7 @@ function SurveyDesign() {
                   onDataChange={updateQuestionData}
                 ></EditQuestion>
               ))}
-              <Divider>{`섹션 끝 - "${sect.title}"`}</Divider>
+              <Divider>{`${i + 1}번째 섹션 끝 - "${sect.title}"`}</Divider>
             </div>
           ))}
         </div>
