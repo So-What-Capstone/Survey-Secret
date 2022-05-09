@@ -11,9 +11,13 @@ SurveyIcon.propTypes = {
 
 // eslint-disable-next-line react/prop-types
 export default function SurveyIcon({ title, des, exp, link }) {
-  const expArray = exp.split("T");
-  const timeArray = expArray[1].split(".");
+  let expArray = "";
+  let timeArray = "";
 
+  if (exp !== null) {
+    expArray = exp.split("T");
+    timeArray = expArray[1].split(".");
+  }
   return (
     <a href={link} title={title}>
       <div className="survey-item">
