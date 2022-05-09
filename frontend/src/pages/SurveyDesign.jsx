@@ -551,7 +551,7 @@ function SurveyDesign() {
     // 현재 newForm에 모두 들어있음.
     createForm({
       variables: {
-        requests: newForm,
+        request: newForm,
       },
     });
   }
