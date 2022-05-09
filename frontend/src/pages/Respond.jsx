@@ -1,9 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/Respond.css";
 
 function Respond() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [response, setResponse] = useState();
   const onSubmitClick = () => {
     // submit the response
@@ -22,6 +25,15 @@ function Respond() {
       alert("필수 응답문항을 모두 답해주세요.");
     }
   };
+
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      //
+    } else {
+      navigate("/");
+    }
+  }, [searchParams]);
   return (
     <div className="respond-container">
       respond~~
