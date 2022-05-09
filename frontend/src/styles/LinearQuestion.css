@@ -1,0 +1,40 @@
+.components {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  /* background-color: aqua; */
+}
+.slider-container {
+  width: fit-content;
+  max-width: 100%;
+  min-width: 60%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+}
+
+.slider {
+  width: 90%;
+}
+
+.label-container {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  width: 100%;
+  height: fit-content;
+}
+
+.label {
+  min-width: 1rem;
+  max-width: 40%;
+  margin-right: 5%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.input-num {
+  margin-left: 2%;
+  margin-right: 2%;
+}
