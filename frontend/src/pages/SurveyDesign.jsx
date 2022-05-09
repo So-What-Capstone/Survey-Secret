@@ -15,6 +15,76 @@ import oneImage from "../resources/one.png";
 import phoneImage from "../resources/phone.png";
 import shortImage from "../resources/short.png";
 import { EditQuestion } from "../modules";
+import { gql, useQuery } from "@apollo/client";
+
+const formId = "62790a9fa2b013e1c29571d7";
+
+const FIND_FORM_BY_ID_QUERY = gql`
+  query findFormById($formId: String!) {
+    findFormById(input: { formId: $formId }) {
+      ok
+      error
+      form {
+        state
+        createdAt
+        sections {
+          _id
+          title
+          order
+          questions {
+            ... on ClosedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              closedType
+              choices {
+                no
+                choice
+                activatedSection
+              }
+            }
+            ... on OpenedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              openedType
+            }
+            ... on LinearQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              leftRange
+              rightRange
+              leftLabel
+              rightLabel
+            }
+            ... on GridQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              gridType
+            }
+            ... on PersonalQuestion {
+              _id
+              content
+              description
+              required
+              kind
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 const dummyData = [
   {
@@ -78,6 +148,14 @@ const dummyData = [
 ];
 
 function SurveyDesign() {
+  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
+    variables: { formId },
+    onCompleted: (data) => {
+      console.log("Query Completed");
+      console.log(data);
+    },
+  });
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [sections, setSections] = useState([]);
