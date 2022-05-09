@@ -5,10 +5,10 @@ import { Radio, Space, Checkbox, Input } from "antd";
 import { closed1 } from "./test_config";
 
 function ClosedQuestion_one({ config, setValue }) {
-  const [content] = useState(config.content);
-  const [description] = useState(config.description);
-  const [choices] = useState(config.choices);
-  const [required] = useState(config.required);
+  const content = config.content;
+  const description = config.description;
+  const choices = config.choices;
+  const required = config.required;
   const [internalVal, setInternal] = useState(closed1);
   const selected = internalVal.data.length > 0 ? internalVal.data[0] : -1;
   useEffect((e) => {
@@ -58,10 +58,10 @@ ClosedQuestion_one.propTypes = {
 };
 
 function ClosedQuestion_mult({ config, setValue }) {
-  const [content] = useState(config.content);
-  const [description] = useState(config.description);
-  const [choices] = useState(config.choices);
-  const [required] = useState(config.required);
+  const content = config.content;
+  const description = config.description;
+  const choices = config.choices;
+  const required = config.required;
   const [internalVal, setInternal] = useState(closed1);
   useEffect((e) => {
     setInternal({ ...internalVal, isValid: !required });
@@ -108,10 +108,10 @@ ClosedQuestion_mult.propTypes = {
 };
 
 function ClosedQuestion_input({ config }) {
-  const [content] = useState(config.content);
-  const [description] = useState(config.description);
-  const [choices] = useState(config.choices);
-  const [required] = useState(config.required);
+  const content = config.content;
+  const description = config.description;
+  const choices = config.choices;
+  const required = config.required;
   function RadioInput({ value }) {
     const last_idx = choices.length - 1;
 

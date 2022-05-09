@@ -7,9 +7,9 @@ import "../../styles/AddressQuestion.css";
 import { addr } from "./test_config";
 
 function AddressQuestion({ config, setValue }) {
-  const [content] = useState(config.content);
-  const [description] = useState(config.description);
-  const [required] = useState(config.required);
+  const content = config.content;
+  const description = config.description;
+  const required = config.required;
   const [internalVal, setInternal] = useState(addr);
   useEffect((e) => {
     setInternal({ ...internalVal, isValid: !required });

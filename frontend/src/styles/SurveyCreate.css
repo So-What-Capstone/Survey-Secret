@@ -1,0 +1,79 @@
+.content {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  justify-content: space-between;
+}
+
+.select-template {
+  width: 40%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 2%;
+  padding: 1%;
+  background-color: #384d6d;
+  border-radius: 0.5rem;
+}
+.example-templates {
+  width: 100%;
+  margin-bottom: 5%;
+}
+
+.title-label {
+  color: #65ffdc;
+}
+
+.template-list {
+  width: 100%;
+  background-color: #ffffff50;
+  max-height: 30vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.preview {
+  width: 40%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 2%;
+  padding: 1%;
+  background-color: #384d6d;
+  border-radius: 0.5rem;
+}
+
+.list-item-template {
+  width: 100%;
+  padding: 1%;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+.list-item-template:hover {
+  background-color: #65ffdc50;
+}
+.selected {
+  background-color: #ffffff70;
+}
+
+.panel-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.template-select-btn {
+  background-color: #65ffdc;
+  border-radius: 0.5rem;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  padding-left: 5%;
+  padding-right: 5%;
+}

@@ -16,11 +16,11 @@ const mail_postfix = [
   "@uos.ac.kr",
 ];
 function PhoneQuestion({ config, setValue }) {
-  const [content] = useState(config.content);
-  const [description] = useState(config.description);
-  const [isEncrypted] = useState(config.isEncrypted);
-  const [exp_date] = useState(config.exp_date);
-  const [required] = useState(config.required);
+  const content = config.content;
+  const description = config.description;
+  const isEncrypted = config.isEncrypted;
+  const exp_date = config.exp_date;
+  const required = config.required;
   const [internalVal, setInternal] = useState(phone);
   let info = "";
   if (isEncrypted) info += privacy_info;

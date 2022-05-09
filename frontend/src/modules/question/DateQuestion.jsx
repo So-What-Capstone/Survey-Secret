@@ -6,9 +6,9 @@ import moment from "moment";
 import { date } from "./test_config";
 
 function DateQuestion({ config, setValue }) {
-  const [content] = useState(config.content);
-  const [description] = useState(config.description);
-  const [required] = useState(config.required);
+  const content = config.content;
+  const description = config.description;
+  const required = config.required;
   const [internalVal, setInternal] = useState(date);
   useEffect(() => {
     setInternal({ ...internalVal, isValid: !required });

@@ -16,19 +16,9 @@ import {
 
 import * as configs from "../modules/question/test_config";
 import Form from "../modules/Form";
+import { template_list } from "../modules/Templates";
 
 function Test() {
-  const [shortOpen, setShort] = useState(configs.shortOpen);
-  const [longOpen, setLong] = useState(configs.longOpen);
-  const [phone, setPhone] = useState(configs.phone);
-  const [email, setEmail] = useState(configs.email);
-  const [closed1, setClosed1] = useState(configs.closed1);
-  const [closed2, setClosed2] = useState(configs.closed2);
-  const [linear, setLinear] = useState(configs.linear);
-  const [grid, setGrid] = useState(configs.grid);
-  const [date, setDate] = useState(configs.date);
-  const [addr, setAddr] = useState(configs.addr);
-
   const [section1, setSection1] = useState({
     id: "1",
     title: "section1",
@@ -39,13 +29,13 @@ function Test() {
         id: "0",
         type: 0,
         config: configs.closed_config,
-        setValue: setClosed1,
+        setValue: null,
       },
       {
         id: "1",
         type: 1,
         config: configs.closed_config_mult,
-        setValue: setClosed2,
+        setValue: null,
       },
       {
         id: "2",
@@ -57,49 +47,49 @@ function Test() {
         id: "3",
         type: 3,
         config: configs.opened_config1,
-        setValue: setShort,
+        setValue: null,
       },
       {
         id: "4",
         type: 3,
         config: configs.opened_config2,
-        setValue: setLong,
+        setValue: null,
       },
       {
         id: "5",
         type: 4,
         config: configs.linear_config,
-        setValue: setLinear,
+        setValue: null,
       },
       {
         id: "6",
         type: 5,
         config: configs.grid_config,
-        setValue: setGrid,
+        setValue: null,
       },
       {
         id: "7",
         type: 6,
         config: configs.phone_config,
-        setValue: setPhone,
+        setValue: null,
       },
       {
         id: "8",
         type: 7,
         config: configs.email_config,
-        setValue: setEmail,
+        setValue: null,
       },
       {
         id: "9",
         type: 8,
         config: configs.date_config,
-        setValue: setDate,
+        setValue: null,
       },
       {
         id: "10",
         type: 9,
         config: configs.addr_config,
-        setValue: setAddr,
+        setValue: null,
       },
     ],
   });
@@ -225,7 +215,8 @@ function Test() {
     <div className="root-container">
       <div className="panel">
         미리보기
-        <Form config={form1} />
+        {/* <Form _config={template_list[0]} /> */}
+        <Form _config={form1} />
       </div>
       <div className="panel">
         디자인 수정하기
