@@ -16,3 +16,4 @@ export { default as Intro } from "./Intro";
 export { default as MyInfo } from "./MyInfo";
 export { default as Test } from "./Test";
 export { default as Findpw } from "./Findpw";
+export { default as SearchResult } from "./SearchResult";
