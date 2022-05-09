@@ -9,13 +9,14 @@ import { setContext } from "@apollo/client/link/context";
 const TOKEN = "x-jwt";
 export const isLoggedInVar = makeVar(Boolean(localStorage.getItem(TOKEN)));
 
-export const logUserIn = (token) => {
+export const logUserIn = (token, username) => {
   localStorage.setItem(TOKEN, token);
   isLoggedInVar(true);
 };
 
 export const logUserOut = () => {
   localStorage.removeItem(TOKEN);
+  isLoggedInVar(false);
   window.location.reload();
 };
 
