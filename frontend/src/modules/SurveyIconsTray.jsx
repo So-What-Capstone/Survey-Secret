@@ -1,20 +1,15 @@
 import React from "react";
 import SurveyIcon from "./SurveyIcon";
-import "../styles/Surveys.css";
+import "../styles/Surveys.scss";
 
 // eslint-disable-next-line react/prop-types
 export default function SurveyIconsTray({ open_surveys, color_idx }) {
   return (
-    <div className="tray">
+    <div className="survey-tray">
       {
         // eslint-disable-next-line react/prop-types
         open_surveys.map((survey, i) => (
-          <SurveyIcon
-            key={i}
-            title={survey.title}
-            color_idx={color_idx}
-            link={survey.link}
-          />
+          <SurveyIcon key={i} title={survey.title} link={survey.link} />
         ))
       }
     </div>

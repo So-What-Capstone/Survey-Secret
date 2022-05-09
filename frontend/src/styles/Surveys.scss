@@ -1,0 +1,25 @@
+.survey-tray {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  .survey-item {
+    width: 420px;
+    height: 201px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    padding: 30px;
+    margin: 1.5vw;
+    background-color: #172A46;
+    color: #CCD6F6;
+  
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    font-size: 26px;
+  }
+}
