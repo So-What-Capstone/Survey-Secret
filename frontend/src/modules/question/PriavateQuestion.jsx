@@ -41,6 +41,9 @@ function PhoneQuestion({ config, setValue }) {
     <div className="question-panel">
       <label className="question-title"> {content} </label>
       <label className="question-discription"> {description} </label>
+      {required ? (
+        <label className="question-required">*필수 응답 문항입니다.</label>
+      ) : null}
       {info ? <div className="question-discription"> {info} </div> : null}
 
       <Input
@@ -131,6 +134,9 @@ function EmailQuestion({ config, setValue }) {
     <div className="question-panel">
       <label className="question-title"> {content} </label>
       <label className="question-discription"> {description} </label>
+      {required ? (
+        <label className="question-required">*필수 응답 문항입니다.</label>
+      ) : null}
       {info ? <div className="question-discription"> {info} </div> : null}
 
       <Input
