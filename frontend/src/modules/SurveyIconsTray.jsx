@@ -8,9 +8,9 @@ export default function SurveyIconsTray({ open_surveys, color_idx }) {
     <div className="tray">
       {
         // eslint-disable-next-line react/prop-types
-        open_surveys.map((survey) => (
+        open_surveys.map((survey, i) => (
           <SurveyIcon
-            key={survey}
+            key={i}
             title={survey.title}
             color_idx={color_idx}
             link={survey.link}
