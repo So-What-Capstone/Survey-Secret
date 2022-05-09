@@ -1,4 +1,4 @@
-import { Divider, Typography } from "antd";
+import { Divider, Typography, Input } from "antd";
 import React, { useEffect, useState } from "react";
 import "../styles/SurveyDesign.css";
 import { useSearchParams } from "react-router-dom";
@@ -17,10 +17,11 @@ import { EditQuestion } from "../modules";
 
 const dummyData = [
   {
-    id: "0",
+    _id: "023425989345",
     title: "섹션 제목",
     questions: [
       {
+        _id: "246304623",
         content: "나이가 어떻게 되시나요?",
         description: "만 나이로 답해주시기 바랍니다.",
         required: true,
@@ -46,6 +47,7 @@ const dummyData = [
         ],
       },
       {
+        _id: "3460980953",
         content: "동아리에 바라는 점은?",
         description: "자유롭게 응답해주세요.",
         required: true,
@@ -91,70 +93,199 @@ function SurveyDesign() {
     }
   }, [searchParams]);
 
+  const updateSectionTitleChange = (sectIdx) => (event) => {
+    let newSections = [...sections];
+    newSections[sectIdx].title = event.target.value;
+    setSections(newSections);
+  };
+
   const updateQuestionData = (sectIdx, quesIdx) => (data) => {
     let newSections = [...sections];
-    newSections[sectIdx][quesIdx] = data;
+    newSections[sectIdx].questions[quesIdx] = data;
+    setSections(newSections);
+  };
+
+  const removeQuestion = (sectIdx, quesIdx) => () => {
+    let newSections = [...sections];
+    newSections[sectIdx].questions.splice(quesIdx, 1);
     setSections(newSections);
   };
 
   const paletteData = [
     {
+      key: "closed",
       subtitle: "객관식 문항",
       children: [
         {
+          key: "one",
           image: oneImage,
-          clickHandler: () => {},
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "closed",
+              allowMultiple: false,
+              choices: [],
+            };
+          },
         },
         {
+          key: "mult",
           image: multImage,
-          clickHandler: () => {},
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "closed",
+              allowMultiple: true,
+              choices: [],
+            };
+          },
         },
       ],
     },
     {
+      key: "opened",
       subtitle: "주관식 문항",
       children: [
         {
+          key: "short",
           image: shortImage,
-          clickHandler: () => {},
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "opened",
+              allowMultiple: false,
+            };
+          },
         },
         {
+          key: "long",
           image: longImage,
-          clickHandler: () => {},
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "opened",
+              allowMultiple: true,
+            };
+          },
         },
       ],
     },
     {
+      key: "advanced-opened",
       subtitle: "고급 객관식 문항",
       children: [
         {
+          key: "linear",
           image: linearImage,
-          clickHandler: () => {},
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "linear",
+              leftRange: 0,
+              leftLabel: "낮음",
+              rightRange: 10,
+              rightLabel: "높음",
+            };
+          },
         },
         {
+          key: "grid",
           image: gridImage,
-          clickHandler: () => {},
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "grid",
+              rowContent: ["행 1", "행 2"],
+              colContent: ["열 1", "열 2"],
+            };
+          },
         },
       ],
     },
     {
+      key: "private",
       subtitle: "개인정보 문항",
       children: [
         {
+          key: "addr",
           image: addrImage,
-          clickHandler: () => {},
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "address",
+            };
+          },
         },
         {
+          key: "email",
           image: emailImage,
-          clickHandler: () => {},
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "email",
+            };
+          },
         },
         {
+          key: "phone",
           image: phoneImage,
-          clickHandler: () => {},
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "phone",
+            };
+          },
         },
       ],
     },
   ];
+
+  const addQuestion = (init) => () => {
+    let sectIdx, quesIdx;
+    if (
+      lastFocused === undefined ||
+      !(
+        lastFocused[0] < sections.length &&
+        lastFocused[1] < sections[lastFocused[0]].questions.length
+      )
+    ) {
+      sectIdx = sections.length - 1;
+      quesIdx = sections[sectIdx].questions.length;
+    } else {
+      sectIdx = lastFocused[0];
+      quesIdx = lastFocused[1];
+    }
+    let newSections = [...sections];
+    newSections[sectIdx].questions.splice(quesIdx + 1, 0, init());
+    setSections(newSections);
+  };
 
   return (
     <div className="design-root">
@@ -162,15 +293,19 @@ function SurveyDesign() {
         <Typography.Title level={5} className="design-title">
           문항 팔레트
         </Typography.Title>
-        {paletteData.map((group, i) => (
-          <div key={`group-${i}`} className="design-inner-palette">
+        {paletteData.map((group) => (
+          <div key={group.key} className="design-inner-palette">
             <Typography.Title level={5} className="design-subtitle">
               {group.subtitle}
             </Typography.Title>
             <div className="design-ques-layout">
-              {group.children.map((ques, j) => (
-                <div key={`ques-${j}`} className="design-ques-back">
-                  <img className="design-ques-image" src={ques.image}></img>
+              {group.children.map((ques) => (
+                <div key={ques.key} className="design-ques-back">
+                  <img
+                    className="design-ques-image"
+                    src={ques.image}
+                    onClick={addQuestion(ques.init)}
+                  ></img>
                 </div>
               ))}
             </div>
@@ -191,20 +326,29 @@ function SurveyDesign() {
         </div>
         <div className="design-preview-body">
           {sections.map((sect, i) => (
-            <div className="design-section" key={`sect-${i}`}>
-              <Divider>{`${i + 1}번째 섹션 시작 - "${sect.title}"`}</Divider>
+            <div className="design-section" key={sect._id}>
+              <Divider>
+                <Input
+                  className="design-section-title"
+                  addonBefore={`${i + 1}번째 섹션 제목`}
+                  value={sect.title}
+                  onChange={updateSectionTitleChange(i)}
+                ></Input>
+              </Divider>
+
               {sect.questions.map((ques, j) => (
                 <EditQuestion
                   onFocus={() => {
                     setLastFocused([i, j]);
                   }}
-                  key={`ques-${i}-${j}`}
+                  onRemove={removeQuestion(i, j)}
+                  key={ques._id}
                   sectionCount={sections.length}
                   data={ques}
-                  onDataChange={updateQuestionData}
+                  onDataChange={updateQuestionData(i, j)}
                 ></EditQuestion>
               ))}
-              <Divider>{`${i + 1}번째 섹션 끝 - "${sect.title}"`}</Divider>
+              <Divider>{`${i + 1}번째 섹션 끝`}</Divider>
             </div>
           ))}
         </div>

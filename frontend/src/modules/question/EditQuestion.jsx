@@ -13,10 +13,9 @@ import {
   InputNumber,
   Row,
   Col,
-  Typography,
   Alert,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
 import "../../styles/EditQuestion.css";
 const { Option } = Select;
@@ -57,6 +56,10 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
 
   function handleCheckboxChange(event) {
     setAllowMultiple(event.target.checked);
+    // 복수 선택이라면 트리거 설정을 할 수 없도록 함.
+    if (event.target.checked) {
+      setShowTriggerSelect(false);
+    }
     onDataChange({ ...data, allowMultiple: event.target.checked });
   }
 
@@ -111,6 +114,7 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
         복수 선택 허용
       </Checkbox>
       <Checkbox
+        disabled={allowMultiple}
         checked={showTriggerSelect}
         onChange={(event) => setShowTriggerSelect(event.target.checked)}
       >
@@ -471,7 +475,13 @@ const typeCompMap = {
   address: EditAddressQuestion,
 };
 
-function EditQuestion({ sectionCount, data, onDataChange, ...rprops }) {
+function EditQuestion({
+  sectionCount,
+  data,
+  onDataChange,
+  onRemove,
+  ...rprops
+}) {
   const [quesBody, setQuesBody] = useState(<React.Fragment></React.Fragment>);
   const [content, setContent] = useState(data.content);
   const [description, setDescription] = useState(data.description);
@@ -490,7 +500,7 @@ function EditQuestion({ sectionCount, data, onDataChange, ...rprops }) {
     } else {
       console.log("Unrecognized type name: " + type);
     }
-  }, [type]);
+  }, [type, data, onDataChange, sectionCount]);
 
   function handleQuesTypeChange(typePair) {
     setType(typePair);
@@ -510,11 +520,22 @@ function EditQuestion({ sectionCount, data, onDataChange, ...rprops }) {
     onDataChange(newConfig);
   }
 
+  function handleRemove(e) {
+    onRemove();
+  }
+
   return (
     <Space className="edit-root" direction="vertical" {...rprops}>
       <Input
         placeholder="질문 내용"
         value={content}
+        onChange={handleContentChange}
+        size="large"
+        addonBefore={
+          <Tooltip title="문항 삭제">
+            <CloseOutlined className="edit-remove" onClick={handleRemove} />
+          </Tooltip>
+        }
         addonAfter={
           <Select value={typeLabelMap[type]} onChange={handleQuesTypeChange}>
             {Object.entries(typeLabelMap).map((p) => (
@@ -524,8 +545,6 @@ function EditQuestion({ sectionCount, data, onDataChange, ...rprops }) {
             ))}
           </Select>
         }
-        onChange={handleContentChange}
-        size="large"
       ></Input>
       <Input
         placeholder="문항의 부가 설명을 입력하세요."
@@ -548,6 +567,7 @@ EditQuestion.propTypes = {
     type: PropTypes.string,
   }),
   onDataChange: PropTypes.func,
+  onRemove: PropTypes.func,
 };
 
 export default EditQuestion;
