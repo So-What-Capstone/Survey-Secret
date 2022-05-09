@@ -68,11 +68,17 @@ export class Form extends CoreSchema {
   isPromoted: boolean;
 
   @Field((type) => Date, { nullable: true })
-  @Prop({ type: Date })
+  @Prop({
+    type: Date,
+    default: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+  })
   expiredAt?: Date;
 
   @Field((type) => Date, { nullable: true })
-  @Prop({ type: Date })
+  @Prop({
+    type: Date,
+    default: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+  })
   privacyExpiredAt: Date;
 
   @Field((type) => User)

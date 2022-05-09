@@ -260,7 +260,7 @@ export class FormsService {
   }: SearchFormsInput): Promise<SearchFormsOutput> {
     try {
       //for testing
-      const pageSize = 3;
+      const pageSize = 20;
 
       const forms = await this.formModel
         .find({
@@ -270,6 +270,7 @@ export class FormsService {
             lastId ? { _id: { $gt: lastId } } : {},
           ],
         })
+        .populate('owner')
         .limit(pageSize);
 
       // if (forms.length === 0) {
@@ -289,7 +290,7 @@ export class FormsService {
   async getForms({ lastId }: GetFormsInput): Promise<GetFormsOutput> {
     try {
       //for testing
-      const pageSize = 3;
+      const pageSize = 20;
       console.log(lastId);
 
       const forms = await this.formModel

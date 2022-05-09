@@ -97,7 +97,7 @@ type PersonalQuestion {
   required: Boolean
   order: Float!
   encoded: Boolean!
-  type: PersonalQuestionType!
+  personalType: PersonalQuestionType!
 }
 
 enum PersonalQuestionType {
@@ -422,7 +422,7 @@ input CreatePersonalQuestionInput {
   required: Boolean
   order: Float!
   encoded: Boolean!
-  type: PersonalQuestionType!
+  personalType: PersonalQuestionType!
 }
 
 input CreateLinearQuestionInput {

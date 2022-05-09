@@ -48,7 +48,7 @@ export class PersonalQuestion {
   @Field((type) => PersonalQuestionType)
   @Prop({ type: String, enum: PersonalQuestionType, required: true })
   @IsEnum(PersonalQuestionType)
-  type: PersonalQuestionType;
+  personalType: PersonalQuestionType;
 }
 
 export const PersonalQuestionSchema =
