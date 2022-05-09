@@ -1,0 +1,81 @@
+.search-result-con {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  .search-con {
+    text-align: center;
+    margin: 40px 5vw 40px 5vw;
+    .search-item {
+      width: 45rem;
+      background-color: #F5F5F5;
+      border-radius: 10px;
+    }
+  }
+  .sort-content-con {
+    display: flex;
+    flex-direction: row;
+    .sort-con {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 0;
+      .sort-header {
+        display: flex;
+        flex-direction: row;
+        color: #F5F5F5;
+        padding-left: 3rem;
+      }
+      .sort-list-con {
+        .sort-item-con {
+          .sort-item {
+            margin: 0px 2rem 0px 2rem;
+            text-align: left;
+            background-color: #3D455900;
+            padding: 0.5rem 0px 0.5rem 0px;
+            color: #F5F5F5;
+            border: none;
+            border-bottom: 1px solid #F5F5F5;
+            &.selected {
+              color: #65ffdc !important;
+            }
+          }
+        }
+      }
+  
+    }
+    .list-con {
+      flex: 3 1 0;
+      padding-left: 2rem;
+      .content-con {
+        display: flex;
+        flex-direction: column;
+        .content-wrap {
+          display: flex;
+          flex-direction: column;
+          .content-row { //ListItem 속 데이터 1줄
+            display: flex;
+            flex-direction: row;
+            margin: 0;
+            width: 100%;
+            text-align: left;
+            padding: 1px 1vw 1px 1vw;
+            min-width: 300px;
+            color: #F5F5F5;
+            &.title {
+              color: #F5F5F5;
+            }
+            &.des {
+              color: gray;
+            }
+            &.info {
+              color: gray;
+            }
+          }
+        }
+      }
+      .content-div {
+        background-color: #172A46;
+      }
+    }
+  }
+  
+}
