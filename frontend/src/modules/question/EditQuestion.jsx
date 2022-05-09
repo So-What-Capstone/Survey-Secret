@@ -29,8 +29,6 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
   function getTriggerLabel(trigger) {
     if (trigger === -1) {
       return "다음 섹션으로 이동";
-    } else if (trigger === 0) {
-      return "설문지 바로 제출";
     } else {
       return `섹션 ${trigger}로 이동`;
     }
@@ -39,9 +37,8 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
   useEffect(() => {
     setTriggerOptions([
       [-1, getTriggerLabel(-1)],
-      [0, getTriggerLabel(0)],
       ...[...Array(sectionCount).keys()].map((i) => [
-        i + 1,
+        i,
         getTriggerLabel(i + 1),
       ]),
     ]);

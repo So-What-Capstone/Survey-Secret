@@ -2,6 +2,7 @@ import React from "react";
 import SurveyIcon from "./SurveyIcon";
 import "../styles/Surveys.scss";
 
+const END_POINT = "http://localhost:3000/my-survey/design?id=";
 // eslint-disable-next-line react/prop-types
 export default function SurveyIconsTray({ open_surveys }) {
   return (
@@ -14,7 +15,7 @@ export default function SurveyIconsTray({ open_surveys }) {
             title={survey.title}
             des={survey.description}
             exp={survey.expiredAt}
-            link={survey.link}
+            link={END_POINT + survey._id}
           />
         ))
       }
