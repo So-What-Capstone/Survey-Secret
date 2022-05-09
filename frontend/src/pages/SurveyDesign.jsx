@@ -1,8 +1,9 @@
-import { Divider, Typography, Input } from "antd";
+import { Divider, Typography, Input, message, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import "../styles/SurveyDesign.css";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 import addrImage from "../resources/addr.png";
 import emailImage from "../resources/email.png";
@@ -14,6 +15,76 @@ import oneImage from "../resources/one.png";
 import phoneImage from "../resources/phone.png";
 import shortImage from "../resources/short.png";
 import { EditQuestion } from "../modules";
+import { gql, useQuery } from "@apollo/client";
+
+const formId = "62790a9fa2b013e1c29571d7";
+
+const FIND_FORM_BY_ID_QUERY = gql`
+  query findFormById($formId: String!) {
+    findFormById(input: { formId: $formId }) {
+      ok
+      error
+      form {
+        state
+        createdAt
+        sections {
+          _id
+          title
+          order
+          questions {
+            ... on ClosedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              closedType
+              choices {
+                no
+                choice
+                activatedSection
+              }
+            }
+            ... on OpenedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              openedType
+            }
+            ... on LinearQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              leftRange
+              rightRange
+              leftLabel
+              rightLabel
+            }
+            ... on GridQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              gridType
+            }
+            ... on PersonalQuestion {
+              _id
+              content
+              description
+              required
+              kind
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 const dummyData = [
   {
@@ -77,6 +148,14 @@ const dummyData = [
 ];
 
 function SurveyDesign() {
+  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
+    variables: { formId },
+    onCompleted: (data) => {
+      console.log("Query Completed");
+      console.log(data);
+    },
+  });
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [sections, setSections] = useState([]);
@@ -287,6 +366,28 @@ function SurveyDesign() {
     setSections(newSections);
   };
 
+  function save() {
+    // 실제 백엔드에 저장하는 코드
+  }
+
+  function saveWorks() {
+    save();
+    message.success("작업 내역을 저장하였습니다.");
+  }
+
+  function saveAndExit() {
+    save();
+    Modal.confirm({
+      title: "'내 설문'으로 나갈까요?",
+      icon: <ExclamationCircleOutlined />,
+      content: "지금까지의 작업은 저장되었습니다.",
+      onOk() {
+        navigate("/my-survey");
+      },
+      onCancel() {},
+    });
+  }
+
   return (
     <div className="design-root">
       <div className="design-palette">
@@ -320,8 +421,12 @@ function SurveyDesign() {
             </Typography.Title>
           </div>
           <div className="design-preview-btngroup">
-            <button className="design-button">저장</button>
-            <button className="design-button">완료</button>
+            <button className="design-button" onClick={saveWorks}>
+              저장
+            </button>
+            <button className="design-button" onClick={saveAndExit}>
+              완료
+            </button>
           </div>
         </div>
         <div className="design-preview-body">
