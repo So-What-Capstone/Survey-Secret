@@ -16,7 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Pages.Main />} />
             <Route path="/login" element={<Pages.Login />} />
-          <Route path="/respond" element={<Pages.Respond />} />
+            <Route path="/respond" element={<Pages.Respond />} />
             <Route path="/register" element={<Pages.Register />} />
             <Route path="/findpw" element={<Pages.Findpw />} />
             <Route path="/my-survey" element={<Pages.MySurvey />} />
@@ -48,7 +48,6 @@ function App() {
         </BrowserRouter>
       </div>
     </ApolloProvider>
-
   );
 }
 
