@@ -5,7 +5,7 @@ import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/Respond.css";
 
-const formId = "62790a9fa2b013e1c29571d7";
+const formId = "62797e7d52d860cef3a4f652";
 
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
@@ -13,6 +13,8 @@ const FIND_FORM_BY_ID_QUERY = gql`
       ok
       error
       form {
+        title
+        description
         state
         createdAt
         sections {
@@ -83,12 +85,130 @@ const CREATE_SUBMISSION_MUTATION = gql`
   }
 `;
 
+function getQuestionType(question) {
+  const kind = question.kind;
+  let typecode = -1;
+  switch (kind) {
+    case "Closed":
+      if (question.closedType === "One") typecode = 0;
+      else if (question.closedType === "Multiple") typecode = 1;
+      break;
+    case "Opened":
+      if (question.openedType === "Default") typecode = 3;
+      else if (question.openedType === "Date") typecode = 7;
+      else if (question.openedType === "Time") typecode = 7; // TODO
+      else if (question.openedType === "Address") typecode = 9;
+      else if (question.openedType === "File") typecode = 10; // TODO
+      break;
+    case "Linear":
+      typecode = 4;
+      break;
+    case "Grid":
+      typecode = 5;
+      break;
+    case "Personal":
+      if (question.personalType === "Phone") typecode = 6;
+      else if (question.personalType === "Email") typecode = 7;
+      break;
+  }
+  return typecode;
+}
+function getQuestionKind(type) {
+  if (0 <= type && type <= 2) {
+    return "Closed";
+  } else if (type === 4) {
+    return "Linear";
+  } else if (type === 5) {
+    return "Grid";
+  } else if (type === 6 || type === 7) {
+    return "Personal";
+  } else {
+    return "Opened";
+  }
+}
+function getFormConfigFromDB(formId, data) {
+  const form = data.findFormById.form;
+  let sections = data.findFormById.form.sections;
+
+  let myConfig = {
+    id: formId,
+    title: form.title,
+    description: form.description,
+    state: form.state,
+  };
+
+  let mySections = new Array(sections.length);
+  for (let i = 0; i < sections.length; i++) {
+    let sec = sections[i];
+    mySections[i] = { id: sec._id, title: sec.title };
+
+    let myqs = new Array(sec.questions.length);
+    for (let j = 0; j < sec.questions.length; j++) {
+      let q = sec.questions[j];
+      const type = getQuestionType(q);
+      // common config of question
+      myqs[j] = {
+        id: q._id,
+        type: type,
+        config: {
+          content: q.content,
+          description: q.description,
+          required: q.required,
+        },
+      };
+
+      // specific config
+      if (0 <= type && type <= 2) {
+        // Closed
+        let choices = q.choices.map((ch) => ch.choice);
+        let trigger = q.choices.map((ch) =>
+          ch.activatedSection ? ch.activatedSection : ""
+        );
+        myqs[j].config["choices"] = choices;
+        myqs[j].config["trigger_sections"] = trigger;
+      } else if (type === 3) {
+        // Opened
+        myqs[j].config["isLong"] = true;
+      } else if (type === 4) {
+        // LInear
+        myqs[j].config = {
+          ...myqs[j].config,
+          leftEnd: q.leftRange,
+          rightEnd: q.rightRange,
+          leftLabel: q.leftLabel ? q.leftLabel : "",
+          rightLabel: q.rightLabel ? q.rightLabel : "",
+        };
+      } else if (type === 5) {
+        // Grid
+        myqs[j].config = {
+          ...myqs[j].config,
+          rowLabels: q.rowContent,
+          colLabels: q.colContent,
+        };
+      } else if (type === 6 || type === 7) {
+        // Phone, email
+        myqs[j].config = {
+          ...myqs[j].config,
+          isEncrypted: q.encoded,
+          exp_date: form.privacyExpiredAt,
+        };
+      }
+    }
+    mySections[i]["questions"] = myqs;
+  }
+  myConfig["sections"] = mySections;
+  console.log("myconfig", myConfig);
+  return myConfig;
+}
 function Respond() {
+  const [form_config, setFormConfig] = useState();
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId },
     onCompleted: (data) => {
       console.log("Query Completed");
-      console.log(data);
+      console.log("data", data);
+      const config = getFormConfigFromDB(formId, data);
+      setFormConfig(config);
     },
   });
 
@@ -114,28 +234,82 @@ function Respond() {
   const [response, setResponse] = useState();
   const onSubmitClick = () => {
     // submit the response
-    let isValid = true;
-    for (const idx in response) {
-      if (!response[idx].isValid) {
-        isValid = false;
-        break;
-      }
-    }
 
-    //response => Submission.
-    createSubmission({
+    // check the validity of response
+    // let isValid = true;
+    // for (const idx in response) {
+    //   if (!response[idx].isValid) {
+    //     isValid = false;
+    //     break;
+    //   }
+    // }
+    let sub_secs = new Array(form_config.sections.length);
+    for (let i = 0; i < sub_secs.length; i++) {
+      let sec = form_config.sections[i];
+      sub_secs[i] = { sectionId: sec.id, answers: [] };
+
+      let answers = {
+        Closed: [],
+        Opened: [],
+        Linear: [],
+        Grid: [],
+        Personal: [],
+      };
+      for (let j = 0; j < sec.questions.length; j++) {
+        let q = sec.questions[j];
+        const type = q.type;
+        const kind = getQuestionKind(q.type);
+
+        let ansDic = { kind: kind, question: q.id };
+        let qVal = response[q.id];
+
+        if ((0 <= type && type <= 2) || type === 4) {
+          // Closed, Linear
+          ansDic["no"] = qVal.data;
+        } else if (type === 3 || type === 6 || type === 5) {
+          // Opened, Phone, grid
+          ansDic["content"] = qVal.data;
+        } else if (type === 7) {
+          // email
+          ansDic["content"] = qVal.id + qVal.domain;
+        } else if (type === 8) {
+          // date
+          ansDic["content"] = qVal.date_str;
+        } else if (type === 9) {
+          // address
+          ansDic["content"] =
+            qVal.zip_code + qVal.address + qVal.address_detail;
+        }
+        if (!ansDic.no && !ansDic.content) continue;
+        if (ansDic.no) {
+          if (ansDic.no.length === 0) continue;
+        }
+        answers[kind].push(ansDic);
+      }
+      sub_secs[i]["answers"] = [answers];
+    }
+    const submission = {
       variables: {
         request: {
-          formId: "62796414d8360fa79dec9954",
+          formId: form_config.id,
+          sections: sub_secs,
+        },
+      },
+    };
+    /* // example of submission
+    {
+      variables: {
+        request: {
+          formId: "62797e7d52d860cef3a4f652",
           sections: {
-            sectionId: "62796414d8360fa79dec9955",
+            sectionId: "62797e7d52d860cef3a4f653",
             answers: [
               {
                 Closed: [
                   {
-                    no: 1,
+                    no: [1, 2],
                     kind: "Closed",
-                    question: "62796414d8360fa79dec9956",
+                    question: "62797e7d52d860cef3a4f654",
                   },
                 ],
               },
@@ -143,9 +317,13 @@ function Respond() {
           },
         },
       },
-    });
+    }
+    */
 
-    console.log(response);
+    //response => Submission.
+    createSubmission(submission);
+
+    console.log("submission", submission);
     // if (isValid) {
     //   alert("제출되었습니다.");
     // } else {
@@ -161,11 +339,13 @@ function Respond() {
       navigate("/");
     }
   }, [searchParams]);
+
+  if (!form_config) return null;
   return (
     <div className="respond-container">
       <div className="preview">
         <Form
-          _config={template_list[2]}
+          _config={form_config}
           // _response={response}
           _setResponse={setResponse}
         />
