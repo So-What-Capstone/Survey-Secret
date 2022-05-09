@@ -91,6 +91,12 @@ const EDIT_FORM_MUTATION = gql`
     }
   }
 `;
+const form_states = {
+  0: "Ready",
+  1: "InProgress",
+  2: "Expired",
+  3: "Template",
+};
 
 function SurveyInfo() {
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
@@ -121,15 +127,19 @@ function SurveyInfo() {
 
   const save = (e) => {
     //
+    let state_idx = form_minor_config.state;
+    if (moment().isAfter(form_minor_config.closingAt)) {
+      state_idx = 2;
+    }
     editForm({
       variables: {
         request: {
-          formId: "6279600cd8360fa79dec993c",
-          title: "after!222!!!",
-          description: "AAAA",
-          expiredAt: "2022-05-12",
-          privacyExpiredAt: "2022-05-12",
-          state: "InProgress",
+          formId: formId,
+          title: form_config.title,
+          description: form_config.description,
+          expiredAt: form_minor_config.closingAt,
+          privacyExpiredAt: form_minor_config.privacyExpiredAt,
+          state: form_states[state_idx],
         },
       },
     });
