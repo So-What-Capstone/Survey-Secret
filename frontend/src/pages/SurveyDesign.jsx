@@ -25,6 +25,7 @@ const FIND_FORM_BY_ID_QUERY = gql`
       ok
       error
       form {
+        title
         state
         createdAt
         sections {
@@ -86,91 +87,117 @@ const FIND_FORM_BY_ID_QUERY = gql`
   }
 `;
 
-const dummyData = [
-  {
-    _id: "023425989345",
-    title: "섹션 제목",
-    questions: [
-      {
-        _id: "246304623",
-        content: "나이가 어떻게 되시나요?",
-        description: "만 나이로 답해주시기 바랍니다.",
-        required: true,
-        type: "closed",
-        allowMultiple: false,
-        choices: [
-          {
-            content: "응답하지 않음",
-            trigger: -1,
-          },
-          {
-            content: "10대",
-            trigger: -1,
-          },
-          {
-            content: "20대",
-            trigger: -1,
-          },
-          {
-            content: "30대 이상",
-            trigger: -1,
-          },
-        ],
-      },
-      {
-        _id: "3460980953",
-        content: "동아리에 바라는 점은?",
-        description: "자유롭게 응답해주세요.",
-        required: true,
-        type: "closed",
-        allowMultiple: true,
-        choices: [
-          {
-            content: "멋진 선배",
-            trigger: -1,
-          },
-          {
-            content: "개쩌는 경험",
-            trigger: -1,
-          },
-          {
-            content: "잦은 회식",
-            trigger: -1,
-          },
-          {
-            content: "기타",
-            trigger: -1,
-          },
-        ],
-      },
-    ],
-  },
-];
+function parseClosedQuestion(sections, ques) {
+  return {
+    ...ques,
+    type: "closed",
+    allowMultiple: ques.closedType === "One" ? false : true,
+    choices: ques.choices.map((ch) => {
+      let triggerSect = sections.find((s) => s._id === ch.activatedSection);
+      return {
+        content: ch.choice,
+        trigger: triggerSect ? sections.indexOf(triggerSect) : -1,
+      };
+    }),
+  };
+}
+
+function parseOpenedQuestion(ques) {
+  if (ques.openedType === "Default") {
+    return {
+      ...ques,
+      type: "opened",
+      allowMultiple: true,
+    };
+  } else if (ques.openedType === "Date") {
+    return {
+      ...ques,
+      type: "date",
+    };
+  } else if (ques.openedType === "Time") {
+    return {
+      ...ques,
+      type: "date",
+    };
+  } else if (ques.openedType === "Address") {
+    return {
+      ...ques,
+      type: "address",
+    };
+  } else {
+    console.log("not implemented");
+    return null;
+  }
+}
+
+function parseGridQuestion(ques) {
+  return {
+    ...ques,
+    type: "grid",
+  };
+}
+
+function parsePersonalQuestion(ques) {
+  if (ques.type === "Phone") {
+    return {
+      ...ques,
+      type: "phone",
+    };
+  } else if (ques.type === "Address") {
+    return {
+      ...ques,
+      type: "address",
+    };
+  } else {
+    return {
+      ...ques,
+      type: "email",
+    };
+  }
+}
+
+function parseLinearQuestion(ques) {
+  return {
+    ...ques,
+    type: "linear",
+  };
+}
 
 function SurveyDesign() {
-  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
-    variables: { formId },
-    onCompleted: (data) => {
-      console.log("Query Completed");
-      console.log(data);
-    },
-  });
-
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [rawForm, setRawForm] = useState();
+  const [title, setTitle] = useState("");
   const [sections, setSections] = useState([]);
   const [lastFocused, setLastFocused] = useState(undefined);
 
-  useEffect(() => {
-    const id = searchParams.get("id");
-    if (id) {
-      console.log(`id is ${id}`);
-      // 디버그를 위해 임의의 데이터로 설정
-      setSections(dummyData);
-    } else {
-      navigate("/");
-    }
-  }, [searchParams]);
+  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
+    variables: { formId: searchParams.get("id") },
+    onCompleted: (data) => {
+      setTitle(data.findFormById.form.title);
+      setRawForm(data.findFormById.form);
+      const rawSections = data.findFormById.form.sections;
+      let processed = rawSections.map((sect) => {
+        return {
+          ...sect,
+          questions: sect.questions.map((ques) => {
+            if (ques.__typename === "ClosedQuestion") {
+              return parseClosedQuestion(rawSections, ques);
+            } else if (ques.__typename === "OpenedQuestion") {
+              return parseOpenedQuestion(ques);
+            } else if (ques.__typename === "GridQuestion") {
+              return parseGridQuestion(ques);
+            } else if (ques.__typename === "PersonalQuestion") {
+              return parsePersonalQuestion(ques);
+            } else if (ques.__typename === "LinearQuestion") {
+              return parseLinearQuestion(ques);
+            }
+          }),
+        };
+      });
+      setSections(processed);
+    },
+  });
 
   const updateSectionTitleChange = (sectIdx) => (event) => {
     let newSections = [...sections];
@@ -367,7 +394,135 @@ function SurveyDesign() {
   };
 
   function save() {
-    // 실제 백엔드에 저장하는 코드
+    let newForm = {
+      ...rawForm,
+      sections: sections.map((sect, i) => {
+        let opened = [],
+          closed = [],
+          grid = [],
+          personal = [],
+          linear = [];
+
+        sect.questions.forEach((ques, j) => {
+          if (sect.type === "closed") {
+            closed.push({
+              order: j,
+              required: ques.required,
+              description: ques.description,
+              kind: "Closed",
+              content: ques.content,
+              closedType: ques.allowMultiple ? "Multiple" : "One",
+              choices: ques.choices.map((ch, k) => {
+                return {
+                  no: k,
+                  choice: ch.content,
+                  activatedSection:
+                    ch.trigger === -1 || sections.length <= ch.trigger
+                      ? null
+                      : sections[ch.trigger]._id,
+                };
+              }),
+            });
+          }
+
+          if (sect.type === "opened") {
+            opened.push({
+              openedType: "Default",
+              order: j,
+              required: ques.required,
+              description: ques.description,
+              kind: "Opened",
+              content: ques.content,
+            });
+          }
+
+          if (sect.type === "linear") {
+            linear.push({
+              leftRange: ques.leftRange,
+              rightRange: ques.rightRange,
+              leftLabel: ques.leftLabel,
+              rightLabel: ques.rightLabel,
+              order: j,
+              required: ques.required,
+              description: ques.description,
+              kind: "Linear",
+              content: ques.content,
+            });
+          }
+
+          if (sect.type === "grid") {
+            grid.push({
+              gridType: "One",
+              colContent: ques.colContent,
+              rowContent: ques.rowContent,
+              order: j,
+              required: ques.required,
+              description: ques.description,
+              kind: "Grid",
+              content: ques.content,
+            });
+          }
+
+          if (sect.type === "phone") {
+            personal.push({
+              type: "Phone",
+              encoded: true,
+              order: j,
+              required: ques.required,
+              description: ques.description,
+              kind: "Personal",
+              content: ques.content,
+            });
+          }
+
+          if (sect.type === "email") {
+            personal.push({
+              type: "Email",
+              encoded: true,
+              order: j,
+              required: ques.required,
+              description: ques.description,
+              kind: "Personal",
+              content: ques.content,
+            });
+          }
+
+          if (sect.type === "date") {
+            opened.push({
+              openedType: "Date",
+              order: j,
+              required: ques.required,
+              description: ques.description,
+              kind: "Opened",
+              content: ques.content,
+            });
+          }
+
+          if (sect.type === "address") {
+            opened.push({
+              openedType: "Address",
+              order: j,
+              required: ques.required,
+              description: ques.description,
+              kind: "Opened",
+              content: ques.content,
+            });
+          }
+        });
+
+        return {
+          ...sect,
+          order: i,
+          opened: opened,
+          closed: closed,
+          grid: grid,
+          personal: personal,
+          linear: linear,
+        };
+      }),
+    };
+
+    // 현재 newForm에 모두 들어있음.
   }
 
   function saveWorks() {
@@ -417,7 +572,7 @@ function SurveyDesign() {
         <div className="design-preview-header">
           <div>
             <Typography.Title level={5} className="design-title">
-              설문제목 - 2022 행복 로봇 동아리 회원 모집
+              설문제목 - {title}
             </Typography.Title>
           </div>
           <div className="design-preview-btngroup">
