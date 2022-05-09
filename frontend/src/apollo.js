@@ -21,7 +21,7 @@ export const logUserOut = () => {
 };
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:5000/graphql",
+  uri: "https://common-hats-mix-222-109-143-200.loca.lt/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
