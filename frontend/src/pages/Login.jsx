@@ -44,6 +44,7 @@ function Login() {
     }
     if (token) {
       logUserIn(token);
+
       navigate("/", { state: { message: "XX님 hi" } });
     }
   };

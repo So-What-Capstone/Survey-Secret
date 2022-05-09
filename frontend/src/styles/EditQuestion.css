@@ -5,6 +5,10 @@
   border-radius: 0.4rem;
 }
 
+.edit-remove:hover {
+  cursor: pointer;
+}
+
 .edit-div {
   margin-top: 4px !important;
   margin-bottom: 4px !important;

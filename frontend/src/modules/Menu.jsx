@@ -1,11 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/Menu.css";
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import { isLoggedInVar, logUserOut } from "./../apollo";
+import { useQuery, gql, useReactiveVar } from "@apollo/client";
 // reference: https://intrepidgeeks.com/tutorial/implement-htmlcssdropdown-list-animation
+
+const ME_QUERY = gql`
+  query {
+    me {
+      ok
+      error
+      user {
+        username
+      }
+    }
+  }
+`;
 
 function Menu() {
   const navigate = useNavigate();
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+
+  //나중에 고치기, 메뉴는 맨 위에 올라와있으므로 매번 query 요청해야함
+  //localStorage 이용, token안에 넣고 decode를 하던
+  const [loggedInUser, setLoggedInUser] = useState();
+
+  const { loading, data, error } = useQuery(ME_QUERY, {
+    onCompleted: (data) => {
+      console.log("Query Completed");
+      setLoggedInUser(data?.me?.user?.username);
+    },
+  });
 
   const move = (url) => () => {
     navigate(url);
@@ -14,8 +40,8 @@ function Menu() {
   return (
     <div className="dropDown">
       <button className="dropDown-btn">
-        <div className="icon" onClick={move("/")}>
-          Survey Secret
+        <div className="icon">
+          <Link to="/">Survey Secret</Link>
         </div>
         <div className="menu-titles">
           <div className="menu-title">설문</div>
@@ -23,9 +49,21 @@ function Menu() {
           <div className="menu-title">공지사항</div>
         </div>
         <div className="login-menus">
-          <div className="nickname">큐티토끼님</div>
-          <div className="login-logout">로그아웃</div>
-          <div className="mypage">마이페이지</div>
+          <div className="nickname">
+            {!isLoggedIn ? "guest" : loggedInUser}님
+          </div>
+          {!isLoggedIn ? (
+            <>
+              <Link to="/login">로그인</Link>
+              <div className="login-logout">
+                <Link to="/register">회원가입</Link>
+              </div>
+            </>
+          ) : (
+            <div className="login-logout">
+              <span onClick={logUserOut}>로그아웃</span>
+            </div>
+          )}
         </div>
       </button>
 
