@@ -14,7 +14,6 @@ import {
   AddressQuestion, // 9
 } from "./index.js";
 import { init_value } from "./question/test_config";
-import moment from "moment";
 
 const questionTable = [
   ClosedQuestion_one,
@@ -29,20 +28,44 @@ const questionTable = [
   AddressQuestion,
 ];
 
-function Question({ qprops }) {
+function Question({
+  response,
+  setResponse,
+  secEnabled,
+  setSecEnabled,
+  qprops,
+}) {
   const id = qprops.id;
   const type = qprops.type;
   const config = qprops.config;
-  const setValue = qprops.setValue;
+  const setValue = (val) => {
+    setResponse({ ...response, [id]: val });
+  };
+
+  let setTrigger = () => {};
+  if (type === 0) {
+    setTrigger = (trigger_sec_idx) => {
+      let mySecEnabled = { ...secEnabled };
+      for (let idx in config.trigger_sections) {
+        mySecEnabled[config.trigger_sections[idx]] = false;
+      }
+      mySecEnabled[config.trigger_sections[trigger_sec_idx]] = true;
+      setSecEnabled(mySecEnabled);
+    };
+  }
 
   let Qst = null;
   if (0 <= type && type <= questionTable.length) {
     Qst = questionTable[type];
   }
 
-  return Qst({ config, setValue });
+  return Qst({ config, setValue, setTrigger });
 }
 Question.propTypes = {
+  response: PropTypes.any,
+  setResponse: PropTypes.func,
+  secEnabled: PropTypes.any,
+  setSecEnabled: PropTypes.func,
   qprops: PropTypes.shape({
     id: PropTypes.string,
     type: PropTypes.number,
@@ -54,24 +77,29 @@ Question.propTypes = {
 export default function Form({ _config }) {
   const [response, setResponse] = useState();
   const [config, setConfig] = useState(null);
+  const [secEnabled, setSecEnabled] = useState();
   useEffect(() => {
     let myConfig = { ..._config };
     let myRes = {};
-    for (var i = 0; i < myConfig.sections.length; i++) {
+    let mySec = {};
+
+    for (let i = 0; i < myConfig.sections.length; i++) {
+      mySec[myConfig.sections[i].id] = true;
+    }
+    for (let i = 0; i < myConfig.sections.length; i++) {
       let qs = myConfig.sections[i].questions;
-      for (var j = 0; j < qs.length; j++) {
+      for (let j = 0; j < qs.length; j++) {
         myRes[qs[j].id] = init_value[qs[j].type];
-        let qsj_id = qs[j].id;
-        qs[j] = {
-          ...qs[j],
-          setValue: (x) => {
-            setResponse({ ...response, [qsj_id]: x });
-          },
-        };
+        if (qs[j].type === 0) {
+          for (let idx in qs[j].config.trigger_sections) {
+            mySec[qs[j].config.trigger_sections[idx]] = false;
+          }
+        }
       }
     }
     setResponse(myRes);
     setConfig(myConfig);
+    setSecEnabled(mySec);
   }, [_config]);
 
   if (config === null || config === undefined) {
@@ -83,15 +111,24 @@ export default function Form({ _config }) {
       <div className="form-container">
         <label className="form-desc"> {config.description}</label>
         {/* section */}
-        {config.sections.map((v) => (
-          <div key={v.id} className="section">
-            <label className="section-title">{v.title}</label>
-            {/* question */}
-            {v.questions.map((qprops) => (
-              <Question key={qprops.id} qprops={qprops} />
-            ))}
-          </div>
-        ))}
+        {config.sections.map((sec) =>
+          secEnabled[sec.id] ? (
+            <div key={sec.id} className="section">
+              <label className="section-title">{sec.title}</label>
+              {/* question */}
+              {sec.questions.map((qprops) => (
+                <Question
+                  key={qprops.id}
+                  response={response}
+                  setResponse={setResponse}
+                  secEnabled={secEnabled}
+                  setSecEnabled={setSecEnabled}
+                  qprops={qprops}
+                />
+              ))}
+            </div>
+          ) : null
+        )}
       </div>
     </div>
   );

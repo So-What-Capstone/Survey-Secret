@@ -6,7 +6,7 @@ const empty = {
   description: "빈 템플릿 입니다.",
   sections: [
     {
-      id: "",
+      id: "a",
       title: "섹션1",
       isActive: true,
       nextSecId: "",
@@ -18,6 +18,7 @@ const empty = {
             content: "질문 내용",
             description: "질문 설명",
             choices: ["응답하지 않음", "선택1", "선택2", "선택3"],
+            trigger_sections: ["", "", "", ""],
             required: false,
           },
           setValue: empty_func,
@@ -33,7 +34,7 @@ const simple_form = {
   description: "가족 관계 조사입니다.",
   sections: [
     {
-      id: "",
+      id: "b",
       title: "호구",
       isActive: true,
       nextSecId: "",
@@ -45,6 +46,7 @@ const simple_form = {
             content: "가족 구성원은 몇 명입니까?",
             description: "본인을 포함한 세대원",
             choices: ["1인", "2인", "3~5인", "6인 이상"],
+            trigger_sections: ["", "", "", ""],
             required: false,
           },
           setValue: empty_func,
@@ -74,7 +76,7 @@ const simple_form2 = {
     "설문 설명 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
   sections: [
     {
-      id: "",
+      id: "aa",
       title: "호구",
       isActive: true,
       nextSecId: "",
@@ -86,6 +88,7 @@ const simple_form2 = {
             content: "가족 구성원은 몇 명입니까?",
             description: "본인을 포함한 세대원",
             choices: ["1인", "2인", "3~5인", "6인 이상"],
+            trigger_sections: ["", "", "", "bb"],
             required: false,
           },
           setValue: empty_func,
@@ -105,7 +108,7 @@ const simple_form2 = {
       ],
     },
     {
-      id: "",
+      id: "bb",
       title: "호구",
       isActive: true,
       nextSecId: "",
@@ -117,6 +120,7 @@ const simple_form2 = {
             content: "가족 구성원은 몇 명입니까?",
             description: "본인을 포함한 세대원",
             choices: ["1인", "2인", "3~5인", "6인 이상"],
+            trigger_sections: ["", "", "", ""],
             required: false,
           },
           setValue: empty_func,

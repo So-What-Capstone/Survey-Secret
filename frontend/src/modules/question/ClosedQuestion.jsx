@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { Radio, Space, Checkbox, Input } from "antd";
 import { closed1 } from "./test_config";
 
-function ClosedQuestion_one({ config, setValue }) {
+function ClosedQuestion_one({ config, setValue, setTrigger }) {
   const content = config.content;
   const description = config.description;
   const choices = config.choices;
@@ -21,6 +21,7 @@ function ClosedQuestion_one({ config, setValue }) {
     if (v >= 0) {
       setInternal(temp);
       setValue(temp);
+      setTrigger(v);
     }
   };
 
@@ -55,6 +56,7 @@ ClosedQuestion_one.propTypes = {
     required: PropTypes.bool,
   }),
   setValue: PropTypes.func,
+  setTrigger: PropTypes.func,
 };
 
 function ClosedQuestion_mult({ config, setValue }) {
