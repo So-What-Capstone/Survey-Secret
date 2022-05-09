@@ -19,6 +19,7 @@ import { v4 } from 'uuid';
 import { EditUserInput, EditUserOutput } from './dtos/edit-user.dto';
 import { UploaderService } from './../uploader/uploader.service';
 import { FileUpload } from 'graphql-upload';
+import { meOutput } from './dtos/me.dto';
 
 @Injectable()
 export class UsersService {
@@ -67,7 +68,7 @@ export class UsersService {
 
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 
@@ -86,7 +87,7 @@ export class UsersService {
         return { ok: true, token };
       }
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 
@@ -100,7 +101,7 @@ export class UsersService {
 
       return { ok: true, user };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 
@@ -134,7 +135,17 @@ export class UsersService {
 
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async me(user: User): Promise<meOutput> {
+    try {
+      const me = await this.userModel.findById(user._id).populate('forms');
+
+      return { ok: true, user: me };
+    } catch (error) {
+      return { ok: false, error: error.message };
     }
   }
 }

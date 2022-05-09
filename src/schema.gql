@@ -227,6 +227,12 @@ type EditUserOutput {
   error: String
 }
 
+type meOutput {
+  ok: Boolean!
+  error: String
+  user: User
+}
+
 type CreateFormOutput {
   ok: Boolean!
   error: String
@@ -286,6 +292,7 @@ type DeleteSubmissionOutput {
 
 type Query {
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
+  me: meOutput!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
   findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!
   searchForms(input: SearchFormsInput!): SearchFormsOutput!

@@ -105,7 +105,7 @@ export class User extends CoreSchema {
 
   //소유한 forms
   @Field((type) => [Form], { nullable: true })
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Form' })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Form' }] })
   forms?: Form[];
 
   @Field((type) => Boolean, { nullable: true })

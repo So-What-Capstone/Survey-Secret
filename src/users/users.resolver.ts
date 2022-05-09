@@ -15,6 +15,7 @@ import { EditUserInput, EditUserOutput } from './dtos/edit-user.dto';
 import { User } from './schemas/user.schema';
 import { AuthUser } from '../auth/auth-user.decorator';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
+import { meOutput } from './dtos/me.dto';
 
 @Resolver()
 export class UsersResolver {
@@ -47,5 +48,11 @@ export class UsersResolver {
     @Args('file', { type: () => GraphQLUpload }) avatarImg: FileUpload,
   ): Promise<EditUserOutput> {
     return this.usersService.editUser(user, editUserInput, avatarImg);
+  }
+
+  @Query((returns) => meOutput)
+  @Type(['Any'])
+  me(@AuthUser() user: User): Promise<meOutput> {
+    return this.usersService.me(user);
   }
 }

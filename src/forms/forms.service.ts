@@ -138,7 +138,7 @@ export class FormsService {
 
       return { ok: true, section };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 
@@ -155,7 +155,7 @@ export class FormsService {
 
       return { ok: true, form };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 
@@ -242,7 +242,7 @@ export class FormsService {
 
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 
@@ -275,7 +275,7 @@ export class FormsService {
         lastId: forms.length !== 0 ? forms.at(-1)._id.toString() : undefined,
       };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 
@@ -299,7 +299,7 @@ export class FormsService {
         lastId: forms.length !== 0 ? forms.at(-1)._id.toString() : undefined,
       };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: error.message };
     }
   }
 }
