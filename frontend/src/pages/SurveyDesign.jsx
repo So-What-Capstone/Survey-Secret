@@ -15,7 +15,7 @@ import oneImage from "../resources/one.png";
 import phoneImage from "../resources/phone.png";
 import shortImage from "../resources/short.png";
 import { EditQuestion } from "../modules";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 
 const formId = "62790a9fa2b013e1c29571d7";
 
@@ -83,6 +83,15 @@ const FIND_FORM_BY_ID_QUERY = gql`
           }
         }
       }
+    }
+  }
+`;
+
+const CREATE_FORM_MUTATION = gql`
+  mutation createForm($request: CreateFormInput!) {
+    createForm(input: $request) {
+      ok
+      error
     }
   }
 `;
@@ -164,6 +173,20 @@ function parseLinearQuestion(ques) {
 }
 
 function SurveyDesign() {
+  const [createForm, { loading: mutationLoading }] = useMutation(
+    CREATE_FORM_MUTATION,
+    {
+      onCompleted: (data) => {
+        const {
+          createForm: { ok, error },
+        } = data;
+        if (!ok) {
+          throw new Error(error);
+        }
+        console.log(data);
+      },
+    }
+  );
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [rawForm, setRawForm] = useState();
