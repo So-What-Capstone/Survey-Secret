@@ -6,16 +6,17 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 
-const TOKEN = "TOKEN";
+const TOKEN = "x-jwt";
 export const isLoggedInVar = makeVar(Boolean(localStorage.getItem(TOKEN)));
 
-export const logUserIn = (token) => {
+export const logUserIn = (token, username) => {
   localStorage.setItem(TOKEN, token);
   isLoggedInVar(true);
 };
 
 export const logUserOut = () => {
   localStorage.removeItem(TOKEN);
+  isLoggedInVar(false);
   window.location.reload();
 };
 
@@ -24,7 +25,7 @@ const httpLink = createHttpLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-  return { headers: { ...headers, token: localStorage.getItem(TOKEN) } };
+  return { headers: { ...headers, "x-jwt": localStorage.getItem(TOKEN) } };
 });
 
 export const client = new ApolloClient({
