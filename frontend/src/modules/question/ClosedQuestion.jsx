@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { Radio, Space, Checkbox, Input } from "antd";
 import { closed1 } from "./test_config";
 
-function ClosedQuestion_one({ config, setValue }) {
+function ClosedQuestion_one({ config, setValue, setTrigger }) {
   const content = config.content;
   const description = config.description;
   const choices = config.choices;
@@ -21,6 +21,7 @@ function ClosedQuestion_one({ config, setValue }) {
     if (v >= 0) {
       setInternal(temp);
       setValue(temp);
+      setTrigger(v);
     }
   };
 
@@ -41,7 +42,9 @@ function ClosedQuestion_one({ config, setValue }) {
     <div className="question-panel">
       <label className="question-title"> {content} </label>
       <label className="question-discription"> {description} </label>
-
+      {required ? (
+        <label className="question-required">*필수 응답 문항입니다.</label>
+      ) : null}
       <RadioChoices />
     </div>
   );
@@ -55,6 +58,7 @@ ClosedQuestion_one.propTypes = {
     required: PropTypes.bool,
   }),
   setValue: PropTypes.func,
+  setTrigger: PropTypes.func,
 };
 
 function ClosedQuestion_mult({ config, setValue }) {
@@ -91,6 +95,9 @@ function ClosedQuestion_mult({ config, setValue }) {
     <div className="question-panel">
       <label className="question-title"> {content} </label>
       <label className="question-discription"> {description} </label>
+      {required ? (
+        <label className="question-required">*필수 응답 문항입니다.</label>
+      ) : null}
       <CheckChoices />
     </div>
   );

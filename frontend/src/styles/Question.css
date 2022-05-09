@@ -22,3 +22,8 @@
   height: fit-content;
   padding-bottom: 0.6rem;
 }
+
+.question-required {
+  font-size: 0.8rem;
+  color: brown;
+}

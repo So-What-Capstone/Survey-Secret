@@ -1,0 +1,24 @@
+.respond-container {
+  display: flex;
+  width: 100%;
+  flex-flow: row nowrap;
+  justify-content: center;
+}
+
+.respond-submit-btn {
+  width: 100%;
+  border: 1px solid #65ffdc;
+  outline: 0;
+  /* margin: 0.5rem; */
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 0.1rem;
+  color: white;
+  background-color: #00000000;
+  cursor: pointer;
+}
+
+.respond-submit-btn:hover {
+  color: #384d6d;
+  background-color: #65ffdc90;
+}
