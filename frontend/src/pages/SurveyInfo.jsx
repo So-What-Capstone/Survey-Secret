@@ -5,10 +5,129 @@ import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/SurveryInfo.css";
 import { useNavigate } from "react-router-dom";
+import { gql, useMutation, useQuery } from "@apollo/client";
 
 const { TextArea } = Input;
 
+const formId = "62790a9fa2b013e1c29571d7";
+
+const FIND_FORM_BY_ID_QUERY = gql`
+  query findFormById($formId: String!) {
+    findFormById(input: { formId: $formId }) {
+      ok
+      error
+      form {
+        state
+        createdAt
+        sections {
+          _id
+          title
+          order
+          questions {
+            ... on ClosedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              closedType
+              choices {
+                no
+                choice
+                activatedSection
+              }
+            }
+            ... on OpenedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              openedType
+            }
+            ... on LinearQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              leftRange
+              rightRange
+              leftLabel
+              rightLabel
+            }
+            ... on GridQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              gridType
+            }
+            ... on PersonalQuestion {
+              _id
+              content
+              description
+              required
+              kind
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const EDIT_FORM_MUTATION = gql`
+  mutation editForm($request: EditFormInput!) {
+    editForm(input: $request) {
+      ok
+      error
+    }
+  }
+`;
+
 function SurveyInfo() {
+  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
+    variables: { formId },
+    onCompleted: (data) => {
+      console.log("Query Completed");
+      console.log(data);
+    },
+  });
+
+  const [editForm, { loading: mutationLoading }] = useMutation(
+    EDIT_FORM_MUTATION,
+    {
+      onCompleted: (data) => {
+        const {
+          editForm: { ok, error },
+        } = data;
+        if (!ok) {
+          throw new Error(error);
+        } else {
+          alert("Edit Complete");
+        }
+      },
+    }
+  );
+
+  const save = (e) => {
+    //
+    editForm({
+      variables: {
+        request: {
+          formId: "6279600cd8360fa79dec993c",
+          title: "after!222!!!",
+          description: "AAAA",
+          expiredAt: "2022-05-12",
+          privacyExpiredAt: "2022-05-12",
+          state: "InProgress",
+        },
+      },
+    });
+  };
+
   const navigate = useNavigate();
   const [form_config, setFormConfig] = useState(template_list[0]);
   const [form_minor_config, setFormMinorConfig] = useState({
@@ -129,7 +248,9 @@ function SurveyInfo() {
           <div className="setting-panel-title-container">
             <label className="setting-panel-title">설정</label>
             <div className="setting-btns">
-              <button className="setting-save-btn">저장</button>
+              <button className="setting-save-btn" onClick={save}>
+                저장
+              </button>
               <button className="setting-save-btn">완료</button>
             </div>
           </div>

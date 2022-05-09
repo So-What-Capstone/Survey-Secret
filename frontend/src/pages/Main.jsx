@@ -5,6 +5,8 @@ import SurveyIconsTray from "../modules/SurveyIconsTray";
 import SearchIcon from "@mui/icons-material/Search";
 import { TextField, InputAdornment } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
+import { createSearchParams, useNavigate } from "react-router-dom";
+import { string } from "prop-types";
 
 const GET_FORMS_QUERY = gql`
   query {
@@ -49,7 +51,8 @@ function Main() {
     { title: "하느님이 보우하사", link: "#none" },
     { title: "우리나라 만세", link: "#none" },
     {
-      title: "무궁화 삼천리 화~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+      title:
+        "무궁화 삼천리 화려강산 대한사랑 대한으로 길ffff이보전하세~dfdfdfd~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
       link: "#none",
     },
     { title: "가나다라마바사", link: "#none" },
@@ -69,11 +72,24 @@ function Main() {
     { title: "셋", link_enabled: false, link: "/", color_idx: 3 },
   ];
 
+  const navigate = useNavigate();
+
   const searchSurvey = () => {
     console.log(searchedText);
+    navigate({ pathname: "/search", search: `?${createSearchParams(params)}` });
   };
 
   const [searchedText, setSearchedText] = useState("");
+
+  const params = {
+    value: searchedText,
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      searchSurvey();
+    }
+  };
 
   const handleSearchedText = (e) => {
     setSearchedText(e.target.value);
@@ -92,6 +108,7 @@ function Main() {
           placeholder="지금 진행중인 설문조사를 검색해보세요."
           value={searchedText}
           onChange={handleSearchedText}
+          onKeyPress={handleKeyPress}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

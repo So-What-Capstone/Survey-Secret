@@ -78,6 +78,7 @@ export default function Form({ _config, _setResponse }) {
   const [response, setResponse] = useState();
   const [config, setConfig] = useState(null);
   const [secEnabled, setSecEnabled] = useState();
+
   useEffect(() => {
     let myConfig = { ..._config };
     let myRes = {};
@@ -104,7 +105,7 @@ export default function Form({ _config, _setResponse }) {
   }, [_config]);
 
   useEffect(() => {
-    _setResponse(response);
+    if (_setResponse !== undefined) _setResponse(response);
   }, [response]);
 
   if (config === null || config === undefined) {
