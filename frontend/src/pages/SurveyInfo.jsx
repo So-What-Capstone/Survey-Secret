@@ -6,11 +6,15 @@ import { template_list } from "../modules/Templates";
 import "../styles/SurveryInfo.css";
 import { useNavigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import {
+  FIND_FORM_BY_ID_QUERY,
+  getFormConfigFromDB,
+} from "../modules/FormConfig";
 
 const { TextArea } = Input;
 
-const formId = "62790a9fa2b013e1c29571d7";
-
+const formId = "62799659986c0549c7688c63";
+/*
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
     findFormById(input: { formId: $formId }) {
@@ -77,6 +81,7 @@ const FIND_FORM_BY_ID_QUERY = gql`
     }
   }
 `;
+*/
 
 const EDIT_FORM_MUTATION = gql`
   mutation editForm($request: EditFormInput!) {
@@ -92,7 +97,9 @@ function SurveyInfo() {
     variables: { formId },
     onCompleted: (data) => {
       console.log("Query Completed");
-      console.log(data);
+
+      const config = getFormConfigFromDB(formId, data);
+      setFormConfig(config);
     },
   });
 
