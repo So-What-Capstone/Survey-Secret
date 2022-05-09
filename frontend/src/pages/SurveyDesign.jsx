@@ -1,8 +1,9 @@
-import { Divider, Typography, Input } from "antd";
+import { Divider, Typography, Input, message, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import "../styles/SurveyDesign.css";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 import addrImage from "../resources/addr.png";
 import emailImage from "../resources/email.png";
@@ -287,6 +288,28 @@ function SurveyDesign() {
     setSections(newSections);
   };
 
+  function save() {
+    // 실제 백엔드에 저장하는 코드
+  }
+
+  function saveWorks() {
+    save();
+    message.success("작업 내역을 저장하였습니다.");
+  }
+
+  function saveAndExit() {
+    save();
+    Modal.confirm({
+      title: "'내 설문'으로 나갈까요?",
+      icon: <ExclamationCircleOutlined />,
+      content: "지금까지의 작업은 저장되었습니다.",
+      onOk() {
+        navigate("/my-survey");
+      },
+      onCancel() {},
+    });
+  }
+
   return (
     <div className="design-root">
       <div className="design-palette">
@@ -320,8 +343,12 @@ function SurveyDesign() {
             </Typography.Title>
           </div>
           <div className="design-preview-btngroup">
-            <button className="design-button">저장</button>
-            <button className="design-button">완료</button>
+            <button className="design-button" onClick={saveWorks}>
+              저장
+            </button>
+            <button className="design-button" onClick={saveAndExit}>
+              완료
+            </button>
           </div>
         </div>
         <div className="design-preview-body">
