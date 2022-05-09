@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/SearchResult.scss";
 import SearchIcon from "@mui/icons-material/Search";
 import SortIcon from "@mui/icons-material/Sort";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   TextField,
   InputAdornment,
@@ -13,12 +14,37 @@ import {
 } from "@mui/material";
 
 function SearchResult() {
-  const [searchedText, setSearchedText] = useState("");
   const [selectedForm, setSelectedForm] = useState("");
   const [selectedSort, setSelectedSort] = useState(0);
+  const [searchedForms, setSearchedForms] = useState([]); //검색결과 form들
+
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  //const params = {value:"AAAAA"}
+  //navigate({pathname:string,search:`?${createSearchParams(params)}`})
+  useEffect(() => {
+    const value = searchParams.get("value");
+    if (value) {
+      console.log(`value is ${value}`);
+      setSearchedText(value);
+      // 디버그를 위해 임의의 데이터로 설정
+      setSearchedForms(forms);
+    } else {
+      navigate("/");
+    }
+  }, [searchParams]);
+
+  const [searchedText, setSearchedText] = useState(searchParams);
 
   const handleSearchedText = (e) => {
     setSearchedText(e.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      searchSurvey();
+    }
   };
 
   const searchSurvey = () => {
@@ -109,6 +135,7 @@ function SearchResult() {
           placeholder="지금 진행중인 설문조사를 검색해보세요."
           value={searchedText}
           onChange={handleSearchedText}
+          onKeyPress={handleKeyPress}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
