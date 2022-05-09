@@ -89,10 +89,11 @@ export default function Form({ _config, _setResponse }) {
     for (let i = 0; i < myConfig.sections.length; i++) {
       let qs = myConfig.sections[i].questions;
       for (let j = 0; j < qs.length; j++) {
-        myRes[qs[j].id] = init_value[qs[j].type];
-        if (qs[j].type === 0) {
-          for (let idx in qs[j].config.trigger_sections) {
-            mySec[qs[j].config.trigger_sections[idx]] = false;
+        let q = qs[j];
+        myRes[q.id] = { ...init_value[q.type], isValid: !q.config.required };
+        if (q.type === 0) {
+          for (let idx in q.config.trigger_sections) {
+            mySec[q.config.trigger_sections[idx]] = false;
           }
         }
       }

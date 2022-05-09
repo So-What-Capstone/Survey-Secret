@@ -89,7 +89,7 @@ const simple_form2 = {
             description: "본인을 포함한 세대원",
             choices: ["1인", "2인", "3~5인", "6인 이상"],
             trigger_sections: ["", "", "", "bb"],
-            required: false,
+            required: true,
           },
           setValue: empty_func,
         },

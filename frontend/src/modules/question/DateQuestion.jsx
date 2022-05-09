@@ -37,6 +37,9 @@ function DateQuestion({ config, setValue }) {
     <div className="question-panel">
       <label className="question-title"> {content} </label>
       <label className="question-discription"> {description} </label>
+      {required ? (
+        <label className="question-required">*필수 응답 문항입니다.</label>
+      ) : null}
       <DatePicker
         style={{ width: "50%" }}
         placeholder="날짜를 선택해 주세요."

@@ -81,6 +81,9 @@ function AddressQuestion({ config, setValue }) {
     <div className="question-panel">
       <label className="question-title"> {content} </label>
       <label className="question-discription"> {description} </label>
+      {required ? (
+        <label className="question-required">*필수 응답 문항입니다.</label>
+      ) : null}
       <div className="code-line">
         <div className="code-input">
           <Input
