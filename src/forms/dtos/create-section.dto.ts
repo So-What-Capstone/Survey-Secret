@@ -8,7 +8,7 @@ import { Section } from '../schemas/section.schema';
 import { CoreOutput } from './../../common/dtos/output.dto';
 
 @InputType()
-export class CreateSectionInput extends PickType(Section, ['title']) {
+export class CreateSectionInput extends PickType(Section, ['title', 'order']) {
   @Field((type) => [CreateOpenedQuestionInput], { nullable: true })
   opened?: CreateOpenedQuestionInput[];
 

@@ -12,6 +12,7 @@ type Section {
   _id: String!
   title: String
   questions: [QuestionUnion!]!
+  order: Float!
 }
 
 union QuestionUnion = ClosedQuestion | GridQuestion | LinearQuestion | OpenedQuestion | PersonalQuestion
@@ -360,6 +361,7 @@ input CreateFormInput {
 
 input CreateSectionInput {
   title: String
+  order: Float!
   opened: [CreateOpenedQuestionInput!]
   closed: [CreateClosedQuestionInput!]
   grid: [CreateGridQuestionInput!]

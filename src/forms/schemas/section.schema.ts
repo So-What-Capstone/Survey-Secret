@@ -2,7 +2,7 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { QuestionType, QuestionUnion } from '../questions/question.typeDefs';
-import { IsMongoId, IsString, MaxLength } from 'class-validator';
+import { IsMongoId, IsString, MaxLength, IsNumber } from 'class-validator';
 import { ClosedQuestionSchema } from './../questions/schemas/closed-question.schema';
 import { OpenedQuestionSchema } from '../questions/schemas/opened-question.schema';
 import { GridQuestionSchema } from '../questions/schemas/grid-question.scheam';
@@ -18,7 +18,7 @@ export type SectionDocument = Section & Document;
 export class Section {
   @Field((type) => String)
   @IsMongoId()
-  _id: string;
+  _id?: string;
 
   @Field((type) => String, { nullable: true })
   @Prop({ type: String, trim: true, maxlength: 50 })
@@ -33,7 +33,10 @@ export class Section {
   })
   questions: typeof QuestionUnion[];
 
-  //add trigger ID
+  @Field((type) => Number)
+  @Prop({ type: Number })
+  @IsNumber()
+  order: number;
 }
 
 export const SectionSchema = SchemaFactory.createForClass(Section);

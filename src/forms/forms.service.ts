@@ -17,6 +17,7 @@ import { EditFormOutput, EditFormInput } from './dtos/edit-form.dto';
 import { CreateSectionInput } from './dtos/create-section.dto';
 import { SearchFormsInput, SearchFormsOutput } from './dtos/search-forms.dto';
 import { GetFormsInput, GetFormsOutput } from './dtos/get-forms.dto';
+import { Section } from './schemas/section.schema';
 
 @Injectable()
 export class FormsService {
@@ -32,7 +33,7 @@ export class FormsService {
 
   //graphqlInput(opened,closed,....) to Mongo Entity(questions : [])
   preprocessSections(sectionInput: CreateSectionInput[]) {
-    let sections = [];
+    let sections: Section[] = [];
 
     for (const {
       title,
@@ -41,6 +42,7 @@ export class FormsService {
       grid,
       linear,
       personal,
+      order,
     } of sectionInput) {
       const questions = [
         ...(closed ? closed : []),
@@ -60,11 +62,19 @@ export class FormsService {
       });
 
       const section = {
+        order,
         title,
         questions,
       };
       sections.push(section);
     }
+
+    sections.sort(({ order }, { order: order2 }) => {
+      if (order === order2) {
+        throw new Error('섹션 순서가 중복되었습니다.');
+      }
+      return order - order2;
+    });
 
     return sections;
   }
