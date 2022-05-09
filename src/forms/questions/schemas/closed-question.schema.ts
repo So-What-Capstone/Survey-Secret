@@ -28,9 +28,9 @@ export class ClosedQuestionChoice {
   @Field((type) => String)
   choice: string;
 
-  @Field((type) => String, { nullable: true })
+  @Field((type) => Number, { nullable: true })
   @IsMongoId()
-  activatedSection?: string;
+  activatedSection?: number;
 }
 
 @InputType('ClosedQuestionInputType', { isAbstract: true })
@@ -62,10 +62,7 @@ export class ClosedQuestion {
         //unique동작 안함 좀 더 찾아보기
         no: { type: Number, required: true },
         choice: { type: String, required: true },
-        activatedSection: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Section',
-        },
+        activatedSection: { type: Number },
       },
     ],
     required: true,
