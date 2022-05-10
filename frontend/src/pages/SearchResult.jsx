@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import "../styles/SearchResult.scss";
 import SearchIcon from "@mui/icons-material/Search";
 import SortIcon from "@mui/icons-material/Sort";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import {
+  createSearchParams,
+  useSearchParams,
+  useNavigate,
+} from "react-router-dom";
 import {
   TextField,
   InputAdornment,
@@ -123,6 +127,10 @@ function SearchResult() {
 
   const handleListItemClick = (e, id) => {
     setSelectedForm(id);
+    navigate({
+      pathname: "/respond",
+      search: `?${createSearchParams({ id: id })}`,
+    });
   };
 
   const handleSortItemClick = (e, idx) => {
@@ -212,7 +220,7 @@ function SearchResult() {
             <div key={index} className="content-con">
               <ListItem>
                 <ListItemButton
-                  onClick={(e) => handleListItemClick(e, form.id)}
+                  onClick={(e) => handleListItemClick(e, form._id)}
                   className="content-wrap"
                 >
                   <div className="content-row title">
