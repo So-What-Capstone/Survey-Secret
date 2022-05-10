@@ -122,7 +122,7 @@ function Main() {
       </div>
       <div className="content-con">
         <label>지금 참여 가능한 설문조사</label>
-        <SurveyIconsTray open_surveys={openSurveys} />
+        <SurveyIconsTray open_surveys={openSurveys} type="main" />
       </div>
     </div>
   );
