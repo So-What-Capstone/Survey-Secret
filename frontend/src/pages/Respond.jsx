@@ -10,8 +10,6 @@ import {
 import { template_list } from "../modules/Templates";
 import "../styles/Respond.css";
 
-// const formId = "62799659986c0549c7688c63";
-
 const CREATE_SUBMISSION_MUTATION = gql`
   mutation createSubmission($request: CreateSubmissionInput!) {
     createSubmission(input: $request) {
