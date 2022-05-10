@@ -36,6 +36,8 @@ const ME_QUERY = gql`
           title
           description
           state
+          expiredAt
+          privacyExpiredAt
         }
       }
     }
