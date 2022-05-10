@@ -52,6 +52,8 @@ export const FIND_FORM_BY_ID_QUERY = gql`
               content
               description
               required
+              rowContent
+              colContent
               kind
               gridType
             }

@@ -113,6 +113,7 @@ function SurveyInfo() {
     variables: { formId },
     onCompleted: (data) => {
       console.log("Query Completed");
+      console.log(data);
 
       const config = getFormConfigFromDB(formId, data);
       setFormConfig(config);
