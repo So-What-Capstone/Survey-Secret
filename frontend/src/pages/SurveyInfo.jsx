@@ -1,16 +1,20 @@
 import { DatePicker, TimePicker, Input, Checkbox } from "antd";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/SurveryInfo.css";
-import { useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import {
+  FIND_FORM_BY_ID_QUERY,
+  getFormConfigFromDB,
+} from "../modules/FormConfig";
 
 const { TextArea } = Input;
 
-const formId = "62790a9fa2b013e1c29571d7";
-
+// const formId = "62799659986c0549c7688c63";
+/*
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
     findFormById(input: { formId: $formId }) {
@@ -77,6 +81,7 @@ const FIND_FORM_BY_ID_QUERY = gql`
     }
   }
 `;
+*/
 
 const EDIT_FORM_MUTATION = gql`
   mutation editForm($request: EditFormInput!) {
@@ -86,13 +91,31 @@ const EDIT_FORM_MUTATION = gql`
     }
   }
 `;
+const form_states = {
+  0: "Ready",
+  1: "InProgress",
+  2: "Expired",
+  3: "Template",
+};
 
 function SurveyInfo() {
+  const [searchParams] = useSearchParams();
+  const [formId, setFormId] = useState(0);
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      setFormId(id);
+    } else {
+      navigate("/");
+    }
+  }, [searchParams]);
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId },
     onCompleted: (data) => {
       console.log("Query Completed");
-      console.log(data);
+
+      const config = getFormConfigFromDB(formId, data);
+      setFormConfig(config);
     },
   });
 
@@ -114,22 +137,26 @@ function SurveyInfo() {
 
   const save = (e) => {
     //
+    let state_idx = form_minor_config.state;
+    if (moment().isAfter(form_minor_config.closingAt)) {
+      state_idx = 2;
+    }
     editForm({
       variables: {
         request: {
-          formId: "6279600cd8360fa79dec993c",
-          title: "after!222!!!",
-          description: "AAAA",
-          expiredAt: "2022-05-12",
-          privacyExpiredAt: "2022-05-12",
-          state: "InProgress",
+          formId: formId,
+          title: form_config.title,
+          description: form_config.description,
+          expiredAt: form_minor_config.closingAt,
+          privacyExpiredAt: form_minor_config.privacyExpiredAt,
+          state: form_states[state_idx],
         },
       },
     });
   };
 
   const navigate = useNavigate();
-  const [form_config, setFormConfig] = useState(template_list[0]);
+  const [form_config, setFormConfig] = useState(template_list[3]);
   const [form_minor_config, setFormMinorConfig] = useState({
     state: 0, // 0: designing, 1: doing survey, 2: done survey
     isPromoted: false,
@@ -137,7 +164,7 @@ function SurveyInfo() {
     openingAt: null,
     closingAt: moment(),
     updatedAt: moment(),
-    url: "in-sang",
+    url: "?id=" + formId,
   });
   const editEnabled = form_minor_config.state === 0;
   const p_exp_enabled =
@@ -259,7 +286,9 @@ function SurveyInfo() {
               <div className="setting-line">
                 <label className="setting-label">설문 링크</label>
                 <Input
-                  value={"https://survey-secret/" + form_minor_config.url}
+                  value={
+                    "https://survey-secret/respond" + form_minor_config.url
+                  }
                   disabled={!editEnabled}
                   readOnly
                 />
