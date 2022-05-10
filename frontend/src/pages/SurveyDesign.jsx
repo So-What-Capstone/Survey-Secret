@@ -453,7 +453,7 @@ function SurveyDesign() {
   function save() {
     let newForm = {
       title: title,
-      state: "Template",
+      state: "InProgress",
       sections: sections.map((sect, i) => {
         let opened = [],
           closed = [],
@@ -523,7 +523,7 @@ function SurveyDesign() {
 
           if (ques.type === "phone") {
             personal.push({
-              type: "Phone",
+              personalType: "Phone",
               encoded: true,
               order: j,
               required: ques.required,
@@ -535,7 +535,7 @@ function SurveyDesign() {
 
           if (ques.type === "email") {
             personal.push({
-              type: "Email",
+              personalType: "Email",
               encoded: true,
               order: j,
               required: ques.required,
