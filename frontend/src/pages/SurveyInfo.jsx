@@ -175,7 +175,7 @@ function SurveyInfo() {
     navigate("/my-survey/result/list");
   };
   const editDesign = () => {
-    if (editEnabled) navigate("/my-survey/design/");
+    if (editEnabled) navigate("/my-survey/design?id=" + formId);
   };
   const onTitleChange = (e) => {
     setFormConfig({
