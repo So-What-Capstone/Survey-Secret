@@ -10,12 +10,13 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <div className="root">
-        <Menu></Menu>
         <BrowserRouter>
+          <Menu></Menu>
           {/* NOTE: 각 페이지의 디자인과 구현은 Figma를 참고해주세요. */}
           <Routes>
             <Route path="/" element={<Pages.Main />} />
             <Route path="/login" element={<Pages.Login />} />
+            <Route path="/respond" element={<Pages.Respond />} />
             <Route path="/register" element={<Pages.Register />} />
             <Route path="/findpw" element={<Pages.Findpw />} />
             <Route path="/my-survey" element={<Pages.MySurvey />} />
@@ -40,7 +41,7 @@ function App() {
             <Route path="/notice" element={<Pages.Notice />} />
             <Route path="/intro" element={<Pages.Intro />} />
             <Route path="/my-info" element={<Pages.MyInfo />} />
-
+            <Route path="/search" element={<Pages.SearchResult />} />
             {/* 문항 컴포넌트 테스트용 공간 */}
             <Route path="/test" element={<Pages.Test />} />
           </Routes>

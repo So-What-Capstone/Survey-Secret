@@ -33,7 +33,6 @@ function MainContent() {
 
   return (
     <div className="container">
-      <ClipTray clips={clips} />
       <SurveyIconsTray open_surveys={open_surveys} color_idx={1} />
     </div>
   );

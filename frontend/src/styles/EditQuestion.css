@@ -1,0 +1,58 @@
+.edit-root {
+  padding: 15px;
+  margin: 30px;
+  border: 1px solid #d9d9d9;
+  border-radius: 0.4rem;
+}
+
+.edit-remove:hover {
+  cursor: pointer;
+}
+
+.edit-div {
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
+}
+
+.edit-body {
+  width: 100%;
+  padding: 5px;
+}
+
+.edit-closed-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.edit-closed-input {
+  padding-right: 10px;
+}
+
+.edit-opened-text {
+  color: #8b8b8b;
+}
+
+.edit-linear-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.edit-linear-label {
+  white-space: nowrap;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.edit-linear-row span:first-child {
+  margin-left: 0;
+}
+
+.listman-root {
+  width: 100%;
+}
+
+.listman-row {
+  display: flex;
+  flex-direction: row;
+}

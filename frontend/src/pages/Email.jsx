@@ -9,7 +9,7 @@ function Email() {
     { title: "메일 서비스", link_enabled: false, link: "/", color_idx: 0 },
   ];
 
-  /* 설문 + 수신인 정보 raw data*/
+  /* 설문 + 수신인 정보data*/
   const forms = [
     {
       id: 0,

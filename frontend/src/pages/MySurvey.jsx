@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { SurveyIconsTray } from "../modules/index.js";
 import "../styles/MySurvey.css";
+import { useQuery, gql } from "@apollo/client";
 const surveys_ex = [
   {
     title: "서울 중앙 어린이 도서관 이관 기념퀴즈",
@@ -23,26 +24,67 @@ const surveys_ex = [
     link: "/my-survey/info",
   },
 ];
+
+const ME_QUERY = gql`
+  {
+    me {
+      ok
+      error
+      user {
+        forms {
+          _id
+          title
+          description
+          state
+          expiredAt
+          privacyExpiredAt
+        }
+      }
+    }
+  }
+`;
+
 function MySurvey() {
-  let my_surveys = []; // title, state, link
-  my_surveys = surveys_ex;
-  const designing_surverys = my_surveys.filter((v) => v.state === 0);
-  const doing_surveys = my_surveys.filter((v) => v.state === 1);
-  const done_surveys = my_surveys.filter((v) => v.state === 2);
+  const [readySurveys, setReadySurveys] = useState([]);
+  const [inProgressSurveys, setInProgressSurveys] = useState([]);
+  const [expiredSurveys, setExpiredSurveys] = useState([]);
+
+  const { loading, data, error } = useQuery(ME_QUERY, {
+    onCompleted: (data) => {
+      console.log("Query Completed");
+      setReadySurveys(
+        data?.me?.user?.forms.filter((form) => form.state === "Ready")
+      );
+      setInProgressSurveys(
+        data?.me?.user?.forms.filter((form) => form.state === "InProgress")
+      );
+      setExpiredSurveys(
+        data?.me?.user?.forms.filter((form) => form.state === "Expired")
+      );
+    },
+  });
+
   return (
     <div>
-      <div className="survey-tray-container">
-        <label className="mysurvey-label">진행 중인 설문</label>
-        <SurveyIconsTray open_surveys={doing_surveys} color_idx={1} />
-      </div>
-      <div className="survey-tray-container">
-        <label className="mysurvey-label">준비 중인 설문</label>
-        <SurveyIconsTray open_surveys={designing_surverys} color_idx={0} />
-      </div>
-      <div className="survey-tray-container">
-        <label className="mysurvey-label">마감된 설문</label>
-        <SurveyIconsTray open_surveys={done_surveys} color_idx={2} />
-      </div>
+      {loading ? (
+        "loading..."
+      ) : (
+        //data.ok, error 여부 검증 필요
+        <>
+          <div className="survey-tray-container">
+            <label className="mysurvey-label">진행 중인 설문</label>
+            <SurveyIconsTray open_surveys={inProgressSurveys} color_idx={1} />
+          </div>
+          <div className="survey-tray-container">
+            <label className="mysurvey-label">준비 중인 설문</label>
+            <SurveyIconsTray open_surveys={readySurveys} color_idx={0} />
+          </div>
+          <div className="survey-tray-container">
+            <label className="mysurvey-label">마감된 설문</label>
+            <SurveyIconsTray open_surveys={expiredSurveys} color_idx={2} />
+          </div>
+        </>
+      )}
     </div>
   );
 }
