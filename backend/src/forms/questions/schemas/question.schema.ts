@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { virtualSchemaOption } from './../../../common/schemas/option.schema';
 import {
@@ -12,6 +12,7 @@ import {
 import { QuestionType } from '../question.typeDefs';
 
 //question마다 공통으로 가지는 class
+@InputType('QuestionInputType', { isAbstract: true })
 @ObjectType()
 @Schema({ ...virtualSchemaOption, discriminatorKey: 'kind' })
 export class Question {

@@ -8,6 +8,23 @@ type ClosedQuestionChoice {
   activatedSection: Float
 }
 
+type Question {
+  _id: String!
+  content: String!
+  kind: QuestionType!
+  description: String
+  required: Boolean
+  order: Float!
+}
+
+enum QuestionType {
+  Closed
+  Grid
+  Linear
+  Opened
+  Personal
+}
+
 type Section {
   _id: String!
   title: String
@@ -26,14 +43,6 @@ type ClosedQuestion {
   order: Float!
   choices: [ClosedQuestionChoice!]!
   closedType: ClosedQuestionType
-}
-
-enum QuestionType {
-  Closed
-  Grid
-  Linear
-  Opened
-  Personal
 }
 
 enum ClosedQuestionType {
@@ -170,7 +179,7 @@ type Form {
   owner: User!
   sections: [Section!]
   submissions: [Submission!]
-  representativeQuestion: String
+  representativeQuestion: Question
 }
 
 enum FormState {
@@ -366,7 +375,17 @@ input CreateFormInput {
   state: FormState!
   expiredAt: DateTime
   privacyExpiredAt: DateTime
+  representativeQuestion: QuestionInputType
   sections: [CreateSectionInput!]
+}
+
+input QuestionInputType {
+  _id: String!
+  content: String!
+  kind: QuestionType!
+  description: String
+  required: Boolean
+  order: Float!
 }
 
 input CreateSectionInput {
@@ -447,8 +466,8 @@ input EditFormInput {
   state: FormState
   expiredAt: DateTime
   privacyExpiredAt: DateTime
+  representativeQuestion: QuestionInputType
   sections: [CreateSectionInput!]
-  representativeQuestion: String
   formId: String!
 }
 

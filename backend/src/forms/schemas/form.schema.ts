@@ -19,6 +19,7 @@ import mongoose from 'mongoose';
 import { schemaOption } from './../../common/schemas/option.schema';
 import { Section, SectionSchema } from './section.schema';
 import { Submission } from '../../submissions/schemas/submission.schema';
+import { Question } from './../questions/schemas/question.schema';
 
 export enum FormState {
   Template = 'Template',
@@ -93,9 +94,9 @@ export class Form extends CoreSchema {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Submission' }] })
   submissions?: Submission[];
 
-  @Field((type) => String, { nullable: true })
+  @Field((type) => Question, { nullable: true })
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Question' })
-  representativeQuestion?: string;
+  representativeQuestion?: Question;
 }
 
 export const FormSchema = SchemaFactory.createForClass(Form);

@@ -81,10 +81,17 @@ export class FormsService {
 
   async createForm(
     user: User,
-    createFormInput: CreateFormInput,
+    {
+      sections: sectionsInput,
+      title,
+      description,
+      privacyExpiredAt,
+      expiredAt,
+      state,
+    }: CreateFormInput,
   ): Promise<CreateFormOutput> {
     try {
-      const sections = this.preprocessSections(createFormInput.sections);
+      const sections = this.preprocessSections(sectionsInput);
 
       console.log(sections);
       //Transaction(multi-document)
@@ -94,12 +101,12 @@ export class FormsService {
         const form = await this.formModel.create(
           [
             {
-              title: createFormInput.title,
-              description: createFormInput.description,
-              privacyExpiredAt: createFormInput.privacyExpiredAt,
-              expiredAt: createFormInput.expiredAt,
+              title,
+              description,
+              privacyExpiredAt,
+              expiredAt,
               sections,
-              state: createFormInput.state,
+              state,
               owner: user,
             },
           ],
