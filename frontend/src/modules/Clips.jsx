@@ -3,17 +3,26 @@ import "../styles/Clips.css";
 
 // eslint-disable-next-line react/prop-types
 export default function Clip({ title, link_enabled, link, color_idx }) {
-  const colors = ["green", "yellow", "deep-green", "beige"];
+  const colors = ["dark-blue", "sky-blue"];
 
   var clip_text = <div />;
   if (link_enabled)
     clip_text = (
-      <a className="clip-text" href={link}>
+      <a
+        className={color_idx === 0 ? "clip-text-white" : "clip-text-black"}
+        href={link}
+      >
         {" "}
         {title}
       </a>
     );
-  else clip_text = <div className="clip-text"> {title}</div>;
+  else
+    clip_text = (
+      <div className={color_idx === 0 ? "clip-text-white" : "clip-text-black"}>
+        {" "}
+        {title}
+      </div>
+    );
 
   return <div className={"clip " + colors[color_idx]}>{clip_text}</div>;
 }
