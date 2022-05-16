@@ -9,32 +9,37 @@ function Message() {
     { title: "문자 서비스", link_enabled: false, link: "/", color_idx: 0 },
   ];
 
-  /* 설문 + 수신인 정보 raw data*/
+  /* 설문 + 수신인 정보 dummy data*/
   const forms = [
     {
-      id: 0,
+      id: "0",
       title: "누가 젤 귀여운가?",
       receivers: [
-        { id: 0, name: "카리나" },
-        { id: 1, name: "닝닝" },
-        { id: 2, name: "윈터" },
-        { id: 3, name: "지젤" },
+        { id: "0", name: "카리나" },
+        { id: "1", name: "닝닝" },
+        { id: "2", name: "윈터" },
+        { id: "3", name: "지젤" },
+        { id: "4", name: "카리나" },
+        { id: "5", name: "카리나" },
+        { id: "6", name: "카리나" },
+        { id: "7", name: "카리나" },
+        { id: "8", name: "카리나" },
       ],
     },
     {
-      id: 1,
+      id: "1",
       title: "누가 젤 예쁜가??",
       receivers: [
-        { id: 0, name: "고다현" },
-        { id: 1, name: "김지윤" },
-        { id: 2, name: "윈터" },
+        { id: "9", name: "고다현" },
+        { id: "10", name: "김지윤" },
+        { id: "11", name: "윈터" },
       ],
     },
   ];
 
   /* 수신인 정보 */
   const [selectedForm, setSelectedForm] = useState(forms[0]); //선택된 설문
-  const [checkedItems, setCheckedItems] = useState(new Set()); //체크된 수신자들(num(id)들의 배열)
+  const [checkedItems, setCheckedItems] = useState(new Set()); //체크된 수신자들(receiverId들의 배열)
 
   /* 문자메시지 발신 정보 */
   const [senderTel, setSenderTel] = useState("01012341234");
@@ -49,9 +54,9 @@ function Message() {
   };
 
   const sendMessage = () => {
-    console.log(selectedForm.id);
+    console.log("selectedForm Id: " + selectedForm.id);
     checkedItems.forEach(function (value) {
-      console.log(value);
+      console.log("receiverId: " + value);
     });
     console.log(senderTel + ", " + textValue);
     //send Message logic
@@ -89,7 +94,7 @@ function Message() {
   };
 
   return (
-    <div className="con">
+    <div className="contact-con">
       <ClipTray clips={clips} />
       <div className="message-con">
         <ContactList

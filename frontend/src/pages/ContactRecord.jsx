@@ -14,7 +14,7 @@ import {
 import PropTypes from "prop-types";
 
 function ContactRecord() {
-  /* raw data */
+  /* dummy data */
   const messages = [
     {
       title: "설문제목1",
@@ -90,9 +90,9 @@ function ContactRecord() {
 
   /* 문자메시지/이메일 발신 정보 */
   const [mode, setMode] = useState(0); //0:문자 메시지, 1:이메일
-  const [textTitle, setTextTitle] = useState("");
-  const [textValue, setTextValue] = useState("");
-  const [textByte, setTextByte] = useState(0);
+  const [textTitle, setTextTitle] = useState(""); //이메일 제목
+  const [textValue, setTextValue] = useState(""); //문자/이메일 내용
+  const [textByte, setTextByte] = useState(0); //문자 바이트수
   const [selectedMessage, setSelectedMessage] = useState({
     title: "",
     time: "",
@@ -154,12 +154,12 @@ function ContactRecord() {
   };
 
   const sendMessage = () => {
-    //console.log(senderInfo + ", " + textValue);
+    console.log(textValue);
     //send Message logic
   };
 
   const sendEmail = () => {
-    console.log(textValue);
+    console.log(textTitle + ", " + textValue);
     //send Email logic
   };
 
@@ -224,7 +224,7 @@ function ContactRecord() {
                     <div className="content-row two">
                       {message.content.length > 20 ? (
                         <ListItemText
-                          primary={message.content.substring(0, 20) + "..."}
+                          primary={message.content.substring(0, 23) + "..."}
                         />
                       ) : (
                         <ListItemText primary={message.content} />
@@ -260,7 +260,7 @@ function ContactRecord() {
                     <div className="content-row two">
                       {email.content.length > 20 ? (
                         <ListItemText
-                          primary={email.content.substring(0, 20) + "..."}
+                          primary={email.content.substring(0, 23) + "..."}
                         />
                       ) : (
                         <ListItemText primary={email.content} />
@@ -278,10 +278,10 @@ function ContactRecord() {
   }
 
   return (
-    <div className="con">
+    <div className="contact-con">
       <ClipTray clips={clips} />
       <div className="record-con">
-        <div className="list-panel">
+        <div className="record-list-panel">
           <Tabs
             value={mode}
             onChange={handleModeChange}

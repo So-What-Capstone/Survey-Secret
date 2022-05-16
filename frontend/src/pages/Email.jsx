@@ -12,22 +12,22 @@ function Email() {
   /* 설문 + 수신인 정보data*/
   const forms = [
     {
-      id: 0,
+      id: "0",
       title: "누가 젤 귀여운가?",
       receivers: [
-        { id: 0, name: "카리나" },
-        { id: 1, name: "닝닝" },
-        { id: 2, name: "윈터" },
-        { id: 3, name: "지젤" },
+        { id: "0", name: "카리나" },
+        { id: "1", name: "닝닝" },
+        { id: "2", name: "윈터" },
+        { id: "3", name: "지젤" },
       ],
     },
     {
-      id: 1,
+      id: "1",
       title: "누가 젤 예쁜가??",
       receivers: [
-        { id: 0, name: "고다현" },
-        { id: 1, name: "김지윤" },
-        { id: 2, name: "윈터" },
+        { id: "4", name: "고다현" },
+        { id: "5", name: "김지윤" },
+        { id: "6", name: "윈터" },
       ],
     },
   ];
@@ -49,16 +49,16 @@ function Email() {
   };
 
   const sendEmail = () => {
-    console.log(selectedForm.id);
+    console.log("selectedFormId: " + selectedForm.id);
     checkedItems.forEach(function (value) {
-      console.log(value);
+      console.log("receiver id: " + value);
     });
     console.log(textTitle + ", " + textValue);
     //send Email logic
   };
 
   return (
-    <div className="con">
+    <div className="contact-con">
       <ClipTray clips={clips} />
       <div className="email-con">
         <ContactList
@@ -71,7 +71,7 @@ function Email() {
         <div className="detail-panel">
           <div className="content-row">
             <div className="content-label">
-              <label>메일 제목</label>
+              <label>이메일 제목</label>
             </div>
             <input type="text" value={textTitle} onChange={handleTextTitle} />
           </div>

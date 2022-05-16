@@ -4,23 +4,37 @@ import PropTypes from "prop-types";
 import { Select, MenuItem } from "@mui/material";
 
 TableItem.propTypes = {
-  num: PropTypes.number,
+  id: PropTypes.string,
   name: PropTypes.string,
   checkedItemHandler: PropTypes.func,
   isAllChecked: PropTypes.bool,
+  bAllChecked: PropTypes.bool,
+  setAllChecked: PropTypes.func,
+  order: PropTypes.number,
 };
 
-function TableItem({ num, name, checkedItemHandler, isAllChecked }) {
-  //체크 여부
+function TableItem({
+  id,
+  name,
+  checkedItemHandler,
+  isAllChecked,
+  bAllChecked,
+  setAllChecked,
+  order,
+}) {
+  //각 item 체크 여부
   const [bChecked, setChecked] = useState(false);
 
   //체크박스 눌렀을 때 해당 아이템을 체크리스트에 넣기/빼기
   const checkHandler = ({ target }) => {
     setChecked(!bChecked);
-    checkedItemHandler(num, target.checked);
+    if (bAllChecked && bChecked) {
+      setAllChecked(!bAllChecked);
+    }
+    checkedItemHandler(id, target.checked);
   };
 
-  //전체체크 체크박스가 체크/체크해제되면 개별체크박스도 체크/체크해제
+  //isAllChecked가 true(전체체크박스에 체크되면)면 이 체크박스도 체크
   const allCheckHandler = useCallback(() => {
     setChecked(isAllChecked);
   }, [isAllChecked]);
@@ -36,7 +50,7 @@ function TableItem({ num, name, checkedItemHandler, isAllChecked }) {
         onChange={(e) => checkHandler(e)}
         className="item-check"
       />
-      <label className="item-id">{num}</label>
+      <label className="item-order">{order}</label>
       <label className="item-name">{name}</label>
     </div>
   );
@@ -50,6 +64,9 @@ ContactList.propTypes = {
   setCheckedItems: PropTypes.func,
 };
 
+/**
+ * ContactList
+ */
 function ContactList({
   forms,
   selectedForm,
@@ -60,7 +77,9 @@ function ContactList({
   const handleFormChange = (event) => {
     const selectedId = event.target.value;
     setSelectedForm(forms.find((form) => form.id === selectedId));
-    //setSelectedForm(event.target.value);
+    checkedItems.clear();
+    setIsAllChecked(false);
+    setAllChecked(false);
   };
 
   //전체 체크 여부
@@ -70,16 +89,13 @@ function ContactList({
   const checkedItemHandler = (id, isChecked) => {
     //매개변수 이 순서로 해야 id가 checkedItems에 저장되네..?
     if (isChecked) {
-      setCheckedItems(checkedItems.add(id));
-      //setCheckedItems((prev) => new Set(prev.add(id)));
+      checkedItems.add(id);
+      setCheckedItems(checkedItems);
     } else if (!isChecked && checkedItems.has(id)) {
       //체크 해제
       checkedItems.delete(id);
+      setCheckedItems(checkedItems);
     }
-    //디버깅
-    checkedItems.forEach(function (value) {
-      console.log(value);
-    });
   };
 
   //전체체크 체크박스 눌렀을 때 체크리스트에 넣기/빼기
@@ -96,17 +112,12 @@ function ContactList({
   };
 
   //전체체크 체크박스 여부
-  const [bChecked, setChecked] = useState(false);
+  const [bAllChecked, setAllChecked] = useState(false);
 
   //전체체크 체크박스 눌렀을 때의 행동
   const checkHandler = ({ target }) => {
-    setChecked(!bChecked);
+    setAllChecked(!bAllChecked);
     allCheckedHandler(target.checked);
-
-    //디버깅 - checkedItems에 안들어갔음
-    checkedItems.forEach(function (value) {
-      console.log(value);
-    });
   };
 
   return (
@@ -132,20 +143,24 @@ function ContactList({
           <div className="row-list-head">
             <input
               type="checkbox"
-              checked={bChecked}
+              checked={bAllChecked}
               onChange={(e) => checkHandler(e)}
               className="all-check"
             />
+            <span></span>
             <input type="button" value="즐겨찾기 선택" className="star-btn" />
           </div>
           <div className="list-con">
-            {selectedForm.receivers.map((receiver) => (
+            {selectedForm.receivers.map((receiver, index) => (
               <TableItem
-                num={receiver.id}
+                id={receiver.id}
                 name={receiver.name}
                 isAllChecked={isAllChecked}
                 checkedItemHandler={checkedItemHandler}
+                bAllChecked={bAllChecked}
+                setAllChecked={setAllChecked}
                 key={receiver.id}
+                order={index}
               />
             ))}
           </div>
