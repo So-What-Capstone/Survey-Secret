@@ -45,35 +45,6 @@ function Main() {
     },
   });
 
-  const open_surveys = [
-    {
-      title: "동해물과 백두산이",
-      description: "dfdf라라라ㅏ라라라라라ㅏㄹ",
-      link: "#none",
-    },
-    {
-      title: "마르고 닳도록",
-      description: "dfdf라라라ㅏ라라라라라ㅏㄹ",
-      link: "#none",
-    },
-    {
-      title: "하느님이 보우하사",
-      description: "dfdf라라라ㅏ라라라라라ㅏㄹ",
-      link: "#none",
-    },
-    {
-      title: "우리나라 만세",
-      description: "dfdf라라라ㅏ라라라라라ㅏㄹ",
-      link: "#none",
-    },
-    {
-      title:
-        "무궁화 삼천리 화려강산 대한사랑 대한으로 길ffff이보전하세~dfdfdfd~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-      description: "dfdf라라라ㅏ라라라라라ㅏㄹ",
-      link: "#none",
-    },
-  ];
-
   const navigate = useNavigate();
 
   const searchSurvey = () => {

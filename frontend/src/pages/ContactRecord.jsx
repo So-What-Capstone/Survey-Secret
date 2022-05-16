@@ -18,41 +18,41 @@ function ContactRecord() {
   const messages = [
     {
       title: "설문제목1",
-      time: "2022 3/24 3:59",
+      time: "2022/3/24 3:59",
       count: 3,
       success: true,
       receivers: [
         {
-          id: 0,
+          id: "0",
           name: "닝닝",
         },
         {
-          id: 1,
+          id: "1",
           name: "카리나",
         },
       ],
       senderInfo: "01012341234",
       content: "전송내용1",
-      id: 0,
+      id: "0",
     },
     {
       title: "설문제목2",
       time: "1997/3/14 2:33",
-      count: 15,
+      count: 2,
       success: false,
       receivers: [
         {
-          id: 0,
+          id: "2",
           name: "닝닝닝",
         },
         {
-          id: 1,
+          id: "3",
           name: "카리나",
         },
       ],
       senderInfo: "01010041004",
       content: "전송내용2 룰루랄라 올로랄라 릴리리맘보",
-      id: 1,
+      id: "1",
     },
   ];
 
@@ -64,18 +64,18 @@ function ContactRecord() {
       success: true,
       receivers: [
         {
-          id: 0,
+          id: "10",
           name: "윈터",
         },
         {
-          id: 1,
+          id: "13",
           name: "지젤",
         },
       ],
       senderInfo: "wusdfl@naver.com",
       textTitle: "제목입니당",
-      content: "전송내용2 룰루랄라 올로랄라 릴리리맘보",
-      id: 1,
+      content: "전송내용2 룰루랄라 올로랄라 릴리리맘보 올릴리리",
+      id: "9",
     },
   ];
 
@@ -100,13 +100,13 @@ function ContactRecord() {
     success: false,
     receivers: [
       {
-        id: 0,
+        id: "",
         name: "",
       },
     ],
     senderInfo: "",
     content: "",
-    id: 0,
+    id: "",
   });
   const [selectedEmail, setSelectedEmail] = useState({
     title: "",
@@ -115,14 +115,14 @@ function ContactRecord() {
     success: false,
     receivers: [
       {
-        id: 0,
+        id: "",
         name: "",
       },
     ],
     senderInfo: "",
     texttitle: "",
     content: "",
-    id: 0,
+    id: "",
   });
 
   const maxByte = 100; //최대 100바이트
@@ -224,7 +224,7 @@ function ContactRecord() {
                     <div className="content-row two">
                       {message.content.length > 20 ? (
                         <ListItemText
-                          primary={message.content.substring(0, 23) + "..."}
+                          primary={message.content.substring(0, 22) + "..."}
                         />
                       ) : (
                         <ListItemText primary={message.content} />
@@ -260,7 +260,7 @@ function ContactRecord() {
                     <div className="content-row two">
                       {email.content.length > 20 ? (
                         <ListItemText
-                          primary={email.content.substring(0, 23) + "..."}
+                          primary={email.content.substring(0, 22) + "..."}
                         />
                       ) : (
                         <ListItemText primary={email.content} />
@@ -336,16 +336,16 @@ function ContactRecord() {
             <List className="small-list-con">
               <div className="content-con">
                 {mode === 0 &&
-                  selectedMessage.receivers.map((receiver) => (
+                  selectedMessage.receivers.map((receiver, index) => (
                     <ListItem key={receiver.id} className="content">
-                      <ListItemText primary={receiver.id} />
+                      <ListItemText primary={index} />
                       <ListItemText primary={receiver.name} />
                     </ListItem>
                   ))}
                 {mode === 1 &&
-                  selectedEmail.receivers.map((receiver) => (
+                  selectedEmail.receivers.map((receiver, index) => (
                     <ListItem key={receiver.id} className="content">
-                      <ListItemText primary={receiver.id} />
+                      <ListItemText primary={index} />
                       <ListItemText primary={receiver.name} />
                     </ListItem>
                   ))}
