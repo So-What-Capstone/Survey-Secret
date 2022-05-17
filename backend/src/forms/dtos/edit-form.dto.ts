@@ -14,7 +14,7 @@ import { CreateFormInput } from './craete-form.dto';
 @InputType()
 export class EditFormInput extends IntersectionType(
   PartialType(CreateFormInput),
-  PickType(Form, ['state', 'representativeQuestion']),
+  PickType(Form, ['state']),
 ) {
   @Field((type) => String)
   @IsMongoId()
