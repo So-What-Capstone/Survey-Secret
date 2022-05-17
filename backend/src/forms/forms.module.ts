@@ -8,6 +8,7 @@ import {
   SubmissionSchema,
   Submission,
 } from '../submissions/schemas/submission.schema';
+import { TemplateSchema, Template } from './schemas/template.schema';
 
 @Module({
   imports: [
@@ -23,6 +24,10 @@ import {
       {
         name: Submission.name,
         schema: SubmissionSchema,
+      },
+      {
+        name: Template.name,
+        schema: TemplateSchema,
       },
     ]),
   ],

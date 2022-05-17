@@ -16,6 +16,11 @@ import { DeleteFormOutput, DeleteFormInput } from './dtos/delete-form.dto';
 import { EditFormInput, EditFormOutput } from './dtos/edit-form.dto';
 import { SearchFormsInput, SearchFormsOutput } from './dtos/search-forms.dto';
 import { GetFormsInput, GetFormsOutput } from './dtos/get-forms.dto';
+import { GetTemplatesOutput } from './dtos/get-templates.dto';
+import {
+  GetTemplateByIdInput,
+  GetTemplateByIdOutput,
+} from './dtos/get-template-by-id.dto';
 
 @Resolver()
 export class FormsResolver {
@@ -76,9 +81,15 @@ export class FormsResolver {
     return this.formsService.getForms(getFormsInput);
   }
 
-  @Query((returns) => GetFormsOutput)
+  @Query((returns) => GetTemplatesOutput)
   @Type(['Any'])
-  getTemplates(@AuthUser() user: User): Promise<GetFormsOutput> {
-    return this.formsService.getTemplates(user);
+  getTemplates(): Promise<GetTemplatesOutput> {
+    return this.formsService.getTemplates();
+  }
+
+  @Query((returns) => GetTemplateByIdOutput)
+  @Type(['Any'])
+  getTemplateById(@Args('input') { templateId }: GetTemplateByIdInput) {
+    return this.formsService.getTemplateById(templateId);
   }
 }

@@ -18,13 +18,17 @@ import { CreateSectionInput } from './dtos/create-section.dto';
 import { SearchFormsInput, SearchFormsOutput } from './dtos/search-forms.dto';
 import { GetFormsInput, GetFormsOutput } from './dtos/get-forms.dto';
 import { Section } from './schemas/section.schema';
+import { GetTemplatesOutput } from './dtos/get-templates.dto';
+import { Template, TemplateDocument } from './schemas/template.schema';
+import { GetTemplateByIdOutput } from './dtos/get-template-by-id.dto';
 
 @Injectable()
 export class FormsService {
   constructor(
     @InjectModel(Form.name) private readonly formModel: Model<FormDocument>,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-
+    @InjectModel(Template.name)
+    private readonly templateModel: Model<TemplateDocument>,
     @InjectModel(Submission.name)
     private readonly submissionModel: Model<SubmissionDocument>,
     @InjectConnection()
@@ -317,12 +321,25 @@ export class FormsService {
     }
   }
 
-  async getTemplates(user: User): Promise<GetFormsOutput> {
+  async getTemplates(): Promise<GetTemplatesOutput> {
     try {
-      const template = await this.formModel.find({
-        $and: [{ state: FormState.Template }, { owner: user._id }],
-      });
-      return { ok: true, forms: template };
+      const templates = await this.templateModel.find({});
+
+      return { ok: true, templates };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async getTemplateById(_id: string): Promise<GetTemplateByIdOutput> {
+    try {
+      const template = await this.templateModel.findOne({ _id });
+
+      if (!template) {
+        return { ok: false, error: '존재하지 않는 템플릿 입니다.' };
+      }
+
+      return { ok: true, template };
     } catch (error) {
       return { ok: false, error: error.message };
     }

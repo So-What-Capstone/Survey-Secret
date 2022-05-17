@@ -233,6 +233,15 @@ type meOutput {
   user: User
 }
 
+type Template {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  _id: String!
+  title: String!
+  description: String
+  sections: [Section!]
+}
+
 type CreateFormOutput {
   ok: Boolean!
   error: String
@@ -275,6 +284,18 @@ type GetFormsOutput {
   forms: [Form!]
 }
 
+type GetTemplatesOutput {
+  ok: Boolean!
+  error: String
+  templates: [Template!]
+}
+
+type GetTemplateByIdOutput {
+  ok: Boolean!
+  error: String
+  template: Template
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -298,7 +319,8 @@ type Query {
   findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!
   searchForms(input: SearchFormsInput!): SearchFormsOutput!
   getForms(input: GetFormsInput!): GetFormsOutput!
-  getTemplates: GetFormsOutput!
+  getTemplates: GetTemplatesOutput!
+  getTemplateById(input: GetTemplateByIdInput!): GetTemplateByIdOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
   getStat: CoreOutput!
 }
@@ -322,6 +344,10 @@ input SearchFormsInput {
 
 input GetFormsInput {
   lastId: String
+}
+
+input GetTemplateByIdInput {
+  templateId: String!
 }
 
 input FindSubmissionByIdInput {
