@@ -1,4 +1,5 @@
 import { InputType, ObjectType, PickType, Field } from '@nestjs/graphql';
+import { IsMongoId, IsOptional } from 'class-validator';
 import { Form } from '../schemas/form.schema';
 import { CoreOutput } from './../../common/dtos/output.dto';
 import { CreateSectionInput } from './create-section.dto';
@@ -16,4 +17,9 @@ export class CreateFormInput extends PickType(Form, [
 }
 
 @ObjectType()
-export class CreateFormOutput extends CoreOutput {}
+export class CreateFormOutput extends CoreOutput {
+  @Field((type) => String, { nullable: true })
+  @IsMongoId()
+  @IsOptional()
+  formId?: string;
+}

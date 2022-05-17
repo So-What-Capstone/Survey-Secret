@@ -93,10 +93,10 @@ export class FormsService {
     try {
       const sections = this.preprocessSections(sectionsInput);
 
-      console.log(sections);
       //Transaction(multi-document)
       const session = await this.connection.startSession();
 
+      let formId: string;
       await session.withTransaction(async () => {
         const form = await this.formModel.create(
           [
@@ -113,6 +113,8 @@ export class FormsService {
           { session },
         );
 
+        formId = form[0]._id;
+
         //if(not ~ ) : throw Exception
 
         await this.userModel.updateOne(
@@ -123,7 +125,7 @@ export class FormsService {
       });
       await session.endSession();
 
-      return { ok: true };
+      return { ok: true, formId };
     } catch (error) {
       console.error(error);
       return { ok: false, error: error.message };
@@ -220,7 +222,6 @@ export class FormsService {
     }: EditFormInput,
   ): Promise<EditFormOutput> {
     try {
-      //변수명 고치기
       const sections = sectionInput
         ? this.preprocessSections(sectionInput)
         : undefined;
