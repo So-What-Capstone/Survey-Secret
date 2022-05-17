@@ -18,9 +18,9 @@ import { SearchFormsInput, SearchFormsOutput } from './dtos/search-forms.dto';
 import { GetFormsInput, GetFormsOutput } from './dtos/get-forms.dto';
 import { GetTemplatesOutput } from './dtos/get-templates.dto';
 import {
-  GetTemplateByIdInput,
-  GetTemplateByIdOutput,
-} from './dtos/get-template-by-id.dto';
+  FindTemplateByIdInput,
+  FindTemplateByIdOutput,
+} from './dtos/find-template-by-id.dto';
 
 @Resolver()
 export class FormsResolver {
@@ -87,9 +87,9 @@ export class FormsResolver {
     return this.formsService.getTemplates();
   }
 
-  @Query((returns) => GetTemplateByIdOutput)
+  @Query((returns) => FindTemplateByIdOutput)
   @Type(['Any'])
-  getTemplateById(@Args('input') { templateId }: GetTemplateByIdInput) {
-    return this.formsService.getTemplateById(templateId);
+  findTemplateById(@Args('input') { templateId }: FindTemplateByIdInput) {
+    return this.formsService.findTemplateById(templateId);
   }
 }

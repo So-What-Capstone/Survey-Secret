@@ -20,7 +20,7 @@ import { GetFormsInput, GetFormsOutput } from './dtos/get-forms.dto';
 import { Section } from './schemas/section.schema';
 import { GetTemplatesOutput } from './dtos/get-templates.dto';
 import { Template, TemplateDocument } from './schemas/template.schema';
-import { GetTemplateByIdOutput } from './dtos/get-template-by-id.dto';
+import { FindTemplateByIdOutput } from './dtos/find-template-by-id.dto';
 
 @Injectable()
 export class FormsService {
@@ -331,7 +331,7 @@ export class FormsService {
     }
   }
 
-  async getTemplateById(_id: string): Promise<GetTemplateByIdOutput> {
+  async findTemplateById(_id: string): Promise<FindTemplateByIdOutput> {
     try {
       const template = await this.templateModel.findOne({ _id });
 

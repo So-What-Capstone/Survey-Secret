@@ -290,7 +290,7 @@ type GetTemplatesOutput {
   templates: [Template!]
 }
 
-type GetTemplateByIdOutput {
+type FindTemplateByIdOutput {
   ok: Boolean!
   error: String
   template: Template
@@ -320,7 +320,7 @@ type Query {
   searchForms(input: SearchFormsInput!): SearchFormsOutput!
   getForms(input: GetFormsInput!): GetFormsOutput!
   getTemplates: GetTemplatesOutput!
-  getTemplateById(input: GetTemplateByIdInput!): GetTemplateByIdOutput!
+  findTemplateById(input: FindTemplateByIdInput!): FindTemplateByIdOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
   getStat: CoreOutput!
 }
@@ -346,7 +346,7 @@ input GetFormsInput {
   lastId: String
 }
 
-input GetTemplateByIdInput {
+input FindTemplateByIdInput {
   templateId: String!
 }
 
