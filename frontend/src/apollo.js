@@ -21,7 +21,9 @@ export const logUserOut = () => {
 };
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:5000/graphql",
+  uri: process.env.REACT_APP_BACKEND
+    ? process.env.REACT_APP_BACKEND
+    : "http://localhost:5000/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
