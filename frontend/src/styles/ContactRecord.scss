@@ -27,9 +27,10 @@
         min-height: 38rem;
         max-height: 38rem;
         overflow: auto;
-        background-color: #F5F5F5;
         border-radius: 0px 10px 10px 10px / 0px 10px 10px 10px;
         border: 1px solid #EA99D5;
+        padding: 0px;
+        background-color: #F5F5F5;
         .content-con { //ListItem + Divider
           display: flex;
           flex-direction: column;
@@ -37,10 +38,13 @@
             display: flex;
             flex-direction: column;
             text-align: left;
+            &.selected {
+              background-color: #CCD6F6 !important;
+            }
             .content-row { //ListItem 속 데이터 1줄
               display: flex;
               flex-direction: row;
-              background-color: #F5F5F5;
+              background-color: #CCD6F600;
               margin: 0;
               text-align: left;
               padding: 0.05rem 1vw 0.05rem 1vw;

@@ -205,32 +205,35 @@ function ContactRecord() {
           <List className="list-con">
             {messages.map((message) => (
               <div key={message.id} className="content-con">
-                <ListItem>
-                  <ListItemButton
-                    selected={selectedMessage === message}
-                    onClick={(e) => handleListItemClick(e, message, mode)}
-                    className="content-wrap"
-                  >
-                    <div className="content-row one">
-                      <ListItemText primary={message.title} />
-                    </div>
-                    <div className="content-row one">
-                      <ListItemText primary={message.time} />
-                      <ListItemText primary={message.count + "건"} />
+                <ListItem
+                  button
+                  selected={selectedMessage === message}
+                  onClick={(e) => handleListItemClick(e, message, mode)}
+                  className={
+                    selectedMessage.id === message.id
+                      ? "content-wrap selected"
+                      : "content-wrap"
+                  }
+                >
+                  <div className="content-row one">
+                    <ListItemText primary={message.title} />
+                  </div>
+                  <div className="content-row one">
+                    <ListItemText primary={message.time} />
+                    <ListItemText primary={message.count + "건"} />
+                    <ListItemText
+                      primary={message.success ? "전송 성공" : "전송 실패"}
+                    />
+                  </div>
+                  <div className="content-row two">
+                    {message.content.length > 20 ? (
                       <ListItemText
-                        primary={message.success ? "전송 성공" : "전송 실패"}
+                        primary={message.content.substring(0, 22) + "..."}
                       />
-                    </div>
-                    <div className="content-row two">
-                      {message.content.length > 20 ? (
-                        <ListItemText
-                          primary={message.content.substring(0, 22) + "..."}
-                        />
-                      ) : (
-                        <ListItemText primary={message.content} />
-                      )}
-                    </div>
-                  </ListItemButton>
+                    ) : (
+                      <ListItemText primary={message.content} />
+                    )}
+                  </div>
                 </ListItem>
                 <Divider component="li" className="content-div" />
               </div>
@@ -241,32 +244,35 @@ function ContactRecord() {
           <List className="list-con">
             {emails.map((email) => (
               <div key={email.id} className="content-con">
-                <ListItem>
-                  <ListItemButton
-                    selected={selectedEmail === email}
-                    onClick={(e) => handleListItemClick(e, email, mode)}
-                    className="content-wrap"
-                  >
-                    <div className="content-row one">
-                      <ListItemText primary={email.title} />
-                    </div>
-                    <div className="content-row one">
-                      <ListItemText primary={email.time} />
-                      <ListItemText primary={email.count + "건"} />
+                <ListItem
+                  button
+                  selected={selectedEmail === email}
+                  onClick={(e) => handleListItemClick(e, email, mode)}
+                  className={
+                    selectedEmail.id === email.id
+                      ? "content-wrap selected"
+                      : "content-wrap"
+                  }
+                >
+                  <div className="content-row one">
+                    <ListItemText primary={email.title} />
+                  </div>
+                  <div className="content-row one">
+                    <ListItemText primary={email.time} />
+                    <ListItemText primary={email.count + "건"} />
+                    <ListItemText
+                      primary={email.success ? "전송 성공" : "전송 실패"}
+                    />
+                  </div>
+                  <div className="content-row two">
+                    {email.content.length > 20 ? (
                       <ListItemText
-                        primary={email.success ? "전송 성공" : "전송 실패"}
+                        primary={email.content.substring(0, 22) + "..."}
                       />
-                    </div>
-                    <div className="content-row two">
-                      {email.content.length > 20 ? (
-                        <ListItemText
-                          primary={email.content.substring(0, 22) + "..."}
-                        />
-                      ) : (
-                        <ListItemText primary={email.content} />
-                      )}
-                    </div>
-                  </ListItemButton>
+                    ) : (
+                      <ListItemText primary={email.content} />
+                    )}
+                  </div>
                 </ListItem>
                 <Divider component="li" className="content-div" />
               </div>

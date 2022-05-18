@@ -15,7 +15,7 @@ function Email() {
       id: "0",
       title: "누가 젤 귀여운가?",
       receivers: [
-        { id: "0", name: "카리나" },
+        { id: "0", name: "카리나" }, //id:submission id, name:대표문항 답
         { id: "1", name: "닝닝" },
         { id: "2", name: "윈터" },
         { id: "3", name: "지젤" },
