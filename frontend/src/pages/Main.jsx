@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { MainContent } from "../modules";
 import "../styles/Main.scss";
 import SurveyIconsTray from "../modules/SurveyIconsTray";
 import SearchIcon from "@mui/icons-material/Search";
 import { TextField, InputAdornment } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
 import { createSearchParams, useNavigate } from "react-router-dom";
-import { string } from "prop-types";
+import adImage from "../resources/adImage.PNG";
 
 const GET_FORMS_QUERY = gql`
   query {
@@ -101,7 +100,7 @@ function Main() {
     <div className="main-con">
       <div className="banner-con">
         <input type="button" value="<" className="arrow-btn" />
-        <img className="banner" alt="banner" src="/img/adImage.png" />
+        <img className="banner" alt="banner" src={adImage} />
         <input type="button" value=">" className="arrow-btn" />
       </div>
       <div className="search-con">
