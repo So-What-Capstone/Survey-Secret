@@ -25,7 +25,7 @@ function SurveyCreate() {
     // get the result(new form's id) of the request
     // make new config for the new form
     // make url: /my-syrvey/design?survey={id}
-    navigate("/my-survey/design");
+    navigate("/my-survey/design?id=6279ba04986c0549c76891a9");
   };
   return (
     <div className="content">

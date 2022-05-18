@@ -1,7 +1,7 @@
 const empty_func = () => {};
 
 const empty = {
-  id: "",
+  id: "6279b598986c0549c7689095",
   title: "빈 템플릿",
   description: "빈 템플릿 입니다.",
   sections: [

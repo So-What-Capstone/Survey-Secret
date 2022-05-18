@@ -10,8 +10,6 @@ import {
 import { template_list } from "../modules/Templates";
 import "../styles/Respond.css";
 
-const formId = "62799659986c0549c7688c63";
-
 const CREATE_SUBMISSION_MUTATION = gql`
   mutation createSubmission($request: CreateSubmissionInput!) {
     createSubmission(input: $request) {
@@ -23,6 +21,16 @@ const CREATE_SUBMISSION_MUTATION = gql`
 
 function Respond() {
   const [form_config, setFormConfig] = useState();
+  const [searchParams] = useSearchParams();
+  const [formId, setFormId] = useState(0);
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      setFormId(id);
+    } else {
+      navigate("/");
+    }
+  }, [searchParams]);
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId },
     onCompleted: (data) => {
@@ -50,7 +58,6 @@ function Respond() {
     }
   );
 
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [response, setResponse] = useState();
   const onSubmitClick = () => {
@@ -151,15 +158,6 @@ function Respond() {
     //   alert("필수 응답문항을 모두 답해주세요.");
     // }
   };
-
-  useEffect(() => {
-    const id = searchParams.get("id");
-    if (id) {
-      //
-    } else {
-      navigate("/");
-    }
-  }, [searchParams]);
 
   if (!form_config) return null;
   return (

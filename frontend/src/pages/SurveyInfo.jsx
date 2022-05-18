@@ -1,10 +1,10 @@
 import { DatePicker, TimePicker, Input, Checkbox } from "antd";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/SurveryInfo.css";
-import { useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   FIND_FORM_BY_ID_QUERY,
@@ -13,7 +13,7 @@ import {
 
 const { TextArea } = Input;
 
-const formId = "62799659986c0549c7688c63";
+// const formId = "62799659986c0549c7688c63";
 /*
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
@@ -99,10 +99,21 @@ const form_states = {
 };
 
 function SurveyInfo() {
+  const [searchParams] = useSearchParams();
+  const [formId, setFormId] = useState(0);
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      setFormId(id);
+    } else {
+      navigate("/");
+    }
+  }, [searchParams]);
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId },
     onCompleted: (data) => {
       console.log("Query Completed");
+      console.log(data);
 
       const config = getFormConfigFromDB(formId, data);
       setFormConfig(config);
@@ -146,7 +157,7 @@ function SurveyInfo() {
   };
 
   const navigate = useNavigate();
-  const [form_config, setFormConfig] = useState(template_list[0]);
+  const [form_config, setFormConfig] = useState(template_list[3]);
   const [form_minor_config, setFormMinorConfig] = useState({
     state: 0, // 0: designing, 1: doing survey, 2: done survey
     isPromoted: false,
@@ -154,7 +165,7 @@ function SurveyInfo() {
     openingAt: null,
     closingAt: moment(),
     updatedAt: moment(),
-    url: "in-sang",
+    url: "?id=" + formId,
   });
   const editEnabled = form_minor_config.state === 0;
   const p_exp_enabled =
@@ -165,7 +176,7 @@ function SurveyInfo() {
     navigate("/my-survey/result/list");
   };
   const editDesign = () => {
-    if (editEnabled) navigate("/my-survey/design/");
+    if (editEnabled) navigate("/my-survey/design?id=" + formId);
   };
   const onTitleChange = (e) => {
     setFormConfig({
@@ -276,7 +287,9 @@ function SurveyInfo() {
               <div className="setting-line">
                 <label className="setting-label">설문 링크</label>
                 <Input
-                  value={"https://survey-secret/" + form_minor_config.url}
+                  value={
+                    "https://survey-secret/respond" + form_minor_config.url
+                  }
                   disabled={!editEnabled}
                   readOnly
                 />

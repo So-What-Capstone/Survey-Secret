@@ -52,6 +52,8 @@ export const FIND_FORM_BY_ID_QUERY = gql`
               content
               description
               required
+              rowContent
+              colContent
               kind
               gridType
             }
@@ -93,6 +95,7 @@ export function getQuestionType(question) {
     case "Personal":
       if (question.personalType === "Phone") typecode = 6;
       else if (question.personalType === "Email") typecode = 7;
+      else typecode = 6;
       break;
   }
   return typecode;
