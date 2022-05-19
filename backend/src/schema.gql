@@ -358,6 +358,7 @@ type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
   editUser(input: EditUserInput!, file: Upload!): EditUserOutput!
+  sendSms: CoreOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!

@@ -28,6 +28,7 @@
     "@nestjs/graphql": "^10.0.8",
     "@nestjs/mongoose": "^9.0.3",
     "@nestjs/platform-express": "^8.0.0",
+    "aligoapi": "^1.1.3",
     "apollo-server-express": "^3.6.5",
     "aws-sdk": "^2.1121.0",
     "bcrypt": "^5.0.1",

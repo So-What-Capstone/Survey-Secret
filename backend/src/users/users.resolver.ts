@@ -1,4 +1,4 @@
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { Resolver } from '@nestjs/graphql';
 import {
   CreateAccountOutput,
@@ -16,10 +16,16 @@ import { User } from './schemas/user.schema';
 import { AuthUser } from '../auth/auth-user.decorator';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { meOutput } from './dtos/me.dto';
+import { CoreOutput } from './../common/dtos/output.dto';
+import { SmsService } from './../sms/sms.service';
+import { Req } from '@nestjs/common';
 
 @Resolver()
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly smsService: SmsService,
+  ) {}
 
   @Mutation((returns) => CreateAccountOutput)
   createAccount(
@@ -54,5 +60,10 @@ export class UsersResolver {
   @Type(['Any'])
   me(@AuthUser() user: User): Promise<meOutput> {
     return this.usersService.me(user);
+  }
+
+  @Mutation((returns) => CoreOutput)
+  sendSms(@Context() context): Promise<CoreOutput> {
+    return this.smsService.sendSms(context.req);
   }
 }

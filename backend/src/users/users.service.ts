@@ -20,12 +20,14 @@ import { EditUserInput, EditUserOutput } from './dtos/edit-user.dto';
 import { UploaderService } from './../uploader/uploader.service';
 import { FileUpload } from 'graphql-upload';
 import { meOutput } from './dtos/me.dto';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     private readonly mailsService: MailsService,
+    private readonly SmsService: SmsService,
     @InjectModel(Verification.name)
     private readonly verificationModel: Model<VerificationDocument>,
     private readonly uploaderService: UploaderService,

@@ -9,6 +9,8 @@ import {
   VerificationSchema,
 } from './schemas/verification.schema';
 import { UploaderModule } from './../uploader/uploader.module';
+import { SmsModule } from '../sms/sms.module';
+import { SmsService } from 'src/sms/sms.service';
 
 @Module({
   imports: [

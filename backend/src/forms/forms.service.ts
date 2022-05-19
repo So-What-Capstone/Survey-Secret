@@ -56,11 +56,10 @@ export class FormsService {
         ...(personal ? personal : []),
       ];
 
-      // find more faster algorithm....
       // consider using DB middleware(before insert)
       questions.sort(({ order }, { order: order2 }) => {
         if (order === order2) {
-          throw new Error('순서가 중복되었습니다.');
+          throw new Error('질문 순서가 중복되었습니다.');
         }
         return order - order2;
       });
