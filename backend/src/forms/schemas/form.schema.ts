@@ -19,10 +19,8 @@ import mongoose from 'mongoose';
 import { schemaOption } from './../../common/schemas/option.schema';
 import { Section, SectionSchema } from './section.schema';
 import { Submission } from '../../submissions/schemas/submission.schema';
-import { Question } from './../questions/schemas/question.schema';
 
 export enum FormState {
-  Template = 'Template',
   Ready = 'Ready',
   InProgress = 'InProgress',
   Expired = 'Expired',

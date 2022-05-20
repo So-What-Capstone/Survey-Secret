@@ -173,7 +173,6 @@ type Form {
 }
 
 enum FormState {
-  Template
   Ready
   InProgress
   Expired

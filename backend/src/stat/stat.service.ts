@@ -8,6 +8,7 @@ import {
 import { Model } from 'mongoose';
 import { CoreOutput } from './../common/dtos/output.dto';
 import { Form, FormDocument } from './../forms/schemas/form.schema';
+import { OpenedAnswer } from 'src/submissions/answers/schemas/opened-answer.schema';
 
 @Injectable()
 export class StatService {
@@ -20,13 +21,31 @@ export class StatService {
 
   async getStat(): Promise<CoreOutput> {
     try {
-      const form = await this.formModel.findOne({
-        _id: '62760e0f9e1ccb85c08145bb',
+      const formId = '62873f1dc03ea057158e8efa';
+      const questionId = '62873f1dc03ea057158e8efc';
+
+      const { submissions } = await this.formModel
+        .findOne({
+          _id: formId,
+        })
+        .populate('submissions');
+
+      const answers = submissions.map((submission) => {
+        const answer = submission.answers.find(
+          (answer) =>
+            answer.question.toString() === questionId &&
+            answer.kind === 'Opened',
+        ) as OpenedAnswer;
+        return answer.content;
       });
+
+      console.log(answers);
+
+      //토큰화 이후, 빈도수 체크
 
       return { ok: true };
     } catch (error) {
-      return { ok: false, error: error.msg };
+      return { ok: false, error: error.message };
     }
   }
 }
