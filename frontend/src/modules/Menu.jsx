@@ -83,29 +83,29 @@ function Menu() {
           </div>
           <div className="menu-lists">
             <div className="menu-list">
-              <a className="list-item" onClick={move("/my-survey")}>
+              <a className="menu-list-item" onClick={move("/my-survey")}>
                 내 설문
               </a>
-              <a className="list-item" onClick={move("/my-survey/create")}>
+              <a className="menu-list-item" onClick={move("/my-survey/create")}>
                 새 설문 만들기
               </a>
             </div>
             <div className="menu-list">
-              <a className="list-item" onClick={move("/message")}>
+              <a className="menu-list-item" onClick={move("/message")}>
                 문자 서비스
               </a>
-              <a className="list-item" onClick={move("/email")}>
+              <a className="menu-list-item" onClick={move("/email")}>
                 이메일 서비스
               </a>
-              <a className="list-item" onClick={move("/contact-record")}>
+              <a className="menu-list-item" onClick={move("/contact-record")}>
                 서비스 이용기록
               </a>
             </div>
             <div className="menu-list">
-              <a className="list-item" onClick={move("/notice")}>
+              <a className="menu-list-item" onClick={move("/notice")}>
                 공지사항
               </a>
-              <a className="list-item" onClick={move("/intro")}>
+              <a className="menu-list-item" onClick={move("/intro")}>
                 이용방법
               </a>
             </div>

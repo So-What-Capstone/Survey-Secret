@@ -151,6 +151,10 @@
   flex-basis: 0;
 }
 
+.icon-sub:hover {
+  animation: heartbeat 1.5s ease-in-out infinite both;
+}
+
 .menu-lists {
   display: flex;
   flex-direction: row;
@@ -168,7 +172,7 @@
   flex-direction: column;
 }
 
-.list-item {
+.menu-list-item {
   /* display: block; a 태그는 가로배치 이므로 세로배치로 변경 */
   width: 10rem;
   text-align: center;
@@ -180,9 +184,10 @@
   transition: all 0.2s ease;
 }
 
-.list-item:hover {
+.menu-list-item:hover {
   background-color: #ffffff56;
   color: #65ffdc;
+  animation: heartbeat 1.5s ease-in-out infinite both;
 }
 
 .empty-box {
@@ -238,5 +243,28 @@
     transform: translateY(0px);
     animation-timing-function: ease-out;
     opacity: 1;
+  }
+}
+@keyframes heartbeat {
+  from {
+    transform: scale(1);
+    transform-origin: center center;
+    animation-timing-function: ease-out;
+  }
+  10% {
+    transform: scale(0.91);
+    animation-timing-function: ease-in;
+  }
+  17% {
+    transform: scale(0.98);
+    animation-timing-function: ease-out;
+  }
+  33% {
+    transform: scale(0.87);
+    animation-timing-function: ease-in;
+  }
+  45% {
+    transform: scale(1);
+    animation-timing-function: ease-out;
   }
 }
