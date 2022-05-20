@@ -19,6 +19,7 @@ import { meOutput } from './dtos/me.dto';
 import { CoreOutput } from './../common/dtos/output.dto';
 import { SmsService } from './../sms/sms.service';
 import { Req } from '@nestjs/common';
+import { SendSmsInput, SendSmsOutput } from './../sms/dtos/send-sms.dto';
 
 @Resolver()
 export class UsersResolver {
@@ -63,7 +64,10 @@ export class UsersResolver {
   }
 
   @Mutation((returns) => CoreOutput)
-  sendSms(@Context() context): Promise<CoreOutput> {
-    return this.smsService.sendSms(context.req);
+  sendSms(
+    @Context() context,
+    @Args('input') sendSmsInput: SendSmsInput,
+  ): Promise<SendSmsOutput> {
+    return this.smsService.sendSms(context.req, sendSmsInput);
   }
 }
