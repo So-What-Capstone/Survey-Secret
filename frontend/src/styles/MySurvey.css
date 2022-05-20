@@ -1,5 +1,44 @@
+.my-survey-banner {
+  width: 96%;
+  margin: 2%;
+  padding: 7%;
+  height: 20vh;
+  background-color: #98b8b920;
+  color: wheat;
+}
+
+.new-survey-con {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.new-survey-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 0.1rem;
+  background-color: #65ffdc50;
+  color: #ccd6f6;
+  font-size: 1.5rem;
+  transition: all 0.2s;
+  border: 1px solid #00000000;
+  cursor: pointer;
+}
+.new-survey-btn:hover {
+  border: 1px solid #65ffdc;
+  background-color: #65ffdca0;
+  color: #172a46;
+}
+.new-survey-label {
+  margin-left: 1rem;
+  z-index: 101;
+  cursor: pointer;
+}
+
 .survey-tray-container {
-  border-radius: 0.5rem;
+  border-radius: 0.1rem;
   background-color: #ffffff20;
   width: 96%;
   margin: 2%;
