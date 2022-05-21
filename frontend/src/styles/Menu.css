@@ -3,6 +3,8 @@
 .dropDown {
   display: inline-block;
   width: 100vw;
+  position: sticky;
+  top: 0px;
 
   /* width: 200px 처럼 사용자가 직접 너비를 지정할 수도 있다. */
 }
@@ -118,7 +120,7 @@
 .subMenu {
   display: none; /* 처음에 안보이게 */
   width: 100%;
-  background-color: #172a46;
+  background-color: #0a182d;
   box-shadow: 0 0 10px rgb(0 0 0 / 17%);
   box-shadow: inset 0px 0px 20px 4px #00000050;
   position: absolute;
