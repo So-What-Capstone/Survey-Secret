@@ -77,16 +77,32 @@ function MySurvey() {
         //data.ok, error 여부 검증 필요
         <>
           <div className="survey-tray-container">
-            <label className="mysurvey-label">진행 중인 설문</label>
-            <SurveyIconsTray open_surveys={inProgressSurveys} color_idx={1} />
-          </div>
-          <div className="survey-tray-container">
-            <label className="mysurvey-label">준비 중인 설문</label>
-            <SurveyIconsTray open_surveys={readySurveys} color_idx={0} />
-          </div>
-          <div className="survey-tray-container">
-            <label className="mysurvey-label">마감된 설문</label>
-            <SurveyIconsTray open_surveys={expiredSurveys} color_idx={2} />
+            <div className="mysurvey-label">진행 중인 설문</div>
+            <div className="survey-folder">
+              <SurveyIconsTray
+                open_surveys={inProgressSurveys}
+                color_idx={1}
+                hover_enabled={true}
+              />
+
+              <div className="mysurvey-label">준비 중인 설문</div>
+              <div className="survey-folder">
+                <SurveyIconsTray
+                  open_surveys={readySurveys}
+                  color_idx={0}
+                  hover_enabled={true}
+                />
+
+                <div className="mysurvey-label">마감된 설문</div>
+                <div className="survey-folder">
+                  <SurveyIconsTray
+                    open_surveys={expiredSurveys}
+                    color_idx={2}
+                    hover_enabled={true}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </>
       )}

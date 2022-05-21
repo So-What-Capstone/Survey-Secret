@@ -16,6 +16,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* background: #0a182d !important; */
   background-image: url(../public/gradation1.png);
+  background-attachment: fixed;
+  background-size: 100% 100%;
 }
 
 code {
