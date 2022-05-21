@@ -8,6 +8,8 @@ TableItem.propTypes = {
   name: PropTypes.string,
   checkedItemHandler: PropTypes.func,
   isAllChecked: PropTypes.bool,
+  isFavoriteChecked: PropTypes.bool,
+  isFavoriteCheckedList: PropTypes.array,
   bAllChecked: PropTypes.bool,
   setAllChecked: PropTypes.func,
   order: PropTypes.number,
@@ -18,6 +20,8 @@ function TableItem({
   name,
   checkedItemHandler,
   isAllChecked,
+  isFavoriteChecked,
+  isFavoriteCheckedList,
   bAllChecked,
   setAllChecked,
   order,
@@ -39,8 +43,22 @@ function TableItem({
     setChecked(isAllChecked);
   }, [isAllChecked]);
 
+  //isFavoriteCheckedList[order] 가 true면 이 체크박스도 체크
+  const favoriteCheckHandler = useCallback(() => {
+    if (isFavoriteCheckedList[order]) {
+      setChecked(isFavoriteChecked);
+    }
+  }, [isFavoriteCheckedList, order, isFavoriteChecked]);
+
   //isAllChecked 값이 변하면 allCheckHandler 호출
   useEffect(() => allCheckHandler(), [isAllChecked, allCheckHandler]);
+
+  //isFavoriteChecked 값이 변하면 favoriteCheckHandler 호출
+  //isFavoriteChecked가 변경될 때 = 즐겨찾기 버튼 클릭시
+  useEffect(
+    () => favoriteCheckHandler(),
+    [isFavoriteChecked, favoriteCheckHandler]
+  );
 
   return (
     <div className="list-item">
@@ -50,7 +68,7 @@ function TableItem({
         onChange={(e) => checkHandler(e)}
         className="item-check"
       />
-      <label className="item-order">{order}</label>
+      <label className="item-order">{order + 1}</label>
       <label className="item-name">{name}</label>
     </div>
   );
@@ -76,18 +94,35 @@ function ContactList({
 }) {
   const handleFormChange = (event) => {
     const selectedId = event.target.value;
-    setSelectedForm(forms.find((form) => form.id === selectedId));
+    const newForm = forms.find((form) => form.id === selectedId);
+    setSelectedForm(newForm);
     checkedItems.clear();
     setIsAllChecked(false);
     setAllChecked(false);
+    setIsFavoriteChecked(false);
+
+    //isFavoriteCheckedList 초기화
+    let newFavoriteArray = new Array();
+    newForm.receivers &&
+      newForm.receivers.map((receiver) => {
+        newFavoriteArray.push(receiver.favorite);
+      });
+    setIsFavoriteCheckedList(newFavoriteArray);
   };
 
   //전체 체크 여부
   const [isAllChecked, setIsAllChecked] = useState(false);
 
+  //즐겨찾기 버튼 클릭 여부
+  const [isFavoriteChecked, setIsFavoriteChecked] = useState(false);
+
+  //즐겨찾기 등록 여부 리스트
+  const [isFavoriteCheckedList, setIsFavoriteCheckedList] = useState(
+    forms[0].receivers.map((receiver) => receiver.favorite)
+  );
+
   //체크박스 단일 선택
   const checkedItemHandler = (id, isChecked) => {
-    //매개변수 이 순서로 해야 id가 checkedItems에 저장되네..?
     if (isChecked) {
       checkedItems.add(id);
       setCheckedItems(checkedItems);
@@ -102,8 +137,8 @@ function ContactList({
   const allCheckedHandler = (isChecked) => {
     if (isChecked) {
       let allSet = new Set();
-      selectedForm.receivers.map((receiver) => allSet.add(receiver.id)); //제대로 만들어짐
-      setCheckedItems(allSet); //이게 안됨
+      selectedForm.receivers.map((receiver) => allSet.add(receiver.id));
+      setCheckedItems(allSet);
       setIsAllChecked(true);
     } else {
       checkedItems.clear();
@@ -118,6 +153,20 @@ function ContactList({
   const checkHandler = ({ target }) => {
     setAllChecked(!bAllChecked);
     allCheckedHandler(target.checked);
+  };
+
+  //즐겨찾기 선택 버튼 눌렀을 때
+  const favoriteHandler = (e) => {
+    setIsFavoriteChecked(true); //반영이 이상하게 됨
+
+    //id 중복 없게 기존 checkedItems에 추가
+    let newSet = checkedItems;
+    selectedForm.receivers.map((receiver) => {
+      if (receiver.favorite) {
+        newSet.add(receiver.id);
+      }
+    });
+    setCheckedItems(newSet);
   };
 
   return (
@@ -148,7 +197,12 @@ function ContactList({
               className="all-check"
             />
             <span></span>
-            <input type="button" value="즐겨찾기 선택" className="star-btn" />
+            <input
+              type="button"
+              value="즐겨찾기 선택"
+              onClick={favoriteHandler}
+              className="star-btn"
+            />
           </div>
           <div className="list-con">
             {selectedForm.receivers.map((receiver, index) => (
@@ -156,6 +210,8 @@ function ContactList({
                 id={receiver.id}
                 name={receiver.name}
                 isAllChecked={isAllChecked}
+                isFavoriteChecked={isFavoriteChecked}
+                isFavoriteCheckedList={isFavoriteCheckedList}
                 checkedItemHandler={checkedItemHandler}
                 bAllChecked={bAllChecked}
                 setAllChecked={setAllChecked}

@@ -15,19 +15,19 @@ function Email() {
       id: "0",
       title: "누가 젤 귀여운가?",
       receivers: [
-        { id: "0", name: "카리나" }, //id:submission id, name:대표문항 답
-        { id: "1", name: "닝닝" },
-        { id: "2", name: "윈터" },
-        { id: "3", name: "지젤" },
+        { id: "0", name: "카리나", favorite: true }, //id:submission id, name:대표문항 답, favorite:즐겨찾기 여부
+        { id: "1", name: "닝닝", favorite: true },
+        { id: "2", name: "윈터", favorite: true },
+        { id: "3", name: "지젤", favorite: false },
       ],
     },
     {
       id: "1",
       title: "누가 젤 예쁜가??",
       receivers: [
-        { id: "4", name: "고다현" },
-        { id: "5", name: "김지윤" },
-        { id: "6", name: "윈터" },
+        { id: "4", name: "고다현", favorite: true },
+        { id: "5", name: "김지윤", favorite: true },
+        { id: "6", name: "윈터", favorite: false },
       ],
     },
   ];
