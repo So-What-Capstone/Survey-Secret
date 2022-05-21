@@ -1,7 +1,7 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from flask import Flask, request, Response, jsonify
+from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
+from flask import Flask, request, Response
 from konlpy.tag import Okt
-import json, re, os
+import json, re
 
 
 class Tokenizer:
@@ -30,6 +30,7 @@ def stats_keywords():
     answers = params["answers"]
     vectorizer = TfidfVectorizer(tokenizer=Tokenizer(app))
     matrix = vectorizer.fit_transform(answers)
+    matrix = matrix.mean(axis=0)
 
     vocabulary_word_id = {}
     for idx, token in enumerate(vectorizer.get_feature_names()):
@@ -38,6 +39,7 @@ def stats_keywords():
     result = {}
     for token in vectorizer.get_feature_names():
         result[token] = matrix[0, vocabulary_word_id[token]]
+
     result = sorted(result.items(), key = lambda item: item[1], reverse = True)
     
     return Response(json.dumps({"result":result}), status=200)
