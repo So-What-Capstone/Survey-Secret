@@ -6,9 +6,13 @@ import {
   SubmissionDocument,
 } from '../submissions/schemas/submission.schema';
 import { Model } from 'mongoose';
-import { CoreOutput } from './../common/dtos/output.dto';
 import { Form, FormDocument } from './../forms/schemas/form.schema';
 import { OpenedAnswer } from 'src/submissions/answers/schemas/opened-answer.schema';
+import fetch from 'node-fetch';
+import {
+  GetKeywordAnalysisInput,
+  GetKeywordAnalysisOutput,
+} from './dtos/get-keyword-analysis.dto';
 
 @Injectable()
 export class StatService {
@@ -19,10 +23,14 @@ export class StatService {
     private readonly formModel: Model<FormDocument>,
   ) {}
 
-  async getStat(): Promise<CoreOutput> {
+  async getKeywordAnalysis({
+    formId,
+    questionId,
+  }: GetKeywordAnalysisInput): Promise<GetKeywordAnalysisOutput> {
     try {
-      const formId = '62873f1dc03ea057158e8efa';
-      const questionId = '62873f1dc03ea057158e8efc';
+      // testing Ids
+      // const formId = '62873f1dc03ea057158e8efa';
+      // const questionId = '62873f1dc03ea057158e8efc';
 
       const { submissions } = await this.formModel
         .findOne({
@@ -30,20 +38,34 @@ export class StatService {
         })
         .populate('submissions');
 
-      const answers = submissions.map((submission) => {
-        const answer = submission.answers.find(
-          (answer) =>
-            answer.question.toString() === questionId &&
-            answer.kind === 'Opened',
-        ) as OpenedAnswer;
-        return answer.content;
+      const answers: [string?] = [];
+      for (const submission of submissions) {
+        let answer = submission.answers.find(
+          (answer) => answer.question.toString() === questionId,
+        );
+        if (answer.kind !== 'Opened') {
+          return { ok: false, error: '답변의 타입이 주관식이 아닙니다.' };
+        }
+        answer = answer as OpenedAnswer;
+        answers.push(answer.content);
+      }
+
+      if (answers.length === 0) {
+        return { ok: false, error: '답변이 존재하지 않습니다.' };
+      }
+
+      //tokenization
+      const response = await fetch('http://localhost:4000/stats/keywords', {
+        method: 'POST',
+        body: JSON.stringify({ answers: [...answers] }),
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      console.log(answers);
+      let { result } = await response.json();
 
-      //토큰화 이후, 빈도수 체크
+      console.log(result);
 
-      return { ok: true };
+      return { ok: true, result };
     } catch (error) {
       return { ok: false, error: error.message };
     }

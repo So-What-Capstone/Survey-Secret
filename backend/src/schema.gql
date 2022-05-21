@@ -311,6 +311,12 @@ type DeleteSubmissionOutput {
   error: String
 }
 
+type GetKeywordAnalysisOutput {
+  ok: Boolean!
+  error: String
+  result: [[String!]!]
+}
+
 type Query {
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   me: meOutput!
@@ -321,7 +327,7 @@ type Query {
   getTemplates: GetTemplatesOutput!
   findTemplateById(input: FindTemplateByIdInput!): FindTemplateByIdOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
-  getStat: CoreOutput!
+  getKeywordAnalysis(input: GetKeywordAnalysisInput!): GetKeywordAnalysisOutput!
 }
 
 input FindUserByIdInput {
@@ -351,6 +357,11 @@ input FindTemplateByIdInput {
 
 input FindSubmissionByIdInput {
   submissionId: String!
+}
+
+input GetKeywordAnalysisInput {
+  formId: String!
+  questionId: String!
 }
 
 type Mutation {
