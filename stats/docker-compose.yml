@@ -1,0 +1,14 @@
+services:
+  stats:
+    build:
+      context: .
+    volumes:
+      - .:/app
+    ports:
+      - 4000:5000
+    environment:
+      - FLASK_APP=/app/api.py
+      - FLASK_ENV=development
+      - STATIC_FOLDER=/app/static
+      - FLASK_DEBUG=1
+    entrypoint: flask run --host=0.0.0.0
