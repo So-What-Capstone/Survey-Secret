@@ -6,6 +6,7 @@ import { Table, Select } from "antd";
 import PropTypes from "prop-types";
 import { StarFilled, StarOutlined } from "@ant-design/icons";
 const { Option } = Select;
+
 function RepresntativeQ({ questions, representative, setRepresentative }) {
   const handleChange = (value) => {
     setRepresentative(value);
