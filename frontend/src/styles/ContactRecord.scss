@@ -10,7 +10,7 @@
     .record-list-panel { //연락이력리스트 패널
       padding: 2rem 3vw 2rem 3vw;
       flex: 4 1 0;
-      margin: 4vw;
+      margin: 3rem 4vw 3rem 4vw;
         .list-tab { //탭의 메뉴 row
           padding: 0;
           .tab-head { //탭의 메뉴 1개
@@ -69,7 +69,7 @@
       background-color: #172A46;
       border-radius: 10px;
       flex: 4 1 0;
-      margin: 4vw;
+      margin: 2rem 4vw 2rem 4vw;
       .panel-title { //상세내역
         color: #65FFDC;
         font-size: 18px;
@@ -141,7 +141,7 @@
       .send-btn {
         margin: 1rem 0px 1rem 0px;
         padding: 0.7rem 0px 0.7rem 0px;
-          background-color: #65FFDC19;
+        background-color: #65FFDC19;
         border: 1px solid #65FFDC;
         border-radius: 10px;
         color: #65FFDC;
