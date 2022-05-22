@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { SMS_CONFIG_OPTIONS } from 'src/common/common.constants';
 import { SmsModuleOptions } from './sms.interfaces';
 import { SendSmsInput } from './dtos/send-sms.dto';
+import { GetSendHistoryInput } from './dtos/get-send-history.dto';
 
 @Injectable()
 export class SmsService {
@@ -19,11 +20,29 @@ export class SmsService {
         receiver,
         msg,
         msg_type: 'SMS',
-        cnt: 1,
       };
       const res = await aligoapi.send(newReq, this.options);
-      if (res.result_code === 200) {
+      if (res.result_code === 1) {
         return { ok: true };
+      } else {
+        throw new Error(res.message);
+      }
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async getSendHistory(req: Request, getSendHistoryInput: GetSendHistoryInput) {
+    try {
+      let newReq: Request = req;
+      newReq.body = getSendHistoryInput;
+
+      const res = await aligoapi.list(newReq, this.options);
+
+      console.log(res);
+
+      if (res.result_code === 1) {
+        return { ok: true, data: res.list };
       } else {
         throw new Error(res.message);
       }

@@ -27,7 +27,6 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     private readonly mailsService: MailsService,
-    private readonly SmsService: SmsService,
     @InjectModel(Verification.name)
     private readonly verificationModel: Model<VerificationDocument>,
     private readonly uploaderService: UploaderService,

@@ -204,11 +204,6 @@ enum UserType {
   Admin
 }
 
-type CoreOutput {
-  ok: Boolean!
-  error: String
-}
-
 type CreateAccountOutput {
   ok: Boolean!
   error: String
@@ -322,6 +317,17 @@ type GetKeywordAnalysisOutput {
   result: [[String!]!]
 }
 
+type GetSendHistoryOutput {
+  ok: Boolean!
+  error: String
+  data: [String!]
+}
+
+type SendSmsOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   me: meOutput!
@@ -332,6 +338,7 @@ type Query {
   getForms(input: GetFormsInput!): GetFormsOutput!
   getTemplates: GetTemplatesOutput!
   findTemplateById(input: FindTemplateByIdInput!): FindTemplateByIdOutput!
+  getSendHistory(input: GetSendHistoryInput!): GetSendHistoryOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
   getKeywordAnalysis(input: GetKeywordAnalysisInput!): GetKeywordAnalysisOutput!
 }
@@ -361,6 +368,13 @@ input FindTemplateByIdInput {
   templateId: String!
 }
 
+input GetSendHistoryInput {
+  page: Float!
+  pageSize: Float!
+  startDate: Float
+  limitDate: Float
+}
+
 input FindSubmissionByIdInput {
   submissionId: String!
 }
@@ -374,10 +388,10 @@ type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
   editUser(input: EditUserInput!, file: Upload!): EditUserOutput!
-  sendSms(input: SendSmsInput!): CoreOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!
+  sendSms(input: SendSmsInput!): SendSmsOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
 }
@@ -402,12 +416,6 @@ input EditUserInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
-
-input SendSmsInput {
-  sender: String!
-  receiver: String!
-  msg: String!
-}
 
 input CreateFormInput {
   title: String!
@@ -501,6 +509,12 @@ input EditFormInput {
   privacyExpiredAt: DateTime
   sections: [CreateSectionInput!]
   formId: String!
+}
+
+input SendSmsInput {
+  sender: String!
+  receiver: String!
+  msg: String!
 }
 
 input CreateSubmissionInput {

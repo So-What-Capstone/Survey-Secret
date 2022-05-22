@@ -2,9 +2,9 @@ import { Module, DynamicModule, Global } from '@nestjs/common';
 import { SMS_CONFIG_OPTIONS } from '../common/common.constants';
 import { SmsService } from './sms.service';
 import { SmsModuleOptions } from './sms.interfaces';
+import { SmsResolver } from './sms.resolver';
 
 @Module({})
-@Global()
 export class SmsModule {
   static forRoot(options: SmsModuleOptions): DynamicModule {
     return {
@@ -18,6 +18,7 @@ export class SmsModule {
             user_id: process.env.SMS_USER_ID,
           },
         },
+        SmsResolver,
       ],
       exports: [SmsService],
     };
