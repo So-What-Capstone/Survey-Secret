@@ -344,14 +344,14 @@ function ContactRecord() {
                 {mode === 0 &&
                   selectedMessage.receivers.map((receiver, index) => (
                     <ListItem key={receiver.id} className="content">
-                      <ListItemText primary={index} />
+                      <ListItemText primary={index + 1} />
                       <ListItemText primary={receiver.name} />
                     </ListItem>
                   ))}
                 {mode === 1 &&
                   selectedEmail.receivers.map((receiver, index) => (
                     <ListItem key={receiver.id} className="content">
-                      <ListItemText primary={index} />
+                      <ListItemText primary={index + 1} />
                       <ListItemText primary={receiver.name} />
                     </ListItem>
                   ))}
