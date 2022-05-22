@@ -32,5 +32,6 @@ code {
 .root {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  min-height: 100vh;
+  max-height: 100vh;
 }

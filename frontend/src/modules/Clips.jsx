@@ -8,8 +8,7 @@ export default function Clip({ title, link_enabled, link, color_idx }) {
   var clip_text = <div />;
   if (link_enabled)
     clip_text = (
-      <a className="clip-text" href={link}>
-        {" "}
+      <a className="clip-text" href={link} style={{ color: "inherit" }}>
         {title}
       </a>
     );

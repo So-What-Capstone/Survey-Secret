@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react";
 import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/SurveyCreate.css";
-import { useNavigate } from "react-router-dom";
+
+import { useSearchParams, useNavigate } from "react-router-dom";
+
 function SurveyCreate() {
   const navigate = useNavigate();
   const template_example_names = template_list.map((v) => v.title);

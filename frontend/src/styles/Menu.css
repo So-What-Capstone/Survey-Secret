@@ -6,6 +6,7 @@
   position: sticky;
   top: 0px;
 
+  z-index: 1000;
   /* width: 200px 처럼 사용자가 직접 너비를 지정할 수도 있다. */
 }
 
