@@ -325,6 +325,7 @@ type GetKeywordAnalysisOutput {
 type Query {
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   me: meOutput!
+  getSignedUrl(input: String!): String!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
   findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!
   searchForms(input: SearchFormsInput!): SearchFormsOutput!
