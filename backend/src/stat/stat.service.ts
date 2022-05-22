@@ -65,6 +65,11 @@ export class StatService {
 
       console.log(result);
 
+      //need to store in DB
+      //need to make stats entity
+      //need to analyze positive/negative word
+      //need to analyze verb, adjective
+
       return { ok: true, result };
     } catch (error) {
       return { ok: false, error: error.message };

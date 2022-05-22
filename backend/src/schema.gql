@@ -5,7 +5,8 @@
 type ClosedQuestionChoice {
   no: Float!
   choice: String!
-  activatedSection: Float
+  attachment: String
+  activatedSection: String
 }
 
 type Section {
@@ -78,6 +79,7 @@ type OpenedQuestion {
   description: String
   required: Boolean
   order: Float!
+  attachment: String
   openedType: OpenedQuestionType
 }
 
@@ -96,6 +98,7 @@ type PersonalQuestion {
   description: String
   required: Boolean
   order: Float!
+  attachment: String
   encoded: Boolean!
   personalType: PersonalQuestionType!
 }
@@ -149,12 +152,14 @@ type OpenedAnswer {
   question: String!
   kind: QuestionType!
   content: String
+  attachment: String
 }
 
 type PersonalAnswer {
   question: String!
   kind: QuestionType!
   content: String
+  attachment: String
 }
 
 type Form {
@@ -428,11 +433,12 @@ input CreateOpenedQuestionInput {
   description: String
   required: Boolean
   order: Float!
+  attachment: String
   openedType: OpenedQuestionType
 }
 
 input CreateClosedQuestionInput {
-  choices: [ClosedQuestionChoiceInputType!]!
+  choices: [ClosedQuestionChoiceInput!]!
   closedType: ClosedQuestionType
   content: String!
   kind: QuestionType!
@@ -441,10 +447,11 @@ input CreateClosedQuestionInput {
   order: Float!
 }
 
-input ClosedQuestionChoiceInputType {
+input ClosedQuestionChoiceInput {
   no: Float!
   choice: String!
-  activatedSection: Float
+  attachment: String
+  activatedSection: String
 }
 
 input CreateGridQuestionInput {
@@ -464,6 +471,7 @@ input CreatePersonalQuestionInput {
   description: String
   required: Boolean
   order: Float!
+  attachment: String
   encoded: Boolean!
   personalType: PersonalQuestionType!
 }
