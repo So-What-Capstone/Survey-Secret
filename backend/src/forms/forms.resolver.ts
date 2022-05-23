@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { AuthUser } from '../auth/auth-user.decorator';
 import { Type } from '../auth/type.decorator';
-import { CreateFormOutput, CreateFormInput } from './dtos/craete-form.dto';
+import { CreateFormOutput, CreateFormInput } from './dtos/create-form.dto';
 import {
   FindSectionByIdInput,
   FindSectionByIdOutput,

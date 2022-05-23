@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Form, FormDocument, FormState } from './schemas/form.schema';
 import { Model } from 'mongoose';
-import { CreateFormInput, CreateFormOutput } from './dtos/craete-form.dto';
+import { CreateFormInput, CreateFormOutput } from './dtos/create-form.dto';
 import { User } from '../users/schemas/user.schema';
 import { UserDocument } from '../users/schemas/user.schema';
 import { FindSectionByIdOutput } from './dtos/find-section-by-id.dto';
@@ -222,6 +222,7 @@ export class FormsService {
       privacyExpiredAt,
       expiredAt,
       state,
+      representativeQuestionId,
     }: EditFormInput,
   ): Promise<EditFormOutput> {
     try {
@@ -230,14 +231,24 @@ export class FormsService {
         : undefined;
 
       //title, description, sections
-      let form = await this.formModel.findOne({ _id: formId });
+      const form = await this.formModel.findOne({ _id: formId });
 
       if (!form) {
-        throw new Error('폼을 찾을 수 없습니다.');
+        return { ok: false, error: '폼을 찾을 수 없습니다.' };
+      }
+
+      if (
+        !form.sections.find((section) =>
+          section.questions.find(
+            (question) => question._id.toString() === representativeQuestionId,
+          ),
+        )
+      ) {
+        return { ok: false, error: '폼 안에 존재하지 않는 대표문항입니다.' };
       }
 
       if (form.owner._id.toString() !== owner._id.toString()) {
-        throw new Error('권한이 없습니다.');
+        return { ok: false, error: '권한이 없습니다.' };
       }
 
       await this.formModel.updateOne(
@@ -250,6 +261,9 @@ export class FormsService {
             privacyExpiredAt: privacyExpiredAt ? privacyExpiredAt : undefined,
             expiredAt: expiredAt ? expiredAt : undefined,
             state: state ? state : undefined,
+            representativeQuestion: representativeQuestionId
+              ? representativeQuestionId
+              : undefined,
           },
         },
       );

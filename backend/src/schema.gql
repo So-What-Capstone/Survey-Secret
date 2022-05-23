@@ -9,6 +9,23 @@ type ClosedQuestionChoice {
   activatedSection: String
 }
 
+type Question {
+  _id: String!
+  content: String!
+  kind: QuestionType!
+  description: String
+  required: Boolean
+  order: Float!
+}
+
+enum QuestionType {
+  Closed
+  Grid
+  Linear
+  Opened
+  Personal
+}
+
 type Section {
   _id: String!
   title: String
@@ -27,14 +44,6 @@ type ClosedQuestion {
   order: Float!
   choices: [ClosedQuestionChoice!]!
   closedType: ClosedQuestionType
-}
-
-enum QuestionType {
-  Closed
-  Grid
-  Linear
-  Opened
-  Personal
 }
 
 enum ClosedQuestionType {
@@ -175,6 +184,7 @@ type Form {
   owner: User!
   sections: [Section!]
   submissions: [Submission!]
+  representativeQuestion: Question
 }
 
 enum FormState {
@@ -509,6 +519,8 @@ input EditFormInput {
   privacyExpiredAt: DateTime
   sections: [CreateSectionInput!]
   formId: String!
+  representativeQuestionId: String!
+  isPromoted: Boolean
 }
 
 input SendSmsInput {
