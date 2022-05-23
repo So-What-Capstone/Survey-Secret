@@ -1,0 +1,1 @@
+export declare const MAIL_CONFIG_OPTIONS = "MAIL_CONFIG_OPTIONS";

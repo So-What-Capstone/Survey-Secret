@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
+import "../styles/MyInfo.scss";
 
 function MyInfo() {
   return (
-    <div>
-      <h1>Implement MyInfo hear...</h1>
+    <div className="myinfo-con">
+      <div className="myinfo-box">
+        <div className="box-icon">아이콘</div>
+        <div className="box-text">텍스트</div>
+      </div>
+      <div className="myinfo-box">
+        <div className="box-icon">아이콘</div>
+        <div className="box-text">텍스트</div>
+      </div>
+      <div className="myinfo-box">
+        <div className="box-icon">아이콘</div>
+        <div className="box-text">텍스트</div>
+      </div>
     </div>
   );
 }

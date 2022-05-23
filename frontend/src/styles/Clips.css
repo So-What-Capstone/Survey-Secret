@@ -6,24 +6,25 @@
   margin-top: 1rem;
 }
 
-.green {
-  background-color: #94b49f;
+.dark-blue {
+  background-color: #172A46;
 }
-.yellow {
-  background-color: #e2d784;
-}
-.deep-green {
-  background-color: #05595b;
+.sky-blue {
+  background-color: #CCD6F6;
 }
 
-.beige {
-  background-color: #e5e3c9;
-}
-
-.clip-text {
+.clip-text-white {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   font-size: 1rem;
+  color: #F5F5F5;
+}
+
+.clip-text-black {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 1rem;
+  color: #000000;
 }
 
 .clip-tray {
