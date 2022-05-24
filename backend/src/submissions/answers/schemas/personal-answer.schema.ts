@@ -20,6 +20,10 @@ export class PersonalAnswer {
   @Field((type) => String, { nullable: true })
   @Prop({ type: String, trim: true })
   content?: string;
+
+  @Field((type) => String, { nullable: true })
+  @Prop({ type: String })
+  attachment?: string;
 }
 
 export const PersonalAnswerSchema =

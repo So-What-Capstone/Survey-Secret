@@ -5,7 +5,25 @@
 type ClosedQuestionChoice {
   no: Float!
   choice: String!
-  activatedSection: Float
+  attachment: String
+  activatedSection: String
+}
+
+type Question {
+  _id: String!
+  content: String!
+  kind: QuestionType!
+  description: String
+  required: Boolean
+  order: Float!
+}
+
+enum QuestionType {
+  Closed
+  Grid
+  Linear
+  Opened
+  Personal
 }
 
 type Section {
@@ -26,14 +44,6 @@ type ClosedQuestion {
   order: Float!
   choices: [ClosedQuestionChoice!]!
   closedType: ClosedQuestionType
-}
-
-enum QuestionType {
-  Closed
-  Grid
-  Linear
-  Opened
-  Personal
 }
 
 enum ClosedQuestionType {
@@ -78,6 +88,7 @@ type OpenedQuestion {
   description: String
   required: Boolean
   order: Float!
+  attachment: String
   openedType: OpenedQuestionType
 }
 
@@ -87,6 +98,7 @@ enum OpenedQuestionType {
   Time
   Address
   File
+  Number
 }
 
 type PersonalQuestion {
@@ -96,6 +108,7 @@ type PersonalQuestion {
   description: String
   required: Boolean
   order: Float!
+  attachment: String
   encoded: Boolean!
   personalType: PersonalQuestionType!
 }
@@ -149,12 +162,14 @@ type OpenedAnswer {
   question: String!
   kind: QuestionType!
   content: String
+  attachment: String
 }
 
 type PersonalAnswer {
   question: String!
   kind: QuestionType!
   content: String
+  attachment: String
 }
 
 type Form {
@@ -170,6 +185,7 @@ type Form {
   owner: User!
   sections: [Section!]
   submissions: [Submission!]
+  representativeQuestion: Question
 }
 
 enum FormState {
@@ -197,11 +213,6 @@ enum UserType {
   Free
   Premium
   Admin
-}
-
-type CoreOutput {
-  ok: Boolean!
-  error: String
 }
 
 type CreateAccountOutput {
@@ -311,17 +322,42 @@ type DeleteSubmissionOutput {
   error: String
 }
 
+type GetKeywordAnalysisOutput {
+  ok: Boolean!
+  error: String
+  result: [[String!]!]
+}
+
+type GetCorrOutput {
+  ok: Boolean!
+  error: String
+}
+
+type GetSendHistoryOutput {
+  ok: Boolean!
+  error: String
+  data: [String!]
+}
+
+type SendSmsOutput {
+  ok: Boolean!
+  error: String
+}
+
 type Query {
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   me: meOutput!
+  getSignedUrl(input: String!): String!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
   findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!
   searchForms(input: SearchFormsInput!): SearchFormsOutput!
   getForms(input: GetFormsInput!): GetFormsOutput!
   getTemplates: GetTemplatesOutput!
   findTemplateById(input: FindTemplateByIdInput!): FindTemplateByIdOutput!
+  getSendHistory(input: GetSendHistoryInput!): GetSendHistoryOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
-  getStat: CoreOutput!
+  getKeywordAnalysis(input: GetKeywordAnalysisInput!): GetKeywordAnalysisOutput!
+  getCorr(input: GetCorrInput!): GetCorrOutput!
 }
 
 input FindUserByIdInput {
@@ -349,18 +385,35 @@ input FindTemplateByIdInput {
   templateId: String!
 }
 
+input GetSendHistoryInput {
+  page: Float!
+  pageSize: Float!
+  startDate: Float
+  limitDate: Float
+}
+
 input FindSubmissionByIdInput {
   submissionId: String!
+}
+
+input GetKeywordAnalysisInput {
+  formId: String!
+  questionId: String!
+}
+
+input GetCorrInput {
+  formId: String!
+  questionIds: [String!]!
 }
 
 type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
   editUser(input: EditUserInput!, file: Upload!): EditUserOutput!
-  sendSms(input: SendSmsInput!): CoreOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!
+  sendSms(input: SendSmsInput!): SendSmsOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
 }
@@ -385,12 +438,6 @@ input EditUserInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
-
-input SendSmsInput {
-  sender: String!
-  receiver: String!
-  msg: String!
-}
 
 input CreateFormInput {
   title: String!
@@ -417,11 +464,12 @@ input CreateOpenedQuestionInput {
   description: String
   required: Boolean
   order: Float!
+  attachment: String
   openedType: OpenedQuestionType
 }
 
 input CreateClosedQuestionInput {
-  choices: [ClosedQuestionChoiceInputType!]!
+  choices: [ClosedQuestionChoiceInput!]!
   closedType: ClosedQuestionType
   content: String!
   kind: QuestionType!
@@ -430,10 +478,11 @@ input CreateClosedQuestionInput {
   order: Float!
 }
 
-input ClosedQuestionChoiceInputType {
+input ClosedQuestionChoiceInput {
   no: Float!
   choice: String!
-  activatedSection: Float
+  attachment: String
+  activatedSection: String
 }
 
 input CreateGridQuestionInput {
@@ -453,6 +502,7 @@ input CreatePersonalQuestionInput {
   description: String
   required: Boolean
   order: Float!
+  attachment: String
   encoded: Boolean!
   personalType: PersonalQuestionType!
 }
@@ -481,6 +531,14 @@ input EditFormInput {
   privacyExpiredAt: DateTime
   sections: [CreateSectionInput!]
   formId: String!
+  representativeQuestionId: String!
+  isPromoted: Boolean
+}
+
+input SendSmsInput {
+  sender: String!
+  receiver: String!
+  msg: String!
 }
 
 input CreateSubmissionInput {

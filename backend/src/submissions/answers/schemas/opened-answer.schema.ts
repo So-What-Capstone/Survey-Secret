@@ -25,6 +25,10 @@ export class OpenedAnswer {
   @Prop({ type: String, trim: true })
   content?: string;
 
+  @Field((type) => String, { nullable: true })
+  @Prop({ type: String })
+  attachment?: string;
+
   // @Field((type) => OpenedQuestion)
   // @Prop({
   //   type: mongoose.Schema.Types.ObjectId,
