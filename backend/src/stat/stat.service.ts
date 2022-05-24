@@ -111,15 +111,10 @@ export class StatService {
         .map((f) => f.submissions.answers)
         .map((answer) => {
           const obj = {};
-          obj[answer.question.toString().substring(20, 24)] = answer.content;
+          obj[answer.question.toString()] = answer.content;
           return obj;
         });
       console.log(answers);
-
-      const df = new dfd.DataFrame(answers);
-      df.print();
-
-      // console.log(df.corr());
 
       return { ok: true };
     } catch (error) {
