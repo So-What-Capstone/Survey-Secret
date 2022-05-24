@@ -15,6 +15,7 @@ export enum OpenedQuestionType {
   Time = 'Time',
   Address = 'Address',
   File = 'File',
+  Number = 'Number',
 }
 
 registerEnumType(OpenedQuestionType, { name: 'OpenedQuestionType' });

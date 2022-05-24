@@ -98,6 +98,7 @@ enum OpenedQuestionType {
   Time
   Address
   File
+  Number
 }
 
 type PersonalQuestion {
@@ -327,6 +328,11 @@ type GetKeywordAnalysisOutput {
   result: [[String!]!]
 }
 
+type GetCorrOutput {
+  ok: Boolean!
+  error: String
+}
+
 type GetSendHistoryOutput {
   ok: Boolean!
   error: String
@@ -351,6 +357,7 @@ type Query {
   getSendHistory(input: GetSendHistoryInput!): GetSendHistoryOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
   getKeywordAnalysis(input: GetKeywordAnalysisInput!): GetKeywordAnalysisOutput!
+  getCorr(input: GetCorrInput!): GetCorrOutput!
 }
 
 input FindUserByIdInput {
@@ -392,6 +399,11 @@ input FindSubmissionByIdInput {
 input GetKeywordAnalysisInput {
   formId: String!
   questionId: String!
+}
+
+input GetCorrInput {
+  formId: String!
+  questionIds: [String!]!
 }
 
 type Mutation {
