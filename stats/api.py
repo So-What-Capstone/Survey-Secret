@@ -1,7 +1,9 @@
+from collections import defaultdict
 from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
 from flask import Flask, request, Response
 from konlpy.tag import Okt
 import json, re
+import numpy as np
 
 
 class Tokenizer:
@@ -42,6 +44,34 @@ def stats_keywords():
 
     result = sorted(result.items(), key = lambda item: item[1], reverse = True)
     
+    return Response(json.dumps({"result":result}), status=200)
+
+
+@app.route("/stats/corr", methods=["POST"])
+def stats_corr():
+    params = json.loads(request.get_data())
+    if len(params) == 0 or "answers" not in params.keys() or len(params["answers"]) == 0:
+        return Response(json.dumps({"error":"Given arguments are not valid."}), status=400)
+
+    answers = params["answers"]
+    observs = defaultdict(list)
+    for entry in answers:
+        for key in entry.keys():
+            observs[key].append(entry[key])
+    
+    input_matrix = []
+    index_key_map = {}
+    for key, obs in observs.items():
+        index_key_map[len(input_matrix)] = key
+        input_matrix.append(obs)
+    
+    result = {}
+    corr_matrix = np.corrcoef(input_matrix)
+    for r in range(len(input_matrix)):
+        result[index_key_map[r]] = {}
+        for c in range(len(input_matrix)):
+            result[index_key_map[r]][index_key_map[c]] = corr_matrix[r, c]
+
     return Response(json.dumps({"result":result}), status=200)
 
 
