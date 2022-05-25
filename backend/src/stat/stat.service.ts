@@ -107,14 +107,21 @@ export class StatService {
         },
       ]);
 
-      const answers = form
-        .map((f) => f.submissions.answers)
-        .map((answer) => {
+      const jsonData = {};
+
+      form.forEach((f) => {
+        if (jsonData[f.submissions._id]) {
+          const obj = jsonData[f.submissions._id];
+          obj[f.submissions.answers._id] = f.submissions.answers.content;
+          jsonData[f.submissions._id] = obj;
+        } else {
           const obj = {};
-          obj[answer.question.toString()] = answer.content;
-          return obj;
-        });
-      console.log(answers);
+          obj[f.submissions.answers._id] = f.submissions.answers.content;
+          jsonData[f.submissions._id] = obj;
+        }
+      });
+
+      console.log(jsonData);
 
       return { ok: true };
     } catch (error) {
