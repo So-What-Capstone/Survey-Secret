@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ResultClipTray } from "../modules";
+import { ResultClipTray, ResponseDetail } from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "../styles/ResultList.scss";
 import { Table, Select, InputNumber, Button, Divider, Tag, Space } from "antd";
@@ -212,39 +212,6 @@ RespondList.propTypes = {
   onSelect: PropTypes.func,
 };
 
-function RespondDetail({ questions, answers }) {
-  // if (!answers) return null;
-  // if (answers.length === 0) return null;
-  const data = [
-    { title: "나이는 몇입니까?", value: "3" },
-    { title: "이름은 무엇입니까?", value: "사나" },
-    { title: "회사는 어디입니까?", value: "JYP" },
-  ];
-  function Line({ title, value }) {
-    return (
-      <div className="resp-detail-line-con">
-        <div className="resp-detail-line-title">{title}</div>
-        <div className="resp-detail-line-value">{value}</div>
-      </div>
-    );
-  }
-  Line.propTypes = {
-    title: PropTypes.string,
-    value: PropTypes.string,
-  };
-  return (
-    <div>
-      {data.map((v, i) => (
-        <Line key={i} title={v.title} value={v.value} />
-      ))}
-    </div>
-  );
-}
-RespondDetail.propTypes = {
-  questions: PropTypes.arrayOf(PropTypes.any),
-  answers: PropTypes.arrayOf(PropTypes.any),
-};
-
 // window design
 function ResultList() {
   const navigate = useNavigate();
@@ -295,7 +262,7 @@ function ResultList() {
 
         {/* detail */}
         <div className="result-list-right-con">
-          <RespondDetail />
+          <ResponseDetail />
         </div>
       </div>
     </div>
