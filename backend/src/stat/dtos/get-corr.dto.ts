@@ -1,6 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsArray, IsMongoId, isMongoId } from 'class-validator';
 import { CoreOutput } from './../../common/dtos/output.dto';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 @InputType()
 export class GetCorrInput {
@@ -13,4 +14,7 @@ export class GetCorrInput {
 }
 
 @ObjectType()
-export class GetCorrOutput extends CoreOutput {}
+export class GetCorrOutput extends CoreOutput {
+  @Field((type) => GraphQLJSONObject, { nullable: true })
+  result?: object;
+}

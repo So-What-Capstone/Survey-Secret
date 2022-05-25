@@ -38,6 +38,7 @@
     "form-data": "^4.0.0",
     "graphql": "^16.3.0",
     "graphql-tools": "^8.2.3",
+    "graphql-type-json": "^0.3.2",
     "graphql-upload": "^13.0.0",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",

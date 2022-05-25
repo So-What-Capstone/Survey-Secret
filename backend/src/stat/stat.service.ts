@@ -121,9 +121,15 @@ export class StatService {
         }
       });
 
-      console.log(jsonData);
+      const response = await fetch('http://localhost:4000/stats/corr', {
+        method: 'POST',
+        body: JSON.stringify({ answers: jsonData }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-      return { ok: true };
+      let { result } = await response.json();
+
+      return { ok: true, result };
     } catch (error) {
       return { ok: false, error: error.message };
     }
