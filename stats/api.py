@@ -5,6 +5,8 @@ from konlpy.tag import Okt
 import json, re
 import numpy as np
 
+app = Flask(__name__)
+
 
 class Tokenizer:
     def __init__(self, app):
@@ -18,9 +20,6 @@ class Tokenizer:
         trimed = re.sub(r'[^ ㄱ-ㅣ가-힣A-Za-z]', '', text)
         return [token for token in self.okt.nouns(trimed)
                 if len(token) > 1 and token not in self.stopwords]
-
-
-app = Flask(__name__)
 
 
 @app.route("/stats/keywords", methods=["POST"])
@@ -55,9 +54,9 @@ def stats_corr():
 
     answers = params["answers"]
     observs = defaultdict(list)
-    for entry in answers:
-        for key in entry.keys():
-            observs[key].append(entry[key])
+    for sub_id in answers.keys():
+        for que_id, user_ans in answers[sub_id].items():
+            observs[que_id].append(float(user_ans))
     
     input_matrix = []
     index_key_map = {}
