@@ -112,11 +112,11 @@ export class StatService {
       form.forEach((f) => {
         if (jsonData[f.submissions._id]) {
           const obj = jsonData[f.submissions._id];
-          obj[f.submissions.answers._id] = f.submissions.answers.content;
+          obj[f.submissions.answers.question] = f.submissions.answers.content;
           jsonData[f.submissions._id] = obj;
         } else {
           const obj = {};
-          obj[f.submissions.answers._id] = f.submissions.answers.content;
+          obj[f.submissions.answers.question] = f.submissions.answers.content;
           jsonData[f.submissions._id] = obj;
         }
       });
