@@ -21,4 +21,8 @@ export class StatResolver {
   getCorr(@Args('input') getCorrInput: GetCorrInput): Promise<GetCorrOutput> {
     return this.statService.getCorr(getCorrInput);
   }
+
+  //기본 통계정보(평균,4분위값,최댓값 등등)
+
+  //market basket model
 }
