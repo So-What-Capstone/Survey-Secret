@@ -264,7 +264,7 @@ type FindSectionByIdOutput {
   section: Section
 }
 
-type FIndFormByIdOutput {
+type FindFormByIdOutput {
   ok: Boolean!
   error: String
   form: Form
@@ -349,7 +349,8 @@ type Query {
   me: meOutput!
   getSignedUrl(input: String!): String!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
-  findFormById(input: FindFormByIdInput!): FIndFormByIdOutput!
+  findFormById(input: FindFormByIdInput!): FindFormByIdOutput!
+  findFormByIdForOwner(input: FindFormByIdInput!): FindFormByIdOutput!
   searchForms(input: SearchFormsInput!): SearchFormsOutput!
   getForms(input: GetFormsInput!): GetFormsOutput!
   getTemplates: GetTemplatesOutput!

@@ -7,7 +7,7 @@ import { User } from '../users/schemas/user.schema';
 import { UserDocument } from '../users/schemas/user.schema';
 import { FindSectionByIdOutput } from './dtos/find-section-by-id.dto';
 import mongoose from 'mongoose';
-import { FIndFormByIdOutput } from './dtos/find-form-by-id.dto';
+import { FindFormByIdOutput } from './dtos/find-form-by-id.dto';
 import { DeleteFormOutput } from './dtos/delete-form.dto';
 import {
   Submission,
@@ -155,7 +155,7 @@ export class FormsService {
     }
   }
 
-  async findFormById(formId: string): Promise<FIndFormByIdOutput> {
+  async findFormById(formId: string): Promise<FindFormByIdOutput> {
     try {
       //not for see result(submissions)
       const form = await this.formModel
@@ -164,6 +164,38 @@ export class FormsService {
 
       if (!form) {
         return { ok: false, error: '폼을 찾을 수 없습니다.' };
+      }
+
+      return { ok: true, form };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  //pagination...?
+  async findFormByIdForOwner(
+    formId: string,
+    owner: User,
+  ): Promise<FindFormByIdOutput> {
+    try {
+      const [form]: Form[] = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+      ]);
+
+      if (!form) {
+        return { ok: false, error: '폼을 찾을 수 없습니다.' };
+      }
+
+      if (form.owner.toString() !== owner._id.toString()) {
+        return { ok: false, error: '권한이 없습니다.' };
       }
 
       return { ok: true, form };
