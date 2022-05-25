@@ -23,24 +23,43 @@ const ME_QUERY = gql`
     }
   }
 `;
+const ex1 = {
+  title: "어린이도서관 이용만족도 조사",
+  description: "2022 상반기 동대문구 이용객 대상 설문조사입니다.",
+  expired: "",
+  _id: "1",
+};
+const ex2 = {
+  title: "4월 독서퀴즈",
+  description: "초등학생 대상 권장도서 독서퀴즈입니다.",
+  expired: "",
+  _id: "2",
+};
+
+const ex3 = {
+  title: "여름방학 특강 수요조사",
+  description: "",
+  expired: "",
+  _id: "3",
+};
 
 function MySurvey() {
-  const [readySurveys, setReadySurveys] = useState([]);
-  const [inProgressSurveys, setInProgressSurveys] = useState([]);
-  const [expiredSurveys, setExpiredSurveys] = useState([]);
+  const [readySurveys, setReadySurveys] = useState([ex1]);
+  const [inProgressSurveys, setInProgressSurveys] = useState([ex2]);
+  const [expiredSurveys, setExpiredSurveys] = useState([ex3]);
   const navigate = useNavigate();
   const { loading, data, error } = useQuery(ME_QUERY, {
     onCompleted: (data) => {
       console.log("Query Completed");
-      setReadySurveys(
-        data?.me?.user?.forms.filter((form) => form.state === "Ready")
-      );
-      setInProgressSurveys(
-        data?.me?.user?.forms.filter((form) => form.state === "InProgress")
-      );
-      setExpiredSurveys(
-        data?.me?.user?.forms.filter((form) => form.state === "Expired")
-      );
+      // setReadySurveys(
+      //   data?.me?.user?.forms.filter((form) => form.state === "Ready")
+      // );
+      // setInProgressSurveys(
+      //   data?.me?.user?.forms.filter((form) => form.state === "InProgress")
+      // );
+      // setExpiredSurveys(
+      //   data?.me?.user?.forms.filter((form) => form.state === "Expired")
+      // );
     },
   });
 

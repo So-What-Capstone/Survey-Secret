@@ -1,12 +1,74 @@
 import React, { useEffect, useState } from "react";
 import { ResultClipTray } from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import "../styles/ResultList.css";
-import { Table, Select } from "antd";
+import "../styles/ResultList.scss";
+import { Table, Select, InputNumber, Button, Divider, Tag, Space } from "antd";
 import PropTypes from "prop-types";
-import { StarFilled, StarOutlined } from "@ant-design/icons";
+import { StarFilled, StarOutlined, CloseCircleFilled } from "@ant-design/icons";
 const { Option } = Select;
 
+function DrawLots({ answers }) {
+  // 답변 추첨
+  const [numLots, setNumLots] = useState(1);
+  const [winNums, setWinNums] = useState([]);
+
+  const onChange = (e) => {
+    setNumLots(e);
+  };
+  const onClick_draw = () => {
+    if (!answers) return;
+    if (numLots > answers.length) return;
+    // draw lots
+    let array = answers.slice();
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    // console.log(answers);
+    setWinNums(array.slice(0, numLots));
+  };
+  const onClick_save = () => {
+    let result = confirm(
+      "현재 즐겨찾기 상태는 지워지고 추첨결과만 즐겨찾기에 등록됩니다. 계속하시겠습니까?"
+    );
+    if (!result) return;
+    // 즐겨찾기 초기화 winNums만 즐겨찾기에 등록
+  };
+  let max = answers ? answers.length : 1;
+  return (
+    <div className="draw-con">
+      <div className="draw-line">
+        <div className="draw-label">몇 개를 뽑을까요?</div>
+        <InputNumber
+          style={{ marginRight: "1rem" }}
+          min={1}
+          max={max}
+          value={numLots}
+          onChange={onChange}
+        />
+        <Button onClick={onClick_draw}>추첨하기</Button>
+      </div>
+      <Divider orientation="left">
+        <div className="draw-result-label">추첨결과</div>
+      </Divider>
+      <div className="draw-lots-con">
+        <Space wrap>
+          {winNums.map((v, i) => (
+            <Tag key={i} color="geekblue">
+              {v}
+            </Tag>
+          ))}
+        </Space>
+      </div>
+      <Button onClick={onClick_save} disabled={winNums.length === 0}>
+        추첨결과 즐겨찾기로 설정
+      </Button>
+    </div>
+  );
+}
+DrawLots.propTypes = {
+  answers: PropTypes.arrayOf(PropTypes.any),
+};
 function RepresntativeQ({ questions, representative, setRepresentative }) {
   const handleChange = (value) => {
     setRepresentative(value);
@@ -46,25 +108,25 @@ RepresntativeQ.propTypes = {
 const listItem_temp = [
   {
     key: "1",
-    answer: "John Brown",
+    answer: "사나",
     order: 1,
     favorite: true,
   },
   {
     key: "2",
-    answer: "Jim Green",
+    answer: "지효",
     order: 2,
     favorite: true,
   },
   {
     key: "3",
-    answer: "Joe Black",
+    answer: "나연",
     order: 3,
     favorite: false,
   },
   {
     key: "4",
-    answer: "Jim Red",
+    answer: "모모",
     order: 4,
     favorite: true,
   },
@@ -123,8 +185,6 @@ function RespondList({ listItems, selected, onSelect }) {
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
-  // console.log("data", data);
-  // console.log("dataForList", dataForList);
   const rowSelection = {
     type: "radio",
     onChange: (selectedRowKeys, selectedRows) => {
@@ -153,21 +213,12 @@ RespondList.propTypes = {
 };
 
 function RespondDetail({ questions, answers }) {
-  if (!answers) return null;
-  if (answers.length === 0) return null;
+  // if (!answers) return null;
+  // if (answers.length === 0) return null;
   const data = [
     { title: "나이는 몇입니까?", value: "3" },
     { title: "이름은 무엇입니까?", value: "사나" },
-    { title: "학교는?", value: "JYP" },
-    { title: "나이는 몇입니까?", value: "3" },
-    { title: "이름은 무엇입니까?", value: "사나" },
-    { title: "학교는?", value: "JYP" },
-    { title: "나이는 몇입니까?", value: "3" },
-    { title: "이름은 무엇입니까?", value: "사나" },
-    { title: "학교는?", value: "JYP" },
-    { title: "나이는 몇입니까?", value: "3" },
-    { title: "이름은 무엇입니까?", value: "사나" },
-    { title: "학교는?", value: "JYP" },
+    { title: "회사는 어디입니까?", value: "JYP" },
   ];
   function Line({ title, value }) {
     return (
@@ -193,12 +244,16 @@ RespondDetail.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.any),
   answers: PropTypes.arrayOf(PropTypes.any),
 };
+
+// window design
 function ResultList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [formId, setFormId] = useState(0);
   const [respId, setRespId] = useState("");
   const [repQ, setRepQ] = useState("");
+
+  const [drawLotsEnabled, setDrawLotsEnabled] = useState(false);
   useEffect(() => {
     const id = searchParams.get("id");
     if (id) {
@@ -218,8 +273,16 @@ function ResultList() {
         <div className="result-list-left-con">
           <div className="result-list-con-title">
             <div>답변 목록</div>
-            <div className="shuffle-btn">답변 추첨</div>
+            <div
+              className="shuffle-btn"
+              onClick={() => setDrawLotsEnabled(!drawLotsEnabled)}
+            >
+              답변 추첨 {drawLotsEnabled ? <CloseCircleFilled /> : null}
+            </div>
           </div>
+          {drawLotsEnabled ? (
+            <DrawLots answers={[1, 2, 3, 4, 5, 6, 7, 8, 9]} />
+          ) : null}
           <div className="repq-fav-save-btn" onClick={onSaveClick}>
             대표문항 & 즐겨찾기 저장
           </div>

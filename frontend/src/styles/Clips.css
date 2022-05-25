@@ -13,21 +13,21 @@
 }
 
 .green {
-  background-color: #94b49f;
-  color: black;
+  background-color: #172a46;
+  color: #ccd6f6;
 }
 .yellow {
-  background-color: #e2d784;
-  color: black;
+  background-color: #172a46;
+  color: #65ffdc;
 }
 .deep-green {
-  background-color: #05595b;
-  color: #ccd6f6;
+  background-color: #65ffdc;
+  color: #172a46;
 }
 
 .beige {
-  background-color: #e5e3c9;
-  color: black;
+  background-color: #ccd6f6;
+  color: 172a46;
 }
 
 .clip-text {

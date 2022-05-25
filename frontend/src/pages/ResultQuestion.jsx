@@ -9,18 +9,9 @@ function QnA({ questions, answers }) {
   if (!answers) return null;
   if (answers.length === 0) return null;
   const data = [
-    { title: "나이는 몇입니까?", value: "3" },
-    { title: "이름은 무엇입니까?", value: "사나" },
-    { title: "학교는?", value: "JYP" },
-    { title: "나이는 몇입니까?", value: "3" },
-    { title: "이름은 무엇입니까?", value: "사나" },
-    { title: "학교는?", value: "JYP" },
-    { title: "나이는 몇입니까?", value: "3" },
-    { title: "이름은 무엇입니까?", value: "사나" },
-    { title: "학교는?", value: "JYP" },
-    { title: "나이는 몇입니까?", value: "3" },
-    { title: "이름은 무엇입니까?", value: "사나" },
-    { title: "학교는?", value: "JYP" },
+    // { title: "나이는 몇입니까?", value: "3" },
+    // { title: "이름은 무엇입니까?", value: "사나" },
+    // { title: "회사는 어디입니까?", value: "JYP" },
   ];
 
   const barGraphData = [
@@ -90,10 +81,12 @@ function QnA({ questions, answers }) {
   };
   return (
     <div className="qna-con">
+      <div className="qna-line-title">좋아하는 과일을 선택하세요.</div>
       <div className="qna-line-value">
         <BarGraph labels={barGraphData} />
       </div>
 
+      <div className="qna-line-title">응원하는 야구팀은 어디인가요?</div>
       <div className="qna-line-value">
         <StringTokens
           labels={[
