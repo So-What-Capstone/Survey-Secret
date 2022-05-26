@@ -7,7 +7,7 @@ import "../styles/SurveyCreate.css";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 
-const GET_FORMS_QUERY = gql`
+const ME_QUERY = gql`
   query {
     me {
       ok
@@ -164,7 +164,7 @@ function SurveyCreate() {
     loading: getFormsLoading,
     data: getFormsData,
     error: getFormsError,
-  } = useQuery(GET_FORMS_QUERY, {
+  } = useQuery(ME_QUERY, {
     onCompleted: (data) => {
       console.log("Query Completed");
       console.log(data);
