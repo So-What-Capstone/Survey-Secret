@@ -11,7 +11,6 @@ function MyInfoEdit() {
   const [pwd, setPwd] = useState("");
   const [pwdConfirm, setPwdConfirm] = useState("");
   const [username, setUsername] = useState("김윈터");
-  const [phoneNum, setPhoneNum] = useState("01012341234");
   const [avatar, setAvatar] = useState(
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
