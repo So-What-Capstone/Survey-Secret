@@ -5,6 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { logUserIn } from "../apollo";
 import FormError from "./../components/FormError";
+import back1 from "../resources/login-background-1.jpeg";
+import back2 from "../resources/login-background-2.jpeg";
+import back3 from "../resources/login-background-3.jpeg";
+import back4 from "../resources/login-background-4.jpeg";
+const BACK_CANDS = [back1, back2, back3, back4];
 
 const LOGIN_MUTATION = gql`
   mutation login($email: String!, $password: String!) {
@@ -66,7 +71,16 @@ function Login() {
   };
 
   return (
-    <div className="loginContainer">
+    <div
+      className="loginContainer"
+      style={{
+        backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${
+          BACK_CANDS[Math.floor(Math.random() * 4)]
+        })`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
+    >
       <div className="login">
         <div>
           <h1>Survey Secret</h1>
