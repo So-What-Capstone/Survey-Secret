@@ -5,7 +5,107 @@ import "../styles/ResultList.scss";
 import { Table, Select, InputNumber, Button, Divider, Tag, Space } from "antd";
 import PropTypes from "prop-types";
 import { StarFilled, StarOutlined, CloseCircleFilled } from "@ant-design/icons";
+import { gql, useQuery } from "@apollo/client";
 const { Option } = Select;
+
+const FIND_FORM_BY_ID_FOR_OWNER_QUERY = gql`
+  query findFormByIdForOwner($formId: String!) {
+    findFormByIdForOwner(input: { formId: $formId }) {
+      ok
+      error
+      form {
+        _id
+        title
+        state
+        createdAt
+        submissions {
+          _id
+          answers {
+            ... on OpenedAnswer {
+              _id
+              openedAnswer
+            }
+            ... on LinearAnswer {
+              _id
+              linearAnswer
+            }
+            ... on PersonalAnswer {
+              _id
+              personalAnswer
+              attachment
+            }
+            ... on ClosedAnswer {
+              _id
+              closedAnswer
+            }
+            ... on GridAnswer {
+              _id
+              gridAnswer {
+                rowNo
+                colNo
+              }
+            }
+          }
+          createdAt
+        }
+        sections {
+          _id
+          title
+          order
+          questions {
+            ... on ClosedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              closedType
+              choices {
+                no
+                choice
+                activatedSection
+              }
+            }
+            ... on OpenedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              openedType
+            }
+            ... on LinearQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              leftRange
+              rightRange
+              leftLabel
+              rightLabel
+            }
+            ... on GridQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              gridType
+            }
+            ... on PersonalQuestion {
+              _id
+              content
+              description
+              required
+              kind
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 function DrawLots({ answers }) {
   // 답변 추첨
@@ -214,6 +314,13 @@ RespondList.propTypes = {
 
 // window design
 function ResultList() {
+  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_FOR_OWNER_QUERY, {
+    variables: { formId: "628f624147f00d90c857dc32" },
+    onCompleted: (data) => {
+      console.log("getSubmissions Completed");
+      console.log(data);
+    },
+  });
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [formId, setFormId] = useState(0);
