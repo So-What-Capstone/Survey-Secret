@@ -10,17 +10,12 @@ import {
   FIND_FORM_BY_ID_QUERY,
   getFormConfigFromDB,
 } from "../modules/FormConfig";
+import { editFormMutation } from "../API/editFormMutation";
 
 const { TextArea } = Input;
 
-const EDIT_FORM_MUTATION = gql`
-  mutation editForm($request: EditFormInput!) {
-    editForm(input: $request) {
-      ok
-      error
-    }
-  }
-`;
+const EDIT_FORM_MUTATION = editFormMutation;
+
 const form_states = {
   0: "Ready",
   1: "InProgress",

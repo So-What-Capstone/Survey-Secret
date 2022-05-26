@@ -6,26 +6,9 @@ import { TextField, InputAdornment } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import adImage from "../resources/adImage.PNG";
+import { getFormsQuery } from "../API/getFormsQuery";
 
-const GET_FORMS_QUERY = gql`
-  query {
-    getForms(input: {}) {
-      ok
-      error
-      lastId
-      forms {
-        _id
-        title
-        description
-        owner {
-          username
-        }
-        expiredAt
-        privacyExpiredAt
-      }
-    }
-  }
-`;
+const GET_FORMS_QUERY = getFormsQuery;
 
 function Main() {
   const [openSurveys, setOpenSurveys] = useState([]);

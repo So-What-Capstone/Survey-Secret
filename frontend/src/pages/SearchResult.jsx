@@ -17,26 +17,9 @@ import {
   ListItemButton,
 } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
+import { searchFormsQuery } from "./../API/serachFormsQuery";
 
-const SEARCH_FORMS_QUERY = gql`
-  query searchForms($title: String!) {
-    searchForms(input: { title: $title }) {
-      ok
-      error
-      forms {
-        _id
-        title
-        description
-        expiredAt
-        privacyExpiredAt
-        owner {
-          username
-        }
-      }
-      lastId
-    }
-  }
-`;
+const SEARCH_FORMS_QUERY = searchFormsQuery;
 
 function SearchResult() {
   const [forms, setForms] = useState([

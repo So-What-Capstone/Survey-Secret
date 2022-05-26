@@ -4,25 +4,10 @@ import "../styles/MySurvey.css";
 import { useQuery, gql } from "@apollo/client";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
+import { getMyFormsSimpleQuery } from "../API/meQuery.js";
 
-const ME_QUERY = gql`
-  {
-    me {
-      ok
-      error
-      user {
-        forms {
-          _id
-          title
-          description
-          state
-          expiredAt
-          privacyExpiredAt
-        }
-      }
-    }
-  }
-`;
+const ME_QUERY = getMyFormsSimpleQuery;
+
 const ex1 = {
   title: "어린이도서관 이용만족도 조사",
   description: "2022 상반기 동대문구 이용객 대상 설문조사입니다.",

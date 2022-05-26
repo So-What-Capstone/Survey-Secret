@@ -16,78 +16,12 @@ import phoneImage from "../resources/phone.png";
 import shortImage from "../resources/short.png";
 import { EditQuestion } from "../modules";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { findTemplateByIdQuery } from "../API/findTemplateByIdQuery";
 
 const formId = "62790a9fa2b013e1c29571d7";
 const templateId = "62836d7185ffb60503c4fad6";
 
-const FIND_TEMPLATE_BY_ID_QUERY = gql`
-  query findTemplateById($templateId: String!) {
-    findTemplateById(input: { templateId: $templateId }) {
-      ok
-      error
-      template {
-        title
-        description
-        sections {
-          _id
-          title
-          order
-          questions {
-            ... on ClosedQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              closedType
-              choices {
-                no
-                choice
-                activatedSection
-              }
-            }
-            ... on OpenedQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              openedType
-            }
-            ... on LinearQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              leftRange
-              rightRange
-              leftLabel
-              rightLabel
-            }
-            ... on GridQuestion {
-              _id
-              content
-              description
-              required
-              rowContent
-              colContent
-              kind
-              gridType
-            }
-            ... on PersonalQuestion {
-              _id
-              content
-              description
-              required
-              kind
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+const FIND_TEMPLATE_BY_ID_QUERY = findTemplateByIdQuery;
 
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {

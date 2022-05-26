@@ -5,16 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { logUserIn } from "../apollo";
 import FormError from "./../components/FormError";
+import { loginMutation } from "../API/loginMutation";
 
-const LOGIN_MUTATION = gql`
-  mutation login($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
-      ok
-      error
-      token
-    }
-  }
-`;
+const LOGIN_MUTATION = loginMutation;
 
 //로그인 한 사람만 올 수 있께 처리 필요...
 //isLoggedInVar 사용
