@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SurveyIconsTray } from "../modules/index.js";
+import { SurveyIconsTray, Banner } from "../modules/index.js";
 import "../styles/MySurvey.css";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
@@ -76,7 +76,9 @@ function MySurvey() {
 
   return (
     <div>
-      <div className="my-survey-banner">이용방법 배너</div>
+      <div className="my-survey-banner">
+        <Banner sources={[]} />
+      </div>
       <div className="new-survey-con">
         <Link to="/my-survey/create" className="new-survey-btn">
           <PlusCircleOutlined
