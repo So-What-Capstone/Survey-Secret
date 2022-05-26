@@ -20,6 +20,9 @@ export class GridAnswerContent {
 @Schema(virtualSchemaOption)
 export class GridAnswer {
   @Field((type) => String)
+  _id: string;
+
+  @Field((type) => String)
   question: string;
 
   @Field((type) => QuestionType)
@@ -35,7 +38,7 @@ export class GridAnswer {
       },
     ],
   })
-  content: GridAnswerContent[];
+  gridAnswer: GridAnswerContent[];
 }
 
 export const GridAnswerSchema = SchemaFactory.createForClass(GridAnswer);

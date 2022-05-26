@@ -1,9 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { schemaOptionExceptDate } from '../../../common/schemas/option.schema';
-import mongoose from 'mongoose';
-import { ClosedQuestion } from '../../../forms/questions/schemas/closed-question.schema';
-import { Answer } from './answer.schema';
 import { virtualSchemaOption } from './../../../common/schemas/option.schema';
 import { QuestionType } from '../../../forms/questions/question.typeDefs';
 import { IsEnum } from 'class-validator';
@@ -15,6 +11,9 @@ export type ClosedAnswerDocument = ClosedAnswer & Document;
 @Schema(virtualSchemaOption)
 export class ClosedAnswer {
   @Field((type) => String)
+  _id: string;
+
+  @Field((type) => String)
   question: string;
 
   @Field((type) => QuestionType)
@@ -23,7 +22,7 @@ export class ClosedAnswer {
 
   @Field((type) => [Number])
   @Prop({ type: [Number] })
-  no: number[];
+  closedAnswer: number[];
 
   // @Field((type) => ClosedQuestion)
   // @Prop({

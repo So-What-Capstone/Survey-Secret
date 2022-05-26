@@ -10,13 +10,11 @@ import { Form, FormDocument } from './../forms/schemas/form.schema';
 import { OpenedAnswer } from 'src/submissions/answers/schemas/opened-answer.schema';
 import fetch from 'node-fetch';
 import { GetCorrInput, GetCorrOutput } from './dtos/get-corr.dto';
-import { Answer } from './../submissions/answers/schemas/answer.schema';
 import {
   GetKeywordAnalysisInput,
   GetKeywordAnalysisOutput,
 } from './dtos/get-keyword-analysis.dto';
 import mongoose from 'mongoose';
-import { notContains } from 'class-validator';
 
 @Injectable()
 export class StatService {
@@ -44,14 +42,15 @@ export class StatService {
 
       const answers: [string?] = [];
       for (const submission of submissions) {
-        let answer = submission.answers.find(
+        let answer: OpenedAnswer = submission.answers.find(
           (answer) => answer.question.toString() === questionId,
         );
+
         if (answer.kind !== 'Opened') {
           return { ok: false, error: '답변의 타입이 주관식이 아닙니다.' };
         }
-        answer = answer as OpenedAnswer;
-        answers.push(answer.content);
+
+        answers.push(answer.openedAnswer);
       }
 
       if (answers.length === 0) {

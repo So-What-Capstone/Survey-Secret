@@ -141,34 +141,39 @@ scalar DateTime
 union AnswerUnion = ClosedAnswer | GridAnswer | LinearAnswer | OpenedAnswer | PersonalAnswer
 
 type ClosedAnswer {
+  _id: String!
   question: String!
   kind: QuestionType!
-  no: [Float!]!
+  closedAnswer: [Float!]!
 }
 
 type GridAnswer {
+  _id: String!
   question: String!
   kind: QuestionType!
-  content: [GridAnswerContent!]
+  gridAnswer: [GridAnswerContent!]
 }
 
 type LinearAnswer {
+  _id: String!
   question: String!
   kind: QuestionType!
-  no: Float!
+  linearAnswer: Float!
 }
 
 type OpenedAnswer {
+  _id: String!
   question: String!
   kind: QuestionType!
-  content: String
+  openedAnswer: String
   attachment: String
 }
 
 type PersonalAnswer {
+  _id: String!
   question: String!
   kind: QuestionType!
-  content: String
+  personalAnswer: String
   attachment: String
 }
 
@@ -567,25 +572,25 @@ input CreateAnswersInput {
 }
 
 input CreateOpenedAnswerInput {
-  content: String
+  openedAnswer: String
   question: String!
   kind: QuestionType!
 }
 
 input CreateClosedAnswerInput {
-  no: [Float!]!
+  closedAnswer: [Float!]!
   question: String!
   kind: QuestionType!
 }
 
 input CreateLinearAnswerInput {
-  no: Float!
+  linearAnswer: Float!
   question: String!
   kind: QuestionType!
 }
 
 input CreateGridAnswerInput {
-  content: [GridAnswerContentInputType!]
+  gridAnswer: [GridAnswerContentInputType!]
   question: String!
   kind: QuestionType!
 }
@@ -598,7 +603,7 @@ input GridAnswerContentInputType {
 input CreatePersonalAnswerInput {
   question: String!
   kind: QuestionType!
-  content: String
+  personalAnswer: String
 }
 
 input DeleteSubmissionInput {
