@@ -4,9 +4,6 @@ import { CoreOutput } from './../../common/dtos/output.dto';
 @InputType()
 export class SendSmsInput {
   @Field((type) => String)
-  sender: string;
-
-  @Field((type) => String)
   receiver: string;
 
   @Field((type) => String)

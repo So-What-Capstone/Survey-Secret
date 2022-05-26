@@ -346,7 +346,7 @@ scalar JSONObject
 type GetSendHistoryOutput {
   ok: Boolean!
   error: String
-  data: [String!]
+  data: [JSONObject!]
 }
 
 type SendSmsOutput {
@@ -545,7 +545,6 @@ input EditFormInput {
 }
 
 input SendSmsInput {
-  sender: String!
   receiver: String!
   msg: String!
 }

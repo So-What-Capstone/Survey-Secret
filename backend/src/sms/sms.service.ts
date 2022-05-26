@@ -4,7 +4,10 @@ import { Request } from 'express';
 import { SMS_CONFIG_OPTIONS } from 'src/common/common.constants';
 import { SmsModuleOptions } from './sms.interfaces';
 import { SendSmsInput } from './dtos/send-sms.dto';
-import { GetSendHistoryInput } from './dtos/get-send-history.dto';
+import {
+  GetSendHistoryInput,
+  GetSendHistoryOutput,
+} from './dtos/get-send-history.dto';
 
 @Injectable()
 export class SmsService {
@@ -12,16 +15,18 @@ export class SmsService {
     @Inject(SMS_CONFIG_OPTIONS) private readonly options: SmsModuleOptions,
   ) {}
 
-  async sendSms(req: Request, { sender, receiver, msg }: SendSmsInput) {
+  async sendSms(req: Request, { receiver, msg }: SendSmsInput) {
     try {
       let newReq: Request = req;
       newReq.body = {
-        sender,
+        sender: process.env.SMS_SENDER,
         receiver,
         msg,
         msg_type: 'SMS',
       };
+
       const res = await aligoapi.send(newReq, this.options);
+
       if (res.result_code === 1) {
         return { ok: true };
       } else {
@@ -32,7 +37,10 @@ export class SmsService {
     }
   }
 
-  async getSendHistory(req: Request, getSendHistoryInput: GetSendHistoryInput) {
+  async getSendHistory(
+    req: Request,
+    getSendHistoryInput: GetSendHistoryInput,
+  ): Promise<GetSendHistoryOutput> {
     try {
       let newReq: Request = req;
       newReq.body = getSendHistoryInput;
