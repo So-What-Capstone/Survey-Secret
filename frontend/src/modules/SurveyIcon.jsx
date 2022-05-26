@@ -28,8 +28,8 @@ export default function SurveyIcon({
   if (des) {
     short_des = des.length <= 25 ? des : des.substr(0, 25);
   }
-  const result_link = "/result/list?id=" + form_id;
-  const edit_link = "/design?id=" + form_id;
+  const result_link = "/my-survey/result/list?id=" + form_id;
+  const edit_link = "/my-survey/design?id=" + form_id;
 
   const expStr = "~ " + expArray[0] + " " + timeArray[0];
 
@@ -53,7 +53,7 @@ export default function SurveyIcon({
           </div>
           <div className="item-title">{title}</div>
           <a
-            link={result_link}
+            href={result_link}
             title="설문응답 확인"
             className="survey-icon-btn"
           >
@@ -66,7 +66,7 @@ export default function SurveyIcon({
             />{" "}
             설문응답 확인
           </a>
-          <a link={edit_link} title="디자인 수정" className="survey-icon-btn">
+          <a href={edit_link} title="디자인 수정" className="survey-icon-btn">
             <EditOutlined
               style={{
                 fontSize: "1.5rem",

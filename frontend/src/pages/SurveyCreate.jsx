@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/SurveyCreate.css";
-
+import { isLoggedInVar } from "./../apollo";
+import { useReactiveVar } from "@apollo/client";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 function SurveyCreate() {
@@ -14,17 +15,15 @@ function SurveyCreate() {
   const [selected_template, setSelected] = useState([0, -1]);
   const unselected_item = "list-item-template";
   const selected_item = "list-item-template selected";
+
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+
   useEffect(() => {
-    // 로그인 상태 확인.
-    const isLogin = true;
-    if (isLogin) {
-      // 템플릿 가져오기
-      // 유저가 소유한 폼들 가져오기
-    } else {
+    if (!isLoggedIn) {
       alert("로그인 후 이용해 주세요.");
       navigate("/login");
     }
-  }, []);
+  }, [isLoggedIn]);
   const onExampleChange = (idx) => () => {
     setSelected([idx, -1]);
   };
