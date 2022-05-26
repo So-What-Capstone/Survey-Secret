@@ -1,6 +1,7 @@
 export { default as Banner } from "./Banner";
 export { default as Clip } from "./Clips";
 export { default as ClipTray } from "./ClipTray";
+export { default as ResultClipTray } from "./ResultClipTray";
 export { default as MainContent } from "./MainContent";
 export { default as Menu } from "./Menu";
 export { default as SurveyIcon } from "./SurveyIcon";
@@ -13,3 +14,4 @@ export * from "./question/PriavateQuestion";
 export { default as DateQuestion } from "./question/DateQuestion";
 export { default as AddressQuestion } from "./question/AddressQuestion";
 export { default as EditQuestion } from "./question/EditQuestion";
+export { default as ResponseDetail } from "./ResponseDetail";

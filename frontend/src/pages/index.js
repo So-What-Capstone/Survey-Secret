@@ -7,7 +7,7 @@ export { default as SurveyDesign } from "./SurveyDesign";
 export { default as SurveyInfo } from "./SurveyInfo";
 export { default as ResultList } from "./ResultList";
 export { default as ResultStats } from "./ResultStats";
-export { default as ResultAnalysis } from "./ResultAnalysis";
+export { default as ResultQuestion } from "./ResultQuestion";
 export { default as Message } from "./Message";
 export { default as Email } from "./Email";
 export { default as ContactRecord } from "./ContactRecord";

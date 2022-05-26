@@ -13,76 +13,6 @@ import {
 
 const { TextArea } = Input;
 
-// const formId = "62799659986c0549c7688c63";
-/*
-const FIND_FORM_BY_ID_QUERY = gql`
-  query findFormById($formId: String!) {
-    findFormById(input: { formId: $formId }) {
-      ok
-      error
-      form {
-        state
-        createdAt
-        sections {
-          _id
-          title
-          order
-          questions {
-            ... on ClosedQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              closedType
-              choices {
-                no
-                choice
-                activatedSection
-              }
-            }
-            ... on OpenedQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              openedType
-            }
-            ... on LinearQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              leftRange
-              rightRange
-              leftLabel
-              rightLabel
-            }
-            ... on GridQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              gridType
-            }
-            ... on PersonalQuestion {
-              _id
-              content
-              description
-              required
-              kind
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-*/
-
 const EDIT_FORM_MUTATION = gql`
   mutation editForm($request: EditFormInput!) {
     editForm(input: $request) {
@@ -102,12 +32,20 @@ function SurveyInfo() {
   const [searchParams] = useSearchParams();
   const [formId, setFormId] = useState(0);
   useEffect(() => {
+    const isLogin = true;
+    if (!isLogin) {
+      alert("로그인 후 이용해주세요.");
+      navigate("/");
+      return;
+    }
     const id = searchParams.get("id");
     if (id) {
       setFormId(id);
     } else {
       navigate("/");
     }
+    //로그인 된 유저가 해당 폼의 소유주인지 확인.
+    const isOwner = true;
   }, [searchParams]);
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId },

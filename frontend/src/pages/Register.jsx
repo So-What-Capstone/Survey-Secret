@@ -134,7 +134,7 @@ function Register() {
             disabled={!formState.isValid || loading}
             className={
               !formState.isValid || loading
-                ? "loginSubmit-disabled"
+                ? "loginSubmit disabled"
                 : "loginSubmit"
             }
           ></input>
@@ -143,7 +143,7 @@ function Register() {
 
         <div className="bottomBox">
           <span className="loginOther">
-            <Link to={"/login"}>Already have an account?</Link>
+            <Link to={"/login"}>이미 계정이 있으신가요?</Link>
           </span>
         </div>
       </div>

@@ -1,0 +1,129 @@
+.draw-con {
+  width: 100%;
+  height: fit-content;
+  background-color: #ffffff50;
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 2% 0 8% 0;
+  padding: 2%;
+  transition: all 0.3s ease;
+
+  .draw-line {
+    display: flex;
+    flex-flow: row wrap;
+    // justify-content: space-between;
+    align-items: center;
+  }
+  .draw-label {
+    color: #65ffdc;
+    font-size: 1rem;
+    margin-right: 1rem;
+  }
+  .draw-result-label {
+    color: #0a182d;
+  }
+  .draw-lots-con {
+    background-color: #dbe3fc;
+    border-radius: 0.2rem;
+    min-height: 2rem;
+    padding: 1%;
+    margin-bottom: 1%;
+    display: flex;
+    flex-flow: row wrap;
+    max-height: 10vh;
+    overflow: auto;
+  }
+}
+
+.result-list-con {
+  width: 100%;
+  height: 95vh;
+  max-height: 90vh;
+}
+.result-list-white-panel {
+  width: 90%;
+  height: 95%;
+  /* margin: 4%; */
+  margin-top: 2%;
+  margin-left: 4rem;
+  background-color: #ffffff50;
+  border-radius: 0.2rem;
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.result-list-left-con {
+  width: 35%;
+  height: 100%;
+  padding: 1rem 0.5rem 0.2rem 1rem;
+}
+
+.result-list-con-title {
+  color: #65ffdc;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  cursor: default;
+}
+.shuffle-btn {
+  width: fit-content;
+  padding: 0.2rem;
+  color: #ccd6f6;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #ffffff00;
+}
+.shuffle-btn:hover {
+  color: #65ffdc;
+  background-color: #ffffff30;
+}
+.shuffle-btn:active {
+  color: #65ffdc;
+  background-color: #ffffff50;
+}
+.repq-fav-save-btn {
+  width: 100%;
+  color: #ccd6f6;
+  border-radius: 0.1rem;
+  /* border: 1px solid #65ffdc; */
+  background-color: #0a182d;
+  padding: 0.3rem;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.repq-fav-save-btn:hover {
+  background-color: #65ffdc50;
+  color: #0a182d;
+}
+.repq-fav-save-btn:active {
+  background-color: #65ffdc;
+  color: #0a182d;
+}
+
+.result-list-list {
+  width: 100%;
+  height: max-content;
+}
+.result-list-right-con {
+  width: 65%;
+  height: 100%;
+  background-color: whitesmoke;
+  overflow: auto;
+}
+
+.star-con {
+  font-size: 1.2rem;
+  color: rgb(224, 233, 55);
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.star-con:active {
+  color: rgb(190, 198, 48);
+}

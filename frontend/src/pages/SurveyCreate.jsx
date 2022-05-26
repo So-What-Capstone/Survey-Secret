@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react";
 import Form from "../modules/Form";
 import { template_list } from "../modules/Templates";
 import "../styles/SurveyCreate.css";
-import { useNavigate } from "react-router-dom";
+
+import { useSearchParams, useNavigate } from "react-router-dom";
+
 function SurveyCreate() {
   const navigate = useNavigate();
   const template_example_names = template_list.map((v) => v.title);
@@ -12,7 +14,17 @@ function SurveyCreate() {
   const [selected_template, setSelected] = useState([0, -1]);
   const unselected_item = "list-item-template";
   const selected_item = "list-item-template selected";
-
+  useEffect(() => {
+    // 로그인 상태 확인.
+    const isLogin = true;
+    if (isLogin) {
+      // 템플릿 가져오기
+      // 유저가 소유한 폼들 가져오기
+    } else {
+      alert("로그인 후 이용해 주세요.");
+      navigate("/login");
+    }
+  }, []);
   const onExampleChange = (idx) => () => {
     setSelected([idx, -1]);
   };
@@ -31,7 +43,9 @@ function SurveyCreate() {
     <div className="content">
       <div className="select-template">
         <div className="example-templates">
-          <label className="title-label"> 템플릿 선택</label>
+          <div className="panel-title">
+            <label className="title-label"> 템플릿 선택</label>
+          </div>
           <div className="template-list">
             <List
               size="small"
@@ -53,12 +67,13 @@ function SurveyCreate() {
         </div>
 
         <div className="my-templates">
-          <label className="title-label"> 내가 만들었던 템플릿 가져오기</label>
+          <div className="panel-title">
+            <label className="title-label">내가 만들었던 템플릿 가져오기</label>
+          </div>
           <div className="template-list">
             {my_templates_names.length === 0 ? (
               <div className="list-item-template">
-                {" "}
-                이전에 만든 설문이 없습니다.{" "}
+                이전에 만든 설문이 없습니다.
               </div>
             ) : (
               <List
