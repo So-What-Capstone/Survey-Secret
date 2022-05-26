@@ -204,7 +204,6 @@ type User {
   updatedAt: DateTime!
   _id: String!
   username: String!
-  phoneNum: String
   email: String!
   password: String!
   type: UserType!
@@ -432,7 +431,6 @@ type Mutation {
 
 input CreateAccountInput {
   username: String!
-  phoneNum: String
   email: String!
   password: String!
 }
@@ -444,7 +442,6 @@ input LoginInput {
 
 input EditUserInput {
   username: String
-  phoneNum: String
   password: String
 }
 
