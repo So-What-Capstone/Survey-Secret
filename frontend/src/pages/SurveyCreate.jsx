@@ -5,8 +5,172 @@ import { template_list } from "../modules/Templates";
 import "../styles/SurveyCreate.css";
 
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { gql, useQuery } from "@apollo/client";
+
+const GET_FORMS_QUERY = gql`
+  query {
+    me {
+      ok
+      error
+      user {
+        forms {
+          title
+          description
+          createdAt
+          sections {
+            _id
+            title
+            order
+            questions {
+              ... on ClosedQuestion {
+                _id
+                content
+                description
+                required
+                kind
+                closedType
+                choices {
+                  no
+                  choice
+                  activatedSection
+                }
+              }
+              ... on OpenedQuestion {
+                _id
+                content
+                description
+                required
+                kind
+                openedType
+              }
+              ... on LinearQuestion {
+                _id
+                content
+                description
+                required
+                kind
+                leftRange
+                rightRange
+                leftLabel
+                rightLabel
+              }
+              ... on GridQuestion {
+                _id
+                content
+                description
+                required
+                rowContent
+                colContent
+                kind
+                gridType
+              }
+              ... on PersonalQuestion {
+                _id
+                content
+                description
+                required
+                kind
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const GET_TEMPLATES_QUERY = gql`
+  query {
+    getTemplates {
+      ok
+      error
+      templates {
+        title
+        description
+        sections {
+          _id
+          title
+          order
+          questions {
+            ... on ClosedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              closedType
+              choices {
+                no
+                choice
+                activatedSection
+              }
+            }
+            ... on OpenedQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              openedType
+            }
+            ... on LinearQuestion {
+              _id
+              content
+              description
+              required
+              kind
+              leftRange
+              rightRange
+              leftLabel
+              rightLabel
+            }
+            ... on GridQuestion {
+              _id
+              content
+              description
+              required
+              rowContent
+              colContent
+              kind
+              gridType
+            }
+            ... on PersonalQuestion {
+              _id
+              content
+              description
+              required
+              kind
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 function SurveyCreate() {
+  const {
+    loading: getTemplatesLoading,
+    data: getTemplatesData,
+    error: getTemplatesError,
+  } = useQuery(GET_TEMPLATES_QUERY, {
+    onCompleted: (data) => {
+      console.log("Query Completed");
+      console.log(data);
+    },
+  });
+
+  const {
+    loading: getFormsLoading,
+    data: getFormsData,
+    error: getFormsError,
+  } = useQuery(GET_FORMS_QUERY, {
+    onCompleted: (data) => {
+      console.log("Query Completed");
+      console.log(data);
+    },
+  });
+
   const navigate = useNavigate();
   const template_example_names = template_list.map((v) => v.title);
   const my_templates = [];
