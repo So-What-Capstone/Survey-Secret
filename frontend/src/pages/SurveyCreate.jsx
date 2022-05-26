@@ -6,8 +6,37 @@ import "../styles/SurveyCreate.css";
 import { isLoggedInVar } from "./../apollo";
 import { useReactiveVar } from "@apollo/client";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { gql, useQuery } from "@apollo/client";
+import { getMyFormsQuery } from "../API/meQuery";
+import { getTemplatesQuery } from "../API/getTemplatesQuery";
+
+const ME_QUERY = getMyFormsQuery;
+
+const GET_TEMPLATES_QUERY = getTemplatesQuery;
 
 function SurveyCreate() {
+  const {
+    loading: getTemplatesLoading,
+    data: getTemplatesData,
+    error: getTemplatesError,
+  } = useQuery(GET_TEMPLATES_QUERY, {
+    onCompleted: (data) => {
+      console.log("Query Completed");
+      console.log(data);
+    },
+  });
+
+  const {
+    loading: getFormsLoading,
+    data: getFormsData,
+    error: getFormsError,
+  } = useQuery(ME_QUERY, {
+    onCompleted: (data) => {
+      console.log("Query Completed");
+      console.log(data);
+    },
+  });
+
   const navigate = useNavigate();
   const template_example_names = template_list.map((v) => v.title);
   const my_templates = [];

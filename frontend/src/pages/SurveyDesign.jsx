@@ -16,8 +16,12 @@ import phoneImage from "../resources/phone.png";
 import shortImage from "../resources/short.png";
 import { EditQuestion } from "../modules";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { findTemplateByIdQuery } from "../API/findTemplateByIdQuery";
 
 const formId = "62790a9fa2b013e1c29571d7";
+const templateId = "62836d7185ffb60503c4fad6";
+
+const FIND_TEMPLATE_BY_ID_QUERY = findTemplateByIdQuery;
 
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
@@ -182,6 +186,18 @@ function parseLinearQuestion(ques) {
 }
 
 function SurveyDesign() {
+  const {
+    loading: findTemplateLoading,
+    data: findTemplateData,
+    error: findTemplateError,
+  } = useQuery(FIND_TEMPLATE_BY_ID_QUERY, {
+    variables: { templateId },
+    onCompleted: (data) => {
+      console.log("find Template completed");
+      console.log(data);
+    },
+  });
+
   const [createForm, { loading: mutationLoading }] = useMutation(
     CREATE_FORM_MUTATION,
     {
