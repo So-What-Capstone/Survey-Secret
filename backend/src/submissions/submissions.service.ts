@@ -133,11 +133,22 @@ export class SubmissionsService {
     id: string,
   ): Promise<FindSubmissionByIdOutput> {
     try {
-      const submission = await this.submissionModel
-        .findOne()
-        .where('_id')
-        .equals(id)
-        .populate('form');
+      const [submission] = await this.submissionModel.aggregate([
+        {
+          $match: { _id: new mongoose.Types.ObjectId(id) },
+        },
+        {
+          $lookup: {
+            from: 'forms',
+            localField: 'form',
+            foreignField: '_id',
+            as: 'form',
+          },
+        },
+        {
+          $unwind: '$form',
+        },
+      ]);
 
       //form의 어느 정보까지 줄것인지 select
       if (!submission) {
@@ -145,8 +156,8 @@ export class SubmissionsService {
       }
 
       if (
-        submission.respondent?._id.toString() !== owner._id.toString() &&
-        submission.form.owner._id.toString() !== owner._id.toString()
+        submission.respondent?.toString() !== owner._id.toString() &&
+        submission.form?.owner.toString() !== owner._id.toString()
       ) {
         return { ok: false, error: '권한이 없습니다.' };
       }

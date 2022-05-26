@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Form, FormDocument, FormState } from './schemas/form.schema';
 import { Model } from 'mongoose';
-import { CreateFormInput, CreateFormOutput } from './dtos/craete-form.dto';
+import { CreateFormInput, CreateFormOutput } from './dtos/create-form.dto';
 import { User } from '../users/schemas/user.schema';
 import { UserDocument } from '../users/schemas/user.schema';
 import { FindSectionByIdOutput } from './dtos/find-section-by-id.dto';
 import mongoose from 'mongoose';
-import { FIndFormByIdOutput } from './dtos/find-form-by-id.dto';
+import { FindFormByIdOutput } from './dtos/find-form-by-id.dto';
 import { DeleteFormOutput } from './dtos/delete-form.dto';
 import {
   Submission,
@@ -56,11 +56,10 @@ export class FormsService {
         ...(personal ? personal : []),
       ];
 
-      // find more faster algorithm....
       // consider using DB middleware(before insert)
       questions.sort(({ order }, { order: order2 }) => {
         if (order === order2) {
-          throw new Error('순서가 중복되었습니다.');
+          throw new Error('질문 순서가 중복되었습니다.');
         }
         return order - order2;
       });
@@ -156,7 +155,7 @@ export class FormsService {
     }
   }
 
-  async findFormById(formId: string): Promise<FIndFormByIdOutput> {
+  async findFormById(formId: string): Promise<FindFormByIdOutput> {
     try {
       //not for see result(submissions)
       const form = await this.formModel
@@ -165,6 +164,38 @@ export class FormsService {
 
       if (!form) {
         return { ok: false, error: '폼을 찾을 수 없습니다.' };
+      }
+
+      return { ok: true, form };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  //pagination...?
+  async findFormByIdForOwner(
+    formId: string,
+    owner: User,
+  ): Promise<FindFormByIdOutput> {
+    try {
+      const [form]: Form[] = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+      ]);
+
+      if (!form) {
+        return { ok: false, error: '폼을 찾을 수 없습니다.' };
+      }
+
+      if (form.owner.toString() !== owner._id.toString()) {
+        return { ok: false, error: '권한이 없습니다.' };
       }
 
       return { ok: true, form };
@@ -223,6 +254,7 @@ export class FormsService {
       privacyExpiredAt,
       expiredAt,
       state,
+      representativeQuestionId,
     }: EditFormInput,
   ): Promise<EditFormOutput> {
     try {
@@ -231,14 +263,24 @@ export class FormsService {
         : undefined;
 
       //title, description, sections
-      let form = await this.formModel.findOne({ _id: formId });
+      const form = await this.formModel.findOne({ _id: formId });
 
       if (!form) {
-        throw new Error('폼을 찾을 수 없습니다.');
+        return { ok: false, error: '폼을 찾을 수 없습니다.' };
+      }
+
+      if (
+        !form.sections.find((section) =>
+          section.questions.find(
+            (question) => question._id.toString() === representativeQuestionId,
+          ),
+        )
+      ) {
+        return { ok: false, error: '폼 안에 존재하지 않는 대표문항입니다.' };
       }
 
       if (form.owner._id.toString() !== owner._id.toString()) {
-        throw new Error('권한이 없습니다.');
+        return { ok: false, error: '권한이 없습니다.' };
       }
 
       await this.formModel.updateOne(
@@ -251,6 +293,9 @@ export class FormsService {
             privacyExpiredAt: privacyExpiredAt ? privacyExpiredAt : undefined,
             expiredAt: expiredAt ? expiredAt : undefined,
             state: state ? state : undefined,
+            representativeQuestion: representativeQuestionId
+              ? representativeQuestionId
+              : undefined,
           },
         },
       );

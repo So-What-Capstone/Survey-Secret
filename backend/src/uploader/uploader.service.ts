@@ -28,4 +28,15 @@ export class UploaderService {
 
     return Location;
   }
+
+  getSignedUrl(key: string) {
+    const s3 = new AWS.S3({ signatureVersion: 'v4', region: 'ap-northeast-2' });
+    const params = {
+      Bucket: 'surveysecret',
+      Key: key,
+      Expires: 60,
+    };
+    const url = s3.getSignedUrl('putObject', params);
+    return url;
+  }
 }

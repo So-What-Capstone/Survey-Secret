@@ -5,7 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsBoolean, IsEnum } from 'class-validator';
+import { IsBoolean, IsEnum, IsString } from 'class-validator';
 import { virtualSchemaOption } from './../../../common/schemas/option.schema';
 import { QuestionType } from '../question.typeDefs';
 
@@ -39,6 +39,11 @@ export class PersonalQuestion {
 
   @Field((type) => Number)
   order: number;
+
+  @Field((type) => String, { nullable: true })
+  @Prop({ type: String })
+  @IsString()
+  attachment?: string;
 
   @Field((type) => Boolean)
   @Prop({ type: Boolean, required: true, default: true })

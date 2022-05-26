@@ -20,6 +20,7 @@ import { EditUserInput, EditUserOutput } from './dtos/edit-user.dto';
 import { UploaderService } from './../uploader/uploader.service';
 import { FileUpload } from 'graphql-upload';
 import { meOutput } from './dtos/me.dto';
+import { SmsService } from '../sms/sms.service';
 
 @Injectable()
 export class UsersService {

@@ -19,7 +19,7 @@ registerEnumType(ClosedQuestionType, { name: 'ClosedQuestionType' });
 
 export type ClosedQuestionDocument = ClosedQuestion & Document;
 
-@InputType('ClosedQuestionChoiceInputType', { isAbstract: true })
+@InputType('ClosedQuestionChoiceInput', { isAbstract: true })
 @ObjectType()
 export class ClosedQuestionChoice {
   @Field((type) => Number)
@@ -28,9 +28,12 @@ export class ClosedQuestionChoice {
   @Field((type) => String)
   choice: string;
 
-  @Field((type) => Number, { nullable: true })
+  @Field((type) => String, { nullable: true })
+  attachment?: string;
+
+  @Field((type) => String, { nullable: true })
   @IsMongoId()
-  activatedSection?: number;
+  activatedSection?: string;
 }
 
 @InputType('ClosedQuestionInputType', { isAbstract: true })
@@ -63,6 +66,7 @@ export class ClosedQuestion {
         no: { type: Number, required: true },
         choice: { type: String, required: true },
         activatedSection: { type: Number },
+        attachment: { type: String },
       },
     ],
     required: true,
