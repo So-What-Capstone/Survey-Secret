@@ -10,7 +10,8 @@ export default function Clip({ title, link_enabled, link, color_idx }) {
     clip_text = (
       <a
         className={color_idx === 0 ? "clip-text-white" : "clip-text-black"}
-        href={link}  style={{ color: "inherit" }}
+        href={link}
+        style={{ color: "inherit" }}
       >
         {" "}
         {title}
