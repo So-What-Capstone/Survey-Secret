@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/Menu.css";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -22,16 +22,18 @@ function Menu() {
   const navigate = useNavigate();
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
-  //나중에 고치기, 메뉴는 맨 위에 올라와있으므로 매번 query 요청해야함
-  //localStorage 이용, token안에 넣고 decode를 하던
-  const [loggedInUser, setLoggedInUser] = useState();
-
-  const { loading, data, error } = useQuery(ME_QUERY, {
+  const { loading, data, error, refetch } = useQuery(ME_QUERY, {
     onCompleted: (data) => {
       console.log("Query Completed");
       setLoggedInUser(data?.me?.user?.username);
     },
   });
+  //나중에 고치기, 메뉴는 맨 위에 올라와있으므로 매번 query 요청해야함
+  //localStorage 이용, token안에 넣고 decode를 하던
+  const [loggedInUser, setLoggedInUser] = useState();
+  useEffect(() => {
+    refetch();
+  }, [isLoggedIn]);
 
   const move = (url) => () => {
     navigate(url);
