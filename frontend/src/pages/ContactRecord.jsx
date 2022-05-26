@@ -14,45 +14,45 @@ import {
 import PropTypes from "prop-types";
 
 function ContactRecord() {
-  /* raw data */
+  /* dummy data */
   const messages = [
     {
       title: "설문제목1",
-      time: "2022 3/24 3:59",
+      time: "2022/3/24 3:59",
       count: 3,
       success: true,
       receivers: [
         {
-          id: 0,
+          id: "0",
           name: "닝닝",
         },
         {
-          id: 1,
+          id: "1",
           name: "카리나",
         },
       ],
       senderInfo: "01012341234",
       content: "전송내용1",
-      id: 0,
+      id: "0",
     },
     {
       title: "설문제목2",
       time: "1997/3/14 2:33",
-      count: 15,
+      count: 2,
       success: false,
       receivers: [
         {
-          id: 0,
+          id: "2",
           name: "닝닝닝",
         },
         {
-          id: 1,
+          id: "3",
           name: "카리나",
         },
       ],
       senderInfo: "01010041004",
       content: "전송내용2 룰루랄라 올로랄라 릴리리맘보",
-      id: 1,
+      id: "1",
     },
   ];
 
@@ -64,18 +64,18 @@ function ContactRecord() {
       success: true,
       receivers: [
         {
-          id: 0,
+          id: "10",
           name: "윈터",
         },
         {
-          id: 1,
+          id: "13",
           name: "지젤",
         },
       ],
       senderInfo: "wusdfl@naver.com",
       textTitle: "제목입니당",
-      content: "전송내용2 룰루랄라 올로랄라 릴리리맘보",
-      id: 1,
+      content: "전송내용2 룰루랄라 올로랄라 릴리리맘보 올릴리리",
+      id: "9",
     },
   ];
 
@@ -90,9 +90,9 @@ function ContactRecord() {
 
   /* 문자메시지/이메일 발신 정보 */
   const [mode, setMode] = useState(0); //0:문자 메시지, 1:이메일
-  const [textTitle, setTextTitle] = useState("");
-  const [textValue, setTextValue] = useState("");
-  const [textByte, setTextByte] = useState(0);
+  const [textTitle, setTextTitle] = useState(""); //이메일 제목
+  const [textValue, setTextValue] = useState(""); //문자/이메일 내용
+  const [textByte, setTextByte] = useState(0); //문자 바이트수
   const [selectedMessage, setSelectedMessage] = useState({
     title: "",
     time: "",
@@ -100,13 +100,13 @@ function ContactRecord() {
     success: false,
     receivers: [
       {
-        id: 0,
+        id: "",
         name: "",
       },
     ],
     senderInfo: "",
     content: "",
-    id: 0,
+    id: "",
   });
   const [selectedEmail, setSelectedEmail] = useState({
     title: "",
@@ -115,14 +115,14 @@ function ContactRecord() {
     success: false,
     receivers: [
       {
-        id: 0,
+        id: "",
         name: "",
       },
     ],
     senderInfo: "",
     texttitle: "",
     content: "",
-    id: 0,
+    id: "",
   });
 
   const maxByte = 100; //최대 100바이트
@@ -154,12 +154,12 @@ function ContactRecord() {
   };
 
   const sendMessage = () => {
-    //console.log(senderInfo + ", " + textValue);
+    console.log(textValue);
     //send Message logic
   };
 
   const sendEmail = () => {
-    console.log(textValue);
+    console.log(textTitle + ", " + textValue);
     //send Email logic
   };
 
@@ -205,32 +205,35 @@ function ContactRecord() {
           <List className="list-con">
             {messages.map((message) => (
               <div key={message.id} className="content-con">
-                <ListItem>
-                  <ListItemButton
-                    selected={selectedMessage === message}
-                    onClick={(e) => handleListItemClick(e, message, mode)}
-                    className="content-wrap"
-                  >
-                    <div className="content-row one">
-                      <ListItemText primary={message.title} />
-                    </div>
-                    <div className="content-row one">
-                      <ListItemText primary={message.time} />
-                      <ListItemText primary={message.count + "건"} />
+                <ListItem
+                  button
+                  selected={selectedMessage === message}
+                  onClick={(e) => handleListItemClick(e, message, mode)}
+                  className={
+                    selectedMessage.id === message.id
+                      ? "content-wrap selected"
+                      : "content-wrap"
+                  }
+                >
+                  <div className="content-row one">
+                    <ListItemText primary={message.title} />
+                  </div>
+                  <div className="content-row one">
+                    <ListItemText primary={message.time} />
+                    <ListItemText primary={message.count + "건"} />
+                    <ListItemText
+                      primary={message.success ? "전송 성공" : "전송 실패"}
+                    />
+                  </div>
+                  <div className="content-row two">
+                    {message.content.length > 20 ? (
                       <ListItemText
-                        primary={message.success ? "전송 성공" : "전송 실패"}
+                        primary={message.content.substring(0, 22) + "..."}
                       />
-                    </div>
-                    <div className="content-row two">
-                      {message.content.length > 20 ? (
-                        <ListItemText
-                          primary={message.content.substring(0, 20) + "..."}
-                        />
-                      ) : (
-                        <ListItemText primary={message.content} />
-                      )}
-                    </div>
-                  </ListItemButton>
+                    ) : (
+                      <ListItemText primary={message.content} />
+                    )}
+                  </div>
                 </ListItem>
                 <Divider component="li" className="content-div" />
               </div>
@@ -241,32 +244,35 @@ function ContactRecord() {
           <List className="list-con">
             {emails.map((email) => (
               <div key={email.id} className="content-con">
-                <ListItem>
-                  <ListItemButton
-                    selected={selectedEmail === email}
-                    onClick={(e) => handleListItemClick(e, email, mode)}
-                    className="content-wrap"
-                  >
-                    <div className="content-row one">
-                      <ListItemText primary={email.title} />
-                    </div>
-                    <div className="content-row one">
-                      <ListItemText primary={email.time} />
-                      <ListItemText primary={email.count + "건"} />
+                <ListItem
+                  button
+                  selected={selectedEmail === email}
+                  onClick={(e) => handleListItemClick(e, email, mode)}
+                  className={
+                    selectedEmail.id === email.id
+                      ? "content-wrap selected"
+                      : "content-wrap"
+                  }
+                >
+                  <div className="content-row one">
+                    <ListItemText primary={email.title} />
+                  </div>
+                  <div className="content-row one">
+                    <ListItemText primary={email.time} />
+                    <ListItemText primary={email.count + "건"} />
+                    <ListItemText
+                      primary={email.success ? "전송 성공" : "전송 실패"}
+                    />
+                  </div>
+                  <div className="content-row two">
+                    {email.content.length > 20 ? (
                       <ListItemText
-                        primary={email.success ? "전송 성공" : "전송 실패"}
+                        primary={email.content.substring(0, 22) + "..."}
                       />
-                    </div>
-                    <div className="content-row two">
-                      {email.content.length > 20 ? (
-                        <ListItemText
-                          primary={email.content.substring(0, 20) + "..."}
-                        />
-                      ) : (
-                        <ListItemText primary={email.content} />
-                      )}
-                    </div>
-                  </ListItemButton>
+                    ) : (
+                      <ListItemText primary={email.content} />
+                    )}
+                  </div>
                 </ListItem>
                 <Divider component="li" className="content-div" />
               </div>
@@ -278,10 +284,10 @@ function ContactRecord() {
   }
 
   return (
-    <div className="con">
+    <div className="contact-con">
       <ClipTray clips={clips} />
       <div className="record-con">
-        <div className="list-panel">
+        <div className="record-list-panel">
           <Tabs
             value={mode}
             onChange={handleModeChange}
@@ -336,16 +342,16 @@ function ContactRecord() {
             <List className="small-list-con">
               <div className="content-con">
                 {mode === 0 &&
-                  selectedMessage.receivers.map((receiver) => (
+                  selectedMessage.receivers.map((receiver, index) => (
                     <ListItem key={receiver.id} className="content">
-                      <ListItemText primary={receiver.id} />
+                      <ListItemText primary={index + 1} />
                       <ListItemText primary={receiver.name} />
                     </ListItem>
                   ))}
                 {mode === 1 &&
-                  selectedEmail.receivers.map((receiver) => (
+                  selectedEmail.receivers.map((receiver, index) => (
                     <ListItem key={receiver.id} className="content">
-                      <ListItemText primary={receiver.id} />
+                      <ListItemText primary={index + 1} />
                       <ListItemText primary={receiver.name} />
                     </ListItem>
                   ))}

@@ -11,7 +11,7 @@
   width: 3rem;
   padding: 2rem 0rem 2rem 1rem;
 }
-
+ 
 .green {
   background-color: #172a46;
   color: #ccd6f6;
@@ -29,11 +29,25 @@
   background-color: #ccd6f6;
   color: 172a46;
 }
+.dark-blue {
+  background-color: #172A46;
+}
+.sky-blue {
+  background-color: #CCD6F6;
+}
 
-.clip-text {
+.clip-text-white {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   font-size: 1rem;
+  color: #F5F5F5;
+}
+
+.clip-text-black {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 1rem;
+  color: #000000;
 }
 
 .clip-tray {
