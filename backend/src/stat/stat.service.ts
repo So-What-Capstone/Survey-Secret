@@ -58,7 +58,7 @@ export class StatService {
       }
 
       //tokenization
-      const response = await fetch('http://localhost:4000/stats/keywords', {
+      const response = await fetch(`${process.env.END_POINT}/stats/keywords`, {
         method: 'POST',
         body: JSON.stringify({ answers: [...answers] }),
         headers: { 'Content-Type': 'application/json' },
@@ -120,7 +120,7 @@ export class StatService {
         }
       });
 
-      const response = await fetch('http://localhost:4000/stats/corr', {
+      const response = await fetch(`${process.env.END_POINT}/stats/corr`, {
         method: 'POST',
         body: JSON.stringify({ answers: jsonData }),
         headers: { 'Content-Type': 'application/json' },

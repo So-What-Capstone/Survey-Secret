@@ -33,6 +33,7 @@ import { SmsModule } from './sms/sms.module';
         SMS_USER_ID: Joi.string().required(),
         SMS_API_KEY: Joi.string().required(),
         SMS_SENDER: Joi.string().required(),
+        STAT_END_POINT: Joi.string().required(),
       }),
     }),
     //set DB logger(raw query), DB error/connect log
