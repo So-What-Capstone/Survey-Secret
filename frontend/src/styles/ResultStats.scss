@@ -1,60 +1,82 @@
 .result-stats {
-  align-self: center;
   width: 100%;
-  height: 100vh;
+  max-width: 100%;
+  height: 90vh;
   display: flex;
   flex-direction: row;
+  align-self: center;
+
+  .result-stats-inner {
+    width: 90%;
+    margin-left: 5rem;
+    display: flex;
+    flex-direction: row;
+
+    .result-stats-option-con {
+      width: 30%;
+      margin: 1rem;
+      background-color: #384d6d90;
+    }
+  }
 }
 
-.result {
+.result-stats-result-con {
   float: right;
   width: 70%;
+  max-width: 70%;
+  height: 100%;
+  margin: 1rem;
   background-color: aliceblue;
 
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.title-label {
-  padding-top: 20px;
-  padding-left: 20px;
-  color: #65ffdc;
-}
-
-.choices {
-  width: 100%;
-  padding: 20px 5px;
-  background-color: aliceblue;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.choice {
-  padding-top: 10px;
-}
-
-.panel-title {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.2rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #ccd6f650;
-}
-
-.not-selected {
 }
 
 .result-option-list {
-  height: 100%;
-  width: 30%;
+  // height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #384d6d90;
+
+  .panel-title {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ccd6f650;
+
+    .title-label {
+      padding-top: 20px;
+      padding-left: 20px;
+      color: #65ffdc;
+    }
+  }
+
+  .choices {
+    width: 100%;
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    .choice {
+      width: 100%;
+      text-align: center;
+      // margin: 0.1rem 0 0.1rem 0;
+      padding: 0.2rem;
+    }
+    .choice:hover {
+      background-color: #65ffdc50;
+    }
+
+    .selected {
+      background-color: #ccd6f6;
+    }
+  }
 }
 
 .list-item-template {
@@ -69,4 +91,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
+}
+
+.result-stats-ques-selection-con {
+  width: 96%;
+  min-height: 50%;
+  max-height: 50%;
+  border-radius: 0.2rem;
+  background-color: #ffffff50;
+  margin: 2%;
+  padding: 2%;
+  display: flex;
+  flex-flow: column nowrap;
+  overflow: auto;
 }
