@@ -28,6 +28,7 @@ export const getMyFormsQuery = gql`
       error
       user {
         forms {
+          _id
           title
           description
           createdAt

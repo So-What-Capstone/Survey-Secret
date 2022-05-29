@@ -24,7 +24,7 @@
 .dropDown-btn {
   /* 부모의 길이를 상속 받음, 유동적 길이 변경 가능 */
   width: inherit;
-  padding: 0.5rem;
+  padding: 0.3rem;
   background: #0a182d;
   border: none; /* 기본 음영효과 제거 */
   outline: none; /* 버튼 클릭 시 음영효과 제거 */
@@ -41,7 +41,7 @@
   min-width: 17rem;
   max-width: 17rem;
   font-family: BMJUA;
-  font-size: 18pt;
+  font-size: 16pt;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -58,7 +58,7 @@
   min-width: 30rem;
   justify-content: center;
   align-items: center;
-  font-size: 14pt;
+  font-size: 12pt;
   font-weight: 600;
 }
 
@@ -146,7 +146,7 @@
   flex-direction: column;
   justify-content: center;
   color: #ccd6f6;
-  font-size: 20pt;
+  font-size: 18pt;
 }
 
 .icon-sub:hover {
@@ -176,9 +176,9 @@
   width: 10rem;
   text-align: center;
   color: #ccd6f6;
-  font-size: 14pt;
-  margin-top: 0.3rem;
-  margin-bottom: 0.3rem;
+  font-size: 12pt;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
   border-radius: 0.1rem;
   transition: all 0.2s ease;
 }

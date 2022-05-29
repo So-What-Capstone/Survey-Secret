@@ -2,15 +2,15 @@ import { Carousel } from "antd";
 import React from "react";
 import "../styles/Banner.css";
 import PropTypes from "prop-types";
-import usage_banner from "../resources/usage_banner.png";
+import usage_banner from "../resources/banner2.png";
 
 function Banner({ sources }) {
   const contentStyle = {
-    width: "100%",
-    height: "25vh",
-    color: "#fff",
+    width: "auto",
+    height: "20vh",
     textAlign: "center",
-    background: "#364d79",
+    display: "flex",
+    justifyContent: "center",
   };
   const default_banner = {
     title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
