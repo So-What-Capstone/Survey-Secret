@@ -1,9 +1,10 @@
 from collections import defaultdict
-from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from flask import Flask, request, Response
 from konlpy.tag import Okt
 import json, re
 import numpy as np
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -72,6 +73,22 @@ def stats_corr():
             result[index_key_map[r]][index_key_map[c]] = corr_matrix[r, c]
 
     return Response(json.dumps({"result":result}), status=200)
+
+
+@app.route("/stats/describe", methods=["POST"])
+def stats_describe():
+    params = json.loads(request.get_data())
+    if len(params) == 0 or "answers" not in params.keys() or len(params["answers"]) == 0:
+        return Response(json.dumps({"error":"Given arguments are not valid."}), status=400)
+    
+    answers = params["answers"]
+    observs = defaultdict(list)
+    for sub_id in answers.keys():
+        for que_id, user_ans in answers[sub_id].items():
+            observs[que_id].append(float(user_ans))
+    
+    df = pd.DataFrame(observs)
+    return Response(json.dumps({"result":df.describe(include='all').to_dict()}), status=200)
 
 
 if __name__ == "__main__":

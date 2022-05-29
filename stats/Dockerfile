@@ -6,3 +6,4 @@ RUN pip install konlpy
 
 RUN pip install flask
 RUN pip install scikit-learn
+RUN pip install pandas
