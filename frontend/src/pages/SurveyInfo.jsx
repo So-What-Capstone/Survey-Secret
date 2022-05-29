@@ -48,7 +48,11 @@ function SurveyInfo() {
       console.log("Query Completed");
       console.log(data);
 
-      const config = getFormConfigFromDB(formId, data);
+      const config = getFormConfigFromDB(
+        formId,
+        data.findFormById.form,
+        data.findFormById.form.sections
+      );
       setFormConfig(config);
     },
   });

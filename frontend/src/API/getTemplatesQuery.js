@@ -9,6 +9,7 @@ export const getTemplatesQuery = gql`
       templates {
         title
         description
+        _id
         ${sectionsInfo}
       }
     }
