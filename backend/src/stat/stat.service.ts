@@ -15,6 +15,7 @@ import {
   GetKeywordAnalysisOutput,
 } from './dtos/get-keyword-analysis.dto';
 import mongoose from 'mongoose';
+import { GetDescribeInput, GetDescribeOutput } from './dtos/get-describe.dto';
 
 @Injectable()
 export class StatService {
@@ -30,9 +31,7 @@ export class StatService {
     questionId,
   }: GetKeywordAnalysisInput): Promise<GetKeywordAnalysisOutput> {
     try {
-      // testing Ids
-      // const formId = '62873f1dc03ea057158e8efa';
-      // const questionId = '62873f1dc03ea057158e8efc';
+      const END_POINT = `${process.env.STAT_END_POINT}/stats/keywords`;
 
       const { submissions } = await this.formModel
         .findOne({
@@ -58,15 +57,13 @@ export class StatService {
       }
 
       //tokenization
-      const response = await fetch(`${process.env.END_POINT}/stats/keywords`, {
+      const response = await fetch(END_POINT, {
         method: 'POST',
         body: JSON.stringify({ answers: [...answers] }),
         headers: { 'Content-Type': 'application/json' },
       });
 
       let { result } = await response.json();
-
-      console.log(result);
 
       //need to store in DB
       //need to make stats entity
@@ -79,48 +76,81 @@ export class StatService {
     }
   }
 
+  async createJsonData(formId: string, questionIds: string[]): Promise<Object> {
+    const mongooseQuestionIds = questionIds.map(
+      (id) => new mongoose.Types.ObjectId(id),
+    );
+
+    const form = await this.formModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+      {
+        $lookup: {
+          from: 'submissions',
+          localField: 'submissions',
+          foreignField: '_id',
+          as: 'submissions',
+        },
+      },
+      { $unwind: '$submissions' },
+      { $unwind: '$submissions.answers' },
+      {
+        $match: {
+          'submissions.answers.question': {
+            $in: [...mongooseQuestionIds],
+          },
+        },
+      },
+    ]);
+
+    const jsonData = {};
+
+    form.forEach((f) => {
+      if (jsonData[f.submissions._id]) {
+        const obj = jsonData[f.submissions._id];
+        obj[f.submissions.answers.question] =
+          f.submissions.answers.openedAnswer;
+        jsonData[f.submissions._id] = obj;
+      } else {
+        const obj = {};
+        obj[f.submissions.answers.question] =
+          f.submissions.answers.openedAnswer;
+        jsonData[f.submissions._id] = obj;
+      }
+    });
+
+    return jsonData;
+  }
+
   async getCorr({ formId, questionIds }: GetCorrInput): Promise<GetCorrOutput> {
     try {
-      const mongooseQuestionIds = questionIds.map(
-        (id) => new mongoose.Types.ObjectId(id),
-      );
+      const END_POINT = `${process.env.STAT_END_POINT}/stats/corr`;
 
-      const form = await this.formModel.aggregate([
-        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
-        {
-          $lookup: {
-            from: 'submissions',
-            localField: 'submissions',
-            foreignField: '_id',
-            as: 'submissions',
-          },
-        },
-        { $unwind: '$submissions' },
-        { $unwind: '$submissions.answers' },
-        {
-          $match: {
-            'submissions.answers.question': {
-              $in: [...mongooseQuestionIds],
-            },
-          },
-        },
-      ]);
+      const jsonData = await this.createJsonData(formId, questionIds);
 
-      const jsonData = {};
-
-      form.forEach((f) => {
-        if (jsonData[f.submissions._id]) {
-          const obj = jsonData[f.submissions._id];
-          obj[f.submissions.answers.question] = f.submissions.answers.content;
-          jsonData[f.submissions._id] = obj;
-        } else {
-          const obj = {};
-          obj[f.submissions.answers.question] = f.submissions.answers.content;
-          jsonData[f.submissions._id] = obj;
-        }
+      const response = await fetch(END_POINT, {
+        method: 'POST',
+        body: JSON.stringify({ answers: jsonData }),
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await fetch(`${process.env.END_POINT}/stats/corr`, {
+      let { result } = await response.json();
+
+      return { ok: true, result };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async getDescribe({
+    formId,
+    questionIds,
+  }: GetDescribeInput): Promise<GetDescribeOutput> {
+    try {
+      const END_POINT = `${process.env.STAT_END_POINT}/stats/describe`;
+
+      const jsonData = await this.createJsonData(formId, questionIds);
+
+      const response = await fetch(END_POINT, {
         method: 'POST',
         body: JSON.stringify({ answers: jsonData }),
         headers: { 'Content-Type': 'application/json' },
