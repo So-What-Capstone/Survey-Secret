@@ -9,6 +9,8 @@ import back1 from "../resources/login-background-1.jpeg";
 import back2 from "../resources/login-background-2.jpeg";
 import back3 from "../resources/login-background-3.jpeg";
 import back4 from "../resources/login-background-4.jpeg";
+import { useEffect } from "react";
+import { useState } from "react";
 const BACK_CANDS = [back1, back2, back3, back4];
 
 const LOGIN_MUTATION = gql`
@@ -24,6 +26,7 @@ const LOGIN_MUTATION = gql`
 //로그인 한 사람만 올 수 있께 처리 필요...
 //isLoggedInVar 사용
 function Login() {
+  const [backIndex, setBackIndex] = useState(0);
   let navigate = useNavigate();
   const {
     register,
@@ -35,6 +38,10 @@ function Login() {
   } = useForm({
     mode: "onChange",
   });
+
+  useEffect(() => {
+    setBackIndex(Math.floor(Math.random() * 4));
+  }, []);
 
   const onCompleted = (data) => {
     const {
@@ -74,9 +81,7 @@ function Login() {
     <div
       className="loginContainer"
       style={{
-        backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${
-          BACK_CANDS[Math.floor(Math.random() * 4)]
-        })`,
+        backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${BACK_CANDS[backIndex]})`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
       }}

@@ -1,4 +1,4 @@
-import { Divider, Typography, Input, message, Modal } from "antd";
+import { Divider, Typography, Input, message, Modal, Empty } from "antd";
 import React, { useEffect, useState } from "react";
 import "../styles/SurveyDesign.css";
 import { useSearchParams } from "react-router-dom";
@@ -16,8 +16,6 @@ import phoneImage from "../resources/phone.png";
 import shortImage from "../resources/short.png";
 import { EditQuestion } from "../modules";
 import { gql, useMutation, useQuery } from "@apollo/client";
-
-const formId = "62790a9fa2b013e1c29571d7";
 
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
@@ -228,12 +226,23 @@ function SurveyDesign() {
   const [sections, setSections] = useState([]);
   const [lastFocused, setLastFocused] = useState(undefined);
 
-  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
+  useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId: searchParams.get("id") },
     onCompleted: (data) => {
+      console.log(data);
       setTitle(data.findFormById.form.title);
       setRawForm(data.findFormById.form);
-      const rawSections = data.findFormById.form.sections;
+      let rawSections = data.findFormById.form.sections;
+      if (rawSections.length === 0) {
+        // 기본 섹션을 추가.
+        rawSections = [
+          {
+            title: "섹션 1",
+            order: 1,
+            questions: [],
+          },
+        ];
+      }
       let processed = rawSections.map((sect) => {
         return {
           ...sect,
@@ -252,6 +261,7 @@ function SurveyDesign() {
           }),
         };
       });
+      console.log(processed);
       setSections(processed);
     },
   });
@@ -666,18 +676,23 @@ function SurveyDesign() {
                 ></Input>
               </Divider>
 
-              {sect.questions.map((ques, j) => (
-                <EditQuestion
-                  onFocus={() => {
-                    setLastFocused([i, j]);
-                  }}
-                  onRemove={removeQuestion(i, j)}
-                  key={ques._id}
-                  sectionCount={sections.length}
-                  data={ques}
-                  onDataChange={updateQuestionData(i, j)}
-                ></EditQuestion>
-              ))}
+              {sect.questions.length === 0 ? (
+                <Empty description="왼쪽 팔레트에서 문항을 추가해보세요!"></Empty>
+              ) : (
+                sect.questions.map((ques, j) => (
+                  <EditQuestion
+                    onFocus={() => {
+                      setLastFocused([i, j]);
+                    }}
+                    onRemove={removeQuestion(i, j)}
+                    key={ques._id}
+                    sectionCount={sections.length}
+                    data={ques}
+                    onDataChange={updateQuestionData(i, j)}
+                  ></EditQuestion>
+                ))
+              )}
+
               <Divider>{`${i + 1}번째 섹션 끝`}</Divider>
             </div>
           ))}
