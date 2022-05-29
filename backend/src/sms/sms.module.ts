@@ -14,8 +14,8 @@ export class SmsModule {
         {
           provide: SMS_CONFIG_OPTIONS,
           useValue: {
-            key: process.env.SMS_API_KEY,
-            user_id: process.env.SMS_USER_ID,
+            key: options.key,
+            user_id: options.user_id,
           },
         },
         SmsResolver,

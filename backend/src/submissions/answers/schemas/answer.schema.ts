@@ -3,14 +3,15 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { virtualSchemaOption } from 'src/common/schemas/option.schema';
 import { IsEnum, IsMongoId } from 'class-validator';
-import {
-  QuestionType,
-  QuestionUnion,
-} from './../../../forms/questions/question.typeDefs';
+import { QuestionType } from './../../../forms/questions/question.typeDefs';
 
 @ObjectType()
 @Schema({ ...virtualSchemaOption, discriminatorKey: 'kind' })
 export class Answer {
+  @Field((type) => String)
+  @IsMongoId()
+  _id: string;
+
   //ref에 ClosedQuestion등 세부적으로 저장되는지 보기
   @Field((type) => String)
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Question' })

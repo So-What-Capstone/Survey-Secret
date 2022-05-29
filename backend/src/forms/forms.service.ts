@@ -333,7 +333,10 @@ export class FormsService {
       return {
         ok: true,
         forms,
-        lastId: forms.length !== 0 ? forms.at(-1)._id.toString() : undefined,
+        lastId:
+          forms.length !== 0
+            ? forms[forms.length - 1]._id.toString()
+            : undefined,
       };
     } catch (error) {
       return { ok: false, error: error.message };
@@ -356,10 +359,17 @@ export class FormsService {
         .populate('owner')
         .limit(pageSize);
 
+      if (forms.length === 0) {
+        return { ok: false, error: '검색된 폼이 없습니다.' };
+      }
+
       return {
         ok: true,
         forms,
-        lastId: forms.length !== 0 ? forms.at(-1)._id.toString() : undefined,
+        lastId:
+          forms.length !== 0
+            ? forms[forms.length - 1]._id.toString()
+            : undefined,
       };
     } catch (error) {
       return { ok: false, error: error.message };
