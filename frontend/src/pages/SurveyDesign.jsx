@@ -5,15 +5,15 @@ import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 
-import addrImage from "../resources/addr.png";
-import emailImage from "../resources/email.png";
-import gridImage from "../resources/grid.png";
-import linearImage from "../resources/linear.png";
-import longImage from "../resources/long.png";
-import multImage from "../resources/mult.png";
-import oneImage from "../resources/one.png";
-import phoneImage from "../resources/phone.png";
-import shortImage from "../resources/short.png";
+import addrImage from "../resources/question_images/addr.png";
+import emailImage from "../resources/question_images/email.png";
+import gridImage from "../resources/question_images/grid.png";
+import linearImage from "../resources/question_images/linear.png";
+import longImage from "../resources/question_images/long.png";
+import multImage from "../resources/question_images/mult.png";
+import oneImage from "../resources/question_images/one.png";
+import phoneImage from "../resources/question_images/phone.png";
+import shortImage from "../resources/question_images/short.png";
 import { EditQuestion } from "../modules";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { findTemplateByIdQuery } from "../API/findTemplateByIdQuery";
@@ -359,6 +359,19 @@ function SurveyDesign() {
             };
           },
         },
+        {
+          key: "addr",
+          image: addrImage,
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "address",
+            };
+          },
+        },
       ],
     },
     {
@@ -403,19 +416,6 @@ function SurveyDesign() {
       key: "private",
       subtitle: "개인정보 문항",
       children: [
-        {
-          key: "addr",
-          image: addrImage,
-          init: () => {
-            return {
-              _id: String(Math.random()),
-              content: "",
-              description: "",
-              required: false,
-              type: "address",
-            };
-          },
-        },
         {
           key: "email",
           image: emailImage,
