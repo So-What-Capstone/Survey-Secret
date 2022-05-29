@@ -3,7 +3,7 @@ import "../styles/Clips.css";
 
 // eslint-disable-next-line react/prop-types
 export default function Clip({ title, link_enabled, link, color_idx }) {
-  const colors = ["dark-blue", "sky-blue"];
+  const colors = ["dark-blue", "sky-blue", "mint"];
 
   var clip_text = <div />;
   if (link_enabled)

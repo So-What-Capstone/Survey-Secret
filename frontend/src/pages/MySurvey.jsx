@@ -1,28 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { SurveyIconsTray } from "../modules/index.js";
+import { SurveyIconsTray, Banner } from "../modules/index.js";
 import "../styles/MySurvey.css";
-import { useQuery, gql } from "@apollo/client";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
+import { useQuery, gql, useReactiveVar } from "@apollo/client";
+import { isLoggedInVar } from "./../apollo";
+import { getMyFormsSimpleQuery } from "../API/meQuery.js";
 
-const ME_QUERY = gql`
-  {
-    me {
-      ok
-      error
-      user {
-        forms {
-          _id
-          title
-          description
-          state
-          expiredAt
-          privacyExpiredAt
-        }
-      }
-    }
-  }
-`;
+const ME_QUERY = getMyFormsSimpleQuery;
+
 const ex1 = {
   title: "어린이도서관 이용만족도 조사",
   description: "2022 상반기 동대문구 이용객 대상 설문조사입니다.",
@@ -48,35 +34,35 @@ function MySurvey() {
   const [inProgressSurveys, setInProgressSurveys] = useState([ex2]);
   const [expiredSurveys, setExpiredSurveys] = useState([ex3]);
   const navigate = useNavigate();
-  const { loading, data, error } = useQuery(ME_QUERY, {
-    onCompleted: (data) => {
-      console.log("Query Completed");
-      // setReadySurveys(
-      //   data?.me?.user?.forms.filter((form) => form.state === "Ready")
-      // );
-      // setInProgressSurveys(
-      //   data?.me?.user?.forms.filter((form) => form.state === "InProgress")
-      // );
-      // setExpiredSurveys(
-      //   data?.me?.user?.forms.filter((form) => form.state === "Expired")
-      // );
-    },
-  });
+
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   useEffect(() => {
-    // 로그인 상태 확인.
-    const isLogin = true;
-    if (isLogin) {
-      // 유저가 소유한 폼들 가져오기
-    } else {
+    if (!isLoggedIn) {
       alert("로그인 후 이용해 주세요.");
       navigate("/login");
     }
-  }, []);
+  }, [isLoggedIn]);
+  const { loading, data, error } = useQuery(ME_QUERY, {
+    onCompleted: (data) => {
+      // console.log(data);
+      // setReadySurveys(
+      //   data?.me?.user?.forms.filter((form) => form.state === "Ready")
+      // );
+      setInProgressSurveys(
+        data?.me?.user?.forms.filter((form) => form.state === "InProgress")
+      );
+      setExpiredSurveys(
+        data?.me?.user?.forms.filter((form) => form.state === "Expired")
+      );
+    },
+  });
 
   return (
     <div>
-      <div className="my-survey-banner">이용방법 배너</div>
+      <div className="my-survey-banner">
+        <Banner sources={[]} />
+      </div>
       <div className="new-survey-con">
         <Link to="/my-survey/create" className="new-survey-btn">
           <PlusCircleOutlined

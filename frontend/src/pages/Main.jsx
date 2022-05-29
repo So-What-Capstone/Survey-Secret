@@ -5,27 +5,10 @@ import SearchIcon from "@mui/icons-material/Search";
 import { TextField, InputAdornment } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
 import { createSearchParams, useNavigate } from "react-router-dom";
-import adImage from "../resources/adImage.PNG";
+import { Banner } from "../modules";
+import { getFormsQuery } from "../API/getFormsQuery";
 
-const GET_FORMS_QUERY = gql`
-  query {
-    getForms(input: {}) {
-      ok
-      error
-      lastId
-      forms {
-        _id
-        title
-        description
-        owner {
-          username
-        }
-        expiredAt
-        privacyExpiredAt
-      }
-    }
-  }
-`;
+const GET_FORMS_QUERY = getFormsQuery;
 
 function Main() {
   const [openSurveys, setOpenSurveys] = useState([]);
@@ -69,10 +52,8 @@ function Main() {
 
   return (
     <div className="main-con">
-      <div className="banner-con">
-        <input type="button" value="<" className="arrow-btn" />
-        <img className="banner" alt="banner" src={adImage} />
-        <input type="button" value=">" className="arrow-btn" />
+      <div className="main-banner-con">
+        <Banner sources={[]} />
       </div>
       <div className="search-con">
         <TextField

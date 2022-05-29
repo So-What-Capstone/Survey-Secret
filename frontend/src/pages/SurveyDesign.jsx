@@ -1,23 +1,27 @@
-import { Divider, Typography, Input, message, Modal } from "antd";
+import { Divider, Typography, Input, message, Modal, Empty } from "antd";
 import React, { useEffect, useState } from "react";
 import "../styles/SurveyDesign.css";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 
-import addrImage from "../resources/addr.png";
-import emailImage from "../resources/email.png";
-import gridImage from "../resources/grid.png";
-import linearImage from "../resources/linear.png";
-import longImage from "../resources/long.png";
-import multImage from "../resources/mult.png";
-import oneImage from "../resources/one.png";
-import phoneImage from "../resources/phone.png";
-import shortImage from "../resources/short.png";
+import addrImage from "../resources/question_images/addr.png";
+import emailImage from "../resources/question_images/email.png";
+import gridImage from "../resources/question_images/grid.png";
+import linearImage from "../resources/question_images/linear.png";
+import longImage from "../resources/question_images/long.png";
+import multImage from "../resources/question_images/mult.png";
+import oneImage from "../resources/question_images/one.png";
+import phoneImage from "../resources/question_images/phone.png";
+import shortImage from "../resources/question_images/short.png";
 import { EditQuestion } from "../modules";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { findTemplateByIdQuery } from "../API/findTemplateByIdQuery";
 
 const formId = "62790a9fa2b013e1c29571d7";
+const templateId = "62836d7185ffb60503c4fad6";
+
+const FIND_TEMPLATE_BY_ID_QUERY = findTemplateByIdQuery;
 
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
@@ -182,6 +186,18 @@ function parseLinearQuestion(ques) {
 }
 
 function SurveyDesign() {
+  const {
+    loading: findTemplateLoading,
+    data: findTemplateData,
+    error: findTemplateError,
+  } = useQuery(FIND_TEMPLATE_BY_ID_QUERY, {
+    variables: { templateId },
+    onCompleted: (data) => {
+      console.log("find Template completed");
+      console.log(data);
+    },
+  });
+
   const [createForm, { loading: mutationLoading }] = useMutation(
     CREATE_FORM_MUTATION,
     {
@@ -228,12 +244,23 @@ function SurveyDesign() {
   const [sections, setSections] = useState([]);
   const [lastFocused, setLastFocused] = useState(undefined);
 
-  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
+  useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId: searchParams.get("id") },
     onCompleted: (data) => {
+      console.log(data);
       setTitle(data.findFormById.form.title);
       setRawForm(data.findFormById.form);
-      const rawSections = data.findFormById.form.sections;
+      let rawSections = data.findFormById.form.sections;
+      if (rawSections.length === 0) {
+        // 기본 섹션을 추가.
+        rawSections = [
+          {
+            title: "섹션 1",
+            order: 1,
+            questions: [],
+          },
+        ];
+      }
       let processed = rawSections.map((sect) => {
         return {
           ...sect,
@@ -252,6 +279,7 @@ function SurveyDesign() {
           }),
         };
       });
+      console.log(processed);
       setSections(processed);
     },
   });
@@ -343,6 +371,19 @@ function SurveyDesign() {
             };
           },
         },
+        {
+          key: "addr",
+          image: addrImage,
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "address",
+            };
+          },
+        },
       ],
     },
     {
@@ -387,19 +428,6 @@ function SurveyDesign() {
       key: "private",
       subtitle: "개인정보 문항",
       children: [
-        {
-          key: "addr",
-          image: addrImage,
-          init: () => {
-            return {
-              _id: String(Math.random()),
-              content: "",
-              description: "",
-              required: false,
-              type: "address",
-            };
-          },
-        },
         {
           key: "email",
           image: emailImage,
@@ -666,18 +694,23 @@ function SurveyDesign() {
                 ></Input>
               </Divider>
 
-              {sect.questions.map((ques, j) => (
-                <EditQuestion
-                  onFocus={() => {
-                    setLastFocused([i, j]);
-                  }}
-                  onRemove={removeQuestion(i, j)}
-                  key={ques._id}
-                  sectionCount={sections.length}
-                  data={ques}
-                  onDataChange={updateQuestionData(i, j)}
-                ></EditQuestion>
-              ))}
+              {sect.questions.length === 0 ? (
+                <Empty description="왼쪽 팔레트에서 문항을 추가해보세요!"></Empty>
+              ) : (
+                sect.questions.map((ques, j) => (
+                  <EditQuestion
+                    onFocus={() => {
+                      setLastFocused([i, j]);
+                    }}
+                    onRemove={removeQuestion(i, j)}
+                    key={ques._id}
+                    sectionCount={sections.length}
+                    data={ques}
+                    onDataChange={updateQuestionData(i, j)}
+                  ></EditQuestion>
+                ))
+              )}
+
               <Divider>{`${i + 1}번째 섹션 끝`}</Divider>
             </div>
           ))}

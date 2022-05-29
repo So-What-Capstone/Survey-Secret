@@ -5,21 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { logUserIn } from "../apollo";
 import FormError from "./../components/FormError";
+import { createAccountQuery } from "../API/createAccountQuery";
 
-const CREATE_ACCOUNT_MUTATION = gql`
-  mutation createAccount(
-    $email: String!
-    $username: String!
-    $password: String!
-  ) {
-    createAccount(
-      input: { email: $email, username: $username, password: $password }
-    ) {
-      ok
-      error
-    }
-  }
-`;
+const CREATE_ACCOUNT_MUTATION = createAccountQuery;
 
 //로그인 한 사람만 올 수 있께 처리 필요...
 //isLoggedInVar 사용

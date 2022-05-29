@@ -11,36 +11,25 @@
   width: 3rem;
   padding: 2rem 0rem 2rem 1rem;
 }
- 
-.green {
+
+.dark-blue {
   background-color: #172a46;
   color: #ccd6f6;
 }
-.yellow {
-  background-color: #415d87;
-  color: #65ffdc;
-}
-.deep-green {
-  background-color: #65ffdc;
+.sky-blue {
+  background-color: #ccd6f6;
   color: #172a46;
 }
-
-.beige {
-  background-color: #ccd6f6;
-  color: 172a46;
-}
-.dark-blue {
-  background-color: #172A46;
-}
-.sky-blue {
-  background-color: #CCD6F6;
+.mint {
+  background-color: #65ffdc;
+  color: #172a46;
 }
 
 .clip-text-white {
   writing-mode: vertical-rl;
   text-orientation: mixed;
   font-size: 1rem;
-  color: #F5F5F5;
+  color: #f5f5f5;
 }
 
 .clip-text-black {
