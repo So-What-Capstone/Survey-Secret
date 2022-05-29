@@ -6,6 +6,7 @@
   width: 92%;
   height: fit-content;
   overflow: hidden;
+  border-bottom: 1px solid #00000030;
 }
 
 .question-title {

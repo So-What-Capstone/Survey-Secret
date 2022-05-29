@@ -12,16 +12,9 @@ import back4 from "../resources/login-background-4.jpeg";
 import { useEffect } from "react";
 import { useState } from "react";
 const BACK_CANDS = [back1, back2, back3, back4];
+import { loginMutation } from "../API/loginMutation";
 
-const LOGIN_MUTATION = gql`
-  mutation login($email: String!, $password: String!) {
-    login(input: { email: $email, password: $password }) {
-      ok
-      error
-      token
-    }
-  }
-`;
+const LOGIN_MUTATION = loginMutation;
 
 //로그인 한 사람만 올 수 있께 처리 필요...
 //isLoggedInVar 사용
@@ -95,8 +88,8 @@ function Login() {
             {...register("email", {
               required: "이메일 필요",
               minLength: {
-                value: 10,
-                message: "(testing)이메일은 10자 이상...........",
+                value: 5,
+                message: "이메일은 5자 이상입니다.",
               },
               // validation
               // validate:{value:(currentValue)=>}
@@ -114,7 +107,7 @@ function Login() {
           <input
             {...register("password", {
               required: "패스워드 필요",
-              minLength: { value: 2, message: "2자 이상..." },
+              minLength: { value: 2, message: "비밀번호는 2자 이상입니다." },
             })}
             onFocus={clearLoginError}
             type="password"
@@ -130,11 +123,11 @@ function Login() {
 
           <input
             type="submit"
-            value={loading ? "Loading" : "LogIn"}
+            value={loading ? "로딩 중" : "로그인"}
             disabled={!formState.isValid || loading}
             className={
               !formState.isValid || loading
-                ? "loginSubmit-disabled"
+                ? "loginSubmit disabled"
                 : "loginSubmit"
             }
           ></input>
@@ -143,18 +136,10 @@ function Login() {
 
         <div className="bottomBox">
           <span className="loginOther">
-            <Link to={"/register"}>Register</Link>
-          </span>
-          <span className="loginOther">
-            <Link to="/findpw">Find Account</Link>
+            <Link to={"/register"}>회원가입</Link>
+            <Link to="/findpw">계정 찾기</Link>
           </span>
         </div>
-
-        {/*       
-      <div className="loginOther">
-        <input type="button" value="회원가입" onClick={register} />
-        <input type="button" value="PW 찾기" onClick={findpw} />
-      </div> */}
       </div>
     </div>
   );

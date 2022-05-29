@@ -7,12 +7,12 @@
 }
 
 .login {
-  max-width: 350px;
-  width: 100%;
+  min-width: 30rem;
   text-align: center;
   border: 1px solid #65ffdc;
   padding: 5vw;
-  background-color: #172a46;
+  background-color: #172a4650;
+  border-radius: 0.1rem;
   color: white;
 }
 
@@ -21,62 +21,59 @@
 }
 
 .loginInputField {
-  border: solid white;
-  border-width: 0px 0px 1px 0px;
+  border: none;
+  border-bottom: 1px solid #ffffff90;
   background-color: #172a46;
   background-color: rgba(255, 255, 255, 0);
   width: 100%;
+  margin-top: 0.5rem;
 }
 .loginInputField :focus {
   border-color: rgb(38, 38, 38);
 }
 
 .loginSubmit {
-  background-color: #65ffdc;
-  border-radius: 10px;
+  background-color: #65ffdc50;
+  border-radius: 0.1rem;
   font-weight: 600;
-  margin-top: 10px;
   text-align: center;
-  color: #172a46;
-  font-size: 15px;
+  color: #65ffdc;
+  font-size: 1rem;
   width: 100%;
-  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  height: 2.5rem;
+  border: none;
   cursor: pointer;
+  transition: all 0.2s;
+}
+.loginSubmit:hover {
+  background-color: #65ffdcff;
+  color: #172a46;
 }
 
-.loginSubmit-disabled {
-  background-color: #65ffdc;
-  border-radius: 10px;
-  font-weight: 600;
-  margin-top: 10px;
-  text-align: center;
-  color: #172a46;
-  font-size: 15px;
-  width: 100%;
-  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+.disabled {
   opacity: 0.2;
 }
 
 .bottomBox {
   display: flex;
   flex-direction: column;
-  margin-top: 15px;
   width: 100%;
 }
 
 .loginOther {
   width: 100%;
-  margin-top: 5px;
+  height: 2rem;
+  text-align: center;
+  margin-top: 0.2rem;
   font-weight: 500;
-  border: 1px solid #65ffdc;
   box-sizing: border-box;
-  border-radius: 7px;
-  color: #65ffdc;
-  font-size: 12px;
+  border-radius: 0.1rem;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-around;
 }
 .loginOther a {
-  color: white;
-  padding: 0px;
+  color: #ccd6f6;
 }
 .loginOther :hover {
   color: tomato;
@@ -90,6 +87,6 @@
 .formError {
   color: tomato;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 1rem;
   margin: 5px 0px 10px 0px;
 }

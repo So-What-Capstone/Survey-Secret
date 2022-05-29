@@ -1,45 +1,108 @@
 .survey-tray {
   width: 100%;
+  height: fit-content;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  .survey-item {
-    width: 25rem;
-    height: 13rem;
-    justify-content: center;
-    border-radius: 10px;
-    padding: 1rem;
-    margin: 1.5vw;
-    background-color: #172A46;
-    color: #CCD6F6;
-    display: flex;
-    flex-direction: column;
+  min-height: 3rem;
 
-    .item-title {
-      flex: 3 1 0;
-      display: -webkit-box;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      font-size: 2rem;
+  .survey-icon-con {
+    width: fit-content;
+    height: fit-content;
+    .survey-item {
+      width: 25rem;
+      height: 13rem;
+      justify-content: center;
+      border-radius: 0.4rem;
+      padding: 1rem;
+      margin: 1rem;
+      background-color: #172a46;
+      color: #ccd6f6;
+      display: flex;
+      flex-direction: column;
+
+      .item-title {
+        flex: 3 1 0;
+        display: -webkit-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        font-size: 1.3rem;
+      }
+      .item-des {
+        flex: 2 1 0;
+        display: -webkit-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        font-size: 0.9rem;
+        padding-top: 0.5rem;
+      }
+      .item-exp {
+        flex: 1 1 0;
+        font-size: 0.8rem;
+        padding-top: 0.5rem;
+        text-align: right;
+      }
     }
-    .item-des {
-      flex: 2 1 0;
-      display: -webkit-box;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      font-size: 1rem;
-      padding-top: 0.5rem;
+
+    .hover-btns {
+      display: none;
+      position: absolute;
+      width: 25rem;
+      height: 13rem;
+      padding: 1rem;
+      margin: 1rem;
+      border-radius: 0.4rem;
+      flex-flow: column nowrap;
+      align-items: center;
+      background-color: #00000050;
+      backdrop-filter: blur(5px);
+      color: #ccd6f6;
+      transition: all 0.2s ease;
+
+      .item-title {
+        display: block;
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 1.2rem;
+        cursor: default;
+      }
+      .survey-del {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        cursor: pointer;
+      }
+      .survey-del :hover {
+        color: #65ffdc;
+      }
+      .survey-icon-btn {
+        color: #65ffdc;
+        font-size: 1rem;
+        padding: 0.5rem;
+        margin: 0.5rem;
+        border-radius: 0.1rem;
+        border: 1px solid #65ffdc;
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+      .survey-icon-btn:hover {
+        color: #ccd6f6;
+        background-color: #65ffdc50;
+      }
     }
-    .item-exp {
-      flex: 1 1 0;
-      font-size: 0.8rem;
-      padding-top: 0.5rem;
-      text-align: right;
+    &:hover .hover-btns {
+      display: flex;
     }
   }
 }

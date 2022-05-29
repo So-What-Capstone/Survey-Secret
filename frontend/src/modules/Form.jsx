@@ -80,6 +80,7 @@ export default function Form({ _config, _setResponse }) {
   const [secEnabled, setSecEnabled] = useState();
 
   useEffect(() => {
+    if (!_config) return;
     let myConfig = { ..._config };
     let myRes = {};
     let mySec = {};

@@ -8,17 +8,19 @@
   width: 225px;
   max-height: 90vh;
   overflow: auto;
-  background-color: #141e61;
-  border-radius: 0.5rem;
+  background-color: #1d6170;
+  border-radius: 0.2rem;
   margin: 10px 50px 0 0;
   padding: 10px 10px 10px 0;
   display: flex;
   flex-direction: column;
+  top: 60px;
+  position: sticky;
 }
 
 .design-inner-palette {
   background-color: rgb(245 245 245 / 10%);
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   margin: 10px 10px 0 0;
   padding: 10px;
 }
@@ -39,8 +41,9 @@
 }
 
 .design-ques-back {
-  border-radius: 1rem;
   margin: 10px;
+  /* width: 45%; */
+  border-radius: 0.2rem;
   background-color: white;
   transition: all 0.5s ease;
 }
@@ -59,9 +62,10 @@
 
 .design-preview {
   flex-grow: 1;
-  background-color: #141e61;
-  border-radius: 0.5rem;
   margin: 10px 30px 0 0;
+  width: calc(100% - 450px);
+  background-color: #172a46;
+  border-radius: 0.2rem;
   padding: 10px;
   height: 90vh;
   display: flex;
@@ -83,7 +87,7 @@
 
 .design-button {
   background-color: #65ffdc;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   border: 0;
   outline: 0;
   cursor: pointer;
@@ -100,7 +104,7 @@
 
 .design-preview-body {
   background-color: white;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   border: 0;
   outline: 0;
   min-height: 100px;

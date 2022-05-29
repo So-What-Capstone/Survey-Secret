@@ -5,21 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { logUserIn } from "../apollo";
 import FormError from "./../components/FormError";
+import { createAccountQuery } from "../API/createAccountQuery";
 
-const CREATE_ACCOUNT_MUTATION = gql`
-  mutation createAccount(
-    $email: String!
-    $username: String!
-    $password: String!
-  ) {
-    createAccount(
-      input: { email: $email, username: $username, password: $password }
-    ) {
-      ok
-      error
-    }
-  }
-`;
+const CREATE_ACCOUNT_MUTATION = createAccountQuery;
 
 //로그인 한 사람만 올 수 있께 처리 필요...
 //isLoggedInVar 사용
@@ -134,7 +122,7 @@ function Register() {
             disabled={!formState.isValid || loading}
             className={
               !formState.isValid || loading
-                ? "loginSubmit-disabled"
+                ? "loginSubmit disabled"
                 : "loginSubmit"
             }
           ></input>
@@ -143,7 +131,7 @@ function Register() {
 
         <div className="bottomBox">
           <span className="loginOther">
-            <Link to={"/login"}>Already have an account?</Link>
+            <Link to={"/login"}>이미 계정이 있으신가요?</Link>
           </span>
         </div>
       </div>
