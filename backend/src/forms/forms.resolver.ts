@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { AuthUser } from '../auth/auth-user.decorator';
 import { Type } from '../auth/type.decorator';
-import { CreateFormOutput, CreateFormInput } from './dtos/craete-form.dto';
+import { CreateFormOutput, CreateFormInput } from './dtos/create-form.dto';
 import {
   FindSectionByIdInput,
   FindSectionByIdOutput,
@@ -10,7 +10,7 @@ import { FormsService } from './forms.service';
 import { User } from './../users/schemas/user.schema';
 import {
   FindFormByIdInput,
-  FIndFormByIdOutput,
+  FindFormByIdOutput,
 } from './dtos/find-form-by-id.dto';
 import { DeleteFormOutput, DeleteFormInput } from './dtos/delete-form.dto';
 import { EditFormInput, EditFormOutput } from './dtos/edit-form.dto';
@@ -42,11 +42,23 @@ export class FormsResolver {
     return this.formsService.findSectionById(sectionId);
   }
 
-  @Query((returns) => FIndFormByIdOutput)
+  @Query((returns) => FindFormByIdOutput)
   findFormById(
     @Args('input') findFormByIdInput: FindFormByIdInput,
-  ): Promise<FIndFormByIdOutput> {
+  ): Promise<FindFormByIdOutput> {
     return this.formsService.findFormById(findFormByIdInput.formId);
+  }
+
+  @Query((returns) => FindFormByIdOutput)
+  @Type(['Free', 'Premium'])
+  findFormByIdForOwner(
+    @Args('input') findFormByIdInput: FindFormByIdInput,
+    @AuthUser() owner: User,
+  ): Promise<FindFormByIdOutput> {
+    return this.formsService.findFormByIdForOwner(
+      findFormByIdInput.formId,
+      owner,
+    );
   }
 
   @Mutation((returns) => DeleteFormOutput)

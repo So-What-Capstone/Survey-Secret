@@ -15,6 +15,7 @@ import { SubmissionsModule } from './submissions/submissions.module';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { UploaderModule } from './uploader/uploader.module';
 import { StatModule } from './stat/stat.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -29,6 +30,9 @@ import { StatModule } from './stat/stat.module';
         MAIL_DOMAIN: Joi.string().required(),
         AWS_KEY: Joi.string().required(),
         AWS_SECRET: Joi.string().required(),
+        SMS_USER_ID: Joi.string().required(),
+        SMS_API_KEY: Joi.string().required(),
+        SMS_SENDER: Joi.string().required(),
       }),
     }),
     //set DB logger(raw query), DB error/connect log
@@ -50,9 +54,14 @@ import { StatModule } from './stat/stat.module';
       fromEmail: process.env.MAIL_FROM_EMAIL,
       domain: process.env.MAIL_DOMAIN,
     }),
+    SmsModule.forRoot({
+      key: process.env.SMS_API_KEY,
+      user_id: process.env.SMS_USER_ID,
+    }),
     SubmissionsModule,
     UploaderModule,
     StatModule,
+    SmsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

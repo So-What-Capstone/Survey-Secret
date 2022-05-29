@@ -1,5 +1,4 @@
 import { InputType, ObjectType } from '@nestjs/graphql';
-import { Answer } from './answer.schema';
 import { SchemaFactory, Prop, Schema } from '@nestjs/mongoose';
 import { Field } from '@nestjs/graphql';
 import { QuestionType } from '../../../forms/questions/question.typeDefs';
@@ -11,6 +10,9 @@ import { virtualSchemaOption } from './../../../common/schemas/option.schema';
 @Schema(virtualSchemaOption)
 export class PersonalAnswer {
   @Field((type) => String)
+  _id: string;
+
+  @Field((type) => String)
   question: string;
 
   @Field((type) => QuestionType)
@@ -19,7 +21,11 @@ export class PersonalAnswer {
 
   @Field((type) => String, { nullable: true })
   @Prop({ type: String, trim: true })
-  content?: string;
+  personalAnswer?: string;
+
+  @Field((type) => String, { nullable: true })
+  @Prop({ type: String })
+  attachment?: string;
 }
 
 export const PersonalAnswerSchema =

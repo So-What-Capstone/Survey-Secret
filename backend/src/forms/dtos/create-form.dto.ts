@@ -1,7 +1,7 @@
 import { InputType, ObjectType, PickType, Field } from '@nestjs/graphql';
 import { IsMongoId, IsOptional } from 'class-validator';
 import { Form } from '../schemas/form.schema';
-import { CoreOutput } from './../../common/dtos/output.dto';
+import { CoreOutput } from '../../common/dtos/output.dto';
 import { CreateSectionInput } from './create-section.dto';
 
 @InputType()

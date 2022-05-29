@@ -35,7 +35,6 @@ export class UsersService {
     username,
     email,
     password,
-    phoneNum,
   }: CreateAccountInput): Promise<CreateAccountOutput> {
     try {
       const existingUser = await this.userModel.findOne({
@@ -52,7 +51,6 @@ export class UsersService {
         username,
         email,
         password: await bcrypt.hash(password, 10),
-        phoneNum,
       });
 
       //email authentication
@@ -107,7 +105,7 @@ export class UsersService {
 
   async editUser(
     user: User,
-    { username, password, phoneNum }: EditUserInput,
+    { username, password }: EditUserInput,
     avatarImg: FileUpload,
   ): Promise<EditUserOutput> {
     try {
@@ -127,7 +125,6 @@ export class UsersService {
             username: username ? username : undefined,
             password: password ? await bcrypt.hash(password, 10) : undefined,
             //need phone verification
-            phoneNum: phoneNum ? phoneNum : undefined,
             avatarImg: avatarImg ? avatarImgUrl : undefined,
           },
         },

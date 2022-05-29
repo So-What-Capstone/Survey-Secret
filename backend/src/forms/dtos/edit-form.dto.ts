@@ -6,19 +6,25 @@ import {
   PartialType,
   PickType,
 } from '@nestjs/graphql';
-import { IsMongoId } from 'class-validator';
+import { IsBoolean, IsMongoId, IsOptional } from 'class-validator';
 import { CoreOutput } from '../../common/dtos/output.dto';
 import { Form } from '../schemas/form.schema';
-import { CreateFormInput } from './craete-form.dto';
+import { CreateFormInput } from './create-form.dto';
 
 @InputType()
-export class EditFormInput extends IntersectionType(
-  PartialType(CreateFormInput),
-  PickType(Form, ['state']),
-) {
+export class EditFormInput extends PartialType(CreateFormInput) {
   @Field((type) => String)
   @IsMongoId()
   formId: string;
+
+  @Field((type) => String)
+  @IsMongoId()
+  representativeQuestionId: string;
+
+  @Field((type) => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isPromoted?: boolean;
 }
 
 @ObjectType()

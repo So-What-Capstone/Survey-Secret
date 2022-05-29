@@ -11,7 +11,7 @@ import { CommonCreateQuestionInput } from './common-create-question.dto';
 @InputType()
 export class CreatePersonalQuestionInput extends IntersectionType(
   CommonCreateQuestionInput,
-  PickType(PersonalQuestion, ['personalType', 'encoded']),
+  PickType(PersonalQuestion, ['personalType', 'encoded', 'attachment']),
 ) {}
 
 @ObjectType()

@@ -50,18 +50,18 @@ export class User extends CoreSchema {
   @IsString()
   username: string;
 
-  @Field((type) => String, { nullable: true })
-  @Prop({
-    type: String,
-    unique: true,
-    sparse: true,
-    match: /^[0-9]{11}$/,
-    select: false,
-  })
-  @IsString()
-  @Length(11, 11)
-  @IsOptional()
-  phoneNum?: string;
+  // @Field((type) => String, { nullable: true })
+  // @Prop({
+  //   type: String,
+  //   unique: true,
+  //   sparse: true,
+  //   match: /^[0-9]{11}$/,
+  //   select: false,
+  // })
+  // @IsString()
+  // @Length(11, 11)
+  // @IsOptional()
+  // phoneNum?: string;
 
   @Field((type) => String)
   @Prop({

@@ -11,7 +11,7 @@ export class FindFormByIdInput {
 }
 
 @ObjectType()
-export class FIndFormByIdOutput extends CoreOutput {
+export class FindFormByIdOutput extends CoreOutput {
   @Field((type) => Form, { nullable: true })
   form?: Form;
 }
