@@ -8,7 +8,7 @@ export default function ClipTray({ clips }) {
     <div className="clip-tray">
       {clips.map((clip, i) => (
         <Clip
-          key={i}
+          key={"clip" + i}
           title={clip.title}
           link_enabled={clip.link_enabled}
           link={clip.link}

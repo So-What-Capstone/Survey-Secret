@@ -1,11 +1,7 @@
 import React from "react";
 
 function Intro() {
-  return (
-    <div>
-      <h1>Implement Intro hear...</h1>
-    </div>
-  );
+  return <div>사용방법 설명</div>;
 }
 
 export default Intro;

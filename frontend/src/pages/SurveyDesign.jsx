@@ -1,4 +1,15 @@
-import { Divider, Typography, Input, message, Modal, Empty } from "antd";
+import {
+  Divider,
+  Typography,
+  Input,
+  message,
+  Modal,
+  Empty,
+  Switch,
+  DatePicker,
+  Radio,
+} from "antd";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import "../styles/SurveyDesign.css";
 import { useSearchParams } from "react-router-dom";
@@ -240,22 +251,36 @@ function SurveyDesign() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [rawForm, setRawForm] = useState();
+
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [state, setState] = useState("Ready");
+  const [isPromoted, setIsPromoted] = useState(false);
+  const [expiredAt, setExpiredAt] = useState(moment());
+  const [privacyExpiredAt, setPrivacyExpiredAt] = useState(moment());
+
   const [sections, setSections] = useState([]);
   const [lastFocused, setLastFocused] = useState(undefined);
 
   useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId: searchParams.get("id") },
     onCompleted: (data) => {
-      console.log(data);
-      setTitle(data.findFormById.form.title);
-      setRawForm(data.findFormById.form);
-      let rawSections = data.findFormById.form.sections;
+      const currForm = data.findFormById.form;
+
+      setTitle(currForm.title);
+      setDescription(currForm.description);
+      setState(currForm.state);
+      setIsPromoted(currForm.isPromoted);
+      setExpiredAt(moment(currForm.expiredAt));
+      setPrivacyExpiredAt(moment(currForm.privacyExpiredAt));
+
+      setRawForm(currForm);
+      let rawSections = currForm.sections;
       if (rawSections.length === 0) {
         // 기본 섹션을 추가.
         rawSections = [
           {
-            title: "섹션 1",
+            title: "기본 섹션",
             order: 1,
             questions: [],
           },
@@ -481,7 +506,11 @@ function SurveyDesign() {
   function save() {
     let newForm = {
       title: title,
-      state: "InProgress",
+      description: description,
+      state: state,
+      isPromoted: isPromoted,
+      expiredAt: expiredAt.toDate(),
+      privacyExpiredAt: privacyExpiredAt.toDate(),
       sections: sections.map((sect, i) => {
         let opened = [],
           closed = [],
@@ -607,8 +636,6 @@ function SurveyDesign() {
       }),
     };
 
-    console.log(newForm);
-    console.log(rawForm);
     deleteForm({
       variables: {
         formId: rawForm._id,
@@ -714,6 +741,92 @@ function SurveyDesign() {
               <Divider>{`${i + 1}번째 섹션 끝`}</Divider>
             </div>
           ))}
+        </div>
+      </div>
+      <div className="design-info">
+        <Typography.Title level={5} className="design-title">
+          설문 정보 편집
+        </Typography.Title>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            설문 참여 주소
+          </Typography.Title>
+          {searchParams.get("id") ? (
+            <Typography.Paragraph copyable>{`${
+              window.location.host
+            }/respond?id=${searchParams.get("id")}`}</Typography.Paragraph>
+          ) : (
+            <Typography>설문을 저장하면 응답 주소가 생성됩니다.</Typography>
+          )}
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            제목
+          </Typography.Title>
+          <Input
+            placeholder="설문 제목"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          ></Input>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            설명
+          </Typography.Title>
+          <Input.TextArea
+            rows={2}
+            placeholder="설문 설명"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          ></Input.TextArea>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            응답 마감 시간
+          </Typography.Title>
+          <DatePicker
+            value={expiredAt}
+            showTime
+            placeholder="응답 마감 시간"
+            onChange={(date) => setExpiredAt(date)}
+          ></DatePicker>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            개인정보 파기 시간
+          </Typography.Title>
+          <DatePicker
+            value={privacyExpiredAt}
+            showTime
+            placeholder="개인정보 파기 시간"
+            onChange={(date) => setPrivacyExpiredAt(date)}
+          ></DatePicker>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            설문 상태
+          </Typography.Title>
+          <Radio.Group
+            value={state}
+            buttonStyle="solid"
+            onChange={(e) => setState(e.target.value)}
+          >
+            <Radio.Button value="Ready">준비 중</Radio.Button>
+            <Radio.Button value="InProgress">공개됨</Radio.Button>
+            <Radio.Button value="Expired">종료됨</Radio.Button>
+          </Radio.Group>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            배너 광고 등록
+          </Typography.Title>
+          <div className="design-switch-layout">
+            <span>메인 페이지에 설문을 노출하기</span>
+            <Switch
+              value={isPromoted}
+              onChange={(value) => setIsPromoted(value)}
+            ></Switch>
+          </div>
         </div>
       </div>
     </div>
