@@ -5,6 +5,7 @@ import {
   GetKeywordAnalysisOutput,
 } from './dtos/get-keyword-analysis.dto';
 import { GetCorrOutput, GetCorrInput } from './dtos/get-corr.dto';
+import { GetDescribeInput, GetDescribeOutput } from './dtos/get-describe.dto';
 
 @Resolver()
 export class StatResolver {
@@ -22,7 +23,12 @@ export class StatResolver {
     return this.statService.getCorr(getCorrInput);
   }
 
-  //기본 통계정보(평균,4분위값,최댓값 등등)
+  @Query((returns) => GetDescribeOutput)
+  getDescribe(
+    @Args('input') getDescribeInput: GetDescribeInput,
+  ): Promise<GetDescribeOutput> {
+    return this.statService.getDescribe(getDescribeInput);
+  }
 
   //market basket model
 }

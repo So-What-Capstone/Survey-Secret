@@ -343,6 +343,12 @@ The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](
 """
 scalar JSONObject
 
+type GetDescribeOutput {
+  ok: Boolean!
+  error: String
+  result: JSONObject
+}
+
 type GetSendHistoryOutput {
   ok: Boolean!
   error: String
@@ -369,6 +375,7 @@ type Query {
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
   getKeywordAnalysis(input: GetKeywordAnalysisInput!): GetKeywordAnalysisOutput!
   getCorr(input: GetCorrInput!): GetCorrOutput!
+  getDescribe(input: GetDescribeInput!): GetDescribeOutput!
 }
 
 input FindUserByIdInput {
@@ -413,6 +420,11 @@ input GetKeywordAnalysisInput {
 }
 
 input GetCorrInput {
+  formId: String!
+  questionIds: [String!]!
+}
+
+input GetDescribeInput {
   formId: String!
   questionIds: [String!]!
 }
