@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ClipTray from "../modules/ClipTray";
 import "../styles/Clips.css";
 import "../styles/ContactRecord.scss";
@@ -119,7 +119,7 @@ function ContactRecord() {
       },
     ],
     senderInfo: "",
-    texttitle: "",
+    textTitle: "",
     content: "",
     id: "",
   });

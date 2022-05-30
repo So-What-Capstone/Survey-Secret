@@ -1,0 +1,51 @@
+.myinfoedit-con {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  align-items: center;
+  .edit-wrap {
+    margin: 2rem 0rem 2rem 0rem;
+    .avatar-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #F5F5F5;
+    }
+    .edit-row {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      margin-bottom: 1.5rem;
+      width: 40vw;
+      min-width: 30vw;
+      .row-title {
+        font-size: 20px;
+        color: #F5F5F5;
+        margin-bottom: 0.8rem;
+      }
+      .row-input {
+        background-color: #ffffff30;
+        color: #CCD6F6;
+        border: none;
+        border-radius: 10px;
+        padding: 0.7rem 2vw 0.7rem 2vw;
+        flex: 3 1 0;
+      }
+      .error-box {
+        font-size: 12px;
+        margin-top: 7px;
+        color: tomato;
+      }
+    }
+    .submit-btn{
+      margin: 1rem 0px 1rem 0px;
+      padding: 0.7rem 0px 0.7rem 0px;
+      background-color: #65FFDC19;
+      border: 1px solid #65FFDC;
+      border-radius: 10px;
+      color: #65FFDC;
+      font-size: 25px;
+      width: 100%;
+    }
+  }
+}

@@ -5,6 +5,21 @@ import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import "../styles/Clips.css";
 import "../styles/Notice.scss";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+  ul: {
+    "& .MuiPaginationItem-root": {
+      color: "#F5F5F5",
+    },
+    "& .MuiPaginationItem-page": {
+      "&.Mui-selected": {
+        backgroundColor: "#65FFDC20",
+        color: "#F5F5F5",
+      },
+    },
+  },
+});
 
 function Notice() {
   const clips = [
@@ -14,6 +29,8 @@ function Notice() {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [noticeList, setNoticeList] = useState([]);
+
+  const classes = useStyles();
 
   /* dummy data */
   const notices = [
@@ -55,18 +72,12 @@ function Notice() {
   const fetchNotice = () => {
     //noticeList 받아오기
     setNoticeList(notices);
-    setTotalPage(1);
+    setTotalPage(3);
   };
 
   const handlePageChange = (e, pageNumber) => {
     setPage(pageNumber);
   };
-
-  /*
-  const [expanded, setExpanded] = useState("");
-  const handleChange = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false);
-  };*/
 
   return (
     <div className="notice-con">
@@ -105,11 +116,10 @@ function Notice() {
         </div>
 
         <Pagination
+          classes={{ ul: classes.ul }}
           className="pagination"
           count={totalPage}
           page={page}
-          variant="outlined"
-          color="primary"
           onChange={handlePageChange}
         />
       </div>

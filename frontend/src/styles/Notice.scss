@@ -5,13 +5,14 @@
   .notice-panel {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-content: center;
     padding: 2rem 3vw 2rem 3vw;
     background-color: #172A46;
     border-radius: 10px;
-    margin: 5rem 4vw 5rem 4vw;
+    margin: 4rem 3vw 4rem 3vw;
     width: 100%;
     min-width: 40rem;
+    height: 45rem;
     .panel-row {
       display: flex;
       flex-direction: row;
@@ -23,6 +24,7 @@
     .table-con {
       display: flex;
       flex-direction: column;
+      flex: 8 1 0;
       .table-head {
         display: flex;
         flex-direction: row;
@@ -64,7 +66,7 @@
             }
             .summary-title {
               flex: 4 1 0;
-            }ㅏㅐ
+            }
             .summary-date {
               flex: 1 1 0;
             }
@@ -78,8 +80,8 @@
     }
     
     .pagination {
-      color: #F5F5F5 !important;
       width: 100%;
+      flex: 1 1 0;
       display: flex;
       align-items: center;
       justify-content: center;
