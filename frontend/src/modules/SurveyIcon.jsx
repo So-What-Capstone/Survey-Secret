@@ -1,7 +1,9 @@
 import React from "react";
+import { gql, useMutation } from "@apollo/client";
 import "../styles/Surveys.scss";
 import PropTypes from "prop-types";
 import { DeleteOutlined, EditOutlined, BarsOutlined } from "@ant-design/icons";
+import { DELETE_FORM_MUTATION } from "../API/deleteForm";
 import { useNavigate } from "react-router-dom";
 
 SurveyIcon.propTypes = {
@@ -19,6 +21,19 @@ export default function SurveyIcon({
   hover_enabled,
 }) {
   let navigate = useNavigate();
+  const [deleteForm, { loading: deleteLoading }] = useMutation(
+    DELETE_FORM_MUTATION,
+    {
+      onCompleted: (data) => {
+        const {
+          deleteForm: { ok, error },
+        } = data;
+        if (!ok) {
+          throw new Error(error);
+        }
+      },
+    }
+  );
   let expArray = "";
   let timeArray = "";
 
@@ -39,6 +54,11 @@ export default function SurveyIcon({
     let ret = confirm('"' + title + '" 설문을 삭제하시겠습니까?');
     if (ret) {
       // delete the form
+      deleteForm({
+        variables: {
+          formId: form_id,
+        },
+      });
       alert("설문을 삭제했습니다.");
     }
   };
