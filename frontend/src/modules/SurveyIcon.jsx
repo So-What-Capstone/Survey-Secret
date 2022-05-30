@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/Surveys.scss";
 import PropTypes from "prop-types";
 import { DeleteOutlined, EditOutlined, BarsOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 SurveyIcon.propTypes = {
   title: PropTypes.string,
@@ -17,6 +18,7 @@ export default function SurveyIcon({
   form_id,
   hover_enabled,
 }) {
+  let navigate = useNavigate();
   let expArray = "";
   let timeArray = "";
 
@@ -39,6 +41,12 @@ export default function SurveyIcon({
       // delete the form
       alert("설문을 삭제했습니다.");
     }
+  };
+
+  const onClick = () => {
+    if (hover_enabled) return;
+    console.log("click");
+    navigate("/respond?id=" + form_id);
   };
   return (
     <div className="survey-icon-con">
@@ -78,7 +86,7 @@ export default function SurveyIcon({
           </a>
         </div>
       ) : null}
-      <div className="survey-item">
+      <div className="survey-item" onClick={onClick}>
         <div className="item-title">{title}</div>
         <div className="item-des">{short_des}</div>
 

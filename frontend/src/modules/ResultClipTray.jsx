@@ -20,8 +20,8 @@ export default function ResultClipTray({ type, formId }) {
     {
       title: "통계",
       link_enabled: true,
-      link: "/my-survey/result/stat?id=" + formId,
-      color_idx: type === "stat" ? 2 : 1,
+      link: "/my-survey/result/stats?id=" + formId,
+      color_idx: type === "stats" ? 2 : 1,
     },
   ];
   return <ClipTray clips={clips} />;
