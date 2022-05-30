@@ -32,6 +32,7 @@
     "apollo-server-express": "^3.6.5",
     "aws-sdk": "^2.1121.0",
     "bcrypt": "^5.0.1",
+    "body-parser": "^1.20.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "danfojs-node": "^1.1.1",
