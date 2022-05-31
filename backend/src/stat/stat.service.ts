@@ -16,6 +16,9 @@ import {
 } from './dtos/get-keyword-analysis.dto';
 import mongoose from 'mongoose';
 import { GetDescribeInput, GetDescribeOutput } from './dtos/get-describe.dto';
+import { QuestionType } from '../forms/questions/question.typeDefs';
+import { OpenedQuestion } from './../forms/questions/schemas/opened-question.schema';
+import { OpenedQuestionType } from '../forms/questions/schemas/opened-question.schema';
 
 @Injectable()
 export class StatService {
@@ -33,23 +36,61 @@ export class StatService {
     try {
       const END_POINT = `${process.env.STAT_END_POINT}/stats/keywords`;
 
-      const { submissions } = await this.formModel
-        .findOne({
-          _id: formId,
-        })
-        .populate('submissions');
+      //type 검사를 위해서 분리해서 연산
+      const [form] = await this.formModel.aggregate([
+        {
+          $match: { _id: new mongoose.Types.ObjectId(formId) },
+        },
+        { $unwind: '$sections' },
+        { $unwind: '$sections.questions' },
+        {
+          $match: {
+            'sections.questions._id': new mongoose.Types.ObjectId(questionId),
+          },
+        },
+      ]);
+
+      if (!form) {
+        return { ok: false, error: '질문이 존재하지 않습니다.' };
+      } else {
+        if (form.sections.questions.kind !== QuestionType.Opened) {
+          return { ok: false, error: '질문의 타입이 주관식이 아닙니다.' };
+        } else {
+          if (
+            (<OpenedQuestion>form.sections.questions).openedType !==
+            OpenedQuestionType.Default
+          ) {
+            return { ok: false, error: '질문의 타입이 단답/장문형이 아닙니다' };
+          }
+        }
+      }
+
+      const submissions = await this.formModel.aggregate([
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+        { $unwind: '$submissions' },
+        { $unwind: '$submissions.answers' },
+        {
+          $match: {
+            'submissions.answers.question': new mongoose.Types.ObjectId(
+              questionId,
+            ),
+          },
+        },
+        {
+          $project: { submissions: { answers: { openedAnswer: true } } },
+        },
+      ]);
 
       const answers: [string?] = [];
       for (const submission of submissions) {
-        let answer: OpenedAnswer = submission.answers.find(
-          (answer) => answer.question.toString() === questionId,
-        );
-
-        if (answer.kind !== 'Opened') {
-          return { ok: false, error: '답변의 타입이 주관식이 아닙니다.' };
-        }
-
-        answers.push(answer.openedAnswer);
+        answers.push(submission.submissions.answers.openedAnswer);
       }
 
       if (answers.length === 0) {
@@ -65,10 +106,12 @@ export class StatService {
 
       let { result } = await response.json();
 
-      //need to store in DB
+      // need to store in DB
       //need to make stats entity
       //need to analyze positive/negative word
       //need to analyze verb, adjective
+
+      console.log(result);
 
       return { ok: true, result };
     } catch (error) {
@@ -105,6 +148,11 @@ export class StatService {
     const jsonData = {};
 
     form.forEach((f) => {
+      // if (type === QuestionType.Opened) {
+      // } else if (type === QuestionType.Closed) {
+      // } else if (type === QuestionType.Linear) {
+      // }
+
       if (jsonData[f.submissions._id]) {
         const obj = jsonData[f.submissions._id];
         obj[f.submissions.answers.question] =
