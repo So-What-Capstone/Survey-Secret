@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import "../styles/ResultStats.scss";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { PropTypes } from "prop-types";
+import PropTypes from "prop-types";
 import { ResultClipTray } from "../modules";
+import { useLazyQuery } from "@apollo/client";
+import { findFormByIdQuery } from "../API/findFormByIdQuery";
+import { getCorrQuery } from "../API/getCorrQuery";
 
 import Plot from "react-plotly.js";
-import { Checkbox, Row } from "antd";
+import { Checkbox, Row, Spin, Empty, Alert, Divider, Button } from "antd";
+import TableTransfer from "../modules/TableTransfer";
 // import Plotly from "plotly.js-basic-dist";
 // import createPlotlyComponent from "react-plotly.js/factory";
 // const Plot = createPlotlyComponent(Plotly);
 
 function ResultStatsOption({ onChange }) {
   const [option, setOption] = useState();
-  const [index, selectedIndex] = useState();
 
   const onClick = (e) => {
     const { id } = e.target.dataset;
@@ -58,13 +61,13 @@ ResultStatsOption.propTypes = {
   onChange: PropTypes.func,
 };
 
-function Result({ option }) {
+function Result({ option, form }) {
   if (option === "1") {
-    return <MarketBasketAnalysis />;
-  } else if (option == 2) {
-    return <CorrAnalysis />;
+    return <MarketBasketAnalysis form={form} />;
+  } else if (option == "2") {
+    return <CorrAnalysis form={form} />;
   } else if (option === "3") {
-    return <KeywordAnalysis />;
+    return <KeywordAnalysis form={form} />;
   } else {
     return <NotSelected />;
   }
@@ -72,6 +75,7 @@ function Result({ option }) {
 
 Result.propTypes = {
   option: PropTypes.string,
+  form: PropTypes.any,
 };
 
 function QuestionSelection({ questions, selectedQuestions, onChange }) {
@@ -103,7 +107,10 @@ QuestionSelection.propTypes = {
 function NotSelected() {
   return (
     <div className="not-selected">
-      왼쪽 메뉴에서 분석 항목과 분석 질문을 선택해주세요
+      <Empty
+        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+        description="왼쪽 메뉴에서 분석 항목과 분석 질문을 선택해주세요."
+      />
     </div>
   );
 }
@@ -112,32 +119,124 @@ function MarketBasketAnalysis() {
   return <div>MarketBasket</div>;
 }
 
-function CorrAnalysis() {
-  //API
-  const data = {};
+function CorrAnalysis({ form }) {
+  const [questions, setQuestions] = useState([]);
+  const [targetKeys, setTargetKeys] = useState([]);
+  const [getCorr, { loading, error, corr }] = useLazyQuery(getCorrQuery);
+
+  useEffect(() => {
+    const currQues = [];
+    form.sections.forEach((sec, i) => {
+      sec.questions.forEach((ques, j) => {
+        if (
+          (ques.kind === "Closed" && ques.closedType === "One") ||
+          ques.kind === "Linear"
+        ) {
+          currQues.push({
+            sectionIndex: i,
+            questionIndex: j,
+            content: ques.content,
+            key: `${ques._id}:${i}:${j}`,
+          });
+        }
+      });
+    });
+    setQuestions(currQues);
+  }, [form]);
+
+  const columns = [
+    {
+      dataIndex: "sectionIndex",
+      title: "섹션 번호",
+      render: (x) => x + 1,
+      width: 80,
+    },
+    {
+      dataIndex: "questionIndex",
+      title: "질문 번호",
+      render: (x) => x + 1,
+      width: 80,
+    },
+    {
+      dataIndex: "content",
+      title: "질문 제목",
+      ellipsis: true,
+    },
+  ];
+
+  function generateResult() {
+    console.log(targetKeys);
+    if (targetKeys.length <= 1) {
+      alert(
+        "적어도 두 개 이상의 문항을 선택해야 합니다." +
+          "왼쪽 테이블에서 오른쪽 테이블로 문항을 옮기세요."
+      );
+      return;
+    }
+    getCorr({
+      variables: {
+        formId: form._id,
+        questionIds: questions,
+      },
+    });
+  }
 
   return (
-    <div>
-      <div id="myDiv"></div>
-      <Plot
-        data={[
-          {
-            z: [
-              [1, null, 30, 50, 1],
-              [20, 1, 60, 80, 30],
-              [30, 60, 1, -10, 20],
-            ],
-            x: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            y: ["Morning", "Afternoon", "Evening"],
-            type: "heatmap",
-          },
-        ]}
-        layout={{ width: 700, height: 500, title: "Form Name" }}
-        config={{ displayModeBar: false }}
+    <div className="corr-root">
+      <Alert
+        message="수치응답 상관계수"
+        description={
+          "객관식(단일응답) 문항과 선형 배율 문항에 대하여 여러 응답 간 Pearson 상관계수를 계산할 수 있습니다. " +
+          "왼쪽 테이블에서 분석할 문항을 선택하여 오른쪽 테이블에 옮기고, 분석 버튼을 클릭하세요."
+        }
+        type="info"
+        showIcon
       />
+
+      <Divider>
+        <Button type="primary" onClick={generateResult}>
+          상관계수 산출
+        </Button>
+      </Divider>
+
+      <TableTransfer
+        showSearch
+        dataSource={questions}
+        targetKeys={targetKeys}
+        onChange={(nextTargetKeys) => setTargetKeys(nextTargetKeys)}
+        leftColumns={columns}
+        rightColumns={columns}
+        filterOption={(inputValue, item) =>
+          item.content && item.content.indexOf(inputValue) !== -1
+        }
+      />
+
+      {corr && (
+        <Plot
+          data={[
+            {
+              z: [
+                [1, null, 30, 50, 1],
+                [20, 1, 60, 80, 30],
+                [30, 60, 1, -10, 20],
+              ],
+              x: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              y: ["Morning", "Afternoon", "Evening"],
+              type: "heatmap",
+            },
+          ]}
+          layout={{ width: 700, height: 500, title: "Form Name" }}
+          config={{ displayModeBar: false }}
+        />
+      )}
     </div>
   );
 }
+
+CorrAnalysis.propTypes = {
+  option: PropTypes.string,
+  form: PropTypes.any,
+};
 
 function KeywordAnalysis() {
   //using d3-cloud
@@ -153,52 +252,42 @@ function ResultStats() {
   let navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [formId, setFormId] = useState(0);
+  const [form, setForm] = useState(undefined);
   const [option, setOption] = useState("0");
-  const [questions, setQuestions] = useState([]);
-  const [filteredQuestions, setFiltered] = useState([]);
-  const [selectedIndice, setSelectedIndice] = useState([]);
+  const [getForm] = useLazyQuery(findFormByIdQuery);
 
   useEffect(() => {
-    const id = searchParams.get("id");
-    if (id) {
+    async function fetchData() {
+      const id = searchParams.get("id");
+      if (!id) {
+        navigate("/");
+      }
+
       setFormId(id);
-    } else {
-      navigate("/");
+      const res = await getForm({
+        variables: {
+          formId: id,
+        },
+      });
+      setForm(res.data.findFormById.form);
     }
-  }, [searchParams]);
 
-  useEffect(() => {
-    setSelectedIndice([]);
-    let filtered = [];
-    if (option === 0) {
-      // filtered = questions.filter();
-    } // else ...
-    setFiltered(filtered);
-  }, [option]);
+    fetchData();
+  }, []);
 
-  const onSelectionChange = (i) => {
-    setSelectedIndice(i);
-  };
   return (
     <div className="result-stats">
       <ResultClipTray type="stats" formId={formId} />
       <div className="result-stats-inner">
         <div className="result-stats-option-con">
           <ResultStatsOption onChange={setOption} />
-          <div className="panel-title">
-            <label className="title-label">질문목록</label>
-          </div>
-          <QuestionSelection
-            questions={[
-              { _id: "1", title: "123" },
-              { _id: "2", title: "qwer" },
-            ]} // filtered quesions
-            selectedQuestions={selectedIndice}
-            onChange={onSelectionChange}
-          />
         </div>
         <div className="result-stats-result-con">
-          <Result option={option} />
+          {form ? (
+            <Result option={option} form={form} />
+          ) : (
+            <Spin tip="설문 정보를 가져오는 중..."></Spin>
+          )}
         </div>
       </div>
     </div>

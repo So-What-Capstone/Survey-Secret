@@ -105,3 +105,18 @@
   flex-flow: column nowrap;
   overflow: auto;
 }
+
+.corr-root {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  & > div {
+    margin: 20px;
+  }
+  .ant-transfer-list-body {
+    background: white !important;
+  }
+}
+
