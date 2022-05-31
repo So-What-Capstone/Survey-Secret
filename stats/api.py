@@ -70,7 +70,7 @@ def stats_corr():
     for r in range(len(input_matrix)):
         result[index_key_map[r]] = {}
         for c in range(len(input_matrix)):
-            result[index_key_map[r]][index_key_map[c]] = corr_matrix[r, c]
+            result[index_key_map[r]][index_key_map[c]] = -100 if np.isnan(corr_matrix[r, c]) else corr_matrix[r, c]
 
     return Response(json.dumps({"result":result}), status=200)
 
