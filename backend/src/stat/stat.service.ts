@@ -29,6 +29,37 @@ export class StatService {
     private readonly formModel: Model<FormDocument>,
   ) {}
 
+  //questionKind : 질문 종류(Opened,Closed,...) questionDetailType : Opened면 Default 등등, questionTypeKor,questionDetailTypeKor : 안내메세지에 들어갈 타입이름(한국어)
+  async findQuestion(formId: string, questionIds: string[]) {
+    const mongooseQuestionIds = questionIds.map(
+      (id) => new mongoose.Types.ObjectId(id),
+    );
+
+    //type 검사를 위해서 분리해서 연산
+    const form = await this.formModel.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(formId) },
+      },
+      { $unwind: '$sections' },
+      { $unwind: '$sections.questions' },
+      {
+        $match: {
+          'sections.questions._id': { $in: [...mongooseQuestionIds] },
+        },
+      },
+      {
+        $project: { sections: { questions: true } },
+      },
+    ]);
+
+    if (form.length === 0) {
+      throw new Error('질문이 존재하지 않습니다');
+    }
+
+    //만약 질문이 여러개라면 array return?
+    return form;
+  }
+
   async getKeywordAnalysis({
     formId,
     questionId,
@@ -36,36 +67,21 @@ export class StatService {
     try {
       const END_POINT = `${process.env.STAT_END_POINT}/stats/keywords`;
 
-      //type 검사를 위해서 분리해서 연산
-      const [form] = await this.formModel.aggregate([
-        {
-          $match: { _id: new mongoose.Types.ObjectId(formId) },
-        },
-        { $unwind: '$sections' },
-        { $unwind: '$sections.questions' },
-        {
-          $match: {
-            'sections.questions._id': new mongoose.Types.ObjectId(questionId),
-          },
-        },
-      ]);
+      const [form] = await this.findQuestion(formId, [questionId]);
 
-      if (!form) {
-        return { ok: false, error: '질문이 존재하지 않습니다.' };
+      if (form.sections.questions.kind !== QuestionType.Opened) {
+        return { ok: false, error: `질문의 타입이 주관식이 아닙니다.` };
       } else {
-        if (form.sections.questions.kind !== QuestionType.Opened) {
-          return { ok: false, error: '질문의 타입이 주관식이 아닙니다.' };
-        } else {
-          if (
-            (<OpenedQuestion>form.sections.questions).openedType !==
-            OpenedQuestionType.Default
-          ) {
-            return { ok: false, error: '질문의 타입이 단답/장문형이 아닙니다' };
-          }
+        if (form.sections.questions.openedType !== OpenedQuestionType.Default) {
+          return {
+            ok: false,
+            error: `주관식 질문의 타입이 단답형/장답형이 아닙니다`,
+          };
         }
       }
 
       const submissions = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
         {
           $lookup: {
             from: 'submissions',
@@ -120,6 +136,23 @@ export class StatService {
   }
 
   async createJsonData(formId: string, questionIds: string[]): Promise<Object> {
+    //type checking
+    const forms = await this.findQuestion(formId, questionIds);
+
+    for (const form of forms) {
+      if (
+        form.sections.questions.kind !== QuestionType.Opened &&
+        form.sections.questions.kind !== QuestionType.Linear
+      ) {
+        throw new Error('질문의 타입이 주관식 또는 선형배율이 아닙니다.');
+      } else if (
+        form.sections.questions.kind === QuestionType.Opened &&
+        form.sections.questions.openedType !== OpenedQuestionType.Number
+      ) {
+        throw new Error('주관식 질문의 타입이 숫자형이 아닙니다.');
+      }
+    }
+
     const mongooseQuestionIds = questionIds.map(
       (id) => new mongoose.Types.ObjectId(id),
     );
@@ -143,26 +176,38 @@ export class StatService {
           },
         },
       },
+      {
+        $project: { submissions: { _id: true, answers: true }, _id: false },
+      },
     ]);
 
     const jsonData = {};
 
     form.forEach((f) => {
-      // if (type === QuestionType.Opened) {
-      // } else if (type === QuestionType.Closed) {
-      // } else if (type === QuestionType.Linear) {
-      // }
+      const {
+        submissions: { answers, _id },
+      } = f;
 
-      if (jsonData[f.submissions._id]) {
-        const obj = jsonData[f.submissions._id];
-        obj[f.submissions.answers.question] =
-          f.submissions.answers.openedAnswer;
-        jsonData[f.submissions._id] = obj;
+      if (jsonData[_id]) {
+        const obj = jsonData[_id];
+
+        if (answers.openedAnswer) {
+          obj[answers.question] = answers.openedAnswer.toString();
+        } else if (answers.linearAnswer) {
+          obj[answers.question] = answers.linearAnswer.toString();
+        }
+
+        jsonData[_id] = obj;
       } else {
         const obj = {};
-        obj[f.submissions.answers.question] =
-          f.submissions.answers.openedAnswer;
-        jsonData[f.submissions._id] = obj;
+
+        if (answers.openedAnswer) {
+          obj[answers.question] = answers.openedAnswer.toString();
+        } else if (answers.linearAnswer) {
+          obj[answers.question] = answers.linearAnswer.toString();
+        }
+
+        jsonData[_id] = obj;
       }
     });
 
