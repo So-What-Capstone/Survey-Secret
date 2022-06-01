@@ -106,6 +106,11 @@ function SearchResult() {
 
   const searchSurvey = () => {
     console.log(searchedText);
+    navigate({ pathname: "/search", search: `?${createSearchParams(params)}` });
+  };
+
+  const params = {
+    value: searchedText,
   };
 
   const handleListItemClick = (e, id) => {
@@ -146,9 +151,9 @@ function SearchResult() {
   const sorts = [
     {
       idx: 0,
-      type: "폼 만료 빠른순",
+      type: "폼 만료일 빠른순",
     },
-    { idx: 1, type: "폼 만료 늦은순" },
+    { idx: 1, type: "폼 만료일 늦은순" },
     { idx: 2, type: "개인정보 파기일 빠른순" },
     { idx: 3, type: "개인정보 파기일 느린순" },
   ];
