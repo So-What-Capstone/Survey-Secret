@@ -51,9 +51,40 @@ const CREATE_FORM_MUTATION = gql`
   }
 `;
 
-const DELETE_FORM_MUTATION = gql`
-  mutation deleteForm($formId: String!) {
-    deleteForm(input: { formId: $formId }) {
+const EDIT_FORM_MUTATION2 = gql`
+  mutation editForm(
+    $title: String
+    $description: String
+    $state: FromState
+    $expiredAt: DateTime
+    $privacyExpiredAt: DateTime
+    $sections: [CreateSectionInput!]
+    $formId: String!
+    $representativeQuestionId: String!
+    $isPromoted: Boolean
+  ) {
+    editForm(
+      input: {
+        title: $title
+        description: $description
+        state: $state
+        expiredAt: $expiredAt
+        privacyExpiredAt: $privacyExpiredAt
+        sections: $sections
+        formId: $formId
+        representativeQuestionId: $representativeQuestionId
+        isPromoted: $isPromoted
+      }
+    ) {
+      ok
+      error
+    }
+  }
+`;
+
+const EDIT_FORM_MUTATION = gql`
+  mutation editForm($request: EditFormInput!) {
+    editForm(input: $request) {
       ok
       error
     }
@@ -140,7 +171,6 @@ function SurveyDesign() {
   const [findTemplateById] = useLazyQuery(findTemplateByIdQuery);
   const [findFormById] = useLazyQuery(findFormByIdQuery);
   const [createForm] = useMutation(CREATE_FORM_MUTATION);
-  const [deleteForm] = useMutation(DELETE_FORM_MUTATION);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -671,11 +701,6 @@ function SurveyDesign() {
       await createForm({
         variables: {
           request: newForm,
-        },
-      });
-      await deleteForm({
-        variables: {
-          formId: rawForm._id,
         },
       });
     } catch (err) {
