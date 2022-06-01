@@ -8,7 +8,6 @@ import {
 } from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "../styles/ResultList.scss";
-import PropTypes from "prop-types";
 import { CloseCircleFilled } from "@ant-design/icons";
 import { useQuery } from "@apollo/client";
 import { findFormByIdForOwnerQuery } from "../API/findFormByIdForOwnerQuery";
