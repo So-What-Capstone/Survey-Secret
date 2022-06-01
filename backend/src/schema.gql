@@ -545,7 +545,7 @@ input EditFormInput {
   privacyExpiredAt: DateTime
   sections: [CreateSectionInput!]
   formId: String!
-  representativeQuestionId: String!
+  representativeQuestionId: String
   isPromoted: Boolean
 }
 
