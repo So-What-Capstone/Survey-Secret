@@ -73,10 +73,6 @@
   flex-direction: column;
 }
 
-.design-section-title {
-  width: 300px;
-}
-
 .design-preview-header {
   display: flex;
   flex-direction: row;

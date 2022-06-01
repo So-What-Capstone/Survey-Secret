@@ -9,13 +9,23 @@ import {
   DatePicker,
   Radio,
   Spin,
+  Tooltip,
+  Button,
+  Dropdown,
+  Menu,
 } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import "../styles/SurveyDesign.css";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  CaretDownOutlined,
+  CaretUpOutlined,
+  DeleteOutlined,
+  PlusSquareOutlined,
+} from "@ant-design/icons";
 
 import addrImage from "../resources/question_images/addr.png";
 import emailImage from "../resources/question_images/email.png";
@@ -146,6 +156,14 @@ function SurveyDesign() {
   const [sections, setSections] = useState(null);
   const [lastFocused, setLastFocused] = useState(undefined);
 
+  function generateEmptySection(order) {
+    return {
+      title: "새 섹션",
+      order: order,
+      questions: [],
+    };
+  }
+
   async function fetchFormData(id) {
     try {
       const res = await findFormById({
@@ -166,13 +184,7 @@ function SurveyDesign() {
       let rawSections = currForm.sections;
       if (rawSections.length === 0) {
         // 기본 섹션을 추가.
-        rawSections = [
-          {
-            title: "기본 섹션",
-            order: 1,
-            questions: [],
-          },
-        ];
+        rawSections = [generateEmptySection(0)];
       }
       let processed = rawSections.map((sect) => {
         return {
@@ -525,7 +537,9 @@ function SurveyDesign() {
                 required: ques.required,
                 description: ques.description,
                 kind: "Closed",
-                content: ques.content,
+                content: ques.content
+                  ? ques.content
+                  : "(문항 제목이 없습니다.)",
                 closedType: ques.allowMultiple ? "Multiple" : "One",
                 choices: ques.choices.map((ch, k) => {
                   return {
@@ -547,7 +561,9 @@ function SurveyDesign() {
                 required: ques.required,
                 description: ques.description,
                 kind: "Opened",
-                content: ques.content,
+                content: ques.content
+                  ? ques.content
+                  : "(문항 제목이 없습니다.)",
                 attachment: "",
               });
             }
@@ -562,7 +578,9 @@ function SurveyDesign() {
                 required: ques.required,
                 description: ques.description,
                 kind: "Linear",
-                content: ques.content,
+                content: ques.content
+                  ? ques.content
+                  : "(문항 제목이 없습니다.)",
               });
             }
 
@@ -575,7 +593,9 @@ function SurveyDesign() {
                 required: ques.required,
                 description: ques.description,
                 kind: "Grid",
-                content: ques.content,
+                content: ques.content
+                  ? ques.content
+                  : "(문항 제목이 없습니다.)",
               });
             }
 
@@ -587,7 +607,9 @@ function SurveyDesign() {
                 required: ques.required,
                 description: ques.description,
                 kind: "Personal",
-                content: ques.content,
+                content: ques.content
+                  ? ques.content
+                  : "(문항 제목이 없습니다.)",
               });
             }
 
@@ -599,7 +621,9 @@ function SurveyDesign() {
                 required: ques.required,
                 description: ques.description,
                 kind: "Personal",
-                content: ques.content,
+                content: ques.content
+                  ? ques.content
+                  : "(문항 제목이 없습니다.)",
               });
             }
 
@@ -610,7 +634,9 @@ function SurveyDesign() {
                 required: ques.required,
                 description: ques.description,
                 kind: "Opened",
-                content: ques.content,
+                content: ques.content
+                  ? ques.content
+                  : "(문항 제목이 없습니다.)",
                 attachment: "",
               });
             }
@@ -622,7 +648,9 @@ function SurveyDesign() {
                 required: ques.required,
                 description: ques.description,
                 kind: "Opened",
-                content: ques.content,
+                content: ques.content
+                  ? ques.content
+                  : "(문항 제목이 없습니다.)",
                 attachment: "",
               });
             }
@@ -689,6 +717,60 @@ function SurveyDesign() {
     }
   }
 
+  const moveSectionDown = (secIndex) => () => {
+    if (secIndex === sections.length - 1) {
+      message.error("마지막 섹션은 더 아래로 옮길 수 없습니다.");
+      return;
+    }
+    const newSections = [...sections];
+    [newSections[secIndex], newSections[secIndex + 1]] = [
+      newSections[secIndex + 1],
+      newSections[secIndex],
+    ];
+    setSections(newSections);
+  };
+
+  const moveSectionUp = (secIndex) => () => {
+    if (secIndex === 0) {
+      message.error("첫 번째 섹션은 더 위로 옮길 수 없습니다.");
+      return;
+    }
+    const newSections = [...sections];
+    [newSections[secIndex - 1], newSections[secIndex]] = [
+      newSections[secIndex],
+      newSections[secIndex - 1],
+    ];
+    setSections(newSections);
+  };
+
+  const removeSection = (secIndex) => () => {
+    if (secIndex === 0) {
+      message.error("유일한 섹션은 삭제할 수 없습니다.");
+      return;
+    }
+    const newSections = [...sections];
+    newSections.splice(secIndex, 1);
+    setSections(newSections);
+  };
+
+  const addSectionBefore = (secIndex) => () => {
+    const newSections = [...sections];
+    newSections.splice(secIndex, 0, generateEmptySection(0));
+    newSections.forEach((_, i) => {
+      newSections[i].order = i;
+    });
+    setSections(newSections);
+  };
+
+  const addSectionAfter = (secIndex) => () => {
+    const newSections = [...sections];
+    newSections.splice(secIndex + 1, 0, generateEmptySection(0));
+    newSections.forEach((_, i) => {
+      newSections[i].order = i;
+    });
+    setSections(newSections);
+  };
+
   return (
     <div className="design-root">
       <div className="design-palette">
@@ -735,12 +817,38 @@ function SurveyDesign() {
             sections.map((sect, i) => (
               <div className="design-section" key={sect._id}>
                 <Divider>
-                  <Input
-                    className="design-section-title"
-                    addonBefore={`${i + 1}번째 섹션 제목`}
-                    value={sect.title}
-                    onChange={updateSectionTitleChange(i)}
-                  ></Input>
+                  <Input.Group compact onFocus={() => setLastFocused([i, -1])}>
+                    <Input
+                      className="design-section-title"
+                      addonBefore={`${i + 1}번째 섹션 제목`}
+                      value={sect.title}
+                      onChange={updateSectionTitleChange(i)}
+                    ></Input>
+                    <Tooltip title="섹션을 아래로 옮기기">
+                      <Button
+                        icon={<CaretDownOutlined />}
+                        onClick={moveSectionDown(i)}
+                      />
+                    </Tooltip>
+                    <Tooltip title="섹션을 위로 옮기기">
+                      <Button
+                        icon={<CaretUpOutlined />}
+                        onClick={moveSectionUp(i)}
+                      />
+                    </Tooltip>
+                    <Tooltip title="이 섹션 제거">
+                      <Button
+                        icon={<DeleteOutlined />}
+                        onClick={removeSection(i)}
+                      />
+                    </Tooltip>
+                    <Tooltip title="이 섹션 위에 새 섹션 추가">
+                      <Button
+                        icon={<PlusSquareOutlined />}
+                        onClick={addSectionBefore(i)}
+                      />
+                    </Tooltip>
+                  </Input.Group>
                 </Divider>
 
                 {sect.questions.length === 0 ? (
@@ -760,7 +868,40 @@ function SurveyDesign() {
                   ))
                 )}
 
-                <Divider>{`${i + 1}번째 섹션 끝`}</Divider>
+                <Divider>
+                  <Input.Group compact>
+                    <Input
+                      className="design-section-title"
+                      addonBefore={`${i + 1}번째 섹션 제목`}
+                      value={sect.title}
+                      onChange={updateSectionTitleChange(i)}
+                    ></Input>
+                    <Tooltip title="섹션을 아래로 옮기기">
+                      <Button
+                        icon={<CaretDownOutlined />}
+                        onClick={moveSectionDown(i)}
+                      />
+                    </Tooltip>
+                    <Tooltip title="섹션을 위로 옮기기">
+                      <Button
+                        icon={<CaretUpOutlined />}
+                        onClick={moveSectionUp(i)}
+                      />
+                    </Tooltip>
+                    <Tooltip title="이 섹션 제거">
+                      <Button
+                        icon={<DeleteOutlined />}
+                        onClick={removeSection(i)}
+                      />
+                    </Tooltip>
+                    <Tooltip title="이 섹션 아래에 새 섹션 추가">
+                      <Button
+                        icon={<PlusSquareOutlined />}
+                        onClick={addSectionAfter(i)}
+                      />
+                    </Tooltip>
+                  </Input.Group>
+                </Divider>
               </div>
             ))
           ) : (
