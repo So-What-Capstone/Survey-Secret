@@ -83,7 +83,6 @@ export const findFormByIdForOwnerQuery = gql`
               description
               required
               kind
-              gridType
             }
             ... on PersonalQuestion {
               _id

@@ -585,7 +585,6 @@ function SurveyDesign() {
 
             if (ques.type === "grid") {
               grid.push({
-                gridType: "One",
                 colContent: ques.colContent,
                 rowContent: ques.rowContent,
                 order: j,
