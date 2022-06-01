@@ -11,8 +11,6 @@ import {
   Spin,
   Tooltip,
   Button,
-  Dropdown,
-  Menu,
 } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -47,37 +45,6 @@ const CREATE_FORM_MUTATION = gql`
       ok
       error
       formId
-    }
-  }
-`;
-
-const EDIT_FORM_MUTATION2 = gql`
-  mutation editForm(
-    $title: String
-    $description: String
-    $state: FromState
-    $expiredAt: DateTime
-    $privacyExpiredAt: DateTime
-    $sections: [CreateSectionInput!]
-    $formId: String!
-    $representativeQuestionId: String!
-    $isPromoted: Boolean
-  ) {
-    editForm(
-      input: {
-        title: $title
-        description: $description
-        state: $state
-        expiredAt: $expiredAt
-        privacyExpiredAt: $privacyExpiredAt
-        sections: $sections
-        formId: $formId
-        representativeQuestionId: $representativeQuestionId
-        isPromoted: $isPromoted
-      }
-    ) {
-      ok
-      error
     }
   }
 `;
@@ -171,6 +138,7 @@ function SurveyDesign() {
   const [findTemplateById] = useLazyQuery(findTemplateByIdQuery);
   const [findFormById] = useLazyQuery(findFormByIdQuery);
   const [createForm] = useMutation(CREATE_FORM_MUTATION);
+  const [editForm] = useMutation(EDIT_FORM_MUTATION);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -546,13 +514,14 @@ function SurveyDesign() {
   async function save() {
     try {
       let newForm = {
+        formId: rawForm._id,
         title: title,
         description: description,
         state: state,
-        // createForm에 isPromoted가 없음. 추가되면 uncomment 할 것.
-        // isPromoted: isPromoted,
+        isPromoted: isPromoted,
         expiredAt: expiredAt.toDate(),
         privacyExpiredAt: privacyExpiredAt.toDate(),
+        representativeQuestionId: "-",
         sections: sections.map((sect, i) => {
           let opened = [],
             closed = [],
@@ -697,8 +666,7 @@ function SurveyDesign() {
         }),
       };
 
-      // 현재 newForm에 모두 들어있음.
-      await createForm({
+      await editForm({
         variables: {
           request: newForm,
         },
