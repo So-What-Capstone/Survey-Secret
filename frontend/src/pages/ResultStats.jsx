@@ -122,7 +122,7 @@ function MarketBasketAnalysis() {
 function CorrAnalysis({ form }) {
   const [questions, setQuestions] = useState([]);
   const [targetKeys, setTargetKeys] = useState([]);
-  const [getCorr, { loading, error, corr }] = useLazyQuery(getCorrQuery);
+  const [getCorr, { data }] = useLazyQuery(getCorrQuery);
 
   useEffect(() => {
     const currQues = [];
@@ -211,7 +211,7 @@ function CorrAnalysis({ form }) {
         }
       />
 
-      {corr && (
+      {data && (
         <Plot
           data={[
             {

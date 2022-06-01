@@ -9,7 +9,12 @@ export const findFormByIdQuery = gql`
         _id
         title
         state
+        description
+        isPromoted
+        expiredAt
+        privacyExpiredAt
         createdAt
+        updatedAt
         sections {
           _id
           title
@@ -17,6 +22,7 @@ export const findFormByIdQuery = gql`
           questions {
             ... on ClosedQuestion {
               _id
+              order
               content
               description
               required
@@ -30,14 +36,17 @@ export const findFormByIdQuery = gql`
             }
             ... on OpenedQuestion {
               _id
+              order
               content
               description
               required
               kind
               openedType
+              attachment
             }
             ... on LinearQuestion {
               _id
+              order
               content
               description
               required
@@ -49,18 +58,25 @@ export const findFormByIdQuery = gql`
             }
             ... on GridQuestion {
               _id
+              order
               content
               description
               required
               kind
+              rowContent
+              colContent
               gridType
             }
             ... on PersonalQuestion {
               _id
+              order
               content
               description
               required
               kind
+              encoded
+              attachment
+              personalType
             }
           }
         }

@@ -8,6 +8,7 @@ import {
   Switch,
   DatePicker,
   Radio,
+  Spin,
 } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -26,88 +27,16 @@ import oneImage from "../resources/question_images/one.png";
 import phoneImage from "../resources/question_images/phone.png";
 import shortImage from "../resources/question_images/short.png";
 import { EditQuestion } from "../modules";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { findTemplateByIdQuery } from "../API/findTemplateByIdQuery";
-
-const formId = "62790a9fa2b013e1c29571d7";
-const templateId = "62836d7185ffb60503c4fad6";
-
-const FIND_TEMPLATE_BY_ID_QUERY = findTemplateByIdQuery;
-
-const FIND_FORM_BY_ID_QUERY = gql`
-  query findFormById($formId: String!) {
-    findFormById(input: { formId: $formId }) {
-      ok
-      error
-      form {
-        _id
-        title
-        state
-        createdAt
-        sections {
-          _id
-          title
-          order
-          questions {
-            ... on ClosedQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              closedType
-              choices {
-                no
-                choice
-                activatedSection
-              }
-            }
-            ... on OpenedQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              openedType
-            }
-            ... on LinearQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              leftRange
-              rightRange
-              leftLabel
-              rightLabel
-            }
-            ... on GridQuestion {
-              _id
-              content
-              description
-              required
-              kind
-              gridType
-            }
-            ... on PersonalQuestion {
-              _id
-              content
-              description
-              required
-              kind
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import { findFormByIdQuery } from "../API/findFormByIdQuery";
 
 const CREATE_FORM_MUTATION = gql`
   mutation createForm($request: CreateFormInput!) {
     createForm(input: $request) {
       ok
       error
+      formId
     }
   }
 `;
@@ -121,15 +50,16 @@ const DELETE_FORM_MUTATION = gql`
   }
 `;
 
-function parseClosedQuestion(sections, ques) {
+function parseClosedQuestion(ques) {
   return {
     ...ques,
     type: "closed",
     allowMultiple: ques.closedType === "One" ? false : true,
-    choices: ques.choices.map((ch) => {
+    choices: ques.choices.map((ch, i) => {
       return {
         content: ch.choice,
         trigger: ch.activatedSection ? ch.activatedSection : -1,
+        key: `${ques._id}-${i}`,
       };
     }),
   };
@@ -197,58 +127,12 @@ function parseLinearQuestion(ques) {
 }
 
 function SurveyDesign() {
-  const {
-    loading: findTemplateLoading,
-    data: findTemplateData,
-    error: findTemplateError,
-  } = useQuery(FIND_TEMPLATE_BY_ID_QUERY, {
-    variables: { templateId },
-    onCompleted: (data) => {
-      console.log("find Template completed");
-      console.log(data);
-    },
-  });
+  const [findTemplateById] = useLazyQuery(findTemplateByIdQuery);
+  const [findFormById] = useLazyQuery(findFormByIdQuery);
+  const [createForm] = useMutation(CREATE_FORM_MUTATION);
+  const [deleteForm] = useMutation(DELETE_FORM_MUTATION);
 
-  const [createForm, { loading: mutationLoading }] = useMutation(
-    CREATE_FORM_MUTATION,
-    {
-      onCompleted: (data) => {
-        const {
-          createForm: { ok, error },
-        } = data;
-        if (!ok) {
-          console.log("OK IS FALSE");
-          console.log(error);
-          throw new Error(error);
-        }
-        console.log(data);
-      },
-      onError: (error) => {
-        console.log("ONERROR");
-        console.log(error.clientErrors);
-        console.log(error.extraInfo);
-        console.log(error.graphQLErrors);
-        console.log(error.message);
-        console.log(error.name);
-      },
-    }
-  );
-  const [deleteForm, { loading: deleteLoading }] = useMutation(
-    DELETE_FORM_MUTATION,
-    {
-      onCompleted: (data) => {
-        const {
-          deleteForm: { ok, error },
-        } = data;
-        if (!ok) {
-          throw new Error(error);
-        }
-        console.log("Delete Complete");
-      },
-    }
-  );
-
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [rawForm, setRawForm] = useState();
 
@@ -259,14 +143,19 @@ function SurveyDesign() {
   const [expiredAt, setExpiredAt] = useState(moment());
   const [privacyExpiredAt, setPrivacyExpiredAt] = useState(moment());
 
-  const [sections, setSections] = useState([]);
+  const [sections, setSections] = useState(null);
   const [lastFocused, setLastFocused] = useState(undefined);
 
-  useQuery(FIND_FORM_BY_ID_QUERY, {
-    variables: { formId: searchParams.get("id") },
-    onCompleted: (data) => {
-      const currForm = data.findFormById.form;
+  async function fetchFormData(id) {
+    try {
+      const res = await findFormById({
+        variables: {
+          formId: id,
+        },
+      });
+      const currForm = res.data.findFormById.form;
 
+      setRawForm(currForm);
       setTitle(currForm.title);
       setDescription(currForm.description);
       setState(currForm.state);
@@ -274,7 +163,6 @@ function SurveyDesign() {
       setExpiredAt(moment(currForm.expiredAt));
       setPrivacyExpiredAt(moment(currForm.privacyExpiredAt));
 
-      setRawForm(currForm);
       let rawSections = currForm.sections;
       if (rawSections.length === 0) {
         // 기본 섹션을 추가.
@@ -291,7 +179,7 @@ function SurveyDesign() {
           ...sect,
           questions: sect.questions.map((ques) => {
             if (ques.__typename === "ClosedQuestion") {
-              return parseClosedQuestion(rawSections, ques);
+              return parseClosedQuestion(ques);
             } else if (ques.__typename === "OpenedQuestion") {
               return parseOpenedQuestion(ques);
             } else if (ques.__typename === "GridQuestion") {
@@ -304,10 +192,120 @@ function SurveyDesign() {
           }),
         };
       });
-      console.log(processed);
       setSections(processed);
-    },
-  });
+    } catch (err) {
+      console.log(JSON.stringify(err));
+      alert(`설문 데이터를 불러오는데 실패하였습니다. ${err}`);
+      navigate("/my-survey");
+    }
+  }
+
+  function generateInputFromTemplate(currTemp) {
+    const processSection = (sec) => {
+      return {
+        title: sec.title ? sec.title : "",
+        order: sec.order,
+        opened: sec.questions
+          .filter((ques) => ques.kind === "Opened")
+          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+        closed: sec.questions
+          .filter((ques) => ques.kind === "Closed")
+          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+        grid: sec.questions
+          .filter((ques) => ques.kind === "Grid")
+          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+        personal: sec.questions
+          .filter((ques) => ques.kind === "Personal")
+          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+        linear: sec.questions
+          .filter((ques) => ques.kind === "Linear")
+          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+      };
+    };
+    return {
+      title: currTemp.title ? currTemp.title : "",
+      description: currTemp.description ? currTemp.description : "",
+      state: "Ready",
+      expiredAt: moment().add(1, "months").toDate(),
+      privacyExpiredAt: moment().add(1, "years").toDate(),
+      sections: currTemp.sections.map((sec) => processSection(sec)),
+    };
+  }
+
+  async function handleTemplate(id) {
+    let currTemp;
+    try {
+      const res = await findTemplateById({
+        variables: {
+          templateId: id,
+        },
+      });
+      currTemp = res.data.findTemplateById.template;
+    } catch (err) {
+      alert(`템플릿 데이터를 불러오는데 실패하였습니다. ${err}`);
+      navigate("/my-survey");
+    }
+
+    try {
+      const createInput = generateInputFromTemplate(currTemp);
+      const createRes = await createForm({
+        variables: {
+          request: createInput,
+        },
+      });
+      const formIdRes = createRes.data.createForm.formId;
+      setSearchParams({ id: formIdRes });
+    } catch (err) {
+      console.log(JSON.stringify(err));
+      alert(`새 설문지를 생성하는데 실패하였습니다. ${err}`);
+      navigate("/my-survey");
+    }
+  }
+
+  async function handleReuse(id) {
+    let currTemp;
+    try {
+      const res = await findFormById({
+        variables: {
+          formId: id,
+        },
+      });
+      currTemp = res.data.findFormById.form;
+    } catch (err) {
+      console.log(JSON.stringify(err));
+      alert(`기존의 설문 데이터를 불러오는데 실패하였습니다. ${err}`);
+      navigate("/my-survey");
+    }
+
+    try {
+      const createInput = generateInputFromTemplate(currTemp);
+      console.log(createInput);
+      const createRes = await createForm({
+        variables: {
+          request: createInput,
+        },
+      });
+      const formIdRes = createRes.data.createForm.formId;
+      setSearchParams({ id: formIdRes });
+    } catch (err) {
+      console.log(JSON.stringify(err));
+      alert(`새 설문지를 생성하는데 실패하였습니다. ${err}`);
+      navigate("/my-survey");
+    }
+  }
+
+  useEffect(() => {
+    if (searchParams.get("temp")) {
+      handleTemplate(searchParams.get("temp"));
+    } else if (searchParams.get("reuse")) {
+      handleReuse(searchParams.get("reuse"));
+    } else if (searchParams.get("id")) {
+      fetchFormData(searchParams.get("id"));
+    } else {
+      alert("올바르지 않은 접근입니다.");
+      navigate("/my-survey");
+    }
+  }, [searchParams]);
 
   const updateSectionTitleChange = (sectIdx) => (event) => {
     let newSections = [...sections];
@@ -503,169 +501,192 @@ function SurveyDesign() {
     setSections(newSections);
   };
 
-  function save() {
-    let newForm = {
-      title: title,
-      description: description,
-      state: state,
-      isPromoted: isPromoted,
-      expiredAt: expiredAt.toDate(),
-      privacyExpiredAt: privacyExpiredAt.toDate(),
-      sections: sections.map((sect, i) => {
-        let opened = [],
-          closed = [],
-          grid = [],
-          personal = [],
-          linear = [];
+  async function save() {
+    try {
+      let newForm = {
+        title: title,
+        description: description,
+        state: state,
+        // createForm에 isPromoted가 없음. 추가되면 uncomment 할 것.
+        // isPromoted: isPromoted,
+        expiredAt: expiredAt.toDate(),
+        privacyExpiredAt: privacyExpiredAt.toDate(),
+        sections: sections.map((sect, i) => {
+          let opened = [],
+            closed = [],
+            grid = [],
+            personal = [],
+            linear = [];
 
-        sect.questions.forEach((ques, j) => {
-          if (ques.type === "closed") {
-            closed.push({
-              order: j,
-              required: ques.required,
-              description: ques.description,
-              kind: "Closed",
-              content: ques.content,
-              closedType: ques.allowMultiple ? "Multiple" : "One",
-              choices: ques.choices.map((ch, k) => {
-                return {
-                  no: k,
-                  choice: ch.content,
-                  activatedSection:
-                    ch.trigger === -1 || sections.length <= ch.trigger
-                      ? null
-                      : ch.trigger,
-                };
-              }),
-            });
-          }
+          sect.questions.forEach((ques, j) => {
+            if (ques.type === "closed") {
+              closed.push({
+                order: j,
+                required: ques.required,
+                description: ques.description,
+                kind: "Closed",
+                content: ques.content,
+                closedType: ques.allowMultiple ? "Multiple" : "One",
+                choices: ques.choices.map((ch, k) => {
+                  return {
+                    no: k,
+                    choice: ch.content,
+                    activatedSection:
+                      ch.trigger === -1 || sections.length <= ch.trigger
+                        ? null
+                        : ch.trigger,
+                  };
+                }),
+              });
+            }
 
-          if (ques.type === "opened") {
-            opened.push({
-              openedType: "Default",
-              order: j,
-              required: ques.required,
-              description: ques.description,
-              kind: "Opened",
-              content: ques.content,
-            });
-          }
+            if (ques.type === "opened") {
+              opened.push({
+                openedType: "Default",
+                order: j,
+                required: ques.required,
+                description: ques.description,
+                kind: "Opened",
+                content: ques.content,
+                attachment: "",
+              });
+            }
 
-          if (ques.type === "linear") {
-            linear.push({
-              leftRange: ques.leftRange,
-              rightRange: ques.rightRange,
-              leftLabel: ques.leftLabel,
-              rightLabel: ques.rightLabel,
-              order: j,
-              required: ques.required,
-              description: ques.description,
-              kind: "Linear",
-              content: ques.content,
-            });
-          }
+            if (ques.type === "linear") {
+              linear.push({
+                leftRange: ques.leftRange,
+                rightRange: ques.rightRange,
+                leftLabel: ques.leftLabel,
+                rightLabel: ques.rightLabel,
+                order: j,
+                required: ques.required,
+                description: ques.description,
+                kind: "Linear",
+                content: ques.content,
+              });
+            }
 
-          if (ques.type === "grid") {
-            grid.push({
-              gridType: "One",
-              colContent: ques.colContent,
-              rowContent: ques.rowContent,
-              order: j,
-              required: ques.required,
-              description: ques.description,
-              kind: "Grid",
-              content: ques.content,
-            });
-          }
+            if (ques.type === "grid") {
+              grid.push({
+                gridType: "One",
+                colContent: ques.colContent,
+                rowContent: ques.rowContent,
+                order: j,
+                required: ques.required,
+                description: ques.description,
+                kind: "Grid",
+                content: ques.content,
+              });
+            }
 
-          if (ques.type === "phone") {
-            personal.push({
-              personalType: "Phone",
-              encoded: true,
-              order: j,
-              required: ques.required,
-              description: ques.description,
-              kind: "Personal",
-              content: ques.content,
-            });
-          }
+            if (ques.type === "phone") {
+              personal.push({
+                personalType: "Phone",
+                encoded: true,
+                order: j,
+                required: ques.required,
+                description: ques.description,
+                kind: "Personal",
+                content: ques.content,
+              });
+            }
 
-          if (ques.type === "email") {
-            personal.push({
-              personalType: "Email",
-              encoded: true,
-              order: j,
-              required: ques.required,
-              description: ques.description,
-              kind: "Personal",
-              content: ques.content,
-            });
-          }
+            if (ques.type === "email") {
+              personal.push({
+                personalType: "Email",
+                encoded: true,
+                order: j,
+                required: ques.required,
+                description: ques.description,
+                kind: "Personal",
+                content: ques.content,
+              });
+            }
 
-          if (ques.type === "date") {
-            opened.push({
-              openedType: "Date",
-              order: j,
-              required: ques.required,
-              description: ques.description,
-              kind: "Opened",
-              content: ques.content,
-            });
-          }
+            if (ques.type === "date") {
+              opened.push({
+                openedType: "Date",
+                order: j,
+                required: ques.required,
+                description: ques.description,
+                kind: "Opened",
+                content: ques.content,
+                attachment: "",
+              });
+            }
 
-          if (ques.type === "address") {
-            opened.push({
-              openedType: "Address",
-              order: j,
-              required: ques.required,
-              description: ques.description,
-              kind: "Opened",
-              content: ques.content,
-            });
-          }
-        });
+            if (ques.type === "address") {
+              opened.push({
+                openedType: "Address",
+                order: j,
+                required: ques.required,
+                description: ques.description,
+                kind: "Opened",
+                content: ques.content,
+                attachment: "",
+              });
+            }
+          });
 
-        return {
-          order: i,
-          opened: opened,
-          closed: closed,
-          grid: grid,
-          personal: personal,
-          linear: linear,
-        };
-      }),
-    };
+          return {
+            order: i,
+            opened: opened,
+            closed: closed,
+            grid: grid,
+            personal: personal,
+            linear: linear,
+          };
+        }),
+      };
 
-    deleteForm({
-      variables: {
-        formId: rawForm._id,
-      },
-    });
-
-    // 현재 newForm에 모두 들어있음.
-    createForm({
-      variables: {
-        request: newForm,
-      },
-    });
+      // 현재 newForm에 모두 들어있음.
+      await createForm({
+        variables: {
+          request: newForm,
+        },
+      });
+      await deleteForm({
+        variables: {
+          formId: rawForm._id,
+        },
+      });
+    } catch (err) {
+      console.log(JSON.stringify(err));
+      return false;
+    }
+    return true;
   }
 
-  function saveWorks() {
-    save();
-    message.success("작업 내역을 저장하였습니다.");
+  async function saveWorks() {
+    if (await save()) {
+      message.success("작업 내역을 저장하였습니다.");
+    } else {
+      message.error("작업 내역을 저장하지 못했습니다.");
+    }
   }
 
-  function saveAndExit() {
-    save();
-    Modal.confirm({
-      title: "'내 설문'으로 나갈까요?",
-      icon: <ExclamationCircleOutlined />,
-      content: "지금까지의 작업은 저장되었습니다.",
-      onOk() {
-        navigate("/my-survey");
-      },
-      onCancel() {},
-    });
+  async function saveAndExit() {
+    if (await save()) {
+      Modal.confirm({
+        title: "'내 설문'으로 나갈까요?",
+        icon: <ExclamationCircleOutlined />,
+        content: "지금까지의 작업은 저장되었습니다.",
+        onOk() {
+          navigate("/my-survey");
+        },
+        onCancel() {},
+      });
+    } else {
+      Modal.confirm({
+        title: "'내 설문'으로 나갈까요?",
+        icon: <ExclamationCircleOutlined />,
+        content: "작업 내역이 저장되지 않았습니다.",
+        onOk() {
+          navigate("/my-survey");
+        },
+        onCancel() {},
+      });
+    }
   }
 
   return (
@@ -710,37 +731,43 @@ function SurveyDesign() {
           </div>
         </div>
         <div className="design-preview-body">
-          {sections.map((sect, i) => (
-            <div className="design-section" key={sect._id}>
-              <Divider>
-                <Input
-                  className="design-section-title"
-                  addonBefore={`${i + 1}번째 섹션 제목`}
-                  value={sect.title}
-                  onChange={updateSectionTitleChange(i)}
-                ></Input>
-              </Divider>
+          {sections ? (
+            sections.map((sect, i) => (
+              <div className="design-section" key={sect._id}>
+                <Divider>
+                  <Input
+                    className="design-section-title"
+                    addonBefore={`${i + 1}번째 섹션 제목`}
+                    value={sect.title}
+                    onChange={updateSectionTitleChange(i)}
+                  ></Input>
+                </Divider>
 
-              {sect.questions.length === 0 ? (
-                <Empty description="왼쪽 팔레트에서 문항을 추가해보세요!"></Empty>
-              ) : (
-                sect.questions.map((ques, j) => (
-                  <EditQuestion
-                    onFocus={() => {
-                      setLastFocused([i, j]);
-                    }}
-                    onRemove={removeQuestion(i, j)}
-                    key={ques._id}
-                    sectionCount={sections.length}
-                    data={ques}
-                    onDataChange={updateQuestionData(i, j)}
-                  ></EditQuestion>
-                ))
-              )}
+                {sect.questions.length === 0 ? (
+                  <Empty description="왼쪽 팔레트에서 문항을 추가해보세요!"></Empty>
+                ) : (
+                  sect.questions.map((ques, j) => (
+                    <EditQuestion
+                      onFocus={() => {
+                        setLastFocused([i, j]);
+                      }}
+                      onRemove={removeQuestion(i, j)}
+                      key={ques._id}
+                      sectionCount={sections.length}
+                      data={ques}
+                      onDataChange={updateQuestionData(i, j)}
+                    ></EditQuestion>
+                  ))
+                )}
 
-              <Divider>{`${i + 1}번째 섹션 끝`}</Divider>
+                <Divider>{`${i + 1}번째 섹션 끝`}</Divider>
+              </div>
+            ))
+          ) : (
+            <div className="design-preview-spin">
+              <Spin tip="설문지를 준비하는 중입니다!"></Spin>
             </div>
-          ))}
+          )}
         </div>
       </div>
       <div className="design-info">
