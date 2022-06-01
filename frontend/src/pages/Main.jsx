@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { MainContent } from "../modules";
 import "../styles/Main.scss";
 import SurveyIconsTray from "../modules/SurveyIconsTray";
 import SearchIcon from "@mui/icons-material/Search";

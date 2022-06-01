@@ -1,0 +1,17 @@
+.pay-con {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  .pay-panel {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    padding: 0.5rem 10vw 2rem 10vw;
+    background-color: #172A4600;
+    border-radius: 10px;
+    margin: 4rem 3vw 4rem 3vw;
+    width: 100%;
+    min-width: 40rem;
+    height: 45rem;
+  }
+}

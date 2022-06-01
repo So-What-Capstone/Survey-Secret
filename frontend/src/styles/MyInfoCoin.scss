@@ -86,3 +86,20 @@
     }
   }
 }
+
+
+.modal-con {
+  background-color: #CCD6F6 !important;
+  color: #0A182D !important;
+  .modal-button {
+    background-color: #0A182D;
+    border: none;
+    color: #CCD6F6;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 530;
+    text-align: center;
+    width: 3.5rem;
+    height: 3rem;
+  }
+}
