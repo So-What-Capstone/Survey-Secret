@@ -521,7 +521,7 @@ function SurveyDesign() {
         isPromoted: isPromoted,
         expiredAt: expiredAt.toDate(),
         privacyExpiredAt: privacyExpiredAt.toDate(),
-        representativeQuestionId: "-",
+        representativeQuestionId: null,
         sections: sections.map((sect, i) => {
           let opened = [],
             closed = [],
@@ -655,6 +655,7 @@ function SurveyDesign() {
           });
 
           return {
+            title: sect.title,
             order: i,
             opened: opened,
             closed: closed,
