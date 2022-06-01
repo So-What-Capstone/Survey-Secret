@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const createAccountQuery = gql`
+export const createSubmissionMutation = gql`
   mutation createSubmission($request: CreateSubmissionInput!) {
     createSubmission(input: $request) {
       ok
