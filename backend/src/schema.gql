@@ -60,12 +60,6 @@ type GridQuestion {
   order: Float!
   rowContent: [String!]
   colContent: [String!]
-  gridType: GridQuestionType
-}
-
-enum GridQuestionType {
-  One
-  Multiple
 }
 
 type LinearQuestion {
@@ -514,7 +508,6 @@ input CreateGridQuestionInput {
   order: Float!
   rowContent: [String!]
   colContent: [String!]
-  gridType: GridQuestionType
 }
 
 input CreatePersonalQuestionInput {
@@ -568,7 +561,7 @@ input CreateSubmissionInput {
 
 input SectionInCreateSubmissionInput {
   sectionId: String!
-  answers: [CreateAnswersInput!]
+  answers: CreateAnswersInput
 }
 
 input CreateAnswersInput {
