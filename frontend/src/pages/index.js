@@ -17,6 +17,7 @@ export { default as MyInfo } from "./MyInfo";
 export { default as MyInfoEdit } from "./MyInfoEdit";
 export { default as MyInfoPremium } from "./MyInfoPremium";
 export { default as MyInfoCoin } from "./MyInfoCoin";
+export { default as MyInfoPay } from "./MyInfoPay";
 export { default as Test } from "./Test";
 export { default as Respond } from "./Respond";
 export { default as Findpw } from "./Findpw";

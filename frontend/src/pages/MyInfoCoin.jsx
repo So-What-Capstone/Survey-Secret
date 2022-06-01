@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ClipTray from "../modules/ClipTray";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Pagination from "@material-ui/lab/Pagination";
 import "../styles/Clips.css";
 import "../styles/MyInfoCoin.scss";
@@ -145,13 +145,13 @@ function MyInfoCoin() {
               {coinChargeList.map((coinCharge) => (
                 <TableRow key={coinCharge.id}>
                   <TableCell className="table-text">
-                    {coinCharge.coinAmount}
+                    {coinCharge.coinAmount} 코인
                   </TableCell>
                   <TableCell className="table-text">
                     {coinCharge.paymentType}
                   </TableCell>
                   <TableCell className="table-text">
-                    {coinCharge.cashAmount}
+                    {coinCharge.cashAmount} 원
                   </TableCell>
                   <TableCell className="table-text">
                     {coinCharge.chargedAt}
@@ -174,7 +174,7 @@ function MyInfoCoin() {
               {coinConsumeList.map((coinConsume) => (
                 <TableRow key={coinConsume.id}>
                   <TableCell className="table-text">
-                    {coinConsume.coinAmount}
+                    {coinConsume.coinAmount} 코인
                   </TableCell>
                   <TableCell className="table-text">
                     {coinConsume.usedFor}
@@ -199,12 +199,7 @@ function MyInfoCoin() {
         <div className="panel-title-small">나의 코인</div>
         <div className="panel-row">
           <div className="panel-text">{coin} 코인</div>
-          <input
-            type="button"
-            value="충전하기"
-            onClick={chargeCoin}
-            className="panel-btn"
-          />
+          <input type="button" value="충전하기" className="panel-btn" />
         </div>
         <Divider className="panel-divider" />
         <div className="panel-title-small">코인 충전/사용 내역</div>

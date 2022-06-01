@@ -44,6 +44,7 @@ function App() {
             <Route path="/my-info/edit" element={<Pages.MyInfoEdit />} />
             <Route path="/my-info/premium" element={<Pages.MyInfoPremium />} />
             <Route path="/my-info/coin" element={<Pages.MyInfoCoin />} />
+            <Route path="/my-info/pay" element={<Pages.MyInfoPay />} />
             <Route path="/search" element={<Pages.SearchResult />} />
             {/* 문항 컴포넌트 테스트용 공간 */}
             <Route path="/test" element={<Pages.Test />} />
