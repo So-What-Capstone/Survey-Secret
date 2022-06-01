@@ -22,9 +22,11 @@ export type ClosedQuestionDocument = ClosedQuestion & Document;
 @InputType('ClosedQuestionChoiceInput', { isAbstract: true })
 @ObjectType()
 export class ClosedQuestionChoice {
+  //선지 번호
   @Field((type) => Number)
   no: number;
 
+  //선지 내용
   @Field((type) => String)
   choice: string;
 

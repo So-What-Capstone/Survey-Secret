@@ -17,9 +17,10 @@ export class EditFormInput extends PartialType(CreateFormInput) {
   @IsMongoId()
   formId: string;
 
-  @Field((type) => String)
+  @Field((type) => String, { nullable: true })
   @IsMongoId()
-  representativeQuestionId: string;
+  @IsOptional()
+  representativeQuestionId?: string;
 
   @Field((type) => Boolean, { nullable: true })
   @IsBoolean()
