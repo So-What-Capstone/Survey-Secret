@@ -7,7 +7,7 @@
     flex-direction: column;
     align-content: center;
     padding: 2rem 3vw 2rem 3vw;
-    background-color: #172A46;
+    background-color: #0A182D60;
     border-radius: 10px;
     margin: 4rem 3vw 4rem 3vw;
     width: 100%;
@@ -19,6 +19,7 @@
       .panel-title {
         color: #65FFDC;
         font-size: 24px;
+        border: none !important;
       }
     }
     .table-con {
