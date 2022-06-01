@@ -16,6 +16,9 @@ import {
 } from './dtos/get-keyword-analysis.dto';
 import mongoose from 'mongoose';
 import { GetDescribeInput, GetDescribeOutput } from './dtos/get-describe.dto';
+import { QuestionType } from '../forms/questions/question.typeDefs';
+import { OpenedQuestion } from './../forms/questions/schemas/opened-question.schema';
+import { OpenedQuestionType } from '../forms/questions/schemas/opened-question.schema';
 
 @Injectable()
 export class StatService {
@@ -26,6 +29,37 @@ export class StatService {
     private readonly formModel: Model<FormDocument>,
   ) {}
 
+  //questionKind : 질문 종류(Opened,Closed,...) questionDetailType : Opened면 Default 등등, questionTypeKor,questionDetailTypeKor : 안내메세지에 들어갈 타입이름(한국어)
+  async findQuestion(formId: string, questionIds: string[]) {
+    const mongooseQuestionIds = questionIds.map(
+      (id) => new mongoose.Types.ObjectId(id),
+    );
+
+    //type 검사를 위해서 분리해서 연산
+    const form = await this.formModel.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(formId) },
+      },
+      { $unwind: '$sections' },
+      { $unwind: '$sections.questions' },
+      {
+        $match: {
+          'sections.questions._id': { $in: [...mongooseQuestionIds] },
+        },
+      },
+      {
+        $project: { sections: { questions: true } },
+      },
+    ]);
+
+    if (form.length === 0) {
+      throw new Error('질문이 존재하지 않습니다');
+    }
+
+    //만약 질문이 여러개라면 array return?
+    return form;
+  }
+
   async getKeywordAnalysis({
     formId,
     questionId,
@@ -33,23 +67,46 @@ export class StatService {
     try {
       const END_POINT = `${process.env.STAT_END_POINT}/stats/keywords`;
 
-      const { submissions } = await this.formModel
-        .findOne({
-          _id: formId,
-        })
-        .populate('submissions');
+      const [form] = await this.findQuestion(formId, [questionId]);
+
+      if (form.sections.questions.kind !== QuestionType.Opened) {
+        return { ok: false, error: `질문의 타입이 주관식이 아닙니다.` };
+      } else {
+        if (form.sections.questions.openedType !== OpenedQuestionType.Default) {
+          return {
+            ok: false,
+            error: `주관식 질문의 타입이 단답형/장답형이 아닙니다`,
+          };
+        }
+      }
+
+      const submissions = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+        { $unwind: '$submissions' },
+        { $unwind: '$submissions.answers' },
+        {
+          $match: {
+            'submissions.answers.question': new mongoose.Types.ObjectId(
+              questionId,
+            ),
+          },
+        },
+        {
+          $project: { submissions: { answers: { openedAnswer: true } } },
+        },
+      ]);
 
       const answers: [string?] = [];
       for (const submission of submissions) {
-        let answer: OpenedAnswer = submission.answers.find(
-          (answer) => answer.question.toString() === questionId,
-        );
-
-        if (answer.kind !== 'Opened') {
-          return { ok: false, error: '답변의 타입이 주관식이 아닙니다.' };
-        }
-
-        answers.push(answer.openedAnswer);
+        answers.push(submission.submissions.answers.openedAnswer);
       }
 
       if (answers.length === 0) {
@@ -65,10 +122,12 @@ export class StatService {
 
       let { result } = await response.json();
 
-      //need to store in DB
+      // need to store in DB
       //need to make stats entity
       //need to analyze positive/negative word
       //need to analyze verb, adjective
+
+      console.log(result);
 
       return { ok: true, result };
     } catch (error) {
@@ -77,6 +136,23 @@ export class StatService {
   }
 
   async createJsonData(formId: string, questionIds: string[]): Promise<Object> {
+    //type checking
+    const forms = await this.findQuestion(formId, questionIds);
+
+    for (const form of forms) {
+      if (
+        form.sections.questions.kind !== QuestionType.Opened &&
+        form.sections.questions.kind !== QuestionType.Linear
+      ) {
+        throw new Error('질문의 타입이 주관식 또는 선형배율이 아닙니다.');
+      } else if (
+        form.sections.questions.kind === QuestionType.Opened &&
+        form.sections.questions.openedType !== OpenedQuestionType.Number
+      ) {
+        throw new Error('주관식 질문의 타입이 숫자형이 아닙니다.');
+      }
+    }
+
     const mongooseQuestionIds = questionIds.map(
       (id) => new mongoose.Types.ObjectId(id),
     );
@@ -100,21 +176,38 @@ export class StatService {
           },
         },
       },
+      {
+        $project: { submissions: { _id: true, answers: true }, _id: false },
+      },
     ]);
 
     const jsonData = {};
 
     form.forEach((f) => {
-      if (jsonData[f.submissions._id]) {
-        const obj = jsonData[f.submissions._id];
-        obj[f.submissions.answers.question] =
-          f.submissions.answers.openedAnswer;
-        jsonData[f.submissions._id] = obj;
+      const {
+        submissions: { answers, _id },
+      } = f;
+
+      if (jsonData[_id]) {
+        const obj = jsonData[_id];
+
+        if (answers.openedAnswer) {
+          obj[answers.question] = answers.openedAnswer.toString();
+        } else if (answers.linearAnswer) {
+          obj[answers.question] = answers.linearAnswer.toString();
+        }
+
+        jsonData[_id] = obj;
       } else {
         const obj = {};
-        obj[f.submissions.answers.question] =
-          f.submissions.answers.openedAnswer;
-        jsonData[f.submissions._id] = obj;
+
+        if (answers.openedAnswer) {
+          obj[answers.question] = answers.openedAnswer.toString();
+        } else if (answers.linearAnswer) {
+          obj[answers.question] = answers.linearAnswer.toString();
+        }
+
+        jsonData[_id] = obj;
       }
     });
 

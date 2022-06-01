@@ -51,6 +51,7 @@ function PhoneQuestion({ config, setValue }) {
         type="text"
         value={internalVal.data}
         onChange={onChange}
+        placeholder="전화번호를 숫자만 입력해 주세요."
       />
     </div>
   );
@@ -144,6 +145,7 @@ function EmailQuestion({ config, setValue }) {
         value={internalVal.id}
         onChange={onMailChanged}
         maxLength={50}
+        placeholder="이메일을 입력해 주세요."
       />
     </div>
   );

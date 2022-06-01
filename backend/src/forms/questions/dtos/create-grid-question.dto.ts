@@ -13,7 +13,7 @@ import { QuestionType } from 'src/forms/questions/question.typeDefs';
 @InputType()
 export class CreateGridQuestionInput extends IntersectionType(
   CommonCreateQuestionInput,
-  PickType(GridQuestion, ['rowContent', 'colContent', 'gridType']),
+  PickType(GridQuestion, ['rowContent', 'colContent']),
 ) {}
 
 @ObjectType()

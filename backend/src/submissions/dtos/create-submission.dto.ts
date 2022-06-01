@@ -7,8 +7,8 @@ export class SectionInCreateSubmissionInput {
   @Field((type) => String)
   sectionId: string;
 
-  @Field((type) => [CreateAnswersInput], { nullable: true })
-  answers?: CreateAnswersInput[];
+  @Field((type) => CreateAnswersInput, { nullable: true })
+  answers?: CreateAnswersInput;
 }
 
 @InputType()

@@ -61,7 +61,7 @@ function TableItem({
   );
 
   return (
-    <div className="list-item">
+    <div className="contact-list-item">
       <input
         type="checkbox"
         checked={bChecked}
@@ -170,7 +170,7 @@ function ContactList({
   };
 
   return (
-    <div className="list-panel">
+    <div className="contact-list-panel">
       <div className="panel-row">
         <label htmlFor="formSelect">설문 선택</label>
         <Select

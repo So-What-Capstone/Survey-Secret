@@ -269,14 +269,17 @@ export class FormsService {
         return { ok: false, error: '폼을 찾을 수 없습니다.' };
       }
 
-      if (
-        !form.sections.find((section) =>
-          section.questions.find(
-            (question) => question._id.toString() === representativeQuestionId,
-          ),
-        )
-      ) {
-        return { ok: false, error: '폼 안에 존재하지 않는 대표문항입니다.' };
+      if (representativeQuestionId) {
+        if (
+          !form.sections.find((section) =>
+            section.questions.find(
+              (question) =>
+                question._id.toString() === representativeQuestionId,
+            ),
+          )
+        ) {
+          return { ok: false, error: '폼 안에 존재하지 않는 대표문항입니다.' };
+        }
       }
 
       if (form.owner._id.toString() !== owner._id.toString()) {

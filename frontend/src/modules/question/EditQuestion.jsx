@@ -62,14 +62,21 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
   }
 
   function addChoice() {
-    let newChoices = [...choices, { content: "", trigger: -1 }];
+    let newChoices = [
+      ...choices,
+      { content: "", trigger: -1, key: new Date().getTime() },
+    ];
     setChoices(newChoices);
     onDataChange({ ...data, choices: newChoices });
   }
 
   const addChoiceBelow = (i) => () => {
     let newChoices = [...choices];
-    newChoices.splice(i + 1, 0, { content: "", trigger: -1 });
+    newChoices.splice(i + 1, 0, {
+      content: "",
+      trigger: -1,
+      key: new Date().getTime(),
+    });
     setChoices(newChoices);
     onDataChange({ ...data, choices: newChoices });
   };
@@ -123,7 +130,7 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
         <Empty description="문항에 선택지가 없습니다."></Empty>
       ) : (
         choices.map((c, i) => (
-          <div key={i} className="edit-closed-row">
+          <div key={c.key} className="edit-closed-row">
             <Input
               className="edit-closed-input"
               placeholder="선택지 내용"
@@ -493,6 +500,7 @@ function EditQuestion({
   ...rprops
 }) {
   const [quesBody, setQuesBody] = useState(<React.Fragment></React.Fragment>);
+  const [required, setRequired] = useState(!!data.required);
   const [content, setContent] = useState(data.content);
   const [description, setDescription] = useState(data.description);
   const [type, setType] = useState(data.type);
@@ -534,6 +542,11 @@ function EditQuestion({
     onRemove();
   }
 
+  function handleCheckboxChange(event) {
+    setRequired(event.target.checked);
+    onDataChange({ ...data, required: event.target.checked });
+  }
+
   return (
     <Space className="edit-root" direction="vertical" {...rprops}>
       <Input
@@ -556,6 +569,9 @@ function EditQuestion({
           </Select>
         }
       ></Input>
+      <Checkbox checked={required} onChange={handleCheckboxChange}>
+        필수적으로 응답하도록 설정
+      </Checkbox>
       <Input
         placeholder="문항의 부가 설명을 입력하세요."
         value={description}

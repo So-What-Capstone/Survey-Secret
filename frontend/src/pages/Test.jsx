@@ -16,7 +16,6 @@ import {
 
 import * as configs from "../modules/question/test_config";
 import Form from "../modules/Form";
-import { template_list } from "../modules/Templates";
 
 function Test() {
   const [section1, setSection1] = useState({
@@ -198,7 +197,6 @@ function Test() {
     <div className="root-container">
       <div className="panel">
         미리보기
-        {/* <Form _config={template_list[0]} /> */}
         <Form _config={form1} />
       </div>
       <div className="panel">
