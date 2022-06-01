@@ -500,6 +500,7 @@ function EditQuestion({
   ...rprops
 }) {
   const [quesBody, setQuesBody] = useState(<React.Fragment></React.Fragment>);
+  const [required, setRequired] = useState(!!data.required);
   const [content, setContent] = useState(data.content);
   const [description, setDescription] = useState(data.description);
   const [type, setType] = useState(data.type);
@@ -541,6 +542,11 @@ function EditQuestion({
     onRemove();
   }
 
+  function handleCheckboxChange(event) {
+    setRequired(event.target.checked);
+    onDataChange({ ...data, required: event.target.checked });
+  }
+
   return (
     <Space className="edit-root" direction="vertical" {...rprops}>
       <Input
@@ -563,6 +569,9 @@ function EditQuestion({
           </Select>
         }
       ></Input>
+      <Checkbox checked={required} onChange={handleCheckboxChange}>
+        필수적으로 응답하도록 설정
+      </Checkbox>
       <Input
         placeholder="문항의 부가 설명을 입력하세요."
         value={description}
