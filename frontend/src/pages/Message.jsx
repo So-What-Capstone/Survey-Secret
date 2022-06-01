@@ -6,7 +6,7 @@ import "../styles/Message.scss";
 
 function Message() {
   const clips = [
-    { title: "문자 서비스", link_enabled: false, link: "/", color_idx: 0 },
+    { title: "문자 서비스", link_enabled: false, link: ".", color_idx: 0 },
   ];
 
   /* 설문 + 수신인 정보 dummy data*/
@@ -121,6 +121,7 @@ function Message() {
               placeholder="내용을 입력하세요."
               value={textValue}
               onChange={handleTextValue}
+              style={{ borderRadius: "0.2rem" }}
             />
           </div>
           <input
