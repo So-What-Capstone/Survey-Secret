@@ -9,13 +9,6 @@ import { IsEnum } from 'class-validator';
 import { virtualSchemaOption } from './../../../common/schemas/option.schema';
 import { QuestionType } from '../question.typeDefs';
 
-export enum GridQuestionType {
-  One = 'One',
-  Multiple = 'Multiple',
-}
-
-registerEnumType(GridQuestionType, { name: 'GridQuestionType' });
-
 export type GridQuestionDocument = GridQuestion & Document;
 
 @InputType('GridQuestionInputType', { isAbstract: true })
@@ -47,16 +40,6 @@ export class GridQuestion {
   @Field((type) => [String], { nullable: true })
   @Prop({ type: [{ type: String, trim: true }] })
   colContent?: string[];
-
-  @Field((type) => GridQuestionType, { nullable: true })
-  @Prop({
-    type: String,
-    enum: GridQuestionType,
-    default: GridQuestionType.One,
-    required: true,
-  })
-  @IsEnum(GridQuestionType)
-  gridType?: GridQuestionType;
 }
 
 export const GridQuestionSchema = SchemaFactory.createForClass(GridQuestion);

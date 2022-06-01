@@ -56,7 +56,6 @@ export const FIND_FORM_BY_ID_QUERY = gql`
               rowContent
               colContent
               kind
-              gridType
             }
             ... on PersonalQuestion {
               _id

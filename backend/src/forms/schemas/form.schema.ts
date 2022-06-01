@@ -95,7 +95,7 @@ export class Form extends CoreSchema {
 
   @Field((type) => Question, { nullable: true })
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Question' })
-  representativeQuestion: Question;
+  representativeQuestion?: Question;
 }
 
 export const FormSchema = SchemaFactory.createForClass(Form);

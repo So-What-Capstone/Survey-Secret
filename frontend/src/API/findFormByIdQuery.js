@@ -65,7 +65,6 @@ export const findFormByIdQuery = gql`
               kind
               rowContent
               colContent
-              gridType
             }
             ... on PersonalQuestion {
               _id
