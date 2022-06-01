@@ -52,7 +52,7 @@ function ResultList() {
   const [repList, setRepList] = useState(listItem_temp); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool)} ]
   const [secList, setSecList] = useState([]);
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_FOR_OWNER_QUERY, {
-    variables: { formId: "628f624147f00d90c857dc32" },
+    variables: { formId: formId },
     onCompleted: (data) => {
       // when error occured
       if (!data.findFormByIdForOwner.ok) {
