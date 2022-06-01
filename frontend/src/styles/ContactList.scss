@@ -3,13 +3,14 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  background-color: #0A182D60;
+  background-color: #0a182d60;
   padding: 2%;
   border-radius: 0.2rem;
   flex: 4 1 0;
   margin-right: 2vw;
   height: 100%;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 
   .panel-row {
     //설문선택row / 수신인선택 row
