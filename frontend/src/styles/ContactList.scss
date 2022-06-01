@@ -9,8 +9,8 @@
   flex: 4 1 0;
   margin-right: 2vw;
   height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto;
+  min-width: 21rem;
 
   .panel-row {
     //설문선택row / 수신인선택 row
@@ -19,7 +19,6 @@
     text-align: left;
     // margin: 1rem 0px 1rem 0px;
     width: 100%;
-    min-width: 21rem;
     label {
       color: #65ffdc;
       margin: 0.1rem 0 0.1rem 0;
