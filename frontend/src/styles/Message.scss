@@ -1,47 +1,52 @@
-.contact-con{ //전체
+.contact-con {
+  //전체
   display: flex;
   flex-direction: row;
   width: 100vw;
+  max-height: 95vh;
 
-  .message-con { //clip을 뺀 부분
+  .message-con {
+    //clip을 뺀 부분
     display: flex;
     flex-direction: row;
     width: 100%;
+    padding: 3.5rem;
 
-    .detail-panel { //연락내용 패널
+    .detail-panel {
+      //연락내용 패널
       text-align: center;
       display: flex;
       flex-direction: column;
-      padding: 3rem 3vw 3rem 3vw;
       background-color: #0A182D60;
-      border-radius: 10px;
+      padding: 2%;
+      border-radius: 0.2rem;
       flex: 4 1 0;
-      margin: 5rem 4vw 5rem 4vw;
-      .sender-row { //발신번호 row
+      .sender-row {
+        //발신번호 row
         display: flex;
         flex-direction: row;
         text-align: center;
-        margin: 1rem 0px 1rem 0px;
         width: 100%;
         min-width: 21rem;
         label {
-          color: #65FFDC;
-          padding: 0.8rem 0.5rem 0.8rem 0vw;
+          color: #65ffdc;
+          padding: 0.2rem 0.2rem 0.2rem 0vw;
           font-size: 18px;
           flex: 1 1 0;
           text-align: left;
           min-width: 5rem;
         }
         input {
-          background-color: #ffffff19;
-          color: #CCD6F6;
+          background-color: whitesmoke;
+          color: black;
           border: none;
-          border-radius: 10px;
-          padding: 0.7rem 2vw 0.7rem 2vw;
+          border-radius: 0.1rem;
+          padding: 0.3rem 2vw 0.3rem 2vw;
           flex: 3 1 0;
         }
       }
-      .content-row { //발신내용 row
+      .content-row {
+        //발신내용 row
         display: flex;
         flex-direction: column;
         text-align: center;
@@ -52,7 +57,7 @@
           display: flex;
           flex-direction: row;
           margin: 0px 0px 0.8rem 0px;
-          color: #65FFDC;
+          color: #65ffdc;
           font-size: 18px;
           span {
             flex: 1 1 0;
@@ -61,21 +66,22 @@
         textarea {
           border: none;
           border-radius: 10px;
-          background-color: #F5F5F5;
+          background-color: #f5f5f5;
           height: 20rem;
           padding: 1.5rem 2vw 1.5rem 2vw;
         }
       }
       .send-btn {
         margin: 1rem 0px 1rem 0px;
-        padding: 0.7rem 0px 0.7rem 0px;
-        background-color: #65FFDC19;
-        border: 1px solid #65FFDC;
-        border-radius: 10px;
-        color: #65FFDC;
+        padding: 0.5rem 0px 0.5rem 0px;
+        background-color: #65ffdc19;
+        border: 1px solid #65ffdc;
+        border-radius: 0.2rem;
+        color: #65ffdc;
         font-size: 25px;
         width: 100%;
-      }      
+        cursor: pointer;
+      }
     }
   }
 }

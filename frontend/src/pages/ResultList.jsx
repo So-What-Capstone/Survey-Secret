@@ -1,115 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { ResultClipTray, ResponseDetail } from "../modules";
+import {
+  ResultClipTray,
+  ResultForm,
+  DrawLots,
+  RepresentativeQ,
+  ResponseList,
+} from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "../styles/ResultList.scss";
-import { Table, Select, InputNumber, Button, Divider, Tag, Space } from "antd";
-import PropTypes from "prop-types";
-import { StarFilled, StarOutlined, CloseCircleFilled } from "@ant-design/icons";
-import { gql, useQuery } from "@apollo/client";
+import { CloseCircleFilled } from "@ant-design/icons";
+import { useQuery } from "@apollo/client";
 import { findFormByIdForOwnerQuery } from "../API/findFormByIdForOwnerQuery";
-const { Option } = Select;
 
 const FIND_FORM_BY_ID_FOR_OWNER_QUERY = findFormByIdForOwnerQuery;
 
-function DrawLots({ answers }) {
-  // 답변 추첨
-  const [numLots, setNumLots] = useState(1);
-  const [winNums, setWinNums] = useState([]);
-
-  const onChange = (e) => {
-    setNumLots(e);
-  };
-  const onClick_draw = () => {
-    if (!answers) return;
-    if (numLots > answers.length) return;
-    // draw lots
-    let array = answers.slice();
-    for (let i = array.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    // console.log(answers);
-    setWinNums(array.slice(0, numLots));
-  };
-  const onClick_save = () => {
-    let result = confirm(
-      "현재 즐겨찾기 상태는 지워지고 추첨결과만 즐겨찾기에 등록됩니다. 계속하시겠습니까?"
-    );
-    if (!result) return;
-    // 즐겨찾기 초기화 winNums만 즐겨찾기에 등록
-  };
-  let max = answers ? answers.length : 1;
-  return (
-    <div className="draw-con">
-      <div className="draw-line">
-        <div className="draw-label">몇 개를 뽑을까요?</div>
-        <InputNumber
-          style={{ marginRight: "1rem" }}
-          min={1}
-          max={max}
-          value={numLots}
-          onChange={onChange}
-        />
-        <Button onClick={onClick_draw}>추첨하기</Button>
-      </div>
-      <Divider orientation="left">
-        <div className="draw-result-label">추첨결과</div>
-      </Divider>
-      <div className="draw-lots-con">
-        <Space wrap>
-          {winNums.map((v, i) => (
-            <Tag key={i} color="geekblue">
-              {v}
-            </Tag>
-          ))}
-        </Space>
-      </div>
-      <Button onClick={onClick_save} disabled={winNums.length === 0}>
-        추첨결과 즐겨찾기로 설정
-      </Button>
-    </div>
-  );
-}
-DrawLots.propTypes = {
-  answers: PropTypes.arrayOf(PropTypes.any),
-};
-function RepresntativeQ({ questions, representative, setRepresentative }) {
-  const handleChange = (value) => {
-    setRepresentative(value);
-  };
-  const data = [
-    { id: "1", value: "나이는 몇입니까?" },
-    { id: "2", value: "이름은 무엇입니까?" },
-    { id: "3", value: "학교는?" },
-  ];
-  return (
-    <div className="reprentative-con">
-      <Select
-        placeholder="대표문항을 선택해주세요."
-        value={representative ? representative : null}
-        style={{
-          width: "100%",
-          marginTop: "0.5rem",
-          marginBottom: "0.5rem",
-        }}
-        onChange={handleChange}
-      >
-        {data.map((v) => (
-          <Option key={v.id} value={v.id}>
-            {v.value}
-          </Option>
-        ))}
-      </Select>
-    </div>
-  );
-}
-
-RepresntativeQ.propTypes = {
-  questions: PropTypes.arrayOf(PropTypes.any),
-  representative: PropTypes.string,
-  setRepresentative: PropTypes.func,
-};
-const listItem_temp = [
+let listItem_temp = [
   {
     key: "1",
     answer: "사나",
@@ -135,101 +40,78 @@ const listItem_temp = [
     favorite: true,
   },
 ];
-function RespondList({ listItems, selected, onSelect }) {
-  const [data, setData] = useState(listItem_temp);
-  const onFavChange = (respId) => () => {
-    // do change the fav state (backend api?)
-    if (!data) return;
-    let temp = data.map((v) =>
-      v.key !== respId
-        ? v
-        : {
-            ...v,
-            favorite: !v["favorite"],
-          }
-    );
 
-    setData(temp);
-  };
-  // ...v, favorite: {fav: v.faborite, setFav: onFavChange(v.key)}
-  let dataForList = data.map((v) => ({
-    ...v,
-    favorite: { fav: v["favorite"], setFav: onFavChange(v["key"]) },
-  }));
-
-  const columns = [
-    {
-      title: "순번",
-      dataIndex: "order",
-      defaultSortOrder: "ascend",
-      sorter: (a, b) => a.order - b.order,
-    },
-    {
-      title: "대표문항 답",
-      dataIndex: "answer",
-
-      sorter: (a, b) => a.answer.localeCompare(b.answer),
-    },
-    {
-      title: "즐겨찾기",
-      dataIndex: "favorite",
-      render: (a) => (
-        <div className="star-con" onClick={a.setFav}>
-          {a.fav ? (
-            <StarFilled style={{ color: "inherit" }} />
-          ) : (
-            <StarOutlined style={{ color: "inherit" }} />
-          )}
-        </div>
-      ),
-      sorter: (a, b) => a.favorite - b.favorite,
-    },
-  ];
-
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
-  };
-  const rowSelection = {
-    type: "radio",
-    onChange: (selectedRowKeys, selectedRows) => {
-      if (selectedRowKeys.length !== 0) onSelect(selectedRowKeys[0]);
-      else onSelect("");
-    },
-    selectedRowKeys: [selected],
-  };
-  return (
-    <div className="resp-list-con">
-      <Table
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={dataForList}
-        onChange={onChange}
-        size="small"
-        showSorterTooltip={false}
-      />
-    </div>
-  );
-}
-RespondList.propTypes = {
-  listItems: PropTypes.arrayOf(PropTypes.any),
-  selected: PropTypes.number,
-  onSelect: PropTypes.func,
-};
-
-// window design
 function ResultList() {
-  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_FOR_OWNER_QUERY, {
-    variables: { formId: "628f624147f00d90c857dc32" },
-    onCompleted: (data) => {
-      console.log("getSubmissions Completed");
-      console.log(data);
-    },
-  });
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [formId, setFormId] = useState(0);
-  const [respId, setRespId] = useState("");
+  const [selectedRespNo, setSelectedResp] = useState(-1);
   const [repQ, setRepQ] = useState("");
+  const [repQCandi, setRepQCandi] = useState({});
+  const [ansList, setAnsList] = useState([]); // [ {id1:ans1, id2:ans2, ...} ]
+  const [repList, setRepList] = useState(listItem_temp); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool)} ]
+  const [secList, setSecList] = useState([]);
+  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_FOR_OWNER_QUERY, {
+    variables: { formId: formId },
+    onCompleted: (data) => {
+      // when error occured
+      if (!data.findFormByIdForOwner.ok) {
+        alert(data.findFormByIdForOwner.error);
+        // navigate("/my-survey");
+        return;
+      }
+
+      // make data from DB data
+      let formData = data.findFormByIdForOwner.form;
+
+      // sections
+      let sec = formData.sections;
+      setSecList(sec);
+
+      // representative question
+      let repq = formData.representativeQuestion;
+      setRepQ(repq ? repq : "");
+
+      // representative question candidates dictionary <string, string>: <id, question content>
+      let repQCandi_temp = {};
+      for (let i = 0; i < sec.length; i++) {
+        let que = sec[i].questions;
+        for (let j = 0; j < que.length; j++) {
+          if (que[j].type !== "Opened") continue;
+          repQCandi_temp[que[j]._id] = que[j].content;
+        }
+      }
+      setRepQCandi(repQCandi_temp);
+
+      // submissions-> ansList, respList
+      // ansList: to show the answers of an submission in the right panel
+      // respList: to show the list of submissions in the left panel
+      let subm_orig = formData.submissions;
+      let ansl = [];
+      let repl = [];
+      for (let i = 0; i < subm_orig.length; i++) {
+        let ans = {};
+        let rep = {};
+        let ans_orig = subm_orig[i].answers;
+        let repq_ans_str = "";
+        for (let j = 0; j < ans_orig.length; j++) {
+          ans[ans_orig["question"]] = { ...ans_orig };
+          if (ans_orig["question"] === repq) {
+            repq_ans_str = ans_orig.openedAnswer;
+          }
+        }
+        rep = {
+          key: String(i + 1),
+          answer: repq_ans_str ? repq_ans_str : "",
+          order: i + 1,
+          favorite: false, // TODO
+        };
+        ansl.push(ans);
+        repl.push(rep);
+      }
+      setAnsList(ansl);
+    },
+  });
 
   const [drawLotsEnabled, setDrawLotsEnabled] = useState(false);
   useEffect(() => {
@@ -243,6 +125,20 @@ function ResultList() {
 
   const onSaveClick = () => {
     // save
+  };
+  const onFavChange = (respId) => () => {
+    // do change the fav state (backend api?)
+    if (!repList) return;
+    let temp = repList.map((v) =>
+      v.key !== respId
+        ? v
+        : {
+            ...v,
+            favorite: !v["favorite"],
+          }
+    );
+
+    setRepList(temp);
   };
   return (
     <div className="result-list-con">
@@ -262,18 +158,31 @@ function ResultList() {
             <DrawLots answers={[1, 2, 3, 4, 5, 6, 7, 8, 9]} />
           ) : null}
           <div className="repq-fav-save-btn" onClick={onSaveClick}>
-            대표문항 & 즐겨찾기 저장
+            즐겨찾기 저장
           </div>
-          <RepresntativeQ representative={repQ} setRepresentative={setRepQ} />
+          <RepresentativeQ
+            // questions={repQCandi}
+            questions={{ 1: "asdf", 2: "qwer", 3: "aaaa" }}
+            representative={repQ}
+            setRepresentative={setRepQ}
+          />
           {/* list */}
           <div className="result-list-list">
-            <RespondList selected={respId} onSelect={setRespId} />
+            <ResponseList
+              listItems={repList}
+              selected={String(selectedRespNo)}
+              onSelect={setSelectedResp}
+              onFavChange={onFavChange}
+            />
           </div>
         </div>
 
         {/* detail */}
         <div className="result-list-right-con">
-          <ResponseDetail />
+          <ResultForm
+            sections={secList}
+            answers={ansList[selectedRespNo - 1]}
+          />
         </div>
       </div>
     </div>

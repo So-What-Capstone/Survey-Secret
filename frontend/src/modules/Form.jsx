@@ -1,32 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import "../styles/Form.css";
-import {
-  ClosedQuestion_one, // 0
-  ClosedQuestion_mult, // 1
-  ClosedQuestion_input, // 2
-  OpenedQuestion, // 3
-  LinearQuestion, // 4
-  GridQuestion, // 5
-  PhoneQuestion, // 6
-  EmailQuestion, // 7
-  DateQuestion, // 8
-  AddressQuestion, // 9
-} from "./index.js";
+import { QType, questionTable } from "./index.js";
 import { init_value } from "./question/test_config";
-
-const questionTable = [
-  ClosedQuestion_one,
-  ClosedQuestion_mult,
-  ClosedQuestion_input,
-  OpenedQuestion,
-  LinearQuestion,
-  GridQuestion,
-  PhoneQuestion,
-  EmailQuestion,
-  DateQuestion,
-  AddressQuestion,
-];
 
 function Question({
   response,
@@ -57,6 +33,8 @@ function Question({
   let Qst = null;
   if (0 <= type && type <= questionTable.length) {
     Qst = questionTable[type];
+  } else {
+    return null;
   }
 
   return Qst({ config, setValue, setTrigger });

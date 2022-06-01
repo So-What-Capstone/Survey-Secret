@@ -36,6 +36,7 @@
 
 .preview {
   width: 40%;
+  min-width: min(40rem, 90vw);
   margin-left: 5%;
   margin-right: 5%;
   margin-top: 2%;

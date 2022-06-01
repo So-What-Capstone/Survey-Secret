@@ -60,6 +60,7 @@ export default function SurveyIcon({
         },
       });
       alert("설문을 삭제했습니다.");
+      location.reload();
     }
   };
 

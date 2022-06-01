@@ -22,6 +22,8 @@
       color: #ccd6f6;
       display: flex;
       flex-direction: column;
+      border: 1px solid #00000000;
+      transition: 0.2s;
 
       .item-title {
         flex: 3 1 0;
@@ -49,7 +51,9 @@
         text-align: right;
       }
     }
-
+    .survey-item:hover {
+      border: 1px solid #65ffdc;
+    }
     .hover-btns {
       display: none;
       position: absolute;

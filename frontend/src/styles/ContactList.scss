@@ -1,43 +1,51 @@
-.list-panel { //연락리스트 패널
+.contact-list-panel {
+  //연락리스트 패널
   text-align: center;
   display: flex;
   flex-direction: column;
-  padding: 2rem 3vw 2rem 3vw;
   background-color: #0A182D60;
-  border-radius: 10px;
+  padding: 2%;
+  border-radius: 0.2rem;
   flex: 4 1 0;
-  margin: 5rem 4vw 5rem 4vw;
+  margin-right: 2vw;
+  height: 100%;
+  overflow: hidden;
 
-  .panel-row { //설문선택row / 수신인선택 row
+  .panel-row {
+    //설문선택row / 수신인선택 row
     display: flex;
     flex-direction: column;
     text-align: left;
-    margin: 1rem 0px 1rem 0px;
+    // margin: 1rem 0px 1rem 0px;
     width: 100%;
     min-width: 21rem;
     label {
-      color: #65FFDC;
-      margin: 0px 0px 0.8rem 0px;
+      color: #65ffdc;
+      margin: 0.1rem 0 0.1rem 0;
       font-size: 18px;
     }
-    .row-select { //설문선택
+    .row-select {
+      //설문선택
       background-color: #ffffff19;
-      color: #CCD6F6;
+      color: #ccd6f6;
       border: none;
-      border-radius: 10px;
+      border-radius: 0.2rem;
       padding: 0px 2vw 0px 2vw;
     }
-    .row-list { //수신인 리스트
+    .row-list {
+      //수신인 리스트
       height: 25rem;
       display: flex;
       flex-direction: column;
-      .row-list-head { //리스트 헤더
+      .row-list-head {
+        //리스트 헤더
         display: flex;
         flex-direction: row;
-        background-color: #CCD6F680;
-        border-radius: 10px 10px 0px 0px / 10px 10px 0px 0px;
+        background-color: #ccd6f680;
+        border-radius: 0.2rem 0.2rem 0.2rem 0px / 0.2rem 0.2rem 0px 0px;
         padding: 0.9rem 2vw 0.9rem 2vw;
-        .all-check { //전체체크
+        .all-check {
+          //전체체크
           position: relative;
           top: 6px;
           flex: 1 1 0;
@@ -45,47 +53,52 @@
         span {
           flex: 5 1 0;
         }
-        .star-btn { //즐겨찾기 버튼
+        .star-btn {
+          //즐겨찾기 버튼
           flex: 1 1 0;
-          color: #65FFDC;
+          color: #65ffdc;
           text-align: right;
-          background-color: #CCD6F600;
-          border-bottom: 1px solid #65FFDC;
+          background-color: #ccd6f600;
+          border-bottom: 1px solid #65ffdc;
           border-top: none;
           border-left: none;
           border-right: none;
         }
       }
-      .list-con { //리스트 내용 container
+      .list-con {
+        //리스트 내용 container
         display: flex;
         flex-direction: column;
-        background-color: #F5F5F519;
-        border-radius: 0px 0px 10px 10px / 0px 0px 10px 10px;
+        background-color: #f5f5f519;
+        border-radius: 0 0 0.2rem 0.2rem / 0 0 0.2rem 0.2rem;
         max-height: 21rem;
         overflow: auto;
-        .list-item { //리스트 내용 1개
+        .contact-list-item {
+          //리스트 내용 1개
           display: flex;
           flex-direction: row;
-          border-bottom: 1px solid #C4C4C4;
-          border-radius: 0px;
-          padding: 0.5rem 2vw 0.5rem 2vw;
+          justify-content: center;
+          align-items: center;
+          border-bottom: 1px solid #c4c4c460;
+          padding: 0.1rem 1vw 0.1rem 1vw;
           width: 100%;
           &:hover {
-            background-color: #F5F5F500;
+            background-color: #f5f5f500;
           }
-          .item-check { //체크박스
-            position: relative;
-            top: 0.5rem;
+          .item-check {
+            //체크박스
+            // position: relative;
+            // top: 0.5rem;
             flex: 1 1 0;
           }
           .item-order {
             flex: 1 1 0;
-            color: #CCD6F6;
+            color: #ccd6f6;
             font-size: 17px;
           }
           .item-name {
             flex: 5 1 0;
-            color: #CCD6F6;
+            color: #ccd6f6;
             font-size: 17px;
           }
         }

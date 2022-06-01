@@ -62,14 +62,21 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
   }
 
   function addChoice() {
-    let newChoices = [...choices, { content: "", trigger: -1 }];
+    let newChoices = [
+      ...choices,
+      { content: "", trigger: -1, key: new Date().getTime() },
+    ];
     setChoices(newChoices);
     onDataChange({ ...data, choices: newChoices });
   }
 
   const addChoiceBelow = (i) => () => {
     let newChoices = [...choices];
-    newChoices.splice(i + 1, 0, { content: "", trigger: -1 });
+    newChoices.splice(i + 1, 0, {
+      content: "",
+      trigger: -1,
+      key: new Date().getTime(),
+    });
     setChoices(newChoices);
     onDataChange({ ...data, choices: newChoices });
   };
@@ -123,7 +130,7 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
         <Empty description="문항에 선택지가 없습니다."></Empty>
       ) : (
         choices.map((c, i) => (
-          <div key={i} className="edit-closed-row">
+          <div key={c.key} className="edit-closed-row">
             <Input
               className="edit-closed-input"
               placeholder="선택지 내용"
