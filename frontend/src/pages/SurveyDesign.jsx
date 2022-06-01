@@ -112,9 +112,40 @@ const CREATE_FORM_MUTATION = gql`
   }
 `;
 
-const DELETE_FORM_MUTATION = gql`
-  mutation deleteForm($formId: String!) {
-    deleteForm(input: { formId: $formId }) {
+const EDIT_FORM_MUTATION2 = gql`
+  mutation editForm(
+    $title: String
+    $description: String
+    $state: FromState
+    $expiredAt: DateTime
+    $privacyExpiredAt: DateTime
+    $sections: [CreateSectionInput!]
+    $formId: String!
+    $representativeQuestionId: String!
+    $isPromoted: Boolean
+  ) {
+    editForm(
+      input: {
+        title: $title
+        description: $description
+        state: $state
+        expiredAt: $expiredAt
+        privacyExpiredAt: $privacyExpiredAt
+        sections: $sections
+        formId: $formId
+        representativeQuestionId: $representativeQuestionId
+        isPromoted: $isPromoted
+      }
+    ) {
+      ok
+      error
+    }
+  }
+`;
+
+const EDIT_FORM_MUTATION = gql`
+  mutation editForm($request: EditFormInput!) {
+    editForm(input: $request) {
       ok
       error
     }
@@ -230,20 +261,6 @@ function SurveyDesign() {
         console.log(error.graphQLErrors);
         console.log(error.message);
         console.log(error.name);
-      },
-    }
-  );
-  const [deleteForm, { loading: deleteLoading }] = useMutation(
-    DELETE_FORM_MUTATION,
-    {
-      onCompleted: (data) => {
-        const {
-          deleteForm: { ok, error },
-        } = data;
-        if (!ok) {
-          throw new Error(error);
-        }
-        console.log("Delete Complete");
       },
     }
   );
@@ -635,12 +652,6 @@ function SurveyDesign() {
         };
       }),
     };
-
-    deleteForm({
-      variables: {
-        formId: rawForm._id,
-      },
-    });
 
     // 현재 newForm에 모두 들어있음.
     createForm({
