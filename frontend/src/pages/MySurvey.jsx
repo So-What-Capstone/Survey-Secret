@@ -46,9 +46,9 @@ function MySurvey() {
   const { loading, data, error } = useQuery(ME_QUERY, {
     onCompleted: (data) => {
       // console.log(data);
-      // setReadySurveys(
-      //   data?.me?.user?.forms.filter((form) => form.state === "Ready")
-      // );
+      setReadySurveys(
+        data?.me?.user?.forms.filter((form) => form.state === "Ready")
+      );
       setInProgressSurveys(
         data?.me?.user?.forms.filter((form) => form.state === "InProgress")
       );

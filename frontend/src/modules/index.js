@@ -17,3 +17,4 @@ export { default as ResultForm } from "./ResultForm";
 export { default as DrawLots } from "./DrawLots";
 export { default as RepresentativeQ } from "./RepresentativeQuestionSelector";
 export { default as ResponseList } from "./ResponseList";
+export { QType, questionTable } from "./question/QuestionType";

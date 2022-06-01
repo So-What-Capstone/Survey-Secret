@@ -15,7 +15,7 @@ export default function RepresentativeQ({
   return (
     <div className="reprentative-con">
       <Select
-        placeholder="대표문항을 선택해주세요."
+        placeholder="대표문항을 선택해 주세요."
         value={representative ? representative : null}
         style={{
           width: "100%",

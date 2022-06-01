@@ -1,4 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { QType } from "./question/QuestionType";
 
 export const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
@@ -63,6 +64,7 @@ export const FIND_FORM_BY_ID_QUERY = gql`
               description
               required
               kind
+              personalType
             }
           }
         }
@@ -76,38 +78,40 @@ export function getQuestionType(question) {
   let typecode = -1;
   switch (kind) {
     case "Closed":
-      if (question.closedType === "One") typecode = 0;
-      else if (question.closedType === "Multiple") typecode = 1;
+      if (question.closedType === "One") typecode = QType.CLOSED_ONE;
+      else if (question.closedType === "Multiple") typecode = QType.CLOSED_MULT;
+      else typecode = QType.ERROR;
       break;
     case "Opened":
-      if (question.openedType === "Default") typecode = 3;
-      else if (question.openedType === "Date") typecode = 7;
-      else if (question.openedType === "Time") typecode = 7; // TODO
-      else if (question.openedType === "Address") typecode = 9;
-      else if (question.openedType === "File") typecode = 10; // TODO
+      if (question.openedType === "Default") typecode = QType.OPENED;
+      else if (question.openedType === "Date") typecode = QType.DATE;
+      else if (question.openedType === "Time") typecode = QType.ERROR; // TODO
+      else if (question.openedType === "Address") typecode = QType.ADDRESS;
+      else if (question.openedType === "File") typecode = QType.ERROR; // TODO
+      else typecode = QType.ERROR;
       break;
     case "Linear":
-      typecode = 4;
+      typecode = QType.LINEAR;
       break;
     case "Grid":
-      typecode = 5;
+      typecode = QType.GRID;
       break;
     case "Personal":
-      if (question.personalType === "Phone") typecode = 6;
-      else if (question.personalType === "Email") typecode = 7;
-      else typecode = 6;
+      if (question.personalType === "Phone") typecode = QType.PHONE;
+      else if (question.personalType === "Email") typecode = QType.EMAIL;
+      else typecode = QType.ERROR;
       break;
   }
   return typecode;
 }
 export function getQuestionKind(type) {
-  if (0 <= type && type <= 2) {
+  if (QType.CLOSED_ONE <= type && type <= QType.CLOSED_INPUT) {
     return "Closed";
-  } else if (type === 4) {
+  } else if (type === QType.LINEAR) {
     return "Linear";
-  } else if (type === 5) {
+  } else if (type === QType.GRID) {
     return "Grid";
-  } else if (type === 6 || type === 7) {
+  } else if (type === QType.PHONE || type === QType.EMAIL) {
     return "Personal";
   } else {
     return "Opened";
@@ -145,7 +149,7 @@ export function getFormConfigFromDB(formId, formDB, sectionsDB) {
       };
 
       // specific config
-      if (0 <= type && type <= 2) {
+      if (QType.CLOSED_ONE <= type && type <= QType.CLOSED_MULT) {
         // Closed
         let choices = q.choices.map((ch) => ch.choice);
         let trigger = q.choices.map((ch) =>
@@ -153,10 +157,10 @@ export function getFormConfigFromDB(formId, formDB, sectionsDB) {
         );
         myqs[j].config["choices"] = choices;
         myqs[j].config["trigger_sections"] = trigger;
-      } else if (type === 3) {
+      } else if (type === QType.OPENED) {
         // Opened
         myqs[j].config["isLong"] = true;
-      } else if (type === 4) {
+      } else if (type === QType.LINEAR) {
         // LInear
         myqs[j].config = {
           ...myqs[j].config,
@@ -165,14 +169,14 @@ export function getFormConfigFromDB(formId, formDB, sectionsDB) {
           leftLabel: q.leftLabel ? q.leftLabel : "",
           rightLabel: q.rightLabel ? q.rightLabel : "",
         };
-      } else if (type === 5) {
+      } else if (type === QType.GRID) {
         // Grid
         myqs[j].config = {
           ...myqs[j].config,
           rowLabels: q.rowContent,
           colLabels: q.colContent,
         };
-      } else if (type === 6 || type === 7) {
+      } else if (type === QType.PHONE || type === QType.EMAIL) {
         // Phone, email
         myqs[j].config = {
           ...myqs[j].config,
