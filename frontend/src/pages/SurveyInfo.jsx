@@ -2,10 +2,9 @@ import { DatePicker, TimePicker, Input, Checkbox } from "antd";
 import moment from "moment";
 import React, { useState, useEffect } from "react";
 import Form from "../modules/Form";
-import { template_list } from "../modules/Templates";
 import "../styles/SurveryInfo.css";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   FIND_FORM_BY_ID_QUERY,
   getFormConfigFromDB,
@@ -94,7 +93,7 @@ function SurveyInfo() {
   };
 
   const navigate = useNavigate();
-  const [form_config, setFormConfig] = useState(template_list[3]);
+  const [form_config, setFormConfig] = useState();
   const [form_minor_config, setFormMinorConfig] = useState({
     state: 0, // 0: designing, 1: doing survey, 2: done survey
     isPromoted: false,
