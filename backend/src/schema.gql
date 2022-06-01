@@ -125,6 +125,7 @@ type Submission {
   respondent: User
   form: Form!
   answers: [AnswerUnion!]!
+  isFavorite: Boolean
 }
 
 """
