@@ -14,6 +14,7 @@ import {
   Row,
   Col,
   Alert,
+  Empty,
 } from "antd";
 import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
 import { useState, useEffect } from "react";
@@ -118,46 +119,50 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
         선택지 트리거 설정 보이기
       </Checkbox>
 
-      {choices.map((c, i) => (
-        <div key={i} className="edit-closed-row">
-          <Input
-            className="edit-closed-input"
-            placeholder="선택지 내용"
-            value={c.content}
-            onChange={editContent(i)}
-            addonAfter={
-              showTriggerSelect ? (
-                <Select
-                  value={c.trigger}
-                  placement="bottomRight"
-                  dropdownMatchSelectWidth={false}
-                  onChange={handleTriggerChange(i)}
-                >
-                  {triggerOptions.map((p) => (
-                    <Option key={"option" + p[0]} value={p[0]}>
-                      {p[1]}
-                    </Option>
-                  ))}
-                </Select>
-              ) : null
-            }
-          ></Input>
-          <Dropdown.Button
-            onClick={addChoiceBelow(i)}
-            overlay={
-              <Menu>
-                <Menu.Item onClick={moveDownward(i)}>아래로 이동</Menu.Item>
-                <Menu.Item onClick={moveUpward(i)}>위로 이동</Menu.Item>
-                <Menu.Item onClick={remove(i)}>삭제</Menu.Item>
-              </Menu>
-            }
-          >
-            <Tooltip title="아래에 새 선택지 추가">
-              <PlusOutlined />
-            </Tooltip>
-          </Dropdown.Button>
-        </div>
-      ))}
+      {choices.length === 0 ? (
+        <Empty description="문항에 선택지가 없습니다."></Empty>
+      ) : (
+        choices.map((c, i) => (
+          <div key={i} className="edit-closed-row">
+            <Input
+              className="edit-closed-input"
+              placeholder="선택지 내용"
+              value={c.content}
+              onChange={editContent(i)}
+              addonAfter={
+                showTriggerSelect ? (
+                  <Select
+                    value={c.trigger}
+                    placement="bottomRight"
+                    dropdownMatchSelectWidth={false}
+                    onChange={handleTriggerChange(i)}
+                  >
+                    {triggerOptions.map((p) => (
+                      <Option key={"option" + p[0]} value={p[0]}>
+                        {p[1]}
+                      </Option>
+                    ))}
+                  </Select>
+                ) : null
+              }
+            ></Input>
+            <Dropdown.Button
+              onClick={addChoiceBelow(i)}
+              overlay={
+                <Menu>
+                  <Menu.Item onClick={moveDownward(i)}>아래로 이동</Menu.Item>
+                  <Menu.Item onClick={moveUpward(i)}>위로 이동</Menu.Item>
+                  <Menu.Item onClick={remove(i)}>삭제</Menu.Item>
+                </Menu>
+              }
+            >
+              <Tooltip title="아래에 새 선택지 추가">
+                <PlusOutlined />
+              </Tooltip>
+            </Dropdown.Button>
+          </div>
+        ))
+      )}
       <Divider>
         <Tooltip title="새 선택지 추가">
           <Button shape="circle" icon={<PlusOutlined />} onClick={addChoice} />
@@ -322,25 +327,33 @@ function ListMaintainer({ title, list, onListChange }) {
   return (
     <Space className="listman-root" direction="vertical">
       <Divider>{title}</Divider>
-      {choices.map((c, i) => (
-        <div key={i} className="listman-row">
-          <Input placeholder="내용" value={c} onChange={editContent(i)}></Input>
-          <Dropdown.Button
-            onClick={addChoiceBelow(i)}
-            overlay={
-              <Menu>
-                <Menu.Item onClick={moveDownward(i)}>아래로 이동</Menu.Item>
-                <Menu.Item onClick={moveUpward(i)}>위로 이동</Menu.Item>
-                <Menu.Item onClick={remove(i)}>삭제</Menu.Item>
-              </Menu>
-            }
-          >
-            <Tooltip title="아래에 새 선택지 추가">
-              <PlusOutlined />
-            </Tooltip>
-          </Dropdown.Button>
-        </div>
-      ))}
+      {choices.length === 0 ? (
+        <Empty description={`${title}에 해당하는 선택지가 없습니다.`}></Empty>
+      ) : (
+        choices.map((c, i) => (
+          <div key={i} className="listman-row">
+            <Input
+              placeholder="내용"
+              value={c}
+              onChange={editContent(i)}
+            ></Input>
+            <Dropdown.Button
+              onClick={addChoiceBelow(i)}
+              overlay={
+                <Menu>
+                  <Menu.Item onClick={moveDownward(i)}>아래로 이동</Menu.Item>
+                  <Menu.Item onClick={moveUpward(i)}>위로 이동</Menu.Item>
+                  <Menu.Item onClick={remove(i)}>삭제</Menu.Item>
+                </Menu>
+              }
+            >
+              <Tooltip title="아래에 새 선택지 추가">
+                <PlusOutlined />
+              </Tooltip>
+            </Dropdown.Button>
+          </div>
+        ))
+      )}
       <Divider>
         <Tooltip title="새 선택지 추가">
           <Button shape="circle" icon={<PlusOutlined />} onClick={addChoice} />

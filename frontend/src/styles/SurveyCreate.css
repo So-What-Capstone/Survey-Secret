@@ -13,8 +13,9 @@
   margin-right: 5%;
   margin-top: 2%;
   padding: 1%;
-  background-color: #384d6d;
-  border-radius: 0.5rem;
+  height: fit-content;
+  background-color: #384d6d90;
+  border-radius: 0.1rem;
 }
 .example-templates {
   width: 100%;
@@ -39,8 +40,8 @@
   margin-right: 5%;
   margin-top: 2%;
   padding: 1%;
-  background-color: #384d6d;
-  border-radius: 0.5rem;
+  background-color: #384d6d90;
+  border-radius: 0.1rem;
 }
 
 .list-item-template {
@@ -57,23 +58,29 @@
   text-align: center;
 }
 .list-item-template:hover {
-  background-color: #65ffdc50;
+  background-color: #ffffff70;
 }
 .selected {
-  background-color: #ffffff70;
+  background-color: #65ffdc50;
 }
 
 .panel-title {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 0.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #ccd6f650;
 }
 
 .template-select-btn {
   background-color: #65ffdc;
-  border-radius: 0.5rem;
+  border-radius: 0.1rem;
   border: 0;
   outline: 0;
   cursor: pointer;
   padding-left: 5%;
   padding-right: 5%;
+}
+.template-select-btn:hover {
+  animation: heartbeat 1.5s ease-in-out infinite both;
 }

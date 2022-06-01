@@ -32,8 +32,8 @@ function App() {
               element={<Pages.ResultStats />}
             />
             <Route
-              path="/my-survey/result/analysis"
-              element={<Pages.ResultAnalysis />}
+              path="/my-survey/result/question"
+              element={<Pages.ResultQuestion />}
             />
             <Route path="/message" element={<Pages.Message />} />
             <Route path="/email" element={<Pages.Email />} />

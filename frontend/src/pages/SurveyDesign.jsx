@@ -1,23 +1,38 @@
-import { Divider, Typography, Input, message, Modal } from "antd";
+import {
+  Divider,
+  Typography,
+  Input,
+  message,
+  Modal,
+  Empty,
+  Switch,
+  DatePicker,
+  Radio,
+} from "antd";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import "../styles/SurveyDesign.css";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 
-import addrImage from "../resources/addr.png";
-import emailImage from "../resources/email.png";
-import gridImage from "../resources/grid.png";
-import linearImage from "../resources/linear.png";
-import longImage from "../resources/long.png";
-import multImage from "../resources/mult.png";
-import oneImage from "../resources/one.png";
-import phoneImage from "../resources/phone.png";
-import shortImage from "../resources/short.png";
+import addrImage from "../resources/question_images/addr.png";
+import emailImage from "../resources/question_images/email.png";
+import gridImage from "../resources/question_images/grid.png";
+import linearImage from "../resources/question_images/linear.png";
+import longImage from "../resources/question_images/long.png";
+import multImage from "../resources/question_images/mult.png";
+import oneImage from "../resources/question_images/one.png";
+import phoneImage from "../resources/question_images/phone.png";
+import shortImage from "../resources/question_images/short.png";
 import { EditQuestion } from "../modules";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { findTemplateByIdQuery } from "../API/findTemplateByIdQuery";
 
 const formId = "62790a9fa2b013e1c29571d7";
+const templateId = "62836d7185ffb60503c4fad6";
+
+const FIND_TEMPLATE_BY_ID_QUERY = findTemplateByIdQuery;
 
 const FIND_FORM_BY_ID_QUERY = gql`
   query findFormById($formId: String!) {
@@ -97,9 +112,40 @@ const CREATE_FORM_MUTATION = gql`
   }
 `;
 
-const DELETE_FORM_MUTATION = gql`
-  mutation deleteForm($formId: String!) {
-    deleteForm(input: { formId: $formId }) {
+const EDIT_FORM_MUTATION2 = gql`
+  mutation editForm(
+    $title: String
+    $description: String
+    $state: FromState
+    $expiredAt: DateTime
+    $privacyExpiredAt: DateTime
+    $sections: [CreateSectionInput!]
+    $formId: String!
+    $representativeQuestionId: String!
+    $isPromoted: Boolean
+  ) {
+    editForm(
+      input: {
+        title: $title
+        description: $description
+        state: $state
+        expiredAt: $expiredAt
+        privacyExpiredAt: $privacyExpiredAt
+        sections: $sections
+        formId: $formId
+        representativeQuestionId: $representativeQuestionId
+        isPromoted: $isPromoted
+      }
+    ) {
+      ok
+      error
+    }
+  }
+`;
+
+const EDIT_FORM_MUTATION = gql`
+  mutation editForm($request: EditFormInput!) {
+    editForm(input: $request) {
       ok
       error
     }
@@ -182,6 +228,18 @@ function parseLinearQuestion(ques) {
 }
 
 function SurveyDesign() {
+  const {
+    loading: findTemplateLoading,
+    data: findTemplateData,
+    error: findTemplateError,
+  } = useQuery(FIND_TEMPLATE_BY_ID_QUERY, {
+    variables: { templateId },
+    onCompleted: (data) => {
+      console.log("find Template completed");
+      console.log(data);
+    },
+  });
+
   const [createForm, { loading: mutationLoading }] = useMutation(
     CREATE_FORM_MUTATION,
     {
@@ -206,34 +264,45 @@ function SurveyDesign() {
       },
     }
   );
-  const [deleteForm, { loading: deleteLoading }] = useMutation(
-    DELETE_FORM_MUTATION,
-    {
-      onCompleted: (data) => {
-        const {
-          deleteForm: { ok, error },
-        } = data;
-        if (!ok) {
-          throw new Error(error);
-        }
-        console.log("Delete Complete");
-      },
-    }
-  );
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [rawForm, setRawForm] = useState();
+
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [state, setState] = useState("Ready");
+  const [isPromoted, setIsPromoted] = useState(false);
+  const [expiredAt, setExpiredAt] = useState(moment());
+  const [privacyExpiredAt, setPrivacyExpiredAt] = useState(moment());
+
   const [sections, setSections] = useState([]);
   const [lastFocused, setLastFocused] = useState(undefined);
 
-  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
+  useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId: searchParams.get("id") },
     onCompleted: (data) => {
-      setTitle(data.findFormById.form.title);
-      setRawForm(data.findFormById.form);
-      const rawSections = data.findFormById.form.sections;
+      const currForm = data.findFormById.form;
+
+      setTitle(currForm.title);
+      setDescription(currForm.description);
+      setState(currForm.state);
+      setIsPromoted(currForm.isPromoted);
+      setExpiredAt(moment(currForm.expiredAt));
+      setPrivacyExpiredAt(moment(currForm.privacyExpiredAt));
+
+      setRawForm(currForm);
+      let rawSections = currForm.sections;
+      if (rawSections.length === 0) {
+        // 기본 섹션을 추가.
+        rawSections = [
+          {
+            title: "기본 섹션",
+            order: 1,
+            questions: [],
+          },
+        ];
+      }
       let processed = rawSections.map((sect) => {
         return {
           ...sect,
@@ -252,6 +321,7 @@ function SurveyDesign() {
           }),
         };
       });
+      console.log(processed);
       setSections(processed);
     },
   });
@@ -343,6 +413,19 @@ function SurveyDesign() {
             };
           },
         },
+        {
+          key: "addr",
+          image: addrImage,
+          init: () => {
+            return {
+              _id: String(Math.random()),
+              content: "",
+              description: "",
+              required: false,
+              type: "address",
+            };
+          },
+        },
       ],
     },
     {
@@ -387,19 +470,6 @@ function SurveyDesign() {
       key: "private",
       subtitle: "개인정보 문항",
       children: [
-        {
-          key: "addr",
-          image: addrImage,
-          init: () => {
-            return {
-              _id: String(Math.random()),
-              content: "",
-              description: "",
-              required: false,
-              type: "address",
-            };
-          },
-        },
         {
           key: "email",
           image: emailImage,
@@ -453,7 +523,11 @@ function SurveyDesign() {
   function save() {
     let newForm = {
       title: title,
-      state: "InProgress",
+      description: description,
+      state: state,
+      isPromoted: isPromoted,
+      expiredAt: expiredAt.toDate(),
+      privacyExpiredAt: privacyExpiredAt.toDate(),
       sections: sections.map((sect, i) => {
         let opened = [],
           closed = [],
@@ -579,14 +653,6 @@ function SurveyDesign() {
       }),
     };
 
-    console.log(newForm);
-    console.log(rawForm);
-    deleteForm({
-      variables: {
-        formId: rawForm._id,
-      },
-    });
-
     // 현재 newForm에 모두 들어있음.
     createForm({
       variables: {
@@ -666,21 +732,112 @@ function SurveyDesign() {
                 ></Input>
               </Divider>
 
-              {sect.questions.map((ques, j) => (
-                <EditQuestion
-                  onFocus={() => {
-                    setLastFocused([i, j]);
-                  }}
-                  onRemove={removeQuestion(i, j)}
-                  key={ques._id}
-                  sectionCount={sections.length}
-                  data={ques}
-                  onDataChange={updateQuestionData(i, j)}
-                ></EditQuestion>
-              ))}
+              {sect.questions.length === 0 ? (
+                <Empty description="왼쪽 팔레트에서 문항을 추가해보세요!"></Empty>
+              ) : (
+                sect.questions.map((ques, j) => (
+                  <EditQuestion
+                    onFocus={() => {
+                      setLastFocused([i, j]);
+                    }}
+                    onRemove={removeQuestion(i, j)}
+                    key={ques._id}
+                    sectionCount={sections.length}
+                    data={ques}
+                    onDataChange={updateQuestionData(i, j)}
+                  ></EditQuestion>
+                ))
+              )}
+
               <Divider>{`${i + 1}번째 섹션 끝`}</Divider>
             </div>
           ))}
+        </div>
+      </div>
+      <div className="design-info">
+        <Typography.Title level={5} className="design-title">
+          설문 정보 편집
+        </Typography.Title>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            설문 참여 주소
+          </Typography.Title>
+          {searchParams.get("id") ? (
+            <Typography.Paragraph copyable>{`${
+              window.location.host
+            }/respond?id=${searchParams.get("id")}`}</Typography.Paragraph>
+          ) : (
+            <Typography>설문을 저장하면 응답 주소가 생성됩니다.</Typography>
+          )}
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            제목
+          </Typography.Title>
+          <Input
+            placeholder="설문 제목"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          ></Input>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            설명
+          </Typography.Title>
+          <Input.TextArea
+            rows={2}
+            placeholder="설문 설명"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          ></Input.TextArea>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            응답 마감 시간
+          </Typography.Title>
+          <DatePicker
+            value={expiredAt}
+            showTime
+            placeholder="응답 마감 시간"
+            onChange={(date) => setExpiredAt(date)}
+          ></DatePicker>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            개인정보 파기 시간
+          </Typography.Title>
+          <DatePicker
+            value={privacyExpiredAt}
+            showTime
+            placeholder="개인정보 파기 시간"
+            onChange={(date) => setPrivacyExpiredAt(date)}
+          ></DatePicker>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            설문 상태
+          </Typography.Title>
+          <Radio.Group
+            value={state}
+            buttonStyle="solid"
+            onChange={(e) => setState(e.target.value)}
+          >
+            <Radio.Button value="Ready">준비 중</Radio.Button>
+            <Radio.Button value="InProgress">공개됨</Radio.Button>
+            <Radio.Button value="Expired">종료됨</Radio.Button>
+          </Radio.Group>
+        </div>
+        <div className="design-inner-info">
+          <Typography.Title level={5} className="design-subtitle">
+            배너 광고 등록
+          </Typography.Title>
+          <div className="design-switch-layout">
+            <span>메인 페이지에 설문을 노출하기</span>
+            <Switch
+              value={isPromoted}
+              onChange={(value) => setIsPromoted(value)}
+            ></Switch>
+          </div>
         </div>
       </div>
     </div>

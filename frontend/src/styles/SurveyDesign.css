@@ -5,19 +5,22 @@
 }
 
 .design-palette {
-  width: 400px;
-  background-color: #141e61;
-  border-radius: 0.5rem;
-  margin: 10px 50px 0 0;
+  width: 225px;
+  max-height: 90vh;
+  overflow: auto;
+  background-color: #1d6170;
+  border-radius: 0.2rem;
+  margin: 10px 0 0;
   padding: 10px 10px 10px 0;
   display: flex;
   flex-direction: column;
+  top: 60px;
+  position: sticky;
 }
 
 .design-inner-palette {
-  width: 375px;
   background-color: rgb(245 245 245 / 10%);
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   margin: 10px 10px 0 0;
   padding: 10px;
 }
@@ -34,12 +37,14 @@
 .design-ques-layout {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .design-ques-back {
-  width: 45%;
-  margin: 2.5%;
-  border-radius: 1rem;
+  margin: 10px;
+
+  /* width: 45%; */
+  border-radius: 0.2rem;
   background-color: white;
   transition: all 0.5s ease;
 }
@@ -57,12 +62,15 @@
 }
 
 .design-preview {
+  flex-grow: 1;
+  margin: 10px 50px 0;
   width: calc(100% - 450px);
-  background-color: #141e61;
-  border-radius: 0.5rem;
-  margin: 10px 0 0;
+  background-color: #172a46;
+  border-radius: 0.2rem;
   padding: 10px;
-  height: fit-content;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .design-section-title {
@@ -80,7 +88,7 @@
 
 .design-button {
   background-color: #65ffdc;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   border: 0;
   outline: 0;
   cursor: pointer;
@@ -97,15 +105,50 @@
 
 .design-preview-body {
   background-color: white;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   border: 0;
   outline: 0;
   min-height: 100px;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
 }
 
 .design-section {
   display: flex;
   flex-direction: column;
+}
+
+.design-info {
+  width: 350px;
+  max-height: 90vh;
+  overflow: auto;
+  background-color: #1d6170;
+  border-radius: 0.2rem;
+  margin: 10px 0 0;
+  padding: 10px 10px 10px 0;
+  display: flex;
+  flex-direction: column;
+  top: 60px;
+  position: sticky;
+}
+
+.design-inner-info {
+  background-color: rgb(245 245 245 / 10%);
+  border-radius: 0.2rem;
+  margin: 10px 0 0 10px;
+  padding: 10px;
+}
+
+.design-switch-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.design-switch-layout > span {
+  margin-right: 10px;
+  color: #ccd6f6;
 }

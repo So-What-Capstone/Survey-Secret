@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/Menu.css";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -22,16 +22,18 @@ function Menu() {
   const navigate = useNavigate();
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
-  //나중에 고치기, 메뉴는 맨 위에 올라와있으므로 매번 query 요청해야함
-  //localStorage 이용, token안에 넣고 decode를 하던
-  const [loggedInUser, setLoggedInUser] = useState();
-
-  const { loading, data, error } = useQuery(ME_QUERY, {
+  const { loading, data, error, refetch } = useQuery(ME_QUERY, {
     onCompleted: (data) => {
       console.log("Query Completed");
       setLoggedInUser(data?.me?.user?.username);
     },
   });
+  //나중에 고치기, 메뉴는 맨 위에 올라와있으므로 매번 query 요청해야함
+  //localStorage 이용, token안에 넣고 decode를 하던
+  const [loggedInUser, setLoggedInUser] = useState();
+  useEffect(() => {
+    refetch();
+  }, [isLoggedIn]);
 
   const move = (url) => () => {
     navigate(url);
@@ -83,29 +85,29 @@ function Menu() {
           </div>
           <div className="menu-lists">
             <div className="menu-list">
-              <a className="list-item" onClick={move("/my-survey")}>
+              <a className="menu-list-item" onClick={move("/my-survey")}>
                 내 설문
               </a>
-              <a className="list-item" onClick={move("/my-survey/create")}>
+              <a className="menu-list-item" onClick={move("/my-survey/create")}>
                 새 설문 만들기
               </a>
             </div>
             <div className="menu-list">
-              <a className="list-item" onClick={move("/message")}>
+              <a className="menu-list-item" onClick={move("/message")}>
                 문자 서비스
               </a>
-              <a className="list-item" onClick={move("/email")}>
+              <a className="menu-list-item" onClick={move("/email")}>
                 이메일 서비스
               </a>
-              <a className="list-item" onClick={move("/contact-record")}>
+              <a className="menu-list-item" onClick={move("/contact-record")}>
                 서비스 이용기록
               </a>
             </div>
             <div className="menu-list">
-              <a className="list-item" onClick={move("/notice")}>
+              <a className="menu-list-item" onClick={move("/notice")}>
                 공지사항
               </a>
-              <a className="list-item" onClick={move("/intro")}>
+              <a className="menu-list-item" onClick={move("/intro")}>
                 이용방법
               </a>
             </div>

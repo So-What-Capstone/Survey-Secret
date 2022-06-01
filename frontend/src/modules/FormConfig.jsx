@@ -113,9 +113,9 @@ export function getQuestionKind(type) {
     return "Opened";
   }
 }
-export function getFormConfigFromDB(formId, data) {
-  const form = data.findFormById.form;
-  let sections = data.findFormById.form.sections;
+export function getFormConfigFromDB(formId, formDB, sectionsDB) {
+  const form = formDB;
+  let sections = sectionsDB;
 
   let myConfig = {
     id: formId,
@@ -184,6 +184,5 @@ export function getFormConfigFromDB(formId, data) {
     mySections[i]["questions"] = myqs;
   }
   myConfig["sections"] = mySections;
-  console.log("myconfig", myConfig);
   return myConfig;
 }
