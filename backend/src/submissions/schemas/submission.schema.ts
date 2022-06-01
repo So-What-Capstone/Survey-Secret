@@ -44,6 +44,10 @@ export class Submission extends CoreSchema {
     required: true,
   })
   answers: typeof AnswerUnion[];
+
+  @Field((type) => Boolean, { nullable: true })
+  @Prop({ type: Boolean, required: true, default: false })
+  isFavorite?: boolean;
 }
 
 export const SubmissionSchema = SchemaFactory.createForClass(Submission);
