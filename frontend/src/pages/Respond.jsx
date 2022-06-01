@@ -1,7 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { createAccountQuery } from "../API/createAccountQuery";
+import { createSubmissionMutation } from "../API/createSubmissionMutation";
 import Form from "../modules/Form";
 import {
   FIND_FORM_BY_ID_QUERY,
@@ -11,7 +11,7 @@ import {
 import { template_list } from "../modules/Templates";
 import "../styles/Respond.css";
 
-const CREATE_SUBMISSION_MUTATION = createAccountQuery;
+const CREATE_SUBMISSION_MUTATION = createSubmissionMutation;
 
 function Respond() {
   const [form_config, setFormConfig] = useState();
