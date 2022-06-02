@@ -20,6 +20,10 @@ import { QuestionType } from '../forms/questions/question.typeDefs';
 import { OpenedQuestion } from './../forms/questions/schemas/opened-question.schema';
 import { OpenedQuestionType } from '../forms/questions/schemas/opened-question.schema';
 import { ClosedAnswer } from './../submissions/answers/schemas/closed-answer.schema';
+import {
+  GetMarketBasketInput,
+  GetMarketBasketOutput,
+} from './dtos/get-market-basket.dto';
 
 @Injectable()
 export class StatService {
@@ -30,7 +34,6 @@ export class StatService {
     private readonly formModel: Model<FormDocument>,
   ) {}
 
-  //questionKind : 질문 종류(Opened,Closed,...) questionDetailType : Opened면 Default 등등, questionTypeKor,questionDetailTypeKor : 안내메세지에 들어갈 타입이름(한국어)
   async findQuestion(formId: string, questionIds: string[]) {
     const mongooseQuestionIds = questionIds.map(
       (id) => new mongoose.Types.ObjectId(id),
@@ -335,6 +338,82 @@ export class StatService {
       for (const f of form) {
         result[f._id] = f.result;
       }
+
+      return { ok: true, result };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async getMarketBasket({
+    formId,
+    questionIds,
+  }: GetMarketBasketInput): Promise<GetMarketBasketOutput> {
+    try {
+      const END_POINT = `${process.env.STAT_END_POINT}/stats/market-basket`;
+
+      const form = await this.findQuestion(formId, questionIds);
+
+      for (const f of form) {
+        if (f.sections.questions.kind !== QuestionType.Closed) {
+          return {
+            ok: false,
+            error: '질문의 타입이 객관식이 아닙니다.',
+          };
+        }
+      }
+
+      const mongooseQuestionIds = questionIds.map(
+        (id) => new mongoose.Types.ObjectId(id),
+      );
+
+      const submissions = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+        { $unwind: '$submissions' },
+        { $unwind: '$submissions.answers' },
+        {
+          $match: {
+            'submissions.answers.question': { $in: [...mongooseQuestionIds] },
+          },
+        },
+        {
+          $project: {
+            submissions: { answers: { closedAnswer: true, question: true } },
+          },
+        },
+      ]);
+
+      const answers = [];
+
+      for (const {
+        submissions: {
+          answers: { closedAnswer, question },
+        },
+        _id,
+      } of submissions) {
+        const data = [];
+
+        for (const choice of closedAnswer) {
+          data.push(`${question}-${choice}`);
+        }
+        answers.push(data);
+      }
+
+      const response = await fetch(END_POINT, {
+        method: 'POST',
+        body: JSON.stringify({ answers: [...answers] }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      let { result } = await response.json();
 
       return { ok: true, result };
     } catch (error) {
