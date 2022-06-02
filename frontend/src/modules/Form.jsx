@@ -25,7 +25,7 @@ function Question({
       for (let idx in config.trigger_sections) {
         mySecEnabled[config.trigger_sections[idx]] = false;
       }
-      mySecEnabled[config.trigger_sections[trigger_sec_idx]] = true;
+      mySecEnabled[Number(config.trigger_sections[trigger_sec_idx])] = true;
       setSecEnabled(mySecEnabled);
     };
   }
@@ -64,7 +64,7 @@ export default function Form({ _config, _setResponse }) {
     let mySec = {};
 
     for (let i = 0; i < myConfig.sections.length; i++) {
-      mySec[myConfig.sections[i].id] = true;
+      mySec[i] = true;
     }
     for (let i = 0; i < myConfig.sections.length; i++) {
       let qs = myConfig.sections[i].questions;
@@ -73,11 +73,14 @@ export default function Form({ _config, _setResponse }) {
         myRes[q.id] = { ...init_value[q.type], isValid: !q.config.required };
         if (q.type === QType.CLOSED_ONE) {
           for (let idx in q.config.trigger_sections) {
-            mySec[q.config.trigger_sections[idx]] = false;
+            let sec_idx = q.config.trigger_sections[idx];
+            if (sec_idx === "") continue;
+            mySec[Number(sec_idx)] = false;
           }
         }
       }
     }
+    console.log(mySec);
     setResponse(myRes);
     setConfig(myConfig);
     setSecEnabled(mySec);
@@ -104,8 +107,8 @@ export default function Form({ _config, _setResponse }) {
       <div className="form-container">
         <label className="form-desc"> {config.description}</label>
         {/* section */}
-        {config.sections.map((sec) =>
-          secEnabled[sec.id] ? (
+        {config.sections.map((sec, i) =>
+          secEnabled[i] ? (
             <div key={sec.id} className="section">
               <label className="section-title">{sec.title}</label>
               {/* question */}
