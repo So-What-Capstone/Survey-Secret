@@ -6,7 +6,7 @@ type ClosedQuestionChoice {
   no: Float!
   choice: String!
   attachment: String
-  activatedSection: String
+  activatedSection: Float
 }
 
 type Question {
@@ -497,7 +497,7 @@ input ClosedQuestionChoiceInput {
   no: Float!
   choice: String!
   attachment: String
-  activatedSection: String
+  activatedSection: Float
 }
 
 input CreateGridQuestionInput {
