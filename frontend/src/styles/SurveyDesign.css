@@ -156,3 +156,8 @@
   margin-right: 10px;
   color: #ccd6f6;
 }
+
+.design-modal-layout {
+  display: flex;
+  flex-flow: column;
+}
