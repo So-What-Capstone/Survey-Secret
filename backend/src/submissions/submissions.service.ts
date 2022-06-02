@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Query } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Submission, SubmissionDocument } from './schemas/submission.schema';
 import { Model } from 'mongoose';
@@ -95,92 +95,101 @@ export class SubmissionsService {
                 ok: false,
                 error: '답변의 실제 종류와 입력한 종류가 다릅니다.(쿼리 오류)',
               };
-            } else {
-              let question = section.questions.find(
-                (question) =>
-                  question._id.toString() === answer.question.toString(),
-              );
+            }
 
-              if (question) {
-                if (question.kind !== answer.kind) {
-                  return { ok: false, error: '문제와 답변의 타입이 다릅니다.' };
-                } else {
-                  console.log(type, question, answer);
-                  if (type === QuestionType.Closed) {
-                    if (
-                      (<ClosedQuestion>question).closedType ===
-                      ClosedQuestionType.One
-                    ) {
-                      if ((<ClosedAnswer>answer).closedAnswer.length === 0) {
-                        return { ok: false, error: '답변이 없습니다.' };
-                      }
+            let question = section.questions.find(
+              (question) =>
+                question._id.toString() === answer.question.toString(),
+            );
 
-                      if ((<ClosedAnswer>answer).closedAnswer.length > 1) {
-                        return {
-                          ok: false,
-                          error:
-                            '객관식의 단일 답변타입에 여러개의 답변이 들어왔습니다',
-                        };
-                      }
+            console.log(question);
 
-                      //question의 선택지에 있는지 체크
-                    }
-                  } else if (type === QuestionType.Opened) {
-                    if (
-                      (<OpenedQuestion>question).openedType ===
-                      OpenedQuestionType.Number
-                    ) {
-                      const { openedAnswer } = <OpenedAnswer>answer;
-                      if (isNaN(Number(openedAnswer))) {
-                        return {
-                          ok: false,
-                          error:
-                            '숫자 주관식 질문에 대한 답변이 숫자가 아닙니다.',
-                        };
-                      }
-                    }
-                  } else if (type === QuestionType.Linear) {
-                    const { leftRange, rightRange } = <LinearQuestion>question;
-                    const { linearAnswer } = <LinearAnswer>answer;
-                    if (leftRange > linearAnswer || linearAnswer > rightRange) {
-                      return {
-                        ok: true,
-                        error: '선형답변이 범위를 벗어났습니다.',
-                      };
-                    }
-                  } else if (type === QuestionType.Personal) {
-                    const { personalType } = <PersonalQuestion>question;
-                    const { personalAnswer } = <PersonalAnswer>answer;
+            if (!question) {
+              return { ok: false, error: '없는 질문에 대한 답변입니다.' };
+            }
 
-                    if (personalType === PersonalQuestionType.Email) {
-                      const validateEmail = (email) => {
-                        return String(email)
-                          .toLowerCase()
-                          .match(
-                            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-                          );
-                      };
+            if (question.kind !== answer.kind) {
+              return { ok: false, error: '문제와 답변의 타입이 다릅니다.' };
+            }
 
-                      if (!validateEmail(personalAnswer)) {
-                        return {
-                          ok: false,
-                          error: '올바른 이메일 형식이 아닙니다.',
-                        };
-                      }
-                    }
-                    if (personalType === PersonalQuestionType.Phone) {
-                      //^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$
-                      //프론트와 구현 좀 더 공유 후 작성
-                    }
-                  }
-
-                  //complete
-                  answers.push(answer);
+            if (type === QuestionType.Closed) {
+              if (
+                (<ClosedQuestion>question).closedType === ClosedQuestionType.One
+              ) {
+                if ((<ClosedAnswer>answer).closedAnswer.length === 0) {
+                  return { ok: false, error: '답변이 없습니다.' };
                 }
-              } else {
-                return { ok: false, error: '없는 질문에 대한 답변입니다.' };
+
+                if ((<ClosedAnswer>answer).closedAnswer.length > 1) {
+                  return {
+                    ok: false,
+                    error:
+                      '객관식의 단일 답변타입에 여러개의 답변이 들어왔습니다',
+                  };
+                }
+
+                const choices = question.choices.map((choice) => choice.no);
+
+                if (
+                  !(<ClosedAnswer>answer).closedAnswer.every((v) =>
+                    choices.includes(v),
+                  )
+                ) {
+                  return { ok: false, error: '없는 선지입니다' };
+                }
+
+                //question의 선택지에 있는지 체크
+              }
+            } else if (type === QuestionType.Opened) {
+              if (
+                (<OpenedQuestion>question).openedType ===
+                OpenedQuestionType.Number
+              ) {
+                const { openedAnswer } = <OpenedAnswer>answer;
+                if (isNaN(Number(openedAnswer))) {
+                  return {
+                    ok: false,
+                    error: '숫자 주관식 질문에 대한 답변이 숫자가 아닙니다.',
+                  };
+                }
+              }
+            } else if (type === QuestionType.Linear) {
+              const { leftRange, rightRange } = <LinearQuestion>question;
+              const { linearAnswer } = <LinearAnswer>answer;
+              if (leftRange > linearAnswer || linearAnswer > rightRange) {
+                return {
+                  ok: true,
+                  error: '선형답변이 범위를 벗어났습니다.',
+                };
+              }
+            } else if (type === QuestionType.Personal) {
+              const { personalType } = <PersonalQuestion>question;
+              const { personalAnswer } = <PersonalAnswer>answer;
+
+              if (personalType === PersonalQuestionType.Email) {
+                const validateEmail = (email) => {
+                  return String(email)
+                    .toLowerCase()
+                    .match(
+                      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                    );
+                };
+
+                if (!validateEmail(personalAnswer)) {
+                  return {
+                    ok: false,
+                    error: '올바른 이메일 형식이 아닙니다.',
+                  };
+                }
+              }
+              if (personalType === PersonalQuestionType.Phone) {
+                //^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$
+                //프론트와 구현 좀 더 공유 후 작성
               }
             }
+
+            //complete
+            answers.push(answer);
           }
         }
 
