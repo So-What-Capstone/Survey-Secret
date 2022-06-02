@@ -554,12 +554,12 @@ function EditQuestion({
         value={content}
         onChange={handleContentChange}
         size="large"
-        addonBefore={
+        addonAfter={
           <Tooltip title="문항 삭제">
             <CloseOutlined className="edit-remove" onClick={handleRemove} />
           </Tooltip>
         }
-        addonAfter={
+        addonBefore={
           <Select value={typeLabelMap[type]} onChange={handleQuesTypeChange}>
             {Object.entries(typeLabelMap).map((p) => (
               <Option key={p[0]} value={p[0]}>
