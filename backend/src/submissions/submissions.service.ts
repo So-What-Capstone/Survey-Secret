@@ -167,12 +167,11 @@ export class SubmissionsService {
               const { personalAnswer } = <PersonalAnswer>answer;
 
               if (personalType === PersonalQuestionType.Email) {
+                var EMAIL_REGEX =
+                  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
                 const validateEmail = (email) => {
-                  return String(email)
-                    .toLowerCase()
-                    .match(
-                      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-                    );
+                  return EMAIL_REGEX.test(email);
                 };
 
                 if (!validateEmail(personalAnswer)) {
@@ -183,7 +182,17 @@ export class SubmissionsService {
                 }
               }
               if (personalType === PersonalQuestionType.Phone) {
-                //^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$
+                var PHONE_REGEX = /^\d{3}-\d{3,4}-\d{4}$/;
+                const validatePhone = (phone) => {
+                  return PHONE_REGEX.test(phone);
+                };
+
+                if (!validatePhone(personalAnswer)) {
+                  return {
+                    ok: false,
+                    error: '올바른 전화번호 형식이 아닙니다.',
+                  };
+                }
                 //프론트와 구현 좀 더 공유 후 작성
               }
             }
