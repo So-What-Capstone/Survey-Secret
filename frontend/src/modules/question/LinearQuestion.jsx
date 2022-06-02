@@ -3,7 +3,6 @@ import "../../styles/Question.css";
 import "../../styles/LinearQuestion.css";
 import PropTypes from "prop-types";
 import { Slider, InputNumber } from "antd";
-import { linear } from "./test_config";
 
 function LinearQuestion({ config, setValue }) {
   const content = config.content;
@@ -13,17 +12,8 @@ function LinearQuestion({ config, setValue }) {
   const leftLabel = config.leftLabel;
   const rightLabel = config.rightLabel;
   const required = config.required;
-  const [internalVal, setInternal] = useState(linear);
-  useEffect((e) => {
-    setInternal({
-      ...internalVal,
-      isValid: true,
-    });
-    setValue({
-      ...internalVal,
-      isValid: true,
-    });
-  }, []);
+  const [internalVal, setInternal] = useState({ data: leftEnd, isValid: true });
+
   const onChange = (x) => {
     setInternal({ data: x, isValid: true });
     setValue({ data: x, isValid: true });
