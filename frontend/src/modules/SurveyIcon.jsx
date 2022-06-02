@@ -2,7 +2,12 @@ import React from "react";
 import { gql, useMutation } from "@apollo/client";
 import "../styles/Surveys.scss";
 import PropTypes from "prop-types";
-import { DeleteOutlined, EditOutlined, BarsOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  BarsOutlined,
+  ZoomInOutlined,
+} from "@ant-design/icons";
 import { DELETE_FORM_MUTATION } from "../API/deleteForm";
 import { useNavigate } from "react-router-dom";
 
@@ -19,6 +24,7 @@ export default function SurveyIcon({
   exp,
   form_id,
   hover_enabled,
+  setPreviewId,
 }) {
   let navigate = useNavigate();
   const [deleteForm, { loading: deleteLoading }] = useMutation(
@@ -69,6 +75,10 @@ export default function SurveyIcon({
     console.log("click");
     navigate("/respond?id=" + form_id);
   };
+  const onPreviewClicked = () => {
+    setPreviewId(form_id);
+  };
+
   return (
     <div className="survey-icon-con">
       {hover_enabled ? (
@@ -88,7 +98,7 @@ export default function SurveyIcon({
           >
             <BarsOutlined
               style={{
-                fontSize: "1.5rem",
+                fontSize: "1.2rem",
                 color: "inherit",
                 marginRight: "0.2rem",
               }}
@@ -98,12 +108,26 @@ export default function SurveyIcon({
           <a href={edit_link} title="디자인 수정" className="survey-icon-btn">
             <EditOutlined
               style={{
-                fontSize: "1.5rem",
+                fontSize: "1.2rem",
                 color: "inherit",
                 marginRight: "0.2rem",
               }}
             />{" "}
             디자인 수정
+          </a>
+          <a
+            title="미리보기"
+            className="survey-icon-btn"
+            onClick={onPreviewClicked}
+          >
+            <ZoomInOutlined
+              style={{
+                fontSize: "1.2rem",
+                color: "inherit",
+                marginRight: "0.2rem",
+              }}
+            />{" "}
+            미리보기
           </a>
         </div>
       ) : null}
@@ -123,4 +147,5 @@ SurveyIcon.propTypes = {
   exp: PropTypes.any,
   form_id: PropTypes.string,
   hover_enabled: PropTypes.bool,
+  setPreviewId: PropTypes.func,
 };

@@ -37,12 +37,17 @@
   cursor: pointer;
 }
 
+.my-survey-bottom-con {
+  display: flex;
+  flex-flow: row wrap;
+}
+
 .survey-tray-container {
   border-radius: 0.1rem;
   /* background-color: #ffffff20; */
-  width: 96%;
+  width: 60%;
   margin: 2%;
-  height: fit-content;
+
   /* padding: 2%; */
 }
 
@@ -63,4 +68,17 @@
   height: fit-content;
   background-color: #ffffff20;
   border-radius: 0.5rem;
+}
+
+.mysurvey-preview-con {
+  width: 30%;
+  margin: 2%;
+  min-height: 90vh;
+  height: 90vh;
+  position: sticky;
+  top: 6vh;
+  background-color: #172a46;
+  border-radius: 0.2rem;
+  padding: 1rem;
+  overflow-y: auto;
 }

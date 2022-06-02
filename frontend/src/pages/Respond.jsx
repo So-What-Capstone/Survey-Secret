@@ -13,7 +13,7 @@ import "../styles/Respond.css";
 
 const CREATE_SUBMISSION_MUTATION = createSubmissionMutation;
 
-function FormRespToSubm(form_config, response) {
+function FormRespToSubm(form_config, response, secEnabled) {
   /*
   result shape:
   let submission = {
@@ -59,6 +59,7 @@ function FormRespToSubm(form_config, response) {
   for (let i = 0; i < sub_secs.length; i++) {
     let sec = form_config.sections[i];
     sub_secs[i] = { sectionId: sec.id, answers: [] };
+    if (!secEnabled[i]) continue;
 
     let answers = {
       Closed: [],
@@ -75,7 +76,6 @@ function FormRespToSubm(form_config, response) {
 
       let ansDic = { kind: kind, question: q.id };
       let qVal = response[q.id];
-      console.log(qVal);
       if (QType.CLOSED_ONE <= type && type <= QType.CLOSED_INPUT) {
         //closed
         ansDic["closedAnswer"] = qVal.data;
@@ -113,7 +113,10 @@ function FormRespToSubm(form_config, response) {
           qVal.zip_code + qVal.address + qVal.address_detail
         );
       }
-      // if(&&!qVal.isValid)
+      if (!qVal.isValid) {
+        alert("답변이 유효하지 않습니다!");
+        return null;
+      }
 
       answers[kind].push(ansDic);
     }
@@ -135,6 +138,7 @@ function Respond() {
   const [form_config, setFormConfig] = useState();
   const [searchParams] = useSearchParams();
   const [formId, setFormId] = useState(0);
+  const [secEnabled, setSecEnabled] = useState();
   useEffect(() => {
     const id = searchParams.get("id");
     if (id) {
@@ -181,37 +185,30 @@ function Respond() {
   const onSubmitClick = async () => {
     // submit the response
 
-    // check the validity of response
-    // let isValid = true;
-    // for (const idx in response) {
-    //   if (!response[idx].isValid) {
-    //     isValid = false;
-    //     break;
-    //   }
-    // }
     // make submission shape for the mutation
-    let submission = FormRespToSubm(form_config, response);
+    let submission = FormRespToSubm(form_config, response, secEnabled);
     if (!submission) return;
+    console.log("submit", submission);
     //response => Submission.
     try {
       await createSubmission(submission);
     } catch (err) {
-      console.error(JSON.stringify(err, null, 2));
+      if (err) console.error(JSON.stringify(err, null, 2));
     }
 
     console.log("submission", submission);
-    // if (isValid) {
-    //   alert("제출되었습니다.");
-    // } else {
-    //   alert("필수 응답문항을 모두 답해 주세요.");
-    // }
   };
 
   if (!form_config) return null;
   return (
     <div className="respond-container">
       <div className="preview">
-        <Form _config={form_config} _setResponse={setResponse} />
+        <Form
+          _config={form_config}
+          _setResponse={setResponse}
+          secEnabled={secEnabled}
+          setSecEnabled={setSecEnabled}
+        />
         <div className="respond-submit-container">
           <button className="respond-submit-btn" onClick={onSubmitClick}>
             제출하기

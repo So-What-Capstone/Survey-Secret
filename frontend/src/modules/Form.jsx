@@ -52,10 +52,15 @@ Question.propTypes = {
   }),
 };
 
-export default function Form({ _config, _setResponse }) {
+export default function Form({
+  _config,
+  _setResponse,
+  secEnabled,
+  setSecEnabled,
+}) {
   const [response, setResponse] = useState();
   const [config, setConfig] = useState(null);
-  const [secEnabled, setSecEnabled] = useState();
+  // const [secEnabled, setSecEnabled] = useState();
 
   useEffect(() => {
     if (!_config) return;
@@ -138,4 +143,6 @@ Form.propTypes = {
     sections: PropTypes.arrayOf(PropTypes.any),
   }),
   _setResponse: PropTypes.func,
+  secEnabled: PropTypes.shape(PropTypes.any),
+  setSecEnabled: PropTypes.func,
 };

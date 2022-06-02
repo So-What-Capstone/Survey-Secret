@@ -46,6 +46,7 @@ function SurveyCreate() {
   const [my_templates_names, setMyTemplateNames] = useState([]);
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const [secEnabled, setSecEnabled] = useState({});
 
   const {
     loading: getTemplatesLoading,
@@ -155,6 +156,8 @@ function SurveyCreate() {
               ? templates[selected_template[0]]
               : my_templates[selected_template[1]]
           }
+          secEnabled={secEnabled}
+          setSecEnabled={setSecEnabled}
         />
       </div>
     </div>

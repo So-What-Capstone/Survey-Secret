@@ -24,7 +24,6 @@ function Menu() {
 
   const { loading, data, error, refetch } = useQuery(ME_QUERY, {
     onCompleted: (data) => {
-      console.log("Query Completed");
       setLoggedInUser(data?.me?.user?.username);
     },
   });
