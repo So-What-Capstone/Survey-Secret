@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ClipTray from "../modules/ClipTray";
 import { useNavigate } from "react-router-dom";
+import { gql, useQuery } from "@apollo/client";
+import { getMyTypeQuery } from "../API/meQuery";
 import "../styles/Clips.css";
 import "../styles/MyInfoPremium.scss";
 import {
@@ -13,6 +15,8 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 
+const GET_MY_TYPE_QUERY = getMyTypeQuery;
+
 /*
 프리미엄 회원 이점 내용 수정 필요
 */
@@ -24,10 +28,19 @@ function MyInfoPremium() {
   const navigate = useNavigate();
 
   /* dummy data */
-  const userType = "Premium"; //현재 user type
+  //const userType = "Premium"; //현재 user type
   const expiredAt = ["2023", "8", "24"]; //멤버십 만료일
 
-  const [btnState, setBtnState] = useState(userType); //선택한 멤버십
+  /* 멤버십 정보 */
+  const [userType, setUserType] = useState("");
+  const [btnState, setBtnState] = useState(""); //선택한 멤버십
+
+  const { data, loading, error } = useQuery(GET_MY_TYPE_QUERY, {
+    onCompleted: (data) => {
+      setUserType(data?.me?.user?.type);
+      setBtnState(data?.me?.user?.type);
+    },
+  });
 
   const handleBtnState = (e) => {
     setBtnState(e.target.id);

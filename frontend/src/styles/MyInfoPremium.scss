@@ -1,7 +1,7 @@
 .premium-con {
   display: flex;
   flex-direction: row;
-  width: 100vw;
+  width: 100%;
   .premium-panel {
     display: flex;
     flex-direction: column;
@@ -17,6 +17,7 @@
       color: #65FFDC;
       font-size: 24px;
       font-weight: 600;
+      border: none !important;
     }
     .panel-title-small {
       color: #CCD6F6;
