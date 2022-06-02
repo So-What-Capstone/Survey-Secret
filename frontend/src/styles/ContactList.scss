@@ -28,19 +28,22 @@
       padding: 0px 2vw 0px 2vw;
     }
     .row-list { //수신인 리스트
+      z-index: 0;
+      background-color: #CCD6F610;
       height: 50vh;
       min-height: 10rem;
       display: flex;
       flex-direction: column;
-      border: 1px solid #CCD6F680;
       border-radius: 0.2rem;
       .row-list-head { //리스트 헤더
+        z-index: 1;
         display: flex;
         flex-direction: row;
         background-color: #CCD6F680;
         border-radius: 0.2rem 0.2rem 0px 0px / 0.2rem 0.2rem 0px 0px;
         padding: 0.9rem 2vw 0.9rem 2vw;
         .all-check { //전체체크
+          z-index: 1;
           position: relative;
           top: 6px;
           flex: 1 1 0;
@@ -49,6 +52,7 @@
           flex: 5 1 0;
         }
         .star-btn { //즐겨찾기 버튼
+          z-index: 1;
           flex: 1 1 0;
           color: #65FFDC;
           text-align: right;
@@ -60,6 +64,7 @@
         }
       }
       .list-con { //리스트 내용 container
+        z-index: 1;
         display: flex;
         flex-direction: column;
         background-color: #F5F5F519;
@@ -67,6 +72,7 @@
         max-height: 55vh;
         overflow: auto;
         .list-item { //리스트 내용 1개
+          z-index: 1;
           display: flex;
           flex-direction: row;
           border-bottom: 1px solid #CCD6F680;
