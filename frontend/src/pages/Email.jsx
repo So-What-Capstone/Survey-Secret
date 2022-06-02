@@ -58,7 +58,7 @@ function Email() {
   };
 
   return (
-    <div className="contact-con">
+    <div>
       <ClipTray clips={clips} />
       <div className="email-con">
         <ContactList

@@ -1,12 +1,4 @@
-.contact-con {
-  //전체
-  display: flex;
-  flex-direction: row;
-  width: 100vw;
-  max-height: 95vh;
-
-  .message-con {
-    //clip을 뺀 부분
+  .message-con { //clip을 뺀 부분
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -17,12 +9,12 @@
       text-align: center;
       display: flex;
       flex-direction: column;
-      background-color: #0a182d60;
-      padding: 2%;
+      padding: 1rem 1.5vw 1rem 1.5vw;
+      background-color: #0A182D60;
       border-radius: 0.2rem;
-      flex: 4 1 0;
-      .sender-row {
-        //발신번호 row
+      margin: 3rem 1.5vw 3rem 0.5vw;
+      flex: 1 1 0;
+      .sender-row { //발신번호 row
         display: flex;
         flex-direction: row;
         text-align: center;
@@ -40,8 +32,8 @@
           background-color: whitesmoke;
           color: black;
           border: none;
-          border-radius: 0.1rem;
-          padding: 0.3rem 2vw 0.3rem 2vw;
+          border-radius: 0.2rem;
+          padding: 0.7rem 2vw 0.7rem 2vw;
           flex: 3 1 0;
         }
       }
@@ -65,23 +57,23 @@
         }
         textarea {
           border: none;
-          border-radius: 10px;
-          background-color: #f5f5f5;
-          height: 20rem;
+          border-radius: 0.2rem;
+          background-color: #F5F5F5;
+          height: 50vh;
+          min-height: 10rem;
           padding: 1.5rem 2vw 1.5rem 2vw;
         }
       }
       .send-btn {
         margin: 1rem 0px 1rem 0px;
-        padding: 0.5rem 0px 0.5rem 0px;
-        background-color: #65ffdc19;
-        border: 1px solid #65ffdc;
+        padding: 0.7rem 0px 0.7rem 0px;
+        background-color: #65FFDC19;
+        border: 1px solid #65FFDC;
         border-radius: 0.2rem;
-        color: #65ffdc;
+        color: #65FFDC;
         font-size: 25px;
         width: 100%;
         cursor: pointer;
       }
     }
   }
-}
