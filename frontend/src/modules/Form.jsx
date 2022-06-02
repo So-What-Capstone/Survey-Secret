@@ -19,7 +19,7 @@ function Question({
   };
 
   let setTrigger = () => {};
-  if (type === 0) {
+  if (type === QType.CLOSED_ONE) {
     setTrigger = (trigger_sec_idx) => {
       let mySecEnabled = { ...secEnabled };
       for (let idx in config.trigger_sections) {
@@ -71,7 +71,7 @@ export default function Form({ _config, _setResponse }) {
       for (let j = 0; j < qs.length; j++) {
         let q = qs[j];
         myRes[q.id] = { ...init_value[q.type], isValid: !q.config.required };
-        if (q.type === 0) {
+        if (q.type === QType.CLOSED_ONE) {
           for (let idx in q.config.trigger_sections) {
             mySec[q.config.trigger_sections[idx]] = false;
           }
@@ -86,6 +86,14 @@ export default function Form({ _config, _setResponse }) {
   useEffect(() => {
     if (_setResponse !== undefined) _setResponse(response);
   }, [response]);
+
+  useEffect(() => {
+    for (let i in secEnabled) {
+      if (secEnabled[i] === false) {
+        // TODO
+      }
+    }
+  }, [secEnabled]);
 
   if (config === null || config === undefined) {
     return null;

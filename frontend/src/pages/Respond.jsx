@@ -75,6 +75,7 @@ function FormRespToSubm(form_config, response) {
 
       let ansDic = { kind: kind, question: q.id };
       let qVal = response[q.id];
+      console.log(qVal);
       if (QType.CLOSED_ONE <= type && type <= QType.CLOSED_INPUT) {
         //closed
         ansDic["closedAnswer"] = qVal.data;
@@ -108,14 +109,15 @@ function FormRespToSubm(form_config, response) {
         ansDic["opendAnswer"] = qVal.date_str;
       } else if (type === QType.ADDRESS) {
         // address
-        ansDic["personalAnswer"] = String(
+        ansDic["openedAnswer"] = String(
           qVal.zip_code + qVal.address + qVal.address_detail
         );
       }
+      // if(&&!qVal.isValid)
 
       answers[kind].push(ansDic);
     }
-    sub_secs[i]["answers"] = [answers];
+    sub_secs[i]["answers"] = answers;
   }
   let submission = {
     variables: {
@@ -144,11 +146,14 @@ function Respond() {
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId },
     onCompleted: (data) => {
-      const config = getFormConfigFromDB(
-        formId,
-        data.findFormById.form,
-        data.findFormById.form.sections
-      );
+      let formData = data.findFormById.form;
+      if (formData?.state !== "InProgress") {
+        let msg = "현재 설문을 이용할 수 없습니다.";
+        alert(msg);
+        navigate("/");
+      }
+      const config = getFormConfigFromDB(formId, formData, formData.sections);
+
       setFormConfig(config);
     },
   });
@@ -173,7 +178,7 @@ function Respond() {
   const navigate = useNavigate();
   const [response, setResponse] = useState();
 
-  const onSubmitClick = () => {
+  const onSubmitClick = async () => {
     // submit the response
 
     // check the validity of response
@@ -186,9 +191,13 @@ function Respond() {
     // }
     // make submission shape for the mutation
     let submission = FormRespToSubm(form_config, response);
-
+    if (!submission) return;
     //response => Submission.
-    createSubmission(submission);
+    try {
+      await createSubmission(submission);
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2));
+    }
 
     console.log("submission", submission);
     // if (isValid) {
