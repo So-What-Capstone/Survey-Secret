@@ -25,11 +25,13 @@ function EditClosedQuestion({ sectionCount, data, onDataChange, disabled }) {
   const [choices, setChoices] = useState(data.choices ? data.choices : []);
   const [triggerOptions, setTriggerOptions] = useState([]);
   const [allowMultiple, setAllowMultiple] = useState(data.allowMultiple);
-  const [showTriggerSelect, setShowTriggerSelect] = useState(false);
+  const [showTriggerSelect, setShowTriggerSelect] = useState(
+    data.choices.find((ch) => ch.trigger !== -1)
+  );
 
   function getTriggerLabel(trigger) {
     if (trigger === -1) {
-      return "다음 섹션으로 이동";
+      return "트리거 없음";
     } else {
       return `섹션 ${trigger}로 이동`;
     }
