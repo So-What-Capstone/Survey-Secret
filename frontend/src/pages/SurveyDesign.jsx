@@ -66,7 +66,7 @@ function parseClosedQuestion(ques) {
     choices: ques.choices.map((ch, i) => {
       return {
         content: ch.choice,
-        trigger: ch.activatedSection ? ch.activatedSection : -1,
+        trigger: ch.activatedSection ? Number(ch.activatedSection) : -1,
         key: `${ques._id}-${i}`,
       };
     }),
@@ -547,7 +547,7 @@ function SurveyDesign() {
                     activatedSection:
                       ch.trigger === -1 || sections.length <= ch.trigger
                         ? null
-                        : ch.trigger,
+                        : String(ch.trigger),
                   };
                 }),
               });
