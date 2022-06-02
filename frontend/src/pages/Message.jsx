@@ -94,7 +94,7 @@ function Message() {
   };
 
   return (
-    <div className="contact-con">
+    <div>
       <ClipTray clips={clips} />
       <div className="message-con">
         <ContactList
