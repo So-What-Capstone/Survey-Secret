@@ -421,7 +421,6 @@ input GetCorrInput {
 
 input GetDescribeInput {
   formId: String!
-  questionIds: [String!]!
 }
 
 type Mutation {

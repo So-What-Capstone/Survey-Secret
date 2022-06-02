@@ -19,6 +19,7 @@ import { GetDescribeInput, GetDescribeOutput } from './dtos/get-describe.dto';
 import { QuestionType } from '../forms/questions/question.typeDefs';
 import { OpenedQuestion } from './../forms/questions/schemas/opened-question.schema';
 import { OpenedQuestionType } from '../forms/questions/schemas/opened-question.schema';
+import { ClosedAnswer } from './../submissions/answers/schemas/closed-answer.schema';
 
 @Injectable()
 export class StatService {
@@ -234,22 +235,106 @@ export class StatService {
     }
   }
 
-  async getDescribe({
-    formId,
-    questionIds,
-  }: GetDescribeInput): Promise<GetDescribeOutput> {
+  async getDescribe({ formId }: GetDescribeInput): Promise<GetDescribeOutput> {
     try {
-      const END_POINT = `${process.env.STAT_END_POINT}/stats/describe`;
+      const form = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+        { $unwind: '$submissions' },
+        { $unwind: '$submissions.answers' },
+        {
+          $group: {
+            _id: '$submissions.answers.question',
+            count: { $count: {} },
+            result: {
+              $accumulator: {
+                init: function () {
+                  return { count: 0, answer: {} };
+                },
+                accumulate: function (state, answer) {
+                  if (answer.kind === 'Closed') {
+                    const tempAnswer = state.answer;
 
-      const jsonData = await this.createJsonData(formId, questionIds);
+                    for (const choice of answer.closedAnswer) {
+                      tempAnswer[choice] = tempAnswer[choice]
+                        ? tempAnswer[choice] + 1
+                        : 1;
+                    }
 
-      const response = await fetch(END_POINT, {
-        method: 'POST',
-        body: JSON.stringify({ answers: jsonData }),
-        headers: { 'Content-Type': 'application/json' },
-      });
+                    return { count: state.count + 1, answer: tempAnswer };
+                  } else if (answer.kind === 'Grid') {
+                    const tempAnswer = state.answer;
 
-      let { result } = await response.json();
+                    for (const gridAnswer of answer.gridAnswer) {
+                      if (tempAnswer[gridAnswer.rowNo]) {
+                        const obj = tempAnswer[gridAnswer.rowNo];
+                        obj[gridAnswer.colNo] = obj[gridAnswer.colNo]
+                          ? obj[gridAnswer.colNo] + 1
+                          : 1;
+                        tempAnswer[gridAnswer.rowNo] = obj;
+                      } else {
+                        const obj = {};
+                        obj[gridAnswer.colNo] = 1;
+                        tempAnswer[gridAnswer.rowNo] = obj;
+                      }
+                    }
+
+                    return {
+                      count: state.count + 1,
+                      answer: tempAnswer,
+                    };
+                  } else if (answer.kind === 'Linear') {
+                    return {
+                      count: state.count + 1,
+                      sum: state.sum
+                        ? state.sum + answer.linearAnswer
+                        : answer.linearAnswer,
+                      min: state.min
+                        ? Math.min(state.min, answer.linearAnswer)
+                        : answer.linearAnswer,
+                      max: state.max
+                        ? Math.max(state.max, answer.linearAnswer)
+                        : answer.linearAnswer,
+                    };
+                  } else if (answer.kind === 'Opened') {
+                    if (Object.keys(state.answer).length === 0) {
+                      return {
+                        count: state.count + 1,
+                        answer: [answer.openedAnswer],
+                      };
+                    } else {
+                      return {
+                        count: state.count + 1,
+                        answer: [...state.answer, answer.openedAnswer],
+                      };
+                    }
+                  }
+                },
+                accumulateArgs: ['$submissions.answers'],
+                merge: function (state1, state2) {
+                  return {
+                    count: state1 + state2,
+                  };
+                },
+                lang: 'js',
+              },
+            },
+          },
+        },
+      ]);
+
+      const result = {};
+
+      for (const f of form) {
+        result[f._id] = f.result;
+      }
 
       return { ok: true, result };
     } catch (error) {

@@ -111,6 +111,10 @@ export class SubmissionsService {
                       (<ClosedQuestion>question).closedType ===
                       ClosedQuestionType.One
                     ) {
+                      if ((<ClosedAnswer>answer).closedAnswer.length === 0) {
+                        return { ok: false, error: '답변이 없습니다.' };
+                      }
+
                       if ((<ClosedAnswer>answer).closedAnswer.length > 1) {
                         return {
                           ok: false,
@@ -118,6 +122,8 @@ export class SubmissionsService {
                             '객관식의 단일 답변타입에 여러개의 답변이 들어왔습니다',
                         };
                       }
+
+                      //question의 선택지에 있는지 체크
                     }
                   } else if (type === QuestionType.Opened) {
                     if (
