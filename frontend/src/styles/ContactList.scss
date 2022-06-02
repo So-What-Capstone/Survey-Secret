@@ -4,7 +4,7 @@
   flex-direction: column;
   padding: 2rem 3vw 2rem 3vw;
   background-color: #0A182D60;
-  border-radius: 10px;
+  border-radius: 0.2rem;
   flex: 4 1 0;
   margin: 5rem 4vw 5rem 4vw;
 
@@ -24,7 +24,7 @@
       background-color: #ffffff19;
       color: #CCD6F6;
       border: none;
-      border-radius: 10px;
+      border-radius: 0.2rem;
       padding: 0px 2vw 0px 2vw;
     }
     .row-list { //수신인 리스트
@@ -35,7 +35,7 @@
         display: flex;
         flex-direction: row;
         background-color: #CCD6F680;
-        border-radius: 10px 10px 0px 0px / 10px 10px 0px 0px;
+        border-radius: 0.2rem 0.2rem 0px 0px / 0.2rem 0.2rem 0px 0px;
         padding: 0.9rem 2vw 0.9rem 2vw;
         .all-check { //전체체크
           position: relative;
@@ -60,7 +60,7 @@
         display: flex;
         flex-direction: column;
         background-color: #F5F5F519;
-        border-radius: 0px 0px 10px 10px / 0px 0px 10px 10px;
+        border-radius: 0px 0px 0.2rem 0.2rem / 0px 0px 0.2rem 0.2rem;
         max-height: 21rem;
         overflow: auto;
         .list-item { //리스트 내용 1개

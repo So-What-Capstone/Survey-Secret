@@ -15,7 +15,7 @@
     flex-direction: column;
     padding: 2rem 3vw 2rem 3vw;
     background-color: #0A182D60;
-    border-radius: 10px;
+    border-radius: 0.2rem;
     flex: 4 1 0;
     margin: 5rem 4vw 5rem 4vw;
     .content-row { //발신내용 row
@@ -34,13 +34,13 @@
       }
       input {
         border: none;
-        border-radius: 10px;
+        border-radius: 0.2rem;
         background-color: #F5F5F5;
         padding: 0.7rem 2vw 0.7rem 2vw;
       }
       textarea {
         border: none;
-        border-radius: 10px;
+        border-radius: 0.2rem;
         background-color: #F5F5F5;
         height: 20rem;
         padding: 1.5rem 2vw 1.5rem 2vw;
@@ -51,7 +51,7 @@
       padding: 0.7rem 0px 0.7rem 0px;
       background-color: #65FFDC19;
       border: 1px solid #65FFDC;
-      border-radius: 10px;
+      border-radius: 0.2rem;
       color: #65FFDC;
       font-size: 25px;
       width: 100%;

@@ -16,7 +16,7 @@
           .tab-head { //탭의 메뉴 1개
             background-color: #FFFFFF60;
             color: white;
-            border-radius: 10px 10px 0px 0px / 10px 10px 0px 0px;
+            border-radius: 0.5rem 0.5rem 0px 0px / 0.5rem 0.5rem 0px 0px;
             &.selected {
               background-color: #F5F5F5;
               color: black !important;
@@ -27,7 +27,7 @@
         min-height: 38rem;
         max-height: 38rem;
         overflow: auto;
-        border-radius: 0px 10px 10px 10px / 0px 10px 10px 10px;
+        border-radius: 0px 0.2rem 0.2rem 0.2rem / 0px 0.2rem 0.2rem 0.2rem;
         border: 1px solid #EA99D5;
         padding: 0px;
         background-color: #F5F5F5;
@@ -67,7 +67,7 @@
       flex-direction: column;
       padding: 2rem 3vw 2rem 3vw;
       background-color: #0A182D60;
-      border-radius: 10px;
+      border-radius: 0.2rem;
       flex: 4 1 0;
       margin: 2rem 4vw 2rem 4vw;
       .panel-title { //상세내역
@@ -91,7 +91,7 @@
         .row-input {
           background-color: #F5F5F5;
           border: none;
-          border-radius: 10px;
+          border-radius: 0.2rem;
           padding: 0.8rem 2vw 0.8rem 2vw;
           flex: 4 1 0;
           color: #818181;
@@ -116,7 +116,7 @@
         }
         .row-input { //메일제목, 발신내용
           border: none;
-          border-radius: 10px;
+          border-radius: 0.2rem;
           background-color: #F5F5F5;
           padding: 0.8rem 2vw 0.8rem 2vw;
           &.wide { //발신내용
@@ -128,7 +128,7 @@
           max-height: 5rem;
           overflow: auto;
           background-color: #F5F5F5;
-          border-radius: 10px;
+          border-radius: 0.2rem;
           .content-con {
             display: flex;
             flex-direction: column;
@@ -144,7 +144,7 @@
         padding: 0.7rem 0px 0.7rem 0px;
         background-color: #65FFDC19;
         border: 1px solid #65FFDC;
-        border-radius: 10px;
+        border-radius: 0.2rem;
         color: #65FFDC;
         font-size: 23px;
         width: 100%;
