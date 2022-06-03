@@ -56,11 +56,11 @@ export default function SurveyIcon({
 
   const expStr = "~ " + expArray[0] + " " + timeArray[0];
 
-  const onDelete = () => {
+  const onDelete = async () => {
     let ret = confirm('"' + title + '" 설문을 삭제하시겠습니까?');
     if (ret) {
       // delete the form
-      deleteForm({
+      await deleteForm({
         variables: {
           formId: form_id,
         },
