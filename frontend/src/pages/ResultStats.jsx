@@ -7,8 +7,16 @@ import { useLazyQuery } from "@apollo/client";
 import { findFormByIdQuery } from "../API/findFormByIdQuery";
 import { getCorrQuery } from "../API/getCorrQuery";
 
-import Plot from "react-plotly.js";
-import { Checkbox, Row, Spin, Empty, Alert, Divider, Button } from "antd";
+import {
+  Checkbox,
+  Row,
+  Spin,
+  Empty,
+  Alert,
+  Divider,
+  Button,
+  Select,
+} from "antd";
 import TableTransfer from "../modules/TableTransfer";
 // import Plotly from "plotly.js-basic-dist";
 // import createPlotlyComponent from "react-plotly.js/factory";
@@ -116,7 +124,20 @@ function NotSelected() {
 }
 
 function MarketBasketAnalysis() {
-  return <div>MarketBasket</div>;
+  return (
+    <div className="market-root">
+      <Alert
+        message="객관식 응답 경향"
+        description="모든 객관식 문항들에 대한 사람들의 응답 결과를 분석하여, 여러 선택지 간 연관 규칙(Association rules)을 찾아냅니다."
+        type="info"
+        showIcon
+      />
+
+      <Divider>
+        <Button type="primary">응답 경향 분석</Button>
+      </Divider>
+    </div>
+  );
 }
 
 function CorrAnalysis({ form }) {
@@ -210,25 +231,6 @@ function CorrAnalysis({ form }) {
           item.content && item.content.indexOf(inputValue) !== -1
         }
       />
-
-      {data && (
-        <Plot
-          data={[
-            {
-              z: [
-                [1, null, 30, 50, 1],
-                [20, 1, 60, 80, 30],
-                [30, 60, 1, -10, 20],
-              ],
-              x: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-              y: ["Morning", "Afternoon", "Evening"],
-              type: "heatmap",
-            },
-          ]}
-          layout={{ width: 700, height: 500, title: "Form Name" }}
-          config={{ displayModeBar: false }}
-        />
-      )}
     </div>
   );
 }
@@ -238,15 +240,60 @@ CorrAnalysis.propTypes = {
   form: PropTypes.any,
 };
 
-function KeywordAnalysis() {
-  //using d3-cloud
+function KeywordAnalysis({ form }) {
+  const [questions, setQuestions] = useState([]);
+
+  useEffect(() => {
+    const currQues = [];
+    form.sections.forEach((sect, i) => {
+      sect.questions.forEach((ques, j) => {
+        if (ques.kind === "Opened") {
+          currQues.push({
+            text: `Q${i + 1}-C${j + 1} - ${ques.content}`,
+            value: `${ques._id}`,
+          });
+        }
+      });
+    });
+    setQuestions(currQues);
+  }, [form]);
+
   return (
-    <div>
-      <div>WordCloud</div>
-      <div></div>
+    <div className="keyword-root">
+      <Alert
+        message="주관식 응답 키워드"
+        description={
+          "주관식 문항의 주요 키워드로 워드 클라우드를 그릴 수 있습니다."
+        }
+        type="info"
+        showIcon
+      />
+
+      <Select
+        showSearch
+        placeholder="주관식 문항을 선택하세요."
+        optionFilterProp="children"
+        filterOption={(input, option) =>
+          option.children.toLowerCase().includes(input.toLowerCase())
+        }
+      >
+        {questions.map((ques) => (
+          <Select.Option key={ques.value} value={ques.value}>
+            {ques.text}
+          </Select.Option>
+        ))}
+      </Select>
+
+      <Divider>
+        <Button type="primary">워드 클라우드 그리기</Button>
+      </Divider>
     </div>
   );
 }
+
+KeywordAnalysis.propTypes = {
+  form: PropTypes.any,
+};
 
 function ResultStats() {
   let navigate = useNavigate();
