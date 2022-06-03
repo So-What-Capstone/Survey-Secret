@@ -14,39 +14,43 @@ function ResultForm({ sections, answers }) {
 
       const qType = ques.kind;
       const ansUnion = answers[id];
-      let qAns = "";
       let temp;
-      console.log("result ques", ansUnion);
-
-      if (qType == "Closed") {
-        temp = ansUnion.closedAnswer;
-        let tokens = [];
-        if (temp) {
-          if (temp.length > 0) {
-            for (let i = 0; i < temp.length; i++) {
-              console.log(ques.choices);
-              if (temp[i] <= 0) continue;
-              tokens.push(String(ques.choices[temp[i] - 1].choice));
+      let qAns = "";
+      let gridAns = [];
+      if (ansUnion) {
+        if (qType == "Closed") {
+          temp = ansUnion.closedAnswer;
+          let tokens = [];
+          if (temp) {
+            if (temp.length > 0) {
+              for (let i = 0; i < temp.length; i++) {
+                if (temp[i] <= 0) continue;
+                tokens.push(String(ques.choices[temp[i] - 1].choice));
+              }
             }
           }
+          qAns = tokens.map((v, i) => (
+            <div key={i} className="result-que-closed-tokens">
+              {v}
+            </div>
+          ));
+        } else if (qType == "Grid") {
+          gridAns = ansUnion.gridAnswer.map((v) => (v.colNo ? v.colNo : null));
+        } else if (qType == "Linear") {
+          qAns = ansUnion.linearAnswer;
+        } else if (qType == "Opened") {
+          qAns = ansUnion.openedAnswer;
+        } else if (qType == "Personal") {
+          // qAns = ansUnion.personalAnswer;
+        } else {
+          qAns = "!error!";
         }
-        qAns = tokens.map((v, i) => (
-          <div key={i} className="result-que-closed-tokens">
-            {v}
-          </div>
-        ));
-      } else if (qType == "Grid") {
-        qAns = ansUnion.gridAnswer.map((v) => (v.colNo ? v.colNo : null));
-      } else if (qType == "Linear") {
-        qAns = ansUnion.linearAnswer;
-      } else if (qType == "Opened") {
-        qAns = ansUnion.openedAnswer;
-      } else if (qType == "Personal") {
-        // qAns = ansUnion.personalAnswer;
-      } else {
-        qAns = "!error!";
       }
+
       function GridResponse({ rowLabels, colLabels, colSelection }) {
+        if (colSelection.length === 0) {
+          colSelection = rowLabels.map(() => null);
+        }
         const val_lst = colLabels.map((val, idx) => idx);
         const num_col = colLabels.length;
         var text_span = 9;
@@ -120,7 +124,7 @@ function ResultForm({ sections, answers }) {
             <GridResponse
               rowLabels={ques.rowContent}
               colContent={ques.colContent}
-              colSelection={qAns}
+              colSelection={gridAns}
             />
           )}
         </div>

@@ -14,33 +14,6 @@ import { findFormByIdForOwnerQuery } from "../API/findFormByIdForOwnerQuery";
 
 const FIND_FORM_BY_ID_FOR_OWNER_QUERY = findFormByIdForOwnerQuery;
 
-let listItem_temp = [
-  {
-    key: "1",
-    answer: "사나",
-    order: 1,
-    favorite: true,
-  },
-  {
-    key: "2",
-    answer: "지효",
-    order: 2,
-    favorite: true,
-  },
-  {
-    key: "3",
-    answer: "나연",
-    order: 3,
-    favorite: false,
-  },
-  {
-    key: "4",
-    answer: "모모",
-    order: 4,
-    favorite: true,
-  },
-];
-
 function ResultList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -142,6 +115,20 @@ function ResultList() {
 
     setRepList(temp);
   };
+  const RepQChange = (v) => {
+    setRepQ(v);
+    let temp = repList.slice();
+    for (let i = 0; i < temp.length; i++) {
+      let ansStr = ansList[i][v]?.openedAnswer;
+      ansStr = ansStr ? ansStr : "";
+      if (ansStr.length > 10) ansStr = ansStr.substr(0, 10);
+      temp[i] = {
+        ...temp[i],
+        answer: ansStr,
+      };
+    }
+    setRepList(temp);
+  };
   if (loading) {
     return null;
   }
@@ -167,9 +154,8 @@ function ResultList() {
           </div>
           <RepresentativeQ
             questions={repQCandi}
-            // questions={{ 1: "asdf", 2: "qwer", 3: "aaaa" }}
             representative={repQ}
-            setRepresentative={setRepQ}
+            setRepresentative={RepQChange}
           />
           {/* list */}
           <div className="result-list-list">
