@@ -78,17 +78,19 @@ function FormRespToSubm(form_config, response, secEnabled) {
       let qVal = response[q.id];
       if (QType.CLOSED_ONE <= type && type <= QType.CLOSED_INPUT) {
         //closed
-        if (qVal.data.length === 0) continue;
         ansDic["closedAnswer"] = qVal.data;
+        if (ansDic["closedAnswer"].length === 0) continue;
       } else if (type === QType.LINEAR) {
         // linear
         ansDic["linearAnswer"] = qVal.data;
       } else if (type === QType.OPENED) {
         // Opened
         ansDic["openedAnswer"] = qVal.data;
+        if (ansDic["openedAnswer"].length === 0) continue;
       } else if (type === QType.PHONE) {
         // phone
         ansDic["personalAnswer"] = qVal.data;
+        if (ansDic["personalAnswer"].length === 0) continue;
       } else if (type === QType.GRID) {
         // grid
         ansDic["gridAnswer"] = qVal.data
@@ -101,9 +103,9 @@ function FormRespToSubm(form_config, response, secEnabled) {
               : null
           )
           .filter((v) => v !== null);
-        console.log("grid answer: ", ansDic);
       } else if (type === QType.EMAIL) {
         // email
+        if (qVal.id.length === 0) continue;
         ansDic["personalAnswer"] = qVal.id + qVal.domain;
       } else if (type === QType.DATE) {
         // date
@@ -113,6 +115,7 @@ function FormRespToSubm(form_config, response, secEnabled) {
         ansDic["openedAnswer"] = String(
           qVal.zip_code + qVal.address + qVal.address_detail
         );
+        if (ansDic["openedAnswer"].length === 0) continue;
       }
       if (!qVal.isValid) {
         alert("답변이 유효하지 않습니다!");
