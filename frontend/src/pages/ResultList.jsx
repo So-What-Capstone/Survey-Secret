@@ -101,7 +101,7 @@ function ResultList() {
           }
         }
         rep = {
-          key: String(i + 1),
+          key: i + 1,
           answer: repq_ans_str ? repq_ans_str : "",
           order: i + 1,
           favorite: false, // TODO

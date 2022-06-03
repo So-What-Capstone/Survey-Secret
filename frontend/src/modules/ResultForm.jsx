@@ -20,15 +20,21 @@ function ResultForm({ sections, answers }) {
 
       if (qType == "Closed") {
         temp = ansUnion.closedAnswer;
+        let tokens = [];
         if (temp) {
           if (temp.length > 0) {
             for (let i = 0; i < temp.length; i++) {
               console.log(ques.choices);
               if (temp[i] <= 0) continue;
-              qAns += String(ques.choices[temp[i] - 1].choice) + "\n";
+              tokens.push(String(ques.choices[temp[i] - 1].choice));
             }
           }
         }
+        qAns = tokens.map((v, i) => (
+          <div key={i} className="result-que-closed-tokens">
+            {v}
+          </div>
+        ));
       } else if (qType == "Grid") {
         qAns = ansUnion.gridAnswer.map((v) => (v.colNo ? v.colNo : null));
       } else if (qType == "Linear") {

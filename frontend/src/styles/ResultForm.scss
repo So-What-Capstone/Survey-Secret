@@ -15,11 +15,22 @@
   .result-ques-ans {
     width: 100%;
     min-height: 2rem;
+    max-height: 10rem;
+    overflow-y: auto;
     color: black;
     background-color: gainsboro;
     border-radius: 0.2rem;
     padding: 0.5rem;
     font-size: 1rem;
     margin-bottom: 0.5rem;
+    display: flex;
+    flex-flow: row wrap;
+    .result-que-closed-tokens {
+      background-color: #00000010;
+      border-radius: 0.1rem;
+      padding: 0.1rem 0.2rem 0.1rem 0.2rem;
+
+      margin: 0.2rem;
+    }
   }
 }
