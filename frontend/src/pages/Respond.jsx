@@ -78,6 +78,7 @@ function FormRespToSubm(form_config, response, secEnabled) {
       let qVal = response[q.id];
       if (QType.CLOSED_ONE <= type && type <= QType.CLOSED_INPUT) {
         //closed
+        if (qVal.data.length === 0) continue;
         ansDic["closedAnswer"] = qVal.data;
       } else if (type === QType.LINEAR) {
         // linear
