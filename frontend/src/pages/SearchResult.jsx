@@ -44,9 +44,10 @@ function SearchResult() {
   useEffect(() => {
     const value = searchParams.get("value");
     if (value) {
-      console.log(`value is ${value}`);
+      console.log(`value is ${value}`); //ok
       setSearchedText(value);
       // 디버그를 위해 임의의 데이터로 설정
+
       console.log(forms); //forms가 안바뀜
       setSearchedForms(forms);
     } else {
@@ -128,9 +129,9 @@ function SearchResult() {
   const sorts = [
     {
       idx: 0,
-      type: "폼 만료 빠른순",
+      type: "폼 만료일 빠른순",
     },
-    { idx: 1, type: "폼 만료 늦은순" },
+    { idx: 1, type: "폼 만료일 늦은순" },
     { idx: 2, type: "개인정보 파기일 빠른순" },
     { idx: 3, type: "개인정보 파기일 느린순" },
   ];

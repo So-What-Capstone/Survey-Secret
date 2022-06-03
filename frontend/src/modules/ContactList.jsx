@@ -2,6 +2,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import "../styles/ContactList.scss";
 import PropTypes from "prop-types";
 import { Select, MenuItem } from "@mui/material";
+import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
+import { findRepsQueByFormId } from "../API/findRepresentativeQuery";
+
+const FIND_REPS_QUE_BY_FORM_ID = findRepsQueByFormId;
 
 TableItem.propTypes = {
   id: PropTypes.string,
@@ -86,16 +90,73 @@ ContactList.propTypes = {
  * ContactList
  */
 function ContactList({
-  forms,
-  selectedForm,
+  forms, //id, title
+  selectedForm, //id, title, receivers
   checkedItems,
   setSelectedForm,
   setCheckedItems,
 }) {
+  const [findRepsQueByFormId, { data, loading, error }] = useLazyQuery(
+    FIND_REPS_QUE_BY_FORM_ID
+  );
+
   const handleFormChange = (event) => {
     const selectedId = event.target.value;
-    const newForm = forms.find((form) => form.id === selectedId);
-    setSelectedForm(newForm);
+    let newForm = forms.find((form) => form.id === selectedId); //selectedForm 가 될 것(현재 id, title만 있음)
+    /*
+    여기서 newForm에 receivers내용을 채워야 함(id, name, favorite)
+    newForm의 formId를 가지고 findRepsQueByFormId 쿼리 호출 -> 대표질문내용, id, 종류 받아옴
+    
+    */
+
+    /*
+    newForm = {
+      id: newForm.id,
+      title: newForm.title,
+      receivers: [
+        {
+          id: "1",
+          name: "name",
+          favorite: false,
+        },
+      ],
+    };*/
+
+    let repsQueId; //대표문항 id
+    let repsQueType; //대표문항 type
+
+    findRepsQueByFormId({
+      variables: {
+        formId: newForm.id,
+      },
+      onCompleted: (data) => {
+        //대표문항 내용
+        //newForm.repsQueContent = data.form.representativeQuestion.content;
+
+        //대표문항 타입
+        //Closed, Grid, Linear, Opened, Personal
+        /*
+
+        switch (data.form.representativeQuestion.kind.toString()) {
+          case "Personal":
+            console.log("띄우지 않음");
+            break;
+          case "Closed":
+            console.log("띄움");
+        }*/
+        //대표문항 id
+        repsQueId = data.form.representativeQuestion.content._id;
+
+        //repsQueId를 통해 repsQueType Answers엔티티에서 answer 가져오기 -> receivers.name
+        //ClosedAnswer : closedAnswer - [Float!]!
+        //GridAnswer : gridAnswer: [GridAnswerContent!]
+        //LinearAnswer : linearAnswer : Float!
+        //OpenedAnswer : openedAnswer : string
+        //PersonalAnswer : 가져오지 않음
+      },
+    });
+
+    setSelectedForm(newForm); //id, title, receivers
     checkedItems.clear();
     setIsAllChecked(false);
     setAllChecked(false);
@@ -118,7 +179,7 @@ function ContactList({
 
   //즐겨찾기 등록 여부 리스트
   const [isFavoriteCheckedList, setIsFavoriteCheckedList] = useState(
-    forms[0].receivers.map((receiver) => receiver.favorite)
+    selectedForm.receivers.map((receiver) => receiver.favorite)
   );
 
   //체크박스 단일 선택
