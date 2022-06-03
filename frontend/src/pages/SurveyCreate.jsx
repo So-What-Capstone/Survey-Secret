@@ -46,6 +46,7 @@ function SurveyCreate() {
   const [my_templates_names, setMyTemplateNames] = useState([]);
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const [secEnabled, setSecEnabled] = useState({});
 
   const {
     loading: getTemplatesLoading,
@@ -96,7 +97,7 @@ function SurveyCreate() {
     let result = confirm("이 템플릿으로 새 설문을 만들까요?");
     if (!result) return;
     const url_temp = "/my-survey/design?temp=";
-    const url_myTemp = "my-survey/design?reuse=";
+    const url_myTemp = "/my-survey/design?reuse=";
     const template_idx = selected_template[0];
     const my_template_idx = selected_template[1];
     let url = "";
@@ -155,6 +156,8 @@ function SurveyCreate() {
               ? templates[selected_template[0]]
               : my_templates[selected_template[1]]
           }
+          secEnabled={secEnabled}
+          setSecEnabled={setSecEnabled}
         />
       </div>
     </div>

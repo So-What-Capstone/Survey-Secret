@@ -1,76 +1,76 @@
-  .message-con { //clip을 뺀 부분
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+.message-con { //clip을 뺀 부분
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 
-    .detail-panel { //연락내용 패널
+  .detail-panel { //연락내용 패널
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5vw 1rem 1.5vw;
+    background-color: #0A182D60;
+    border-radius: 0.2rem;
+    margin: 3rem 1.5vw 3rem 0.5vw;
+    flex: 1 1 0;
+    .sender-row { //발신번호 row
+      display: flex;
+      flex-direction: row;
       text-align: center;
+      margin: 1rem 0px 1rem 0px;
+      width: 100%;
+      min-width: 21rem;
+      label {
+        color: #65FFDC;
+        padding: 0.8rem 0.5rem 0.8rem 0vw;
+        font-size: 18px;
+        flex: 1 1 0;
+        text-align: left;
+        min-width: 5rem;
+      }
+      input {
+        background-color: #ffffff19;
+        color: #CCD6F6;
+        border: none;
+        border-radius: 0.2rem;
+        padding: 0.7rem 2vw 0.7rem 2vw;
+        flex: 3 1 0;
+      }
+    }
+    .content-row { //발신내용 row
       display: flex;
       flex-direction: column;
-      padding: 1rem 1.5vw 1rem 1.5vw;
-      background-color: #0A182D60;
-      border-radius: 0.2rem;
-      margin: 3rem 1.5vw 3rem 0.5vw;
-      flex: 1 1 0;
-      .sender-row { //발신번호 row
+      text-align: center;
+      margin: 1rem 0px 1rem 0px;
+      width: 100%;
+      min-width: 21rem;
+      .content-label {
         display: flex;
         flex-direction: row;
-        text-align: center;
-        margin: 1rem 0px 1rem 0px;
-        width: 100%;
-        min-width: 21rem;
-        label {
-          color: #65FFDC;
-          padding: 0.8rem 0.5rem 0.8rem 0vw;
-          font-size: 18px;
-          flex: 1 1 0;
-          text-align: left;
-          min-width: 5rem;
-        }
-        input {
-          background-color: #ffffff19;
-          color: #CCD6F6;
-          border: none;
-          border-radius: 0.2rem;
-          padding: 0.7rem 2vw 0.7rem 2vw;
-          flex: 3 1 0;
-        }
-      }
-      .content-row { //발신내용 row
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-        margin: 1rem 0px 1rem 0px;
-        width: 100%;
-        min-width: 21rem;
-        .content-label {
-          display: flex;
-          flex-direction: row;
-          margin: 0px 0px 0.8rem 0px;
-          color: #65FFDC;
-          font-size: 18px;
-          span {
-            flex: 1 1 0;
-          }
-        }
-        textarea {
-          border: none;
-          border-radius: 0.2rem;
-          background-color: #F5F5F5;
-          height: 50vh;
-          min-height: 10rem;
-          padding: 1.5rem 2vw 1.5rem 2vw;
-        }
-      }
-      .send-btn {
-        margin: 1rem 0px 1rem 0px;
-        padding: 0.7rem 0px 0.7rem 0px;
-        background-color: #65FFDC19;
-        border: 1px solid #65FFDC;
-        border-radius: 0.2rem;
+        margin: 0px 0px 0.8rem 0px;
         color: #65FFDC;
-        font-size: 25px;
-        width: 100%;
-      }      
+        font-size: 18px;
+        span {
+          flex: 1 1 0;
+        }
+      }
+      textarea {
+        border: none;
+        border-radius: 0.2rem;
+        background-color: #F5F5F5;
+        height: 50vh;
+        min-height: 10rem;
+        padding: 1.5rem 2vw 1.5rem 2vw;
+      }
     }
+    .send-btn {
+      margin: 1rem 0px 1rem 0px;
+      padding: 0.7rem 0px 0.7rem 0px;
+      background-color: #65FFDC19;
+      border: 1px solid #65FFDC;
+      border-radius: 0.2rem;
+      color: #65FFDC;
+      font-size: 25px;
+      width: 100%;
+    }      
   }
+}

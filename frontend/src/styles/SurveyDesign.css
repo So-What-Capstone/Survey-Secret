@@ -73,10 +73,6 @@
   flex-direction: column;
 }
 
-.design-section-title {
-  width: 300px;
-}
-
 .design-preview-header {
   display: flex;
   flex-direction: row;
@@ -115,6 +111,14 @@
   overflow: auto;
 }
 
+.design-preview-spin {
+  margin: 20px 0;
+  margin-bottom: 20px;
+  padding: 30px 50px;
+  text-align: center;
+  border-radius: 4px;
+}
+
 .design-section {
   display: flex;
   flex-direction: column;
@@ -151,4 +155,9 @@
 .design-switch-layout > span {
   margin-right: 10px;
   color: #ccd6f6;
+}
+
+.design-modal-layout {
+  display: flex;
+  flex-flow: column;
 }

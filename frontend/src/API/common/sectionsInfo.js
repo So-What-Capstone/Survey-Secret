@@ -43,7 +43,6 @@ export const sectionsInfo = `sections {
         rowContent
         colContent
         kind
-        gridType
       }
       ... on PersonalQuestion {
         _id

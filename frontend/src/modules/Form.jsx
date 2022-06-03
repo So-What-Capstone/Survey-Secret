@@ -1,32 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import "../styles/Form.css";
-import {
-  ClosedQuestion_one, // 0
-  ClosedQuestion_mult, // 1
-  ClosedQuestion_input, // 2
-  OpenedQuestion, // 3
-  LinearQuestion, // 4
-  GridQuestion, // 5
-  PhoneQuestion, // 6
-  EmailQuestion, // 7
-  DateQuestion, // 8
-  AddressQuestion, // 9
-} from "./index.js";
+import { QType, questionTable } from "./index.js";
 import { init_value } from "./question/test_config";
-
-const questionTable = [
-  ClosedQuestion_one,
-  ClosedQuestion_mult,
-  ClosedQuestion_input,
-  OpenedQuestion,
-  LinearQuestion,
-  GridQuestion,
-  PhoneQuestion,
-  EmailQuestion,
-  DateQuestion,
-  AddressQuestion,
-];
 
 function Question({
   response,
@@ -43,13 +19,13 @@ function Question({
   };
 
   let setTrigger = () => {};
-  if (type === 0) {
+  if (type === QType.CLOSED_ONE) {
     setTrigger = (trigger_sec_idx) => {
       let mySecEnabled = { ...secEnabled };
       for (let idx in config.trigger_sections) {
         mySecEnabled[config.trigger_sections[idx]] = false;
       }
-      mySecEnabled[config.trigger_sections[trigger_sec_idx]] = true;
+      mySecEnabled[Number(config.trigger_sections[trigger_sec_idx])] = true;
       setSecEnabled(mySecEnabled);
     };
   }
@@ -57,6 +33,8 @@ function Question({
   let Qst = null;
   if (0 <= type && type <= questionTable.length) {
     Qst = questionTable[type];
+  } else {
+    return null;
   }
 
   return Qst({ config, setValue, setTrigger });
@@ -74,10 +52,15 @@ Question.propTypes = {
   }),
 };
 
-export default function Form({ _config, _setResponse }) {
+export default function Form({
+  _config,
+  _setResponse,
+  secEnabled,
+  setSecEnabled,
+}) {
   const [response, setResponse] = useState();
   const [config, setConfig] = useState(null);
-  const [secEnabled, setSecEnabled] = useState();
+  // const [secEnabled, setSecEnabled] = useState();
 
   useEffect(() => {
     if (!_config) return;
@@ -86,20 +69,23 @@ export default function Form({ _config, _setResponse }) {
     let mySec = {};
 
     for (let i = 0; i < myConfig.sections.length; i++) {
-      mySec[myConfig.sections[i].id] = true;
+      mySec[i] = true;
     }
     for (let i = 0; i < myConfig.sections.length; i++) {
       let qs = myConfig.sections[i].questions;
       for (let j = 0; j < qs.length; j++) {
         let q = qs[j];
         myRes[q.id] = { ...init_value[q.type], isValid: !q.config.required };
-        if (q.type === 0) {
+        if (q.type === QType.CLOSED_ONE) {
           for (let idx in q.config.trigger_sections) {
-            mySec[q.config.trigger_sections[idx]] = false;
+            let sec_idx = q.config.trigger_sections[idx];
+            if (sec_idx === "") continue;
+            mySec[Number(sec_idx)] = false;
           }
         }
       }
     }
+    console.log(mySec);
     setResponse(myRes);
     setConfig(myConfig);
     setSecEnabled(mySec);
@@ -108,6 +94,14 @@ export default function Form({ _config, _setResponse }) {
   useEffect(() => {
     if (_setResponse !== undefined) _setResponse(response);
   }, [response]);
+
+  useEffect(() => {
+    for (let i in secEnabled) {
+      if (secEnabled[i] === false) {
+        // TODO
+      }
+    }
+  }, [secEnabled]);
 
   if (config === null || config === undefined) {
     return null;
@@ -118,8 +112,8 @@ export default function Form({ _config, _setResponse }) {
       <div className="form-container">
         <label className="form-desc"> {config.description}</label>
         {/* section */}
-        {config.sections.map((sec) =>
-          secEnabled[sec.id] ? (
+        {config.sections.map((sec, i) =>
+          secEnabled[i] ? (
             <div key={sec.id} className="section">
               <label className="section-title">{sec.title}</label>
               {/* question */}
@@ -149,4 +143,6 @@ Form.propTypes = {
     sections: PropTypes.arrayOf(PropTypes.any),
   }),
   _setResponse: PropTypes.func,
+  secEnabled: PropTypes.shape(PropTypes.any),
+  setSecEnabled: PropTypes.func,
 };

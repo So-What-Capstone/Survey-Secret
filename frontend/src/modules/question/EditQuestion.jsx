@@ -21,15 +21,17 @@ import { useState, useEffect } from "react";
 import "../../styles/EditQuestion.css";
 const { Option } = Select;
 
-function EditClosedQuestion({ sectionCount, data, onDataChange }) {
+function EditClosedQuestion({ sectionCount, data, onDataChange, disabled }) {
   const [choices, setChoices] = useState(data.choices ? data.choices : []);
   const [triggerOptions, setTriggerOptions] = useState([]);
   const [allowMultiple, setAllowMultiple] = useState(data.allowMultiple);
-  const [showTriggerSelect, setShowTriggerSelect] = useState(false);
+  const [showTriggerSelect, setShowTriggerSelect] = useState(
+    data.choices.find((ch) => ch.trigger !== -1)
+  );
 
   function getTriggerLabel(trigger) {
     if (trigger === -1) {
-      return "다음 섹션으로 이동";
+      return "트리거 없음";
     } else {
       return `섹션 ${trigger}로 이동`;
     }
@@ -62,14 +64,21 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
   }
 
   function addChoice() {
-    let newChoices = [...choices, { content: "", trigger: -1 }];
+    let newChoices = [
+      ...choices,
+      { content: "", trigger: -1, key: new Date().getTime() },
+    ];
     setChoices(newChoices);
     onDataChange({ ...data, choices: newChoices });
   }
 
   const addChoiceBelow = (i) => () => {
     let newChoices = [...choices];
-    newChoices.splice(i + 1, 0, { content: "", trigger: -1 });
+    newChoices.splice(i + 1, 0, {
+      content: "",
+      trigger: -1,
+      key: new Date().getTime(),
+    });
     setChoices(newChoices);
     onDataChange({ ...data, choices: newChoices });
   };
@@ -108,7 +117,11 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
 
   return (
     <Space className="edit-body" direction="vertical">
-      <Checkbox checked={allowMultiple} onChange={handleCheckboxChange}>
+      <Checkbox
+        checked={allowMultiple}
+        onChange={handleCheckboxChange}
+        disabled={disabled}
+      >
         복수 선택 허용
       </Checkbox>
       <Checkbox
@@ -123,8 +136,9 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
         <Empty description="문항에 선택지가 없습니다."></Empty>
       ) : (
         choices.map((c, i) => (
-          <div key={i} className="edit-closed-row">
+          <div key={c.key} className="edit-closed-row">
             <Input
+              disabled={disabled}
               className="edit-closed-input"
               placeholder="선택지 내용"
               value={c.content}
@@ -132,6 +146,7 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
               addonAfter={
                 showTriggerSelect ? (
                   <Select
+                    disabled={disabled}
                     value={c.trigger}
                     placement="bottomRight"
                     dropdownMatchSelectWidth={false}
@@ -147,6 +162,7 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
               }
             ></Input>
             <Dropdown.Button
+              disabled={disabled}
               onClick={addChoiceBelow(i)}
               overlay={
                 <Menu>
@@ -165,7 +181,12 @@ function EditClosedQuestion({ sectionCount, data, onDataChange }) {
       )}
       <Divider>
         <Tooltip title="새 선택지 추가">
-          <Button shape="circle" icon={<PlusOutlined />} onClick={addChoice} />
+          <Button
+            shape="circle"
+            icon={<PlusOutlined />}
+            onClick={addChoice}
+            disabled={disabled}
+          />
         </Tooltip>
       </Divider>
     </Space>
@@ -182,9 +203,10 @@ EditClosedQuestion.propTypes = {
     }),
   }),
   onDataChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
-function EditOpenedQuestion({ data, onDataChange }) {
+function EditOpenedQuestion({ data, onDataChange, disabled }) {
   const [allowMultiple, setAllowMultiple] = useState(data.allowMultiple);
 
   function handleCheckboxChange(event) {
@@ -194,7 +216,11 @@ function EditOpenedQuestion({ data, onDataChange }) {
 
   return (
     <div className="edit-body">
-      <Checkbox checked={allowMultiple} onChange={handleCheckboxChange}>
+      <Checkbox
+        checked={allowMultiple}
+        onChange={handleCheckboxChange}
+        disabled={disabled}
+      >
         여러 줄 입력 허용
       </Checkbox>
 
@@ -210,9 +236,10 @@ EditOpenedQuestion.propTypes = {
     allowMultiple: PropTypes.bool,
   }),
   onDataChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
-function EditLinearQuestion({ data, onDataChange }) {
+function EditLinearQuestion({ data, onDataChange, disabled }) {
   const [leftRange, setLeftRange] = useState(data.leftRange);
   const [rightRange, setRightRange] = useState(data.rightRange);
   const [leftLabel, setLeftLabel] = useState(data.leftLabel);
@@ -220,12 +247,20 @@ function EditLinearQuestion({ data, onDataChange }) {
 
   function changeLeftRange(value) {
     setLeftRange(value);
-    onDataChange({ ...data, leftRange: value });
+    onDataChange({
+      ...data,
+      leftRange: value,
+      rightRange: Math.max(value + 1, data.rightRange),
+    });
   }
 
   function changeRightRange(value) {
     setRightRange(value);
-    onDataChange({ ...data, rightRange: value });
+    onDataChange({
+      ...data,
+      leftRange: Math.min(value - 1, data.leftLabel),
+      rightRange: value,
+    });
   }
 
   function changeLeftLabel(event) {
@@ -234,7 +269,7 @@ function EditLinearQuestion({ data, onDataChange }) {
   }
 
   function changeRightLabel(event) {
-    setRightLabel(event.target.value);
+    setRightLabel({ ...data, rightLabel: event.target.value });
   }
 
   return (
@@ -246,9 +281,14 @@ function EditLinearQuestion({ data, onDataChange }) {
           max={100}
           value={leftRange}
           onChange={changeLeftRange}
+          disabled={disabled}
         ></InputNumber>
         <span className="edit-linear-label">최솟값 설명:</span>
-        <Input value={leftLabel} onChange={changeLeftLabel}></Input>
+        <Input
+          value={leftLabel}
+          onChange={changeLeftLabel}
+          disabled={disabled}
+        ></Input>
       </div>
       <div className="edit-linear-row">
         <span className="edit-linear-label">최댓값:</span>
@@ -257,9 +297,14 @@ function EditLinearQuestion({ data, onDataChange }) {
           max={100}
           value={rightRange}
           onChange={changeRightRange}
+          disabled={disabled}
         ></InputNumber>
         <span className="edit-linear-label">최댓값 설명:</span>
-        <Input value={rightLabel} onChange={changeRightLabel}></Input>
+        <Input
+          value={rightLabel}
+          onChange={changeRightLabel}
+          disabled={disabled}
+        ></Input>
       </div>
     </div>
   );
@@ -273,10 +318,11 @@ EditLinearQuestion.propTypes = {
     rightLabel: PropTypes.string,
   }),
   onDataChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 // Used for EditGridQuestion
-function ListMaintainer({ title, list, onListChange }) {
+function ListMaintainer({ title, list, onListChange, disabled }) {
   const [choices, setChoices] = useState(list ? list : []);
 
   function addChoice() {
@@ -336,8 +382,10 @@ function ListMaintainer({ title, list, onListChange }) {
               placeholder="내용"
               value={c}
               onChange={editContent(i)}
+              disabled={disabled}
             ></Input>
             <Dropdown.Button
+              disabled={disabled}
               onClick={addChoiceBelow(i)}
               overlay={
                 <Menu>
@@ -356,7 +404,12 @@ function ListMaintainer({ title, list, onListChange }) {
       )}
       <Divider>
         <Tooltip title="새 선택지 추가">
-          <Button shape="circle" icon={<PlusOutlined />} onClick={addChoice} />
+          <Button
+            shape="circle"
+            icon={<PlusOutlined />}
+            onClick={addChoice}
+            disabled={disabled}
+          />
         </Tooltip>
       </Divider>
     </Space>
@@ -367,9 +420,10 @@ ListMaintainer.propTypes = {
   title: PropTypes.string,
   list: PropTypes.arrayOf(PropTypes.string),
   onListChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
-function EditGridQuestion({ data, onDataChange }) {
+function EditGridQuestion({ data, onDataChange, disabled }) {
   const [rowContent, setRowContent] = useState(
     data.rowContent ? data.rowContent : []
   );
@@ -391,6 +445,7 @@ function EditGridQuestion({ data, onDataChange }) {
     <Row>
       <Col span={10} offset={1}>
         <ListMaintainer
+          disabled={disabled}
           title="행 내용"
           list={rowContent}
           onListChange={changeRowContent}
@@ -398,6 +453,7 @@ function EditGridQuestion({ data, onDataChange }) {
       </Col>
       <Col span={10} offset={2}>
         <ListMaintainer
+          disabled={disabled}
           title="열 내용"
           list={colContent}
           onListChange={changeColContent}
@@ -413,6 +469,7 @@ EditGridQuestion.propTypes = {
     colContent: PropTypes.arrayOf(PropTypes.string),
   }),
   onDataChange: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 function EditPhoneQuestion() {
@@ -490,9 +547,11 @@ function EditQuestion({
   data,
   onDataChange,
   onRemove,
+  disabled,
   ...rprops
 }) {
   const [quesBody, setQuesBody] = useState(<React.Fragment></React.Fragment>);
+  const [required, setRequired] = useState(!!data.required);
   const [content, setContent] = useState(data.content);
   const [description, setDescription] = useState(data.description);
   const [type, setType] = useState(data.type);
@@ -505,12 +564,13 @@ function EditQuestion({
           sectionCount={sectionCount}
           data={data}
           onDataChange={onDataChange}
+          disabled={disabled}
         ></QuesComp>
       );
     } else {
       console.log("Unrecognized type name: " + type);
     }
-  }, [type, data, onDataChange, sectionCount]);
+  }, [type, data, onDataChange, sectionCount, disabled]);
 
   function handleQuesTypeChange(typePair) {
     setType(typePair);
@@ -530,8 +590,13 @@ function EditQuestion({
     onDataChange(newConfig);
   }
 
-  function handleRemove(e) {
+  function handleRemove() {
     onRemove();
+  }
+
+  function handleCheckboxChange(event) {
+    setRequired(event.target.checked);
+    onDataChange({ ...data, required: event.target.checked });
   }
 
   return (
@@ -541,13 +606,21 @@ function EditQuestion({
         value={content}
         onChange={handleContentChange}
         size="large"
-        addonBefore={
+        addonAfter={
           <Tooltip title="문항 삭제">
-            <CloseOutlined className="edit-remove" onClick={handleRemove} />
+            <CloseOutlined
+              className="edit-remove"
+              disabled={disabled}
+              onClick={disabled ? undefined : handleRemove}
+            />
           </Tooltip>
         }
-        addonAfter={
-          <Select value={typeLabelMap[type]} onChange={handleQuesTypeChange}>
+        addonBefore={
+          <Select
+            value={typeLabelMap[type]}
+            onChange={handleQuesTypeChange}
+            disabled={disabled}
+          >
             {Object.entries(typeLabelMap).map((p) => (
               <Option key={p[0]} value={p[0]}>
                 {p[1]}
@@ -555,12 +628,21 @@ function EditQuestion({
             ))}
           </Select>
         }
+        disabled={disabled}
       ></Input>
+      <Checkbox
+        checked={required}
+        onChange={handleCheckboxChange}
+        disabled={disabled}
+      >
+        필수적으로 응답하도록 설정
+      </Checkbox>
       <Input
         placeholder="문항의 부가 설명을 입력하세요."
         value={description}
         onChange={handleDescriptionChange}
         bordered={false}
+        disabled={disabled}
       ></Input>
       <Divider className="edit-div"></Divider>
       {quesBody}
@@ -578,6 +660,7 @@ EditQuestion.propTypes = {
   }),
   onDataChange: PropTypes.func,
   onRemove: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 export default EditQuestion;

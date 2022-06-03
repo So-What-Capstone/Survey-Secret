@@ -1,14 +1,18 @@
-.resp-detail-line-con {
+.result-form-grid-con {
+  width: 100%;
+}
+
+.result-ques-con {
   width: 100%;
   padding: 0.5rem;
 
-  .resp-detail-line-tite {
+  .result-ques-content {
     width: 100%;
     color: black;
     font-size: 1rem;
     word-break: break-word;
   }
-  .resp-detail-line-value {
+  .result-ques-ans {
     width: 100%;
     min-height: 2rem;
     color: black;

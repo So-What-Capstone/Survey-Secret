@@ -19,7 +19,6 @@ function Main() {
     // variables: { formId: undefined },
     onCompleted: (data) => {
       if (data.getForms?.ok) {
-        console.log("Query Completed");
         setOpenSurveys(data.getForms?.forms);
         setLastId(data.getForms?.lastId);
       }

@@ -94,10 +94,14 @@ function MyInfoPremium() {
             expiredAt[2] +
             "일까지 이용 가능합니다.",
           showConfirmButton: true,
+          confirmButtonText: "YES",
+          showCancelButton: true,
+          cancelButtonText: "NO",
           customClass: {
             popup: "modal-con",
             content: "modal-con",
             confirmButton: "modal-button",
+            cancelButton: "modal-button-cancel",
           },
           buttonsStyling: false,
         }).then((result) => {
