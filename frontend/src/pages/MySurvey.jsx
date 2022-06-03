@@ -50,6 +50,7 @@ function MySurvey() {
   );
 
   useEffect(() => {
+    if (previewId === "") return;
     FindFormQuery({
       variables: { formId: previewId },
       onCompleted: (data) => {
@@ -71,7 +72,7 @@ function MySurvey() {
   }, [previewId]);
 
   return (
-    <div>
+    <div className="mysurvey-con">
       <div className="my-survey-banner">
         <Banner sources={[]} />
       </div>
@@ -124,11 +125,18 @@ function MySurvey() {
             </div>
           </div>
           <div className="mysurvey-preview-con">
-            <Form
-              _config={form_config}
-              secEnabled={secEnabled}
-              setSecEnabled={setSecEnabled}
-            />
+            {form_config ? (
+              <Form
+                _config={form_config}
+                secEnabled={secEnabled}
+                setSecEnabled={setSecEnabled}
+              />
+            ) : (
+              <div className="mysurvey-preview-label">
+                미리보기 창입니다.
+                <br /> 미리 볼 설문을 선택해 주세요.
+              </div>
+            )}
           </div>
         </div>
       )}
