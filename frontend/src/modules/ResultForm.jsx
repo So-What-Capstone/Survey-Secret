@@ -11,18 +11,21 @@ function ResultForm({ sections, answers }) {
 
     function ResultQuestion({ ques }) {
       const id = ques._id;
+
       const qType = ques.kind;
       const ansUnion = answers[id];
       let qAns = "";
       let temp;
+      console.log("result ques", ansUnion);
 
       if (qType == "Closed") {
         temp = ansUnion.closedAnswer;
         if (temp) {
           if (temp.length > 0) {
             for (let i = 0; i < temp.length; i++) {
+              console.log(ques.choices);
               if (temp[i] <= 0) continue;
-              qAns += ques.choices[temp[i] - 1] + "\n";
+              qAns += String(ques.choices[temp[i] - 1].choice) + "\n";
             }
           }
         }
@@ -133,7 +136,7 @@ function ResultForm({ sections, answers }) {
       <div className="result-sec-con">
         <div className="result-sec-content">{sec.title}</div>
         {questions.map((v, i) => (
-          <ResultQuestion key={i} />
+          <ResultQuestion key={i} ques={v} />
         ))}
       </div>
     );
@@ -149,7 +152,7 @@ function ResultForm({ sections, answers }) {
   return (
     <div className="result-form-con">
       {sections.map((v, i) => (
-        <ResultSection key={i} />
+        <ResultSection key={i} sec={v} />
       ))}
     </div>
   );
@@ -159,7 +162,7 @@ ResultForm.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string,
       title: PropTypes.string,
-      questions: PropTypes.arrayOf(PropTypes.any),
+      questions: PropTypes.array,
     })
   ),
   answers: PropTypes.any,

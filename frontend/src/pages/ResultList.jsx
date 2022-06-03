@@ -44,12 +44,12 @@ let listItem_temp = [
 function ResultList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [formId, setFormId] = useState(0);
+  const [formId, setFormId] = useState("");
   const [selectedRespNo, setSelectedResp] = useState(-1);
   const [repQ, setRepQ] = useState("");
   const [repQCandi, setRepQCandi] = useState({});
   const [ansList, setAnsList] = useState([]); // [ {id1:ans1, id2:ans2, ...} ]
-  const [repList, setRepList] = useState(listItem_temp); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool)} ]
+  const [repList, setRepList] = useState([]); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool)} ]
   const [secList, setSecList] = useState([]);
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_FOR_OWNER_QUERY, {
     variables: { formId: formId },
@@ -77,7 +77,7 @@ function ResultList() {
       for (let i = 0; i < sec.length; i++) {
         let que = sec[i].questions;
         for (let j = 0; j < que.length; j++) {
-          if (que[j].type !== "Opened") continue;
+          if (que[j].kind !== "Opened") continue;
           repQCandi_temp[que[j]._id] = que[j].content;
         }
       }
@@ -95,9 +95,9 @@ function ResultList() {
         let ans_orig = subm_orig[i].answers;
         let repq_ans_str = "";
         for (let j = 0; j < ans_orig.length; j++) {
-          ans[ans_orig["question"]] = { ...ans_orig };
-          if (ans_orig["question"] === repq) {
-            repq_ans_str = ans_orig.openedAnswer;
+          ans[ans_orig[j]["question"]] = { ...ans_orig[j] };
+          if (ans_orig[j]["question"] === repq) {
+            repq_ans_str = ans_orig[j].openedAnswer;
           }
         }
         rep = {
@@ -110,6 +110,7 @@ function ResultList() {
         repl.push(rep);
       }
       setAnsList(ansl);
+      setRepList(repl);
     },
   });
 
@@ -126,6 +127,7 @@ function ResultList() {
   const onSaveClick = () => {
     // save
   };
+
   const onFavChange = (respId) => () => {
     // do change the fav state (backend api?)
     if (!repList) return;
@@ -140,6 +142,9 @@ function ResultList() {
 
     setRepList(temp);
   };
+  if (loading) {
+    return null;
+  }
   return (
     <div className="result-list-con">
       <ResultClipTray type="list" formId={formId} />
@@ -161,8 +166,8 @@ function ResultList() {
             즐겨찾기 저장
           </div>
           <RepresentativeQ
-            // questions={repQCandi}
-            questions={{ 1: "asdf", 2: "qwer", 3: "aaaa" }}
+            questions={repQCandi}
+            // questions={{ 1: "asdf", 2: "qwer", 3: "aaaa" }}
             representative={repQ}
             setRepresentative={setRepQ}
           />
@@ -170,7 +175,7 @@ function ResultList() {
           <div className="result-list-list">
             <ResponseList
               listItems={repList}
-              selected={String(selectedRespNo)}
+              selected={selectedRespNo}
               onSelect={setSelectedResp}
               onFavChange={onFavChange}
             />
@@ -179,10 +184,12 @@ function ResultList() {
 
         {/* detail */}
         <div className="result-list-right-con">
-          <ResultForm
-            sections={secList}
-            answers={ansList[selectedRespNo - 1]}
-          />
+          {selectedRespNo > 0 ? (
+            <ResultForm
+              sections={secList}
+              answers={ansList[selectedRespNo - 1]}
+            />
+          ) : null}
         </div>
       </div>
     </div>
