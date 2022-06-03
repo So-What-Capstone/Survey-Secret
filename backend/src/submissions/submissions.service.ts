@@ -321,4 +321,14 @@ export class SubmissionsService {
       return { ok: false, error: error.message };
     }
   }
+
+  async editFavoriteSubmission() {
+    try {
+      // this.submissionModel.updateMany({_id:})
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
 }

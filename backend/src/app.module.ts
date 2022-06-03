@@ -63,6 +63,7 @@ import { SmsModule } from './sms/sms.module';
     UploaderModule,
     StatModule,
     SmsModule,
+    MailsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -305,6 +305,11 @@ type FindTemplateByIdOutput {
   template: Template
 }
 
+type SendEmailOutput {
+  ok: Boolean!
+  error: String
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -449,6 +454,7 @@ type Mutation {
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!
+  sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendSms(input: SendSmsInput!): SendSmsOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
@@ -566,6 +572,18 @@ input EditFormInput {
   formId: String!
   representativeQuestionId: String
   isPromoted: Boolean
+}
+
+input SendEmailInput {
+  subject: String!
+  to: String!
+  template: String
+  emailVars: [EmailVarInput!]!
+}
+
+input EmailVarInput {
+  key: String!
+  value: String!
 }
 
 input SendSmsInput {
