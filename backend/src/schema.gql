@@ -395,6 +395,13 @@ input FindFormByIdInput {
 input SearchFormsInput {
   title: String!
   lastId: String
+  sortKey: SortKey
+  desc: Boolean
+}
+
+enum SortKey {
+  expiredAt
+  privacyExpiredAt
 }
 
 input GetFormsInput {

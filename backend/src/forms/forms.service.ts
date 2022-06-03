@@ -313,10 +313,16 @@ export class FormsService {
   async searchForms({
     title,
     lastId,
+    sortKey,
+    desc,
   }: SearchFormsInput): Promise<SearchFormsOutput> {
     try {
       //for testing
+
       const pageSize = 20;
+
+      const sortCondition = {};
+      sortCondition[sortKey] = desc ? -1 : 1;
 
       const forms = await this.formModel
         .find({
@@ -326,6 +332,8 @@ export class FormsService {
             lastId ? { _id: { $gt: lastId } } : {},
           ],
         })
+        //-1 is descending
+        .sort(sortCondition)
         .populate('owner')
         .limit(pageSize);
 
