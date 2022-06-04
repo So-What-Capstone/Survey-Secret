@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { SurveyIconsTray, Banner } from "../modules/index.js";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { Typography } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { useQuery, gql, useReactiveVar, useLazyQuery } from "@apollo/client";
+import { useQuery, useReactiveVar, useLazyQuery } from "@apollo/client";
 import { isLoggedInVar } from "./../apollo";
 import { getMyFormsSimpleQuery } from "../API/meQuery.js";
 import Form from "../modules/Form";
-import "../styles/MySurvey.css";
+import "../styles/MySurvey.scss";
 
 import {
   FIND_FORM_BY_ID_QUERY,
@@ -126,13 +127,29 @@ function MySurvey() {
           </div>
           <div className="mysurvey-preview-con">
             {form_config ? (
-              <Form
-                _config={form_config}
-                secEnabled={secEnabled}
-                setSecEnabled={setSecEnabled}
-              />
+              <>
+                <div className="mysurvey-respond-con">
+                  <div className="mysurvey-respond-title">설문참여 주소</div>
+                  <Typography.Paragraph
+                    copyable
+                    className="mysurvey-respond-addr"
+                  >
+                    {`${window.location.host}/respond?id=${form_config.id}`}
+                  </Typography.Paragraph>
+                </div>
+                <div className="mysurvey-form-con">
+                  <Form
+                    _config={form_config}
+                    secEnabled={secEnabled}
+                    setSecEnabled={setSecEnabled}
+                  />
+                </div>
+              </>
             ) : (
               <div className="mysurvey-preview-label">
+                <InfoCircleOutlined
+                  style={{ width: "100%", margin: "1rem", fontSize: "2rem" }}
+                />
                 미리보기 창입니다.
                 <br /> 미리 볼 설문을 선택해 주세요.
               </div>

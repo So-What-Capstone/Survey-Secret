@@ -11,6 +11,7 @@ export const findFormByIdForOwnerQuery = gql`
         state
         createdAt
         submissions {
+          isFavorite
           _id
           answers {
             ... on OpenedAnswer {

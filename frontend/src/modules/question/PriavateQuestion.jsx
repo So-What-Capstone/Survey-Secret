@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
-import { Input, Select, Space, Cascader } from "antd";
+import { Input, Select } from "antd";
 import { email, phone } from "./test_config";
 const privacy_info =
   "입력하신 소중한 개인정보는 안전하게 암호화하여 보관되며, 조사자에게 절대 제공되지 않습니다. ";
@@ -68,6 +68,8 @@ PhoneQuestion.propTypes = {
   setValue: PropTypes.func,
 };
 
+const EMAIL_REGEX = // eslint-disable-next-line
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 function EmailQuestion({ config, setValue }) {
   const [content] = useState(config.content);
   const [description] = useState(config.description);
@@ -118,6 +120,20 @@ function EmailQuestion({ config, setValue }) {
       isValid: isValid,
     });
   };
+
+  function testValidity(email_addr) {
+    return EMAIL_REGEX.test(email);
+  }
+  function EmailAvailable() {
+    let ret = "";
+    if (
+      !testValidity(internalVal.id + internalVal.domain) &&
+      internalVal.id !== ""
+    ) {
+      ret = "이메일 형식이 올바르지 않습니다.";
+    }
+    return <span className="email-available-msg">{ret}</span>;
+  }
   const selectAfter = (
     <Select
       className="select-after"
@@ -147,6 +163,7 @@ function EmailQuestion({ config, setValue }) {
         maxLength={50}
         placeholder="이메일을 입력해 주세요."
       />
+      <EmailAvailable />
     </div>
   );
 }
