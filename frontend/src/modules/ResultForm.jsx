@@ -15,8 +15,9 @@ function ResultForm({ sections, answers }) {
       let temp;
       let qAns = "";
       let gridAns = [];
+      if (qType === "Personal") return null;
       if (ansUnion) {
-        if (qType == "Closed") {
+        if (qType === "Closed") {
           temp = ansUnion.closedAnswer; // temp = selected choices
           let tokens = [];
           if (temp?.length > 0) {
@@ -30,24 +31,22 @@ function ResultForm({ sections, answers }) {
               {v}
             </div>
           ));
-        } else if (qType == "Grid") {
-          gridAns = ansUnion.gridAnswer.map((v) => (v.colNo ? v.colNo : null));
-        } else if (qType == "Linear") {
+        } else if (qType === "Grid") {
+          gridAns = {};
+          for (const rowcol of ansUnion.gridAnswer)
+            gridAns[rowcol.rowNo] = rowcol.colNo;
+        } else if (qType === "Linear") {
           qAns = ansUnion.linearAnswer;
-        } else if (qType == "Opened") {
+        } else if (qType === "Opened") {
           qAns = ansUnion.openedAnswer;
-        } else if (qType == "Personal") {
-          qAns = ansUnion.personalAnswer;
-          // return null;
+        } else if (qType === "Personal") {
+          // qAns = ansUnion.personalAnswer;
         } else {
           qAns = "!error!";
         }
       }
 
       function GridResponse({ rowLabels, colLabels, colSelection }) {
-        if (colSelection.length === 0) {
-          colSelection = rowLabels.map(() => null);
-        }
         const val_lst = colLabels.map((val, idx) => idx);
         const num_col = colLabels.length;
         var text_span = 9;
@@ -109,7 +108,7 @@ function ResultForm({ sections, answers }) {
       GridResponse.propTypes = {
         rowLabels: PropTypes.arrayOf(PropTypes.string),
         colLabels: PropTypes.arrayOf(PropTypes.string),
-        colSelection: PropTypes.arrayOf(PropTypes.number),
+        colSelection: PropTypes.any,
       };
 
       return (
