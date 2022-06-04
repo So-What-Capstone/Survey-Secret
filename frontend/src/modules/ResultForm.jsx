@@ -6,12 +6,10 @@ import { Row, Col, Radio } from "antd";
 
 function ResultForm({ sections, answers }) {
   function ResultSection({ sec }) {
-    // const sec_id = sec._id;
     const questions = sec.questions;
 
     function ResultQuestion({ ques }) {
       const id = ques._id;
-
       const qType = ques.kind;
       const ansUnion = answers[id];
       let temp;
@@ -19,14 +17,12 @@ function ResultForm({ sections, answers }) {
       let gridAns = [];
       if (ansUnion) {
         if (qType == "Closed") {
-          temp = ansUnion.closedAnswer;
+          temp = ansUnion.closedAnswer; // temp = selected choices
           let tokens = [];
-          if (temp) {
-            if (temp.length > 0) {
-              for (let i = 0; i < temp.length; i++) {
-                if (temp[i] <= 0) continue;
-                tokens.push(String(ques.choices[temp[i] - 1].choice));
-              }
+          if (temp?.length > 0) {
+            for (let i = 0; i < temp.length; i++) {
+              if (temp[i] < 0) continue;
+              tokens.push(String(ques.choices[temp[i]].choice));
             }
           }
           qAns = tokens.map((v, i) => (
@@ -41,7 +37,8 @@ function ResultForm({ sections, answers }) {
         } else if (qType == "Opened") {
           qAns = ansUnion.openedAnswer;
         } else if (qType == "Personal") {
-          // qAns = ansUnion.personalAnswer;
+          qAns = ansUnion.personalAnswer;
+          // return null;
         } else {
           qAns = "!error!";
         }
@@ -123,7 +120,7 @@ function ResultForm({ sections, answers }) {
           ) : (
             <GridResponse
               rowLabels={ques.rowContent}
-              colContent={ques.colContent}
+              colLabels={ques.colContent}
               colSelection={gridAns}
             />
           )}

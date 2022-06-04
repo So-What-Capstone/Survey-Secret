@@ -89,6 +89,8 @@ export const findFormByIdForOwnerQuery = gql`
               description
               required
               kind
+              rowContent
+              colContent
             }
             ... on PersonalQuestion {
               _id

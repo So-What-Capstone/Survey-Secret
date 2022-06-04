@@ -41,6 +41,7 @@ function PhoneQuestion({ config, setValue }) {
       v = v.replace(PHONE_REGEX_NO_HYPHEN, "$1-$2-$3");
       isValid = PHONE_REGEX.test(v);
     }
+    if (v === internalVal.data) return;
     setInternal({ data: v, isValid: isValid });
     setValue({ data: v, isValid: isValid });
   };
@@ -106,7 +107,7 @@ function EmailQuestion({ config, setValue }) {
       idx = 0;
     }
 
-    let isValid = testValidity(internalVal.id + internalVal.domain);
+    let isValid = testValidity(internalVal.id + domain);
     if (!required && internalVal.id === "") isValid = true;
     let temp = {
       ...internalVal,
@@ -134,13 +135,7 @@ function EmailQuestion({ config, setValue }) {
   function testValidity(email_addr) {
     return EMAIL_REGEX.test(email_addr);
   }
-  function EmailAvailable() {
-    let ret = "";
-    if (!testValidity(internalVal.id + internalVal.domain)) {
-      ret += "이메일 형식이 올바르지 않습니다.";
-    }
-    return <span className="email-available-msg">{ret}</span>;
-  }
+
   const selectAfter = (
     <Select
       className="select-after"
@@ -162,7 +157,6 @@ function EmailQuestion({ config, setValue }) {
         <label className="question-required">*필수 응답 문항입니다.</label>
       ) : null}
       {info ? <div className="question-discription"> {info} </div> : null}
-
       <Input
         addonAfter={selectAfter}
         value={internalVal.id}
@@ -170,7 +164,9 @@ function EmailQuestion({ config, setValue }) {
         maxLength={50}
         placeholder="이메일을 입력해 주세요."
       />
-      <EmailAvailable />
+      <span className="email-available-msg">
+        {internalVal.isValid ? "" : "이메일이 올바르지 않습니다."}
+      </span>
     </div>
   );
 }

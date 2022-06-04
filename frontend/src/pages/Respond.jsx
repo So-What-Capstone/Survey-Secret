@@ -118,6 +118,7 @@ function FormRespToSubm(form_config, response, secEnabled) {
         if (ansDic["openedAnswer"].length === 0) continue;
       }
       if (!qVal.isValid) {
+        console.log(qVal);
         alert("답변이 유효하지 않습니다!");
         return null;
       }
@@ -173,8 +174,9 @@ function Respond() {
         const {
           createSubmission: { ok, error },
         } = data;
-        if (!ok) {
-          throw new Error(error);
+        console.log(ok);
+        if (!ok || error) {
+          alert(error);
         } else {
           alert("제출되었습니다.");
           navigate("/");
