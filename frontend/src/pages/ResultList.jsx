@@ -7,10 +7,10 @@ import {
   ResponseList,
 } from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import "../styles/ResultList.scss";
 import { CloseCircleFilled } from "@ant-design/icons";
 import { useMutation, useQuery } from "@apollo/client";
 import { editFormMutation, findFormByIdForOwnerQuery } from "../API";
+import "../styles/ResultList.scss";
 function cutLongStr(str) {
   if (str.length > 20) return str.substr(0, 20);
   return str;
@@ -23,7 +23,7 @@ function ResultList() {
   const [repQ, setRepQ] = useState("");
   const [repQCandi, setRepQCandi] = useState({});
   const [ansList, setAnsList] = useState([]); // [ {id1:ans1, id2:ans2, ...} ]
-  const [repList, setRepList] = useState([]); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool)} ]
+  const [repList, setRepList] = useState([]); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool), id: submission_id(str)} ]
   const [secList, setSecList] = useState([]);
   const { loading, data, error } = useQuery(findFormByIdForOwnerQuery, {
     variables: { formId: formId },
@@ -79,6 +79,7 @@ function ResultList() {
           answer: repq_ans_str ? repq_ans_str : "",
           order: i + 1,
           favorite: false, // TODO
+          id: subm_orig[i]._id,
         };
         ansl.push(ans);
         repl.push(rep);
@@ -99,15 +100,31 @@ function ResultList() {
     }
   }, [searchParams]);
 
-  const onSaveClick = () => {
-    // save
-  };
+  const setFavForDrawing = async (favSubmissions) => {
+    let input = {
+      formId: formId,
+      favoriteSubmissions: favSubmissions,
+    };
+    console.log("mutation input", input);
 
-  const onFavChange = (respId) => () => {
+    // send mutation
+
+    // if not ok, alert and return
+
+    // else: ok, then change the change the repList
+    let temp = repList.slice();
+    for (let i = 0; i < temp.length; i++) {
+      temp[i].favorite = favSubmissions[i].isFavorite;
+    }
+    setRepList(temp);
+
+    return true;
+  };
+  const onFavChange = (respIdx) => async () => {
     // do change the fav state (backend api?)
     if (!repList) return;
     let temp = repList.map((v) =>
-      v.key !== respId
+      v.key !== respIdx
         ? v
         : {
             ...v,
@@ -115,7 +132,18 @@ function ResultList() {
           }
     );
 
-    setRepList(temp);
+    // get submission id
+    const sub_id = temp[respIdx - 1].id;
+    const fav_value = temp[respIdx - 1].favorite;
+
+    let favSubmList = [{ submssionId: sub_id, isFavorite: fav_value }];
+
+    // mutation to set favorite
+    let retSetFav = true;
+
+    if (retSetFav) {
+      setRepList(temp);
+    }
   };
   const RepQChange = async (v) => {
     let mut_input = {
@@ -127,7 +155,7 @@ function ResultList() {
         request: mut_input,
       },
     });
-    console.log(edit_ret);
+
     const {
       editForm: { ok, error },
     } = edit_ret.data;
@@ -167,11 +195,9 @@ function ResultList() {
             </div>
           </div>
           {drawLotsEnabled ? (
-            <DrawLots answers={[1, 2, 3, 4, 5, 6, 7, 8, 9]} />
+            <DrawLots answers={repList} setFav={setFavForDrawing} />
           ) : null}
-          <div className="repq-fav-save-btn" onClick={onSaveClick}>
-            즐겨찾기 저장
-          </div>
+
           <RepresentativeQ
             questions={repQCandi}
             representative={repQ}
