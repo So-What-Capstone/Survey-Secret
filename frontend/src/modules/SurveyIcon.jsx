@@ -8,7 +8,7 @@ import {
   BarsOutlined,
   ZoomInOutlined,
 } from "@ant-design/icons";
-import { DELETE_FORM_MUTATION } from "../API/deleteForm";
+import { DELETE_FORM_MUTATION } from "../API";
 import { useNavigate } from "react-router-dom";
 
 SurveyIcon.propTypes = {

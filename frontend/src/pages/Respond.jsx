@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { createSubmissionMutation } from "../API/createSubmissionMutation";
+import { createSubmissionMutation } from "../API";
 import { QType } from "../modules";
 import Form from "../modules/Form";
 import {

@@ -5,7 +5,7 @@ import { Typography } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useReactiveVar, useLazyQuery } from "@apollo/client";
 import { isLoggedInVar } from "./../apollo";
-import { getMyFormsSimpleQuery } from "../API/meQuery.js";
+import { getMyFormsSimpleQuery } from "../API";
 import Form from "../modules/Form";
 import "../styles/MySurvey.scss";
 

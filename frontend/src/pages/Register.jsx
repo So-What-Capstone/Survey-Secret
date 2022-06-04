@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { logUserIn } from "../apollo";
 import FormError from "./../components/FormError";
-import { createAccountMutation } from "../API/createAccountMutation";
+import { createAccountMutation } from "../API";
 
 const CREATE_ACCOUNT_MUTATION = createAccountMutation;
 

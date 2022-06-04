@@ -17,7 +17,7 @@ import {
   ListItemButton,
 } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
-import { searchFormsQuery } from "./../API/serachFormsQuery";
+import { searchFormsQuery } from "./../API";
 
 const SEARCH_FORMS_QUERY = searchFormsQuery;
 

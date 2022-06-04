@@ -4,8 +4,8 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { ResultClipTray } from "../modules";
 import { useLazyQuery } from "@apollo/client";
-import { findFormByIdQuery } from "../API/findFormByIdQuery";
-import { getCorrQuery } from "../API/getCorrQuery";
+import { findFormByIdQuery } from "../API";
+import { getCorrQuery } from "../API";
 
 import Plot from "react-plotly.js";
 import { Checkbox, Row, Spin, Empty, Alert, Divider, Button } from "antd";
