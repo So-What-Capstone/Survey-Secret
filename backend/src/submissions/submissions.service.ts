@@ -113,13 +113,13 @@ export class SubmissionsService {
             }
 
             if (type === QuestionType.Closed) {
+              if ((<ClosedAnswer>answer).closedAnswer.length === 0) {
+                return { ok: false, error: '답변이 없습니다.' };
+              }
+
               if (
                 (<ClosedQuestion>question).closedType === ClosedQuestionType.One
               ) {
-                if ((<ClosedAnswer>answer).closedAnswer.length === 0) {
-                  return { ok: false, error: '답변이 없습니다.' };
-                }
-
                 if ((<ClosedAnswer>answer).closedAnswer.length > 1) {
                   return {
                     ok: false,
