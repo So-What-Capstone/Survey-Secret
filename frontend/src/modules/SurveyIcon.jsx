@@ -72,7 +72,6 @@ export default function SurveyIcon({
 
   const onClick = () => {
     if (hover_enabled) return;
-    console.log("click");
     navigate("/respond?id=" + form_id);
   };
   const onPreviewClicked = () => {

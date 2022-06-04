@@ -58,7 +58,6 @@ function SurveyCreate() {
       let tempTemplate = tempData.map((v, i) =>
         getFormConfigFromDB(v._id, v, v.sections)
       );
-      // console.log(tempTemplate);
       setTemplates(tempTemplate);
       setTemplateNames(tempTemplate.map((v) => v.title));
     },
@@ -70,8 +69,6 @@ function SurveyCreate() {
     error: getFormsError,
   } = useQuery(ME_QUERY, {
     onCompleted: (data) => {
-      // console.log("Query Completed");
-      // console.log(data);
       let tempData = data.me.user.forms;
       let tempMyTemplate = tempData.map((v, i) =>
         getFormConfigFromDB(v._id, v, v.sections)

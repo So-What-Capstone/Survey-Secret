@@ -15,6 +15,8 @@ const mail_postfix = [
   "@nate.com",
   "@uos.ac.kr",
 ];
+var PHONE_REGEX = /^\d{3}-\d{3,4}-\d{4}$/;
+var PHONE_REGEX_NO_HYPHEN = /^(\d{3})(\d{3,4})(\d{4})$/;
 function PhoneQuestion({ config, setValue }) {
   const content = config.content;
   const description = config.description;
@@ -31,8 +33,14 @@ function PhoneQuestion({ config, setValue }) {
   }, []);
   const onChange = (e) => {
     let v = e.target.value;
-    v = v.replace(/[^0-9]/g, "");
-    let isValid = required ? Boolean(v) : true;
+    let isValid = false;
+    if (!required && v === "") {
+      isValid = true;
+    } else {
+      v = v.replace(/[^0-9]/g, "");
+      v = v.replace(PHONE_REGEX_NO_HYPHEN, "$1-$2-$3");
+      isValid = PHONE_REGEX.test(v);
+    }
     setInternal({ data: v, isValid: isValid });
     setValue({ data: v, isValid: isValid });
   };
@@ -53,6 +61,9 @@ function PhoneQuestion({ config, setValue }) {
         onChange={onChange}
         placeholder="전화번호를 숫자만 입력해 주세요."
       />
+      <span className="email-available-msg">
+        {internalVal.isValid ? "" : "전화번호가 유효하지 않습니다."}
+      </span>
     </div>
   );
 }
@@ -68,7 +79,7 @@ PhoneQuestion.propTypes = {
   setValue: PropTypes.func,
 };
 
-const EMAIL_REGEX = // eslint-disable-next-line
+var EMAIL_REGEX = // eslint-disable-next-line
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 function EmailQuestion({ config, setValue }) {
   const [content] = useState(config.content);
@@ -94,43 +105,39 @@ function EmailQuestion({ config, setValue }) {
     } else {
       idx = 0;
     }
-    setInternal({
+
+    let isValid = testValidity(internalVal.id + internalVal.domain);
+    if (!required && internalVal.id === "") isValid = true;
+    let temp = {
       ...internalVal,
       domain_idx: idx,
       domain: domain,
-    });
-    setValue({
-      ...internalVal,
-      domain_idx: idx,
-      domain: domain,
-    });
+      isValid: isValid,
+    };
+    setInternal(temp);
+    setValue(temp);
   };
 
   const onMailChanged = (e) => {
     let mail = e.target.value;
-    let isValid = required ? Boolean(mail) : true;
-    setInternal({
+    let isValid = testValidity(mail + internalVal.domain);
+    if (!required && mail === "") isValid = true;
+    let temp = {
       ...internalVal,
       id: mail,
       isValid: isValid,
-    });
-    setValue({
-      ...internalVal,
-      id: mail,
-      isValid: isValid,
-    });
+    };
+    setInternal(temp);
+    setValue(temp);
   };
 
   function testValidity(email_addr) {
-    return EMAIL_REGEX.test(email);
+    return EMAIL_REGEX.test(email_addr);
   }
   function EmailAvailable() {
     let ret = "";
-    if (
-      !testValidity(internalVal.id + internalVal.domain) &&
-      internalVal.id !== ""
-    ) {
-      ret = "이메일 형식이 올바르지 않습니다.";
+    if (!testValidity(internalVal.id + internalVal.domain)) {
+      ret += "이메일 형식이 올바르지 않습니다.";
     }
     return <span className="email-available-msg">{ret}</span>;
   }

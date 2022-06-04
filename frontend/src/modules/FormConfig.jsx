@@ -96,7 +96,6 @@ export function getQuestionType(question) {
       typecode = QType.GRID;
       break;
     case "Personal":
-      console.log(question.personalType);
       if (question.personalType === "Phone") typecode = QType.PHONE;
       else if (question.personalType === "Email") typecode = QType.EMAIL;
       else typecode = QType.ERROR;

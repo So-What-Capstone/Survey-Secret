@@ -199,8 +199,6 @@ function Respond() {
     } catch (err) {
       if (err) console.error(JSON.stringify(err, null, 2));
     }
-
-    console.log("submission", submission);
   };
 
   if (!form_config) return null;
