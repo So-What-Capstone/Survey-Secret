@@ -33,6 +33,10 @@ import {
   PersonalQuestionType,
 } from './../forms/questions/schemas/personal-question.schema';
 import { PersonalAnswer } from './answers/schemas/personal-answer.schema';
+import {
+  ToggleFavoriteSubmissionInput,
+  ToggleFavoriteSubmissionsOutput,
+} from './dtos/toggle-favorite-submissions.dto';
 
 @Injectable()
 export class SubmissionsService {
@@ -322,9 +326,34 @@ export class SubmissionsService {
     }
   }
 
-  async editFavoriteSubmission() {
+  async toggleFavoriteSubmission(
+    owner: User,
+    { formId, submissionIds }: ToggleFavoriteSubmissionInput,
+  ): Promise<ToggleFavoriteSubmissionsOutput> {
     try {
-      // this.submissionModel.updateMany({_id:})
+      const form = await this.formModel
+        .findOne({ _id: formId })
+        .populate('owner');
+
+      if (form.owner._id.toString() !== owner._id.toString()) {
+        return { ok: false, error: '권한이 없습니다.' };
+      }
+
+      const submissions = form.submissions.map((submission) =>
+        submission.toString(),
+      );
+
+      if (
+        !submissionIds.every((submission) => submissions.includes(submission))
+      ) {
+        return { ok: false, error: '폼 안에 없는 답변입니다.' };
+      }
+
+      await this.submissionModel.updateMany(
+        { _id: submissionIds },
+        //%eq : true when the values are equivalent.
+        [{ $set: { isFavorite: { $eq: [false, '$isFavorite'] } } }],
+      );
 
       return { ok: true };
     } catch (error) {

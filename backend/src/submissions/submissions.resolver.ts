@@ -15,6 +15,10 @@ import {
   DeleteSubmissionInput,
   DeleteSubmissionOutput,
 } from './dtos/delete-submission.dto';
+import {
+  ToggleFavoriteSubmissionInput,
+  ToggleFavoriteSubmissionsOutput,
+} from './dtos/toggle-favorite-submissions.dto';
 
 @Resolver()
 export class SubmissionsResolver {
@@ -53,6 +57,18 @@ export class SubmissionsResolver {
     return this.submissionsService.deleteSubmission(
       owner,
       deleteSubmissionInput.submissionId,
+    );
+  }
+
+  @Mutation((returns) => ToggleFavoriteSubmissionsOutput)
+  @Type(['Any'])
+  toggleFavoriteSubmissions(
+    @AuthUser() owner: User,
+    @Args('input') toggleFavoriteSubmissionInput: ToggleFavoriteSubmissionInput,
+  ): Promise<ToggleFavoriteSubmissionsOutput> {
+    return this.submissionsService.toggleFavoriteSubmission(
+      owner,
+      toggleFavoriteSubmissionInput,
     );
   }
 }

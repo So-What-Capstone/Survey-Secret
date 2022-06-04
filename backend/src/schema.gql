@@ -326,6 +326,11 @@ type DeleteSubmissionOutput {
   error: String
 }
 
+type ToggleFavoriteSubmissionsOutput {
+  ok: Boolean!
+  error: String
+}
+
 type GetKeywordAnalysisOutput {
   ok: Boolean!
   error: String
@@ -458,6 +463,7 @@ type Mutation {
   sendSms(input: SendSmsInput!): SendSmsOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
+  toggleFavoriteSubmissions(input: ToggleFavoriteSubmissionInput!): ToggleFavoriteSubmissionsOutput!
 }
 
 input CreateAccountInput {
@@ -652,4 +658,9 @@ input CreatePersonalAnswerInput {
 
 input DeleteSubmissionInput {
   submissionId: String!
+}
+
+input ToggleFavoriteSubmissionInput {
+  formId: String!
+  submissionIds: [String!]!
 }
