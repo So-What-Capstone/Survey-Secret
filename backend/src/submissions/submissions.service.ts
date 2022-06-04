@@ -371,14 +371,26 @@ export class SubmissionsService {
   ): Promise<FindAnswerByQuestionIdOutput> {
     try {
       const form = await this.formModel.findOne({
-        $and: [{ _id: formId }, { 'sections.questions._id': questionId }],
+        _id: formId,
       });
 
       if (!form) {
         return {
           ok: false,
-          error: '존재하지 않는 폼이거나, 폼에 질문이 없습니다.',
+          error: '존재하지 않는 폼입니다.',
         };
+      }
+
+      let question: typeof QuestionUnion;
+
+      for (const section of form.sections) {
+        question = section.questions.find(
+          (question) => question._id.toString() === questionId,
+        );
+      }
+
+      if (!question) {
+        return { ok: false, error: '존재하지 않는 질문입니다.' };
       }
 
       if (form.owner.toString() !== owner._id.toString()) {
@@ -409,7 +421,7 @@ export class SubmissionsService {
 
       answers = answers.map((answer) => answer.submissions.answers);
 
-      return { ok: true, answers };
+      return { ok: true, answers, question };
     } catch (error) {
       return { ok: false, error: error.message };
     }

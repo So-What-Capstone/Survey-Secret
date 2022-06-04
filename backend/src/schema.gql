@@ -335,6 +335,7 @@ type FindAnswerByQuestionIdOutput {
   ok: Boolean!
   error: String
   answers: [AnswerUnion!]
+  question: QuestionUnion
 }
 
 type GetKeywordAnalysisOutput {
