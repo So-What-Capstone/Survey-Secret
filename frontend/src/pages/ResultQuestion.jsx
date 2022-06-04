@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { ResultClipTray } from "../modules";
+import { ResultClipTray, ResultDescribe } from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "../styles/ResultQuestion.css";
-import { Progress, Row, Col } from "antd";
+import { Row, Col } from "antd";
 import PropTypes from "prop-types";
+import { useQuery } from "@apollo/client";
+import { getDescribeQuery, findFormByIdForOwnerQuery } from "../API";
+import { BarGraph, StringTokens, Line, GridTable } from "../modules";
 
 const barGraphData = [
   {
@@ -20,58 +23,6 @@ const barGraphData = [
   },
 ];
 
-function BarGraph({ labels }) {
-  return (
-    <div>
-      {labels.map((v, i) => (
-        <Row key={i}>
-          <Col span={4}> {v.value}</Col>
-          <Col span={13}>
-            <Progress percent={v.percent} showInfo={false} />
-          </Col>
-          <Col span={1} />
-          <Col span={4}> {v.percent}%</Col>
-        </Row>
-      ))}
-    </div>
-  );
-}
-BarGraph.propTypes = {
-  labels: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.string,
-      percent: PropTypes.number,
-    })
-  ),
-};
-
-function StringTokens({ labels }) {
-  return (
-    <div>
-      {labels.map((v, i) => (
-        <div key={i} className="qna-token">
-          {v}
-        </div>
-      ))}
-    </div>
-  );
-}
-StringTokens.propTypes = {
-  labels: PropTypes.arrayOf(PropTypes.string),
-};
-function Line({ title, value }) {
-  return (
-    <div className="qna-line-con">
-      <div className="qna-line-title">{title}</div>
-      <div className="qna-line-value">{value}</div>
-    </div>
-  );
-}
-Line.propTypes = {
-  title: PropTypes.string,
-  value: PropTypes.string,
-};
-
 const rowLabels = ["asdaf", "qwer", "zxcv", "qqqq"];
 const colLabels = ["1", "2", "3"];
 const percent = [
@@ -80,67 +31,6 @@ const percent = [
   [10, 0, 90],
   [33, 33, 33],
 ];
-function GridTable({ rowLabels, colLabels, percent }) {
-  const val_lst = colLabels.map((val, idx) => idx);
-  const num_col = colLabels.length;
-  var text_span = 9;
-  var radio_span = Math.max(parseInt(24 / num_col), 1);
-  if (num_col > 5) {
-    text_span = 5;
-  }
-
-  function FirstLine() {
-    return (
-      <Row>
-        <Col span={text_span}> </Col>
-        <Col span={24 - text_span}>
-          <Row>
-            {colLabels.map((label, idx) => (
-              <Col key={idx} span={radio_span}>
-                {label}
-              </Col>
-            ))}
-          </Row>
-        </Col>
-      </Row>
-    );
-  }
-  function GridLine({ rowNum, label }) {
-    return (
-      <Row>
-        <Col span={text_span}> {label}</Col>
-
-        <Col span={24 - text_span}>
-          <Row>
-            {val_lst.map((idx) => (
-              <Col key={idx} span={radio_span}>
-                {percent[rowNum][idx]}%
-              </Col>
-            ))}
-          </Row>
-        </Col>
-      </Row>
-    );
-  }
-  GridLine.propTypes = {
-    rowNum: PropTypes.number,
-    label: PropTypes.string,
-  };
-
-  return (
-    <div>
-      <FirstLine />
-      {rowLabels.map((label, idx) => (
-        <GridLine key={idx} rowNum={idx} label={label} />
-      ))}
-    </div>
-  );
-}
-GridTable.propTypes = {
-  rowLabels: PropTypes.arrayOf(PropTypes.string),
-  colLabels: PropTypes.arrayOf(PropTypes.string),
-  percent: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
-};
 
 function QnA({ questions, answers }) {
   if (!answers) return null;
@@ -195,17 +85,42 @@ QnA.propTypes = {
   answers: PropTypes.arrayOf(PropTypes.any),
 };
 function ResultQuestion() {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [formId, setFormId] = useState(0);
-  useEffect(() => {
-    const id = searchParams.get("id");
-    if (id) {
-      setFormId(id);
-    } else {
-      navigate("/");
+  const navigate = useNavigate();
+  const [formId, setFormId] = useState(searchParams.get("id"));
+  const [secList, setSec] = useState();
+  const [describe, setDescribe] = useState();
+
+  const { loading, data, error } = useQuery(getDescribeQuery, {
+    variables: { formId: formId },
+    onCompleted: (data) => {
+      const {
+        getDescribe: { ok, error, result },
+      } = data;
+      console.log("describe query complete", result);
+      if (!ok || error) {
+        alert(error);
+        return;
+      }
+      setDescribe(result);
+    },
+    onError: (error) => {
+      console.error(JSON.stringify(error, null, 2));
+    },
+  });
+  const { loadingForm, dataForm, errorForm } = useQuery(
+    findFormByIdForOwnerQuery,
+    {
+      variables: { formId: formId },
+      onCompleted: (data) => {
+        console.log(data.findFormByIdForOwner.form.sections);
+        setSec(data.findFormByIdForOwner.form.sections);
+      },
     }
-  }, [searchParams]);
+  );
+  if (!(secList && describe)) {
+    return null;
+  }
 
   return (
     <div className="result-q-con">
@@ -213,6 +128,7 @@ function ResultQuestion() {
       <div className="result-q-white-panel">
         <div className="result-q-form-title">폼 타이틀!</div>
         <QnA answers={[1, 2, 3]} />
+        <ResultDescribe sections={secList} describe={describe} />
       </div>
     </div>
   );

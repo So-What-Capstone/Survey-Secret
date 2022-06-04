@@ -11,3 +11,4 @@ export { getTemplatesQuery } from "./getTemplatesQuery";
 export { loginMutation } from "./loginMutation";
 export { getMyFormsSimpleQuery, getMyFormsQuery } from "./meQuery";
 export { searchFormsQuery } from "./serachFormsQuery";
+export { getDescribeQuery } from "./getDescribeQuery";
