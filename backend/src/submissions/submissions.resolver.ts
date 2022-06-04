@@ -19,6 +19,10 @@ import {
   ToggleFavoriteSubmissionInput,
   ToggleFavoriteSubmissionsOutput,
 } from './dtos/toggle-favorite-submissions.dto';
+import {
+  FindAnswerByQuestionIdInput,
+  FindAnswerByQuestionIdOutput,
+} from './dtos/find-answer-by-question-id-output.dto';
 
 @Resolver()
 export class SubmissionsResolver {
@@ -69,6 +73,18 @@ export class SubmissionsResolver {
     return this.submissionsService.toggleFavoriteSubmission(
       owner,
       toggleFavoriteSubmissionInput,
+    );
+  }
+
+  @Query((returns) => FindAnswerByQuestionIdOutput)
+  @Type(['Any'])
+  findAnswerByQuestionId(
+    @AuthUser() owner: User,
+    @Args('input') findAnswerByQuestionIdInput: FindAnswerByQuestionIdInput,
+  ): Promise<FindAnswerByQuestionIdOutput> {
+    return this.submissionsService.findAnswerByQuestionId(
+      owner,
+      findAnswerByQuestionIdInput,
     );
   }
 }

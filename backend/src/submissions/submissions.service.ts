@@ -37,6 +37,10 @@ import {
   ToggleFavoriteSubmissionInput,
   ToggleFavoriteSubmissionsOutput,
 } from './dtos/toggle-favorite-submissions.dto';
+import {
+  FindAnswerByQuestionIdInput,
+  FindAnswerByQuestionIdOutput,
+} from './dtos/find-answer-by-question-id-output.dto';
 
 @Injectable()
 export class SubmissionsService {
@@ -356,6 +360,56 @@ export class SubmissionsService {
       );
 
       return { ok: true };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async findAnswerByQuestionId(
+    owner: User,
+    { formId, questionId }: FindAnswerByQuestionIdInput,
+  ): Promise<FindAnswerByQuestionIdOutput> {
+    try {
+      const form = await this.formModel.findOne({
+        $and: [{ _id: formId }, { 'sections.questions._id': questionId }],
+      });
+
+      if (!form) {
+        return {
+          ok: false,
+          error: '존재하지 않는 폼이거나, 폼에 질문이 없습니다.',
+        };
+      }
+
+      if (form.owner.toString() !== owner._id.toString()) {
+        return { ok: false, error: '권한이 없습니다.' };
+      }
+
+      let answers = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+        { $unwind: '$submissions' },
+        { $unwind: '$submissions.answers' },
+        {
+          $match: {
+            'submissions.answers.question': new mongoose.Types.ObjectId(
+              questionId,
+            ),
+          },
+        },
+        { $project: { 'submissions.answers': true, _id: false } },
+      ]);
+
+      answers = answers.map((answer) => answer.submissions.answers);
+
+      return { ok: true, answers };
     } catch (error) {
       return { ok: false, error: error.message };
     }

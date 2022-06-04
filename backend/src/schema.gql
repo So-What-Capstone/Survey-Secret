@@ -331,6 +331,12 @@ type ToggleFavoriteSubmissionsOutput {
   error: String
 }
 
+type FindAnswerByQuestionIdOutput {
+  ok: Boolean!
+  error: String
+  answers: [AnswerUnion!]
+}
+
 type GetKeywordAnalysisOutput {
   ok: Boolean!
   error: String
@@ -384,6 +390,7 @@ type Query {
   findTemplateById(input: FindTemplateByIdInput!): FindTemplateByIdOutput!
   getSendHistory(input: GetSendHistoryInput!): GetSendHistoryOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
+  findAnswerByQuestionId(input: FindAnswerByQuestionIdInput!): FindAnswerByQuestionIdOutput!
   getKeywordAnalysis(input: GetKeywordAnalysisInput!): GetKeywordAnalysisOutput!
   getCorr(input: GetCorrInput!): GetCorrOutput!
   getDescribe(input: GetDescribeInput!): GetDescribeOutput!
@@ -431,6 +438,11 @@ input GetSendHistoryInput {
 
 input FindSubmissionByIdInput {
   submissionId: String!
+}
+
+input FindAnswerByQuestionIdInput {
+  formId: String!
+  questionId: String!
 }
 
 input GetKeywordAnalysisInput {
