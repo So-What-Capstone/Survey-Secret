@@ -11,6 +11,10 @@ export const findRepsQueByFormId = gql`
           content
           kind
         }
+        submissions {
+          _id
+          isFavorite
+        }
       }
     }
   }

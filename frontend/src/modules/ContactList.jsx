@@ -124,28 +124,45 @@ function ContactList({
 
     let repsQueId; //대표문항 id
     let repsQueType; //대표문항 type
+    let repsQueContent; //대표문항 질문내용
+    let isFavorite; //즐찾 여부
+    let receiverList = []; //receivers가 될 것
+
+    console.log(newForm.id);
 
     findRepsQueByFormId({
       variables: {
         formId: newForm.id,
       },
       onCompleted: (data) => {
+        //즐찾 여부
+        isFavorite = data.form.submissions.isFavorite;
+
         //대표문항 내용
-        //newForm.repsQueContent = data.form.representativeQuestion.content;
+        repsQueContent = data.form.representativeQuestion.content;
 
         //대표문항 타입
         //Closed, Grid, Linear, Opened, Personal
-        /*
+        repsQueType = data.form.representativeQuestion.kind;
 
         switch (data.form.representativeQuestion.kind.toString()) {
           case "Personal":
             console.log("띄우지 않음");
             break;
           case "Closed":
-            console.log("띄움");
-        }*/
+            //ClosedAnswer에서 답 받아와야 함
+
+            break;
+          case "Grid":
+            break;
+          case "Linear":
+            break;
+          default:
+            break;
+        }
+
         //대표문항 id
-        repsQueId = data.form.representativeQuestion.content._id;
+        repsQueId = data.form.representativeQuestion._id;
 
         //repsQueId를 통해 repsQueType Answers엔티티에서 answer 가져오기 -> receivers.name
         //ClosedAnswer : closedAnswer - [Float!]!
@@ -155,6 +172,19 @@ function ContactList({
         //PersonalAnswer : 가져오지 않음
       },
     });
+
+    //newForm 수정(receivers 추가)
+    newForm = {
+      id: newForm.id,
+      title: newForm.title,
+      receivers: [
+        {
+          id: "1",
+          name: "hello",
+          favorite: true,
+        },
+      ],
+    };
 
     setSelectedForm(newForm); //id, title, receivers
     checkedItems.clear();

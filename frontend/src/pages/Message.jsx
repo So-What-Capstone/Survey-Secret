@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ClipTray from "../modules/ClipTray";
 import ContactList from "../modules/ContactList";
 import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
@@ -38,7 +38,7 @@ function Message() {
         const obj = {};
         obj["id"] = form._id;
         obj["title"] = form.title;
-        obj["privacyExpiredAt"] = form.privacyExpiredAt;
+        //obj["privacyExpiredAt"] = form.privacyExpiredAt;
         return obj;
       });
       setMyForms(myFormList);
@@ -98,9 +98,10 @@ function Message() {
     }
 
     if (totalByte > maxByte) {
+      /*
       alert("메세지는 최대" + maxByte + "byte를 초과할 수 없습니다.");
       setTextValue(newTextValue.substring(0, newTextValue.length - 1));
-      totalByte -= lastByte;
+      totalByte -= lastByte;*/
     }
     setTextByte(totalByte);
   };
@@ -110,7 +111,7 @@ function Message() {
       <ClipTray clips={clips} />
       <div className="message-con">
         <ContactList
-          forms={forms}
+          forms={myForms}
           selectedForm={selectedForm}
           checkedItems={checkedItems}
           setSelectedForm={setSelectedForm}
@@ -125,9 +126,12 @@ function Message() {
             <div className="content-label">
               <label>문자 내용 입력</label>
               <span></span>
-              <label>
-                {textByte}/{maxByte}Byte
-              </label>
+              {textByte > maxByte && <label>MMS</label>}
+              {textByte <= maxByte && (
+                <label>
+                  {textByte}/{maxByte}Byte
+                </label>
+              )}
             </div>
             <textarea
               placeholder="내용을 입력하세요."
