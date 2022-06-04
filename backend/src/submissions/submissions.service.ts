@@ -34,9 +34,9 @@ import {
 } from './../forms/questions/schemas/personal-question.schema';
 import { PersonalAnswer } from './answers/schemas/personal-answer.schema';
 import {
-  ToggleFavoriteSubmissionInput,
-  ToggleFavoriteSubmissionsOutput,
-} from './dtos/toggle-favorite-submissions.dto';
+  SetFavoriteSubmissionsInput,
+  SetFavoriteSubmissionsOutput,
+} from './dtos/set-favorite-submissions.dto';
 import {
   FindAnswerByQuestionIdInput,
   FindAnswerByQuestionIdOutput,
@@ -330,10 +330,10 @@ export class SubmissionsService {
     }
   }
 
-  async toggleFavoriteSubmission(
+  async setFavoriteSubmissions(
     owner: User,
-    { formId, submissionIds }: ToggleFavoriteSubmissionInput,
-  ): Promise<ToggleFavoriteSubmissionsOutput> {
+    { formId, favoriteSubmissions }: SetFavoriteSubmissionsInput,
+  ): Promise<SetFavoriteSubmissionsOutput> {
     try {
       const form = await this.formModel
         .findOne({ _id: formId })
@@ -348,16 +348,31 @@ export class SubmissionsService {
       );
 
       if (
-        !submissionIds.every((submission) => submissions.includes(submission))
+        !favoriteSubmissions.every((submission) =>
+          submissions.includes(submission.submissionId),
+        )
       ) {
         return { ok: false, error: '폼 안에 없는 답변입니다.' };
       }
 
-      await this.submissionModel.updateMany(
-        { _id: submissionIds },
-        //%eq : true when the values are equivalent.
-        [{ $set: { isFavorite: { $eq: [false, '$isFavorite'] } } }],
-      );
+      const falseSubmissionIds: string[] = [];
+      const trueSubmissionIds: string[] = [];
+
+      for (const { isFavorite, submissionId } of favoriteSubmissions) {
+        if (isFavorite) {
+          trueSubmissionIds.push(submissionId);
+        } else {
+          falseSubmissionIds.push(submissionId);
+        }
+      }
+
+      await this.submissionModel.updateMany({ _id: falseSubmissionIds }, [
+        { $set: { isFavorite: false } },
+      ]);
+
+      await this.submissionModel.updateMany({ _id: trueSubmissionIds }, [
+        { $set: { isFavorite: true } },
+      ]);
 
       return { ok: true };
     } catch (error) {

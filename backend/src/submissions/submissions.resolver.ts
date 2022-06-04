@@ -16,9 +16,9 @@ import {
   DeleteSubmissionOutput,
 } from './dtos/delete-submission.dto';
 import {
-  ToggleFavoriteSubmissionInput,
-  ToggleFavoriteSubmissionsOutput,
-} from './dtos/toggle-favorite-submissions.dto';
+  SetFavoriteSubmissionsInput,
+  SetFavoriteSubmissionsOutput,
+} from './dtos/set-favorite-submissions.dto';
 import {
   FindAnswerByQuestionIdInput,
   FindAnswerByQuestionIdOutput,
@@ -64,15 +64,15 @@ export class SubmissionsResolver {
     );
   }
 
-  @Mutation((returns) => ToggleFavoriteSubmissionsOutput)
+  @Mutation((returns) => SetFavoriteSubmissionsOutput)
   @Type(['Any'])
-  toggleFavoriteSubmissions(
+  setFavoriteSubmissions(
     @AuthUser() owner: User,
-    @Args('input') toggleFavoriteSubmissionInput: ToggleFavoriteSubmissionInput,
-  ): Promise<ToggleFavoriteSubmissionsOutput> {
-    return this.submissionsService.toggleFavoriteSubmission(
+    @Args('input') setFavoriteSubmissionInput: SetFavoriteSubmissionsInput,
+  ): Promise<SetFavoriteSubmissionsOutput> {
+    return this.submissionsService.setFavoriteSubmissions(
       owner,
-      toggleFavoriteSubmissionInput,
+      setFavoriteSubmissionInput,
     );
   }
 

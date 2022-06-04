@@ -326,7 +326,7 @@ type DeleteSubmissionOutput {
   error: String
 }
 
-type ToggleFavoriteSubmissionsOutput {
+type SetFavoriteSubmissionsOutput {
   ok: Boolean!
   error: String
 }
@@ -476,7 +476,7 @@ type Mutation {
   sendSms(input: SendSmsInput!): SendSmsOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
-  toggleFavoriteSubmissions(input: ToggleFavoriteSubmissionInput!): ToggleFavoriteSubmissionsOutput!
+  setFavoriteSubmissions(input: SetFavoriteSubmissionsInput!): SetFavoriteSubmissionsOutput!
 }
 
 input CreateAccountInput {
@@ -673,7 +673,12 @@ input DeleteSubmissionInput {
   submissionId: String!
 }
 
-input ToggleFavoriteSubmissionInput {
+input SetFavoriteSubmissionsInput {
   formId: String!
-  submissionIds: [String!]!
+  favoriteSubmissions: [FavoriteSubmission!]!
+}
+
+input FavoriteSubmission {
+  submissionId: String!
+  isFavorite: Boolean!
 }
