@@ -109,12 +109,12 @@ function parseGridQuestion(ques) {
 }
 
 function parsePersonalQuestion(ques) {
-  if (ques.type === "Phone") {
+  if (ques.personalType === "Phone") {
     return {
       ...ques,
       type: "phone",
     };
-  } else if (ques.type === "Address") {
+  } else if (ques.personalType === "Address") {
     return {
       ...ques,
       type: "address",
