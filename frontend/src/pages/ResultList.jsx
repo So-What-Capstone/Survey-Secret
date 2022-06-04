@@ -9,11 +9,12 @@ import {
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "../styles/ResultList.scss";
 import { CloseCircleFilled } from "@ant-design/icons";
-import { useQuery } from "@apollo/client";
-import { findFormByIdForOwnerQuery } from "../API/findFormByIdForOwnerQuery";
-
-const FIND_FORM_BY_ID_FOR_OWNER_QUERY = findFormByIdForOwnerQuery;
-
+import { useMutation, useQuery } from "@apollo/client";
+import { editFormMutation, findFormByIdForOwnerQuery } from "../API";
+function cutLongStr(str) {
+  if (str.length > 20) return str.substr(0, 20);
+  return str;
+}
 function ResultList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -24,7 +25,7 @@ function ResultList() {
   const [ansList, setAnsList] = useState([]); // [ {id1:ans1, id2:ans2, ...} ]
   const [repList, setRepList] = useState([]); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool)} ]
   const [secList, setSecList] = useState([]);
-  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_FOR_OWNER_QUERY, {
+  const { loading, data, error } = useQuery(findFormByIdForOwnerQuery, {
     variables: { formId: formId },
     onCompleted: (data) => {
       // when error occured
@@ -40,9 +41,9 @@ function ResultList() {
       // sections
       let sec = formData.sections;
       setSecList(sec);
-
+      console.log(formData);
       // representative question
-      let repq = formData.representativeQuestion;
+      let repq = formData.representativeQuestion?._id;
       setRepQ(repq ? repq : "");
 
       // representative question candidates dictionary <string, string>: <id, question content>
@@ -70,7 +71,7 @@ function ResultList() {
         for (let j = 0; j < ans_orig.length; j++) {
           ans[ans_orig[j]["question"]] = { ...ans_orig[j] };
           if (ans_orig[j]["question"] === repq) {
-            repq_ans_str = ans_orig[j].openedAnswer;
+            repq_ans_str = cutLongStr(ans_orig[j].openedAnswer);
           }
         }
         rep = {
@@ -86,6 +87,7 @@ function ResultList() {
       setRepList(repl);
     },
   });
+  const [editForm] = useMutation(editFormMutation);
 
   const [drawLotsEnabled, setDrawLotsEnabled] = useState(false);
   useEffect(() => {
@@ -115,13 +117,30 @@ function ResultList() {
 
     setRepList(temp);
   };
-  const RepQChange = (v) => {
+  const RepQChange = async (v) => {
+    let mut_input = {
+      formId: formId,
+      representativeQuestionId: v,
+    };
+    let edit_ret = await editForm({
+      variables: {
+        request: mut_input,
+      },
+    });
+    console.log(edit_ret);
+    const {
+      editForm: { ok, error },
+    } = edit_ret.data;
+    if (!ok || error) {
+      alert("대표문항을 변경할 수 없습니다.");
+      return;
+    }
     setRepQ(v);
     let temp = repList.slice();
     for (let i = 0; i < temp.length; i++) {
       let ansStr = ansList[i][v]?.openedAnswer;
       ansStr = ansStr ? ansStr : "";
-      if (ansStr.length > 10) ansStr = ansStr.substr(0, 10);
+      ansStr = cutLongStr(ansStr);
       temp[i] = {
         ...temp[i],
         answer: ansStr,
@@ -129,6 +148,7 @@ function ResultList() {
     }
     setRepList(temp);
   };
+
   if (loading) {
     return null;
   }

@@ -10,6 +10,9 @@ export const findFormByIdForOwnerQuery = gql`
         title
         state
         createdAt
+        representativeQuestion {
+          _id
+        }
         submissions {
           isFavorite
           _id
