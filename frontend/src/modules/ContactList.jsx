@@ -2,10 +2,16 @@ import React, { useState, useEffect, useCallback } from "react";
 import "../styles/ContactList.scss";
 import PropTypes from "prop-types";
 import { Select, MenuItem } from "@mui/material";
+import {
+  findRepsQueByFormId,
+  findRepsAnsByQueId,
+} from "../API/findRepresentativeQuery";
+import { findQueById } from "../API/findQuestionByIdQuery";
 import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
-import { findRepsQueByFormId } from "../API/findRepresentativeQuery";
 
 const FIND_REPS_QUE_BY_FORM_ID = findRepsQueByFormId;
+const FIND_REPS_ANS_BY_QUE_ID = findRepsAnsByQueId;
+const FIND_QUE_BY_ID = findQueById;
 
 TableItem.propTypes = {
   id: PropTypes.string,
@@ -90,8 +96,8 @@ ContactList.propTypes = {
  * ContactList
  */
 function ContactList({
-  forms, //id, title
-  selectedForm, //id, title, receivers
+  forms,
+  selectedForm,
   checkedItems,
   setSelectedForm,
   setCheckedItems,
@@ -99,77 +105,60 @@ function ContactList({
   const [findRepsQueByFormId, { data, loading, error }] = useLazyQuery(
     FIND_REPS_QUE_BY_FORM_ID
   );
+  const [findQueById] = useLazyQuery(FIND_QUE_BY_ID);
+  const [findRepsAnsByQueId] = useLazyQuery(FIND_REPS_ANS_BY_QUE_ID);
 
-  const handleFormChange = (event) => {
+  const handleFormChange = async (event) => {
     const selectedId = event.target.value;
     let newForm = forms.find((form) => form.id === selectedId); //selectedForm 가 될 것(현재 id, title만 있음)
-    /*
-    여기서 newForm에 receivers내용을 채워야 함(id, name, favorite)
-    newForm의 formId를 가지고 findRepsQueByFormId 쿼리 호출 -> 대표질문내용, id, 종류 받아옴
-    
-    */
 
-    /*
-    newForm = {
-      id: newForm.id,
-      title: newForm.title,
-      receivers: [
-        {
-          id: "1",
-          name: "name",
-          favorite: false,
-        },
-      ],
-    };*/
+    console.log("form id:" + newForm.id);
 
     let repsQueId; //대표문항 id
-    let repsQueType; //대표문항 type
+    let repsQueType; //대표문항 type //Closed, Grid, Linear, Opened, Personal
     let repsQueContent; //대표문항 질문내용
-    let isFavorite; //즐찾 여부
-    let receiverList = []; //receivers가 될 것
+    let receiverFavoriteList; //[{submission id, isFavorite}]
+    let receiverAnswerList; //[{submission id, answer {__typename, ㅇㅇanswer} }]
 
-    console.log(newForm.id);
+    //formId -> 대표문항 id, submission id+isFavorite
+    //대표문항이 null이면 에러남
+    await findRepsQueByFormId({
+      variables: { formId: newForm.id },
+      onCompleted: (data) => {
+        //대표문항 id
+        repsQueId = data?.findFormById?.form?.representativeQuestion?._id;
 
-    findRepsQueByFormId({
+        //[{_id, isFavorite}]
+        receiverFavoriteList = data?.findFormById?.form?.submissions;
+      },
+    });
+
+    //대표문항 id -> 대표문항 type, content
+    await findQueById({
       variables: {
         formId: newForm.id,
+        queId: repsQueId,
       },
       onCompleted: (data) => {
-        //즐찾 여부
-        isFavorite = data.form.submissions.isFavorite;
+        repsQueType = data?.findQuestionById?.question?.__typename;
+        repsQueContent = data?.findQuestionById?.question?.content;
+      },
+    });
 
-        //대표문항 내용
-        repsQueContent = data.form.representativeQuestion.content;
+    console.log("대표문항 id: " + repsQueId);
+    console.log("대표문항 type: " + repsQueType);
+    console.log("대표문항 content: " + repsQueContent);
 
-        //대표문항 타입
-        //Closed, Grid, Linear, Opened, Personal
-        repsQueType = data.form.representativeQuestion.kind;
-
-        switch (data.form.representativeQuestion.kind.toString()) {
-          case "Personal":
-            console.log("띄우지 않음");
-            break;
-          case "Closed":
-            //ClosedAnswer에서 답 받아와야 함
-
-            break;
-          case "Grid":
-            break;
-          case "Linear":
-            break;
-          default:
-            break;
-        }
-
-        //대표문항 id
-        repsQueId = data.form.representativeQuestion._id;
-
-        //repsQueId를 통해 repsQueType Answers엔티티에서 answer 가져오기 -> receivers.name
-        //ClosedAnswer : closedAnswer - [Float!]!
-        //GridAnswer : gridAnswer: [GridAnswerContent!]
-        //LinearAnswer : linearAnswer : Float!
-        //OpenedAnswer : openedAnswer : string
-        //PersonalAnswer : 가져오지 않음
+    //form id, 질문 id -> answer, submission id
+    //isFavorite를 같이 가져올 수만 있다면..
+    await findRepsAnsByQueId({
+      variables: {
+        formId: newForm.id,
+        questionId: repsQueId,
+      },
+      onCompleted: (data) => {
+        //[{submission id, answer객체}]
+        receiverAnswerList = data?.findAnswerByQuestionId?.answers;
       },
     });
 

@@ -16,22 +16,13 @@ import {
   Divider,
   ListItemButton,
 } from "@mui/material";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useLazyQuery } from "@apollo/client";
 import { searchFormsQuery } from "./../API/serachFormsQuery";
 
 const SEARCH_FORMS_QUERY = searchFormsQuery;
 
 function SearchResult() {
-  const [forms, setForms] = useState([
-    {
-      id: "",
-      title: "",
-      description: "",
-      expiredAt: "",
-      privacyExpiredAt: "",
-      owner: "",
-    },
-  ]);
+  const [forms, setForms] = useState([]);
   const [selectedForm, setSelectedForm] = useState("");
   const [selectedSort, setSelectedSort] = useState(0);
   const [searchedForms, setSearchedForms] = useState([]); //검색결과 form들
@@ -39,20 +30,33 @@ function SearchResult() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  //const params = {value:"AAAAA"}
-  //navigate({pathname:string,search:`?${createSearchParams(params)}`})
   useEffect(() => {
     const value = searchParams.get("value");
-    if (value) {
-      console.log(`value is ${value}`); //ok
-      setSearchedText(value);
-      // 디버그를 위해 임의의 데이터로 설정
 
-      console.log(forms); //forms가 안바뀜
-      setSearchedForms(forms);
-    } else {
-      navigate("/");
-    }
+    const getSearchedForms = async () => {
+      if (value) {
+        console.log(`value is ${value}`); //2
+        setSearchedText(value); //엔터치는 순간 바뀜
+
+        await searchForms({
+          variables: {
+            title: searchParams.get("value"),
+            sortkey: "expiredAt",
+            desc: false,
+          },
+          onCompleted: (data) => {
+            data?.searchForms?.forms.map((form, index) => console.log(form));
+            setSearchedForms(data?.searchForms?.forms); //이게 안된다고!!!!!!!!!!
+
+            console.log("searchedForms size: " + searchedForms.length);
+          },
+        });
+        console.log("젤 나중");
+      } else {
+        navigate("/");
+      }
+    };
+    getSearchedForms();
   }, [searchParams]);
 
   const [searchedText, setSearchedText] = useState(searchParams);
@@ -61,20 +65,8 @@ function SearchResult() {
     value: searchedText,
   };
 
-  const { loading, data, error } = useQuery(SEARCH_FORMS_QUERY, {
-    variables: { title: searchParams.get("value") },
-    onCompleted: (data) => {
-      let {
-        searchForms: { ok, error, forms },
-      } = data;
-
-      if (!ok) {
-        throw new Error(error);
-      } else {
-        setForms(forms);
-      }
-    },
-  });
+  const [searchForms, { data, loading, error }] =
+    useLazyQuery(SEARCH_FORMS_QUERY);
 
   const handleSearchedText = (e) => {
     setSearchedText(e.target.value);
@@ -87,8 +79,8 @@ function SearchResult() {
   };
 
   const searchSurvey = () => {
-    console.log(searchedText);
-    navigate({ pathname: "/search", search: `?${createSearchParams(params)}` });
+    navigate({ pathname: "/search", search: `?${createSearchParams(params)}` }); //1
+    console.log("아니 왜 안되나교!");
   };
 
   const handleListItemClick = (e, id) => {
@@ -127,13 +119,14 @@ function SearchResult() {
   };
 
   const sorts = [
+    { idx: 0, type: "정확도순" },
     {
-      idx: 0,
+      idx: 1,
       type: "폼 만료일 빠른순",
     },
-    { idx: 1, type: "폼 만료일 늦은순" },
-    { idx: 2, type: "개인정보 파기일 빠른순" },
-    { idx: 3, type: "개인정보 파기일 느린순" },
+    { idx: 2, type: "폼 만료일 늦은순" },
+    { idx: 3, type: "개인정보 파기일 빠른순" },
+    { idx: 4, type: "개인정보 파기일 느린순" },
   ];
 
   return (
@@ -182,7 +175,7 @@ function SearchResult() {
           </List>
         </div>
         <List className="list-con">
-          {forms.map((form, index) => (
+          {searchedForms.map((form, index) => (
             <div key={index} className="content-con">
               <ListItem>
                 <ListItemButton

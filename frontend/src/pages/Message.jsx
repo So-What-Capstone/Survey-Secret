@@ -32,6 +32,23 @@ function Message() {
     },
   ]);
 
+  /* 수신인 정보 */
+  const [selectedForm, setSelectedForm] = useState({
+    id: forms[0].id,
+    title: forms[0].title,
+    receivers: [{ id: "id", name: "name", favorite: false }],
+  });
+
+  //선택된 설문
+  const [checkedItems, setCheckedItems] = useState(new Set()); //체크된 수신자들(receiverId들의 배열)
+
+  /* 문자메시지 발신 정보 */
+  const [senderTel, setSenderTel] = useState("01012341234");
+  const [textValue, setTextValue] = useState("");
+  const [textByte, setTextByte] = useState(0);
+
+  const maxByte = 100; //최대 100바이트
+
   const { data, loading, error } = useQuery(GET_MY_FORMS_CONTACT_QUERY, {
     onCompleted: (data) => {
       const myFormList = data?.me?.user?.forms.map((form) => {
@@ -42,23 +59,9 @@ function Message() {
         return obj;
       });
       setMyForms(myFormList);
+      //setSelectedForm
     },
   });
-
-  /* 수신인 정보 */
-  const [selectedForm, setSelectedForm] = useState({
-    id: forms[0].id,
-    title: forms[0].title,
-    receivers: [{ id: "id", name: "name", favorite: false }],
-  }); //선택된 설문
-  const [checkedItems, setCheckedItems] = useState(new Set()); //체크된 수신자들(receiverId들의 배열)
-
-  /* 문자메시지 발신 정보 */
-  const [senderTel, setSenderTel] = useState("01012341234");
-  const [textValue, setTextValue] = useState("");
-  const [textByte, setTextByte] = useState(0);
-
-  const maxByte = 100; //최대 100바이트
 
   const handleTextValue = (e) => {
     setTextValue(e.target.value);
