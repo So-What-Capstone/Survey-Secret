@@ -27,3 +27,4 @@ export {
   Linear,
   GridTable,
 } from "./ResultQuestionModule";
+export { default as MainSurveys } from "./MainSurveys";

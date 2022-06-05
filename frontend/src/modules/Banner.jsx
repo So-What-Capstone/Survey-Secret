@@ -53,7 +53,7 @@ function Banner({ sources }) {
 
   return (
     <div className="real-banner-con">
-      <Carousel infinite autoplay>
+      <Carousel infinite autoplay dotPosition="top">
         {default_banners.map((v, i) => (
           <CarouselItem key={v.img_url + i} value={v} />
         ))}

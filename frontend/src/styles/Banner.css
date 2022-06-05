@@ -5,14 +5,14 @@
 }
 .img-in-banner-con {
   width: 100vw;
-  height: 40vh;
+  height: 45vh;
   display: flex;
   justify-content: center;
 }
 
 .img-in-banner-back-con {
   width: 100vw;
-  height: 40vh;
+  height: 45vh;
   position: absolute;
   top: 0;
   z-index: 10;
@@ -20,12 +20,13 @@
 
 .img-in-banner-back {
   width: 100vw;
-  height: 40vh;
+  height: 45vh;
   object-fit: center;
   filter: blur(5px);
+  opacity: 50%;
 }
 
 .img-in-banner {
   z-index: 11;
-  height: 40vh;
+  height: 45vh;
 }
