@@ -19,6 +19,7 @@ import mongoose from 'mongoose';
 import { Form } from '../../forms/schemas/form.schema';
 import { CoreSchema } from './../../common/schemas/core.schema';
 import { schemaOption } from './../../common/schemas/option.schema';
+import { Contact } from './../../sms/schemas/contact.schema';
 
 //enum type 정의
 export enum UserType {
@@ -110,6 +111,10 @@ export class User extends CoreSchema {
   @Field((type) => Boolean, { nullable: true })
   @Prop({ type: Boolean, required: true, default: false })
   isVerified?: boolean;
+
+  @Field((type) => [Contact], { nullable: true })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Contact' }] })
+  contacts?: Contact[];
 }
 
 //class를 토대로 schema를 생성합니다.
