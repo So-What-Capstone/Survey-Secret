@@ -4,7 +4,12 @@ import ClipTray from "./ClipTray";
 
 export default function ResultClipTray({ type, formId }) {
   const clips = [
-    { title: "설문정보", link_enabled: false, link: "./", color_idx: 0 },
+    {
+      title: "내 설문",
+      link_enabled: true,
+      link: "/my-survey/",
+      color_idx: 0,
+    },
     {
       title: "목록",
       link_enabled: true,

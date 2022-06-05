@@ -3,12 +3,24 @@ import "../styles/ResultStats.scss";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { ResultClipTray } from "../modules";
+import { findFormByIdQuery } from "../API";
+import { getCorrQuery } from "../API";
+import { getKeywordAnalysisQuery } from "../API";
+import { getMarketBasketQuery } from "../API";
 import { useLazyQuery } from "@apollo/client";
-import { findFormByIdQuery } from "../API/findFormByIdQuery";
-import { getCorrQuery } from "../API/getCorrQuery";
+import WordCloud from "react-d3-cloud";
 
-import Plot from "react-plotly.js";
-import { Checkbox, Row, Spin, Empty, Alert, Divider, Button } from "antd";
+import {
+  Checkbox,
+  Row,
+  Spin,
+  Empty,
+  Alert,
+  Divider,
+  Button,
+  Select,
+  message,
+} from "antd";
 import TableTransfer from "../modules/TableTransfer";
 // import Plotly from "plotly.js-basic-dist";
 // import createPlotlyComponent from "react-plotly.js/factory";
@@ -115,14 +127,71 @@ function NotSelected() {
   );
 }
 
-function MarketBasketAnalysis() {
-  return <div>MarketBasket</div>;
+function MarketBasketAnalysis({ form }) {
+  const [questions, setQuestions] = useState([]);
+  const [analysis, setAnalysis] = useState(undefined);
+  const [getMarketBasket, { loading }] = useLazyQuery(getMarketBasketQuery);
+
+  useEffect(() => {
+    const quesIds = [];
+    form.sections.forEach((sect, i) => {
+      sect.questions.forEach((ques, j) => {
+        if (ques.kind === "Closed") {
+          quesIds.push(ques);
+        }
+      });
+    });
+    setQuestions(quesIds);
+  }, [form]);
+
+  function generateResult() {
+    getMarketBasket({
+      variables: {
+        formId: form._id,
+        questionIds: questions.map((ques) => ques._id),
+      },
+    }).then((res) => {
+      try {
+        const currAnalysis = res.data.getMarketBasket.error;
+        console.log(currAnalysis);
+        setAnalysis(currAnalysis);
+      } catch (err) {
+        message.error("데이터 산출에 실패했습니다.");
+        console.error(JSON.stringify(err, null, 2));
+        console.error(JSON.stringify(err.message, null, 2));
+      }
+    });
+  }
+
+  return (
+    <div className="market-root">
+      <Alert
+        message="객관식 응답 경향"
+        description="모든 객관식 문항들에 대한 사람들의 응답 결과를 분석하여, 여러 선택지 간 연관 규칙(Association rules)을 찾아냅니다."
+        type="info"
+        showIcon
+      />
+
+      <Divider>
+        <Button type="primary" onClick={generateResult}>
+          응답 경향 분석
+        </Button>
+      </Divider>
+
+      {!loading && !analysis && <Empty description=""></Empty>}
+      {loading && <Spin tip="정보를 가져오는 중..."></Spin>}
+    </div>
+  );
 }
+
+MarketBasketAnalysis.propTypes = {
+  form: PropTypes.any,
+};
 
 function CorrAnalysis({ form }) {
   const [questions, setQuestions] = useState([]);
   const [targetKeys, setTargetKeys] = useState([]);
-  const [getCorr, { data }] = useLazyQuery(getCorrQuery);
+  const [getCorr] = useLazyQuery(getCorrQuery);
 
   useEffect(() => {
     const currQues = [];
@@ -165,7 +234,6 @@ function CorrAnalysis({ form }) {
   ];
 
   function generateResult() {
-    console.log(targetKeys);
     if (targetKeys.length <= 1) {
       alert(
         "적어도 두 개 이상의 문항을 선택해야 합니다." +
@@ -210,25 +278,6 @@ function CorrAnalysis({ form }) {
           item.content && item.content.indexOf(inputValue) !== -1
         }
       />
-
-      {data && (
-        <Plot
-          data={[
-            {
-              z: [
-                [1, null, 30, 50, 1],
-                [20, 1, 60, 80, 30],
-                [30, 60, 1, -10, 20],
-              ],
-              x: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-              y: ["Morning", "Afternoon", "Evening"],
-              type: "heatmap",
-            },
-          ]}
-          layout={{ width: 700, height: 500, title: "Form Name" }}
-          config={{ displayModeBar: false }}
-        />
-      )}
     </div>
   );
 }
@@ -238,15 +287,101 @@ CorrAnalysis.propTypes = {
   form: PropTypes.any,
 };
 
-function KeywordAnalysis() {
-  //using d3-cloud
+function KeywordAnalysis({ form }) {
+  const [questions, setQuestions] = useState([]);
+  const [selected, setSelected] = useState(undefined);
+  const [analysis, setAnalysis] = useState(undefined);
+  const [getKeywordAnalysis, { loading }] = useLazyQuery(
+    getKeywordAnalysisQuery
+  );
+
+  useEffect(() => {
+    const currQues = [];
+    form.sections.forEach((sect, i) => {
+      sect.questions.forEach((ques, j) => {
+        if (ques.kind === "Opened") {
+          currQues.push({
+            text: `Q${i + 1}-C${j + 1} - ${ques.content}`,
+            value: `${ques._id}`,
+          });
+        }
+      });
+    });
+    setQuestions(currQues);
+  }, [form]);
+
+  function drawKeyword() {
+    if (!selected) {
+      message.info("분석할 문항을 선택해주세요.");
+      return;
+    }
+    setAnalysis(undefined);
+    const variables = {
+      formId: form._id,
+      questionId: selected,
+    };
+    getKeywordAnalysis({
+      variables: variables,
+    }).then((res) => {
+      try {
+        const currAnalysis = res.data.getKeywordAnalysis.result.map(
+          ([t, v]) => ({
+            text: t,
+            value: Number(v) * 100000,
+          })
+        );
+        setAnalysis(currAnalysis);
+      } catch (err) {
+        message.error("데이터 산출에 실패했습니다.");
+        console.error(JSON.stringify(err, null, 2));
+        console.error(JSON.stringify(err.message, null, 2));
+      }
+    });
+  }
+
   return (
-    <div>
-      <div>WordCloud</div>
-      <div></div>
+    <div className="keyword-root">
+      <Alert
+        message="주관식 응답 키워드"
+        description={
+          "주관식 문항의 주요 키워드로 워드 클라우드를 그릴 수 있습니다."
+        }
+        type="info"
+        showIcon
+      />
+
+      <Select
+        showSearch
+        placeholder="주관식 문항을 선택하세요."
+        optionFilterProp="children"
+        onChange={(e) => setSelected(e)}
+        filterOption={(input, option) =>
+          option.children.toLowerCase().includes(input.toLowerCase())
+        }
+      >
+        {questions.map((ques) => (
+          <Select.Option key={ques.value} value={ques.value}>
+            {ques.text}
+          </Select.Option>
+        ))}
+      </Select>
+
+      <Divider>
+        <Button type="primary" onClick={drawKeyword}>
+          워드 클라우드 그리기
+        </Button>
+      </Divider>
+
+      {!loading && !analysis && <Empty description=""></Empty>}
+      {loading && <Spin tip="정보를 가져오는 중..."></Spin>}
+      {analysis && <WordCloud data={analysis}></WordCloud>}
     </div>
   );
 }
+
+KeywordAnalysis.propTypes = {
+  form: PropTypes.any,
+};
 
 function ResultStats() {
   let navigate = useNavigate();
@@ -273,7 +408,7 @@ function ResultStats() {
     }
 
     fetchData();
-  }, []);
+  }, [searchParams]);
 
   return (
     <div className="result-stats">

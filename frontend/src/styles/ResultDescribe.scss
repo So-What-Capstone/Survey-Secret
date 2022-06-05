@@ -1,0 +1,80 @@
+.result-desc-con {
+  width: 70%;
+  padding: 0.5rem;
+  height: fit-content;
+  border-radius: 0.2rem;
+  background-color: #33507cb0;
+}
+
+.result-desc-sec-con {
+  width: 100%;
+  border-radius: 0.2rem;
+  padding: 1%;
+  margin-bottom: 1rem;
+
+  .result-desc-sec-title {
+    // padding: 0.1rem 0 0.1rem 1rem;
+    font-size: 1.2rem;
+    color: #ccd6f6;
+  }
+
+  .result-desc-sec {
+    padding: 1%;
+    background-color: whitesmoke;
+    border-radius: 0.2rem;
+  }
+}
+
+.result-desc-q-con {
+  width: 100%;
+  padding: 1rem;
+  .result-desc-q-title {
+    font-size: 1.1rem;
+    color: black;
+  }
+  .result-desc-q-desc {
+    font-size: 0.9rem;
+    color: #33507c;
+  }
+  .result-desc-q {
+    width: 99%;
+    background-color: #e9e9e9;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  border-bottom: 1px solid #00000020;
+}
+
+.qna-line-con {
+  width: 100%;
+  padding: 0.5rem;
+  .qna-line-tite {
+    width: 100%;
+    color: black;
+    font-size: 1rem;
+    word-break: break-word;
+  }
+  .qna-line-value {
+    width: 100%;
+    min-height: 2rem;
+    max-height: 12rem;
+    color: black;
+    background-color: gainsboro;
+    border-radius: 0.2rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    overflow: auto;
+  }
+}
+
+.qna-token {
+  /* background-color: #00000010; */
+  padding: 0.1rem;
+  border-radius: 0.1rem;
+  margin: 0.1rem 1rem 0.1rem 1rem;
+
+  border-bottom: 1px solid #00000030;
+  word-break: break-all;
+  cursor: default;
+}

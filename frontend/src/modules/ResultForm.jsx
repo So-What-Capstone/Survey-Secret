@@ -6,37 +6,46 @@ import { Row, Col, Radio } from "antd";
 
 function ResultForm({ sections, answers }) {
   function ResultSection({ sec }) {
-    // const sec_id = sec._id;
     const questions = sec.questions;
 
     function ResultQuestion({ ques }) {
       const id = ques._id;
       const qType = ques.kind;
       const ansUnion = answers[id];
-      let qAns = "";
       let temp;
-
-      if (qType == "Closed") {
-        temp = ansUnion.closedAnswer;
-        if (temp) {
-          if (temp.length > 0) {
+      let qAns = "";
+      let gridAns = [];
+      if (qType === "Personal") return null;
+      if (ansUnion) {
+        if (qType === "Closed") {
+          temp = ansUnion.closedAnswer; // temp = selected choices
+          let tokens = [];
+          if (temp?.length > 0) {
             for (let i = 0; i < temp.length; i++) {
-              if (temp[i] <= 0) continue;
-              qAns += ques.choices[temp[i] - 1] + "\n";
+              if (temp[i] < 0) continue;
+              tokens.push(String(ques.choices[temp[i]].choice));
             }
           }
+          qAns = tokens.map((v, i) => (
+            <div key={i} className="result-que-closed-tokens">
+              {v}
+            </div>
+          ));
+        } else if (qType === "Grid") {
+          gridAns = {};
+          for (const rowcol of ansUnion.gridAnswer)
+            gridAns[rowcol.rowNo] = rowcol.colNo;
+        } else if (qType === "Linear") {
+          qAns = ansUnion.linearAnswer;
+        } else if (qType === "Opened") {
+          qAns = ansUnion.openedAnswer;
+        } else if (qType === "Personal") {
+          // qAns = ansUnion.personalAnswer;
+        } else {
+          qAns = "!error!";
         }
-      } else if (qType == "Grid") {
-        qAns = ansUnion.gridAnswer.map((v) => (v.colNo ? v.colNo : null));
-      } else if (qType == "Linear") {
-        qAns = ansUnion.linearAnswer;
-      } else if (qType == "Opened") {
-        qAns = ansUnion.openedAnswer;
-      } else if (qType == "Personal") {
-        // qAns = ansUnion.personalAnswer;
-      } else {
-        qAns = "!error!";
       }
+
       function GridResponse({ rowLabels, colLabels, colSelection }) {
         const val_lst = colLabels.map((val, idx) => idx);
         const num_col = colLabels.length;
@@ -99,7 +108,7 @@ function ResultForm({ sections, answers }) {
       GridResponse.propTypes = {
         rowLabels: PropTypes.arrayOf(PropTypes.string),
         colLabels: PropTypes.arrayOf(PropTypes.string),
-        colSelection: PropTypes.arrayOf(PropTypes.number),
+        colSelection: PropTypes.any,
       };
 
       return (
@@ -110,8 +119,8 @@ function ResultForm({ sections, answers }) {
           ) : (
             <GridResponse
               rowLabels={ques.rowContent}
-              colContent={ques.colContent}
-              colSelection={qAns}
+              colLabels={ques.colContent}
+              colSelection={gridAns}
             />
           )}
         </div>
@@ -133,7 +142,7 @@ function ResultForm({ sections, answers }) {
       <div className="result-sec-con">
         <div className="result-sec-content">{sec.title}</div>
         {questions.map((v, i) => (
-          <ResultQuestion key={i} />
+          <ResultQuestion key={i} ques={v} />
         ))}
       </div>
     );
@@ -149,7 +158,7 @@ function ResultForm({ sections, answers }) {
   return (
     <div className="result-form-con">
       {sections.map((v, i) => (
-        <ResultSection key={i} />
+        <ResultSection key={i} sec={v} />
       ))}
     </div>
   );
@@ -159,7 +168,7 @@ ResultForm.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string,
       title: PropTypes.string,
-      questions: PropTypes.arrayOf(PropTypes.any),
+      questions: PropTypes.array,
     })
   ),
   answers: PropTypes.any,

@@ -106,6 +106,17 @@
   overflow: auto;
 }
 
+.market-root {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  & > div {
+    margin: 20px;
+  }
+}
+
 .corr-root {
   width: 100%;
   height: 100%;
@@ -120,3 +131,13 @@
   }
 }
 
+.keyword-root {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  & > div {
+    margin: 20px;
+  }
+}

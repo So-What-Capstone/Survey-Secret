@@ -22,7 +22,6 @@ function App() {
             <Route path="/my-survey" element={<Pages.MySurvey />} />
             <Route path="/my-survey/create" element={<Pages.SurveyCreate />} />
             <Route path="/my-survey/design" element={<Pages.SurveyDesign />} />
-            <Route path="/my-survey/info" element={<Pages.SurveyInfo />} />
             <Route
               path="/my-survey/result/list"
               element={<Pages.ResultList />}

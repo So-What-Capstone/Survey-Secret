@@ -85,10 +85,10 @@ export default function Form({
         }
       }
     }
-    console.log(mySec);
     setResponse(myRes);
     setConfig(myConfig);
     setSecEnabled(mySec);
+    console.log("use effect");
   }, [_config]);
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function Form({
     }
   }, [secEnabled]);
 
-  if (config === null || config === undefined) {
+  if (!config) {
     return null;
   }
   return (

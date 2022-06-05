@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { createSubmissionMutation } from "../API/createSubmissionMutation";
+import { createSubmissionMutation } from "../API";
 import { QType } from "../modules";
 import Form from "../modules/Form";
 import {
@@ -79,15 +79,18 @@ function FormRespToSubm(form_config, response, secEnabled) {
       if (QType.CLOSED_ONE <= type && type <= QType.CLOSED_INPUT) {
         //closed
         ansDic["closedAnswer"] = qVal.data;
+        if (ansDic["closedAnswer"].length === 0) continue;
       } else if (type === QType.LINEAR) {
         // linear
         ansDic["linearAnswer"] = qVal.data;
       } else if (type === QType.OPENED) {
         // Opened
         ansDic["openedAnswer"] = qVal.data;
+        if (ansDic["openedAnswer"].length === 0) continue;
       } else if (type === QType.PHONE) {
         // phone
         ansDic["personalAnswer"] = qVal.data;
+        if (ansDic["personalAnswer"].length === 0) continue;
       } else if (type === QType.GRID) {
         // grid
         ansDic["gridAnswer"] = qVal.data
@@ -100,9 +103,9 @@ function FormRespToSubm(form_config, response, secEnabled) {
               : null
           )
           .filter((v) => v !== null);
-        console.log("grid answer: ", ansDic);
       } else if (type === QType.EMAIL) {
         // email
+        if (qVal.id.length === 0) continue;
         ansDic["personalAnswer"] = qVal.id + qVal.domain;
       } else if (type === QType.DATE) {
         // date
@@ -112,8 +115,10 @@ function FormRespToSubm(form_config, response, secEnabled) {
         ansDic["openedAnswer"] = String(
           qVal.zip_code + qVal.address + qVal.address_detail
         );
+        if (ansDic["openedAnswer"].length === 0) continue;
       }
       if (!qVal.isValid) {
+        console.log(qVal);
         alert("답변이 유효하지 않습니다!");
         return null;
       }
@@ -169,8 +174,9 @@ function Respond() {
         const {
           createSubmission: { ok, error },
         } = data;
-        if (!ok) {
-          throw new Error(error);
+        console.log(ok);
+        if (!ok || error) {
+          alert(error);
         } else {
           alert("제출되었습니다.");
           navigate("/");
@@ -195,8 +201,6 @@ function Respond() {
     } catch (err) {
       if (err) console.error(JSON.stringify(err, null, 2));
     }
-
-    console.log("submission", submission);
   };
 
   if (!form_config) return null;

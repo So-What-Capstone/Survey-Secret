@@ -8,7 +8,7 @@ import {
   BarsOutlined,
   ZoomInOutlined,
 } from "@ant-design/icons";
-import { DELETE_FORM_MUTATION } from "../API/deleteForm";
+import { DELETE_FORM_MUTATION } from "../API";
 import { useNavigate } from "react-router-dom";
 
 SurveyIcon.propTypes = {
@@ -56,11 +56,11 @@ export default function SurveyIcon({
 
   const expStr = "~ " + expArray[0] + " " + timeArray[0];
 
-  const onDelete = () => {
+  const onDelete = async () => {
     let ret = confirm('"' + title + '" 설문을 삭제하시겠습니까?');
     if (ret) {
       // delete the form
-      deleteForm({
+      await deleteForm({
         variables: {
           formId: form_id,
         },
@@ -72,7 +72,6 @@ export default function SurveyIcon({
 
   const onClick = () => {
     if (hover_enabled) return;
-    console.log("click");
     navigate("/respond?id=" + form_id);
   };
   const onPreviewClicked = () => {
@@ -91,6 +90,20 @@ export default function SurveyIcon({
             />
           </div>
           <div className="item-title">{title}</div>
+          <a
+            title="미리보기"
+            className="survey-icon-btn"
+            onClick={onPreviewClicked}
+          >
+            <ZoomInOutlined
+              style={{
+                fontSize: "1.2rem",
+                color: "inherit",
+                marginRight: "0.2rem",
+              }}
+            />{" "}
+            미리보기
+          </a>
           <a
             href={result_link}
             title="설문응답 확인"
@@ -114,20 +127,6 @@ export default function SurveyIcon({
               }}
             />{" "}
             디자인 수정
-          </a>
-          <a
-            title="미리보기"
-            className="survey-icon-btn"
-            onClick={onPreviewClicked}
-          >
-            <ZoomInOutlined
-              style={{
-                fontSize: "1.2rem",
-                color: "inherit",
-                marginRight: "0.2rem",
-              }}
-            />{" "}
-            미리보기
           </a>
         </div>
       ) : null}

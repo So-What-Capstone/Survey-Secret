@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import "../styles/ResultList.scss";
 import { Table } from "antd";
@@ -64,7 +64,7 @@ ResponseList.propTypes = {
     //   PropTypes.arrayOf(PropTypes.any),
     PropTypes.arrayOf(
       PropTypes.shape({
-        key: PropTypes.string,
+        key: PropTypes.number,
         answer: PropTypes.string,
         order: PropTypes.number,
         favorite: PropTypes.bool,

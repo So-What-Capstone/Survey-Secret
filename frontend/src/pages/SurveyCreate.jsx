@@ -6,8 +6,8 @@ import { isLoggedInVar } from "./../apollo";
 import { useReactiveVar } from "@apollo/client";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
-import { getMyFormsQuery } from "../API/meQuery";
-import { getTemplatesQuery } from "../API/getTemplatesQuery";
+import { getMyFormsQuery } from "../API";
+import { getTemplatesQuery } from "../API";
 import { getFormConfigFromDB } from "../modules/FormConfig";
 import PropTypes from "prop-types";
 const ME_QUERY = getMyFormsQuery;
@@ -58,7 +58,6 @@ function SurveyCreate() {
       let tempTemplate = tempData.map((v, i) =>
         getFormConfigFromDB(v._id, v, v.sections)
       );
-      // console.log(tempTemplate);
       setTemplates(tempTemplate);
       setTemplateNames(tempTemplate.map((v) => v.title));
     },
@@ -70,8 +69,6 @@ function SurveyCreate() {
     error: getFormsError,
   } = useQuery(ME_QUERY, {
     onCompleted: (data) => {
-      // console.log("Query Completed");
-      // console.log(data);
       let tempData = data.me.user.forms;
       let tempMyTemplate = tempData.map((v, i) =>
         getFormConfigFromDB(v._id, v, v.sections)

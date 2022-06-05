@@ -26,12 +26,14 @@ export default function SurveyIconsTray({
 }
 
 SurveyIconsTray.propTypes = {
-  open_surveys: PropTypes.arrayOf({
-    title: PropTypes.string,
-    description: PropTypes.string,
-    expiredAt: PropTypes.any,
-    _id: PropTypes.string,
-  }),
+  open_surveys: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+      description: PropTypes.string,
+      expiredAt: PropTypes.any,
+      _id: PropTypes.string,
+    })
+  ),
   hover_enabled: PropTypes.bool,
   setPreviewId: PropTypes.func,
 };

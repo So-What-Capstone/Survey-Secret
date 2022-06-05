@@ -269,7 +269,8 @@ function EditLinearQuestion({ data, onDataChange, disabled }) {
   }
 
   function changeRightLabel(event) {
-    setRightLabel({ ...data, rightLabel: event.target.value });
+    setRightLabel(event.target.value);
+    onDataChange({ ...data, rightLabel: event.target.value });
   }
 
   return (

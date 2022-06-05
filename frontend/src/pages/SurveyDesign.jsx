@@ -36,8 +36,7 @@ import phoneImage from "../resources/question_images/phone.png";
 import shortImage from "../resources/question_images/short.png";
 import { EditQuestion } from "../modules";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
-import { findTemplateByIdQuery } from "../API/findTemplateByIdQuery";
-import { findFormByIdQuery } from "../API/findFormByIdQuery";
+import { findTemplateByIdQuery, findFormByIdQuery } from "../API";
 
 const CREATE_FORM_MUTATION = gql`
   mutation createForm($request: CreateFormInput!) {
@@ -109,12 +108,12 @@ function parseGridQuestion(ques) {
 }
 
 function parsePersonalQuestion(ques) {
-  if (ques.type === "Phone") {
+  if (ques.personalType === "Phone") {
     return {
       ...ques,
       type: "phone",
     };
-  } else if (ques.type === "Address") {
+  } else if (ques.personalType === "Address") {
     return {
       ...ques,
       type: "address",

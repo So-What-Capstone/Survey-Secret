@@ -13,7 +13,9 @@ function LinearQuestion({ config, setValue }) {
   const rightLabel = config.rightLabel;
   const required = config.required;
   const [internalVal, setInternal] = useState({ data: leftEnd, isValid: true });
-
+  useEffect(() => {
+    setValue({ ...internalVal });
+  }, []);
   const onChange = (x) => {
     setInternal({ data: x, isValid: true });
     setValue({ data: x, isValid: true });
