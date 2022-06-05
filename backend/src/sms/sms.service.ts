@@ -15,19 +15,18 @@ export class SmsService {
     @Inject(SMS_CONFIG_OPTIONS) private readonly options: SmsModuleOptions,
   ) {}
 
-  async sendSms(req: Request, { receiver, msg }: SendSmsInput) {
+  async sendSms(req: Request, { receiver, msg, msgType }: SendSmsInput) {
     try {
       let newReq: Request = req;
       newReq.body = {
         sender: process.env.SMS_SENDER,
         receiver,
         msg,
-        msg_type: 'SMS',
+        msg_type: msgType,
       };
 
       const res = await aligoapi.send(newReq, this.options);
-
-      if (res.result_code === 1) {
+      if (res.result_code == 1) {
         return { ok: true };
       } else {
         throw new Error(res.message);

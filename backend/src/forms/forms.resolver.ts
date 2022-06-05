@@ -21,6 +21,10 @@ import {
   FindTemplateByIdInput,
   FindTemplateByIdOutput,
 } from './dtos/find-template-by-id.dto';
+import {
+  FindQuestionByIdInput,
+  FindQuestionByIdOutput,
+} from './dtos/find-question-by-id.dto';
 
 @Resolver()
 export class FormsResolver {
@@ -103,5 +107,12 @@ export class FormsResolver {
   @Type(['Any'])
   findTemplateById(@Args('input') { templateId }: FindTemplateByIdInput) {
     return this.formsService.findTemplateById(templateId);
+  }
+
+  @Query((returns) => FindQuestionByIdOutput)
+  findQuestionById(
+    @Args('input') findQuestionByIdInput: FindQuestionByIdInput,
+  ) {
+    return this.formsService.findQuestionById(findQuestionByIdInput);
   }
 }

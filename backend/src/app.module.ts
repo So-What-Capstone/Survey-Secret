@@ -16,6 +16,8 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import { UploaderModule } from './uploader/uploader.module';
 import { StatModule } from './stat/stat.module';
 import { SmsModule } from './sms/sms.module';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './exception.filter';
 
 @Module({
   imports: [
@@ -63,9 +65,16 @@ import { SmsModule } from './sms/sms.module';
     UploaderModule,
     StatModule,
     SmsModule,
+    MailsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
