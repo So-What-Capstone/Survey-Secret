@@ -14,10 +14,12 @@ import "../styles/ResultList.scss";
 import { message } from "antd";
 
 message.config({
+  // 3 messages can be shown at once
   maxCount: 3,
 });
 
 function cutLongStr(str) {
+  // cut the long string
   if (str.length > 20) return str.substr(0, 20);
   return str;
 }
@@ -35,9 +37,9 @@ function ResultList() {
     variables: { formId: formId },
     onCompleted: (data) => {
       // when error occured
-      if (!data.findFormByIdForOwner.ok) {
+      if (!data.findFormByIdForOwner.ok || data.findFormByIdForOwner.error) {
         alert(data.findFormByIdForOwner.error);
-        // navigate("/my-survey");
+        navigate("/my-survey");
         return;
       }
 
