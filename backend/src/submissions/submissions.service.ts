@@ -33,6 +33,15 @@ import {
   PersonalQuestionType,
 } from './../forms/questions/schemas/personal-question.schema';
 import { PersonalAnswer } from './answers/schemas/personal-answer.schema';
+import {
+  SetFavoriteSubmissionsInput,
+  SetFavoriteSubmissionsOutput,
+} from './dtos/set-favorite-submissions.dto';
+import {
+  AnswersInFindAnswerByQuestionId,
+  FindAnswerByQuestionIdInput,
+  FindAnswerByQuestionIdOutput,
+} from './dtos/find-answer-by-question-id-output.dto';
 
 @Injectable()
 export class SubmissionsService {
@@ -113,13 +122,13 @@ export class SubmissionsService {
             }
 
             if (type === QuestionType.Closed) {
+              if ((<ClosedAnswer>answer).closedAnswer.length === 0) {
+                return { ok: false, error: '답변이 없습니다.' };
+              }
+
               if (
                 (<ClosedQuestion>question).closedType === ClosedQuestionType.One
               ) {
-                if ((<ClosedAnswer>answer).closedAnswer.length === 0) {
-                  return { ok: false, error: '답변이 없습니다.' };
-                }
-
                 if ((<ClosedAnswer>answer).closedAnswer.length > 1) {
                   return {
                     ok: false,
@@ -317,6 +326,131 @@ export class SubmissionsService {
       await session.endSession();
 
       return { ok: true };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async setFavoriteSubmissions(
+    owner: User,
+    { formId, favoriteSubmissions }: SetFavoriteSubmissionsInput,
+  ): Promise<SetFavoriteSubmissionsOutput> {
+    try {
+      const form = await this.formModel
+        .findOne({ _id: formId })
+        .populate('owner');
+
+      if (form.owner._id.toString() !== owner._id.toString()) {
+        return { ok: false, error: '권한이 없습니다.' };
+      }
+
+      const submissions = form.submissions.map((submission) =>
+        submission.toString(),
+      );
+
+      if (
+        !favoriteSubmissions.every((submission) =>
+          submissions.includes(submission.submissionId),
+        )
+      ) {
+        return { ok: false, error: '폼 안에 없는 답변입니다.' };
+      }
+
+      const falseSubmissionIds: string[] = [];
+      const trueSubmissionIds: string[] = [];
+
+      for (const { isFavorite, submissionId } of favoriteSubmissions) {
+        if (isFavorite) {
+          trueSubmissionIds.push(submissionId);
+        } else {
+          falseSubmissionIds.push(submissionId);
+        }
+      }
+
+      await this.submissionModel.updateMany({ _id: falseSubmissionIds }, [
+        { $set: { isFavorite: false } },
+      ]);
+
+      await this.submissionModel.updateMany({ _id: trueSubmissionIds }, [
+        { $set: { isFavorite: true } },
+      ]);
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async findAnswerByQuestionId(
+    owner: User,
+    { formId, questionId }: FindAnswerByQuestionIdInput,
+  ): Promise<FindAnswerByQuestionIdOutput> {
+    try {
+      const form = await this.formModel.findOne({
+        _id: formId,
+      });
+
+      if (!form) {
+        return {
+          ok: false,
+          error: '존재하지 않는 폼입니다.',
+        };
+      }
+
+      let question: typeof QuestionUnion;
+
+      for (const section of form.sections) {
+        question = section.questions.find(
+          (question) => question._id.toString() === questionId,
+        );
+      }
+
+      if (!question) {
+        return { ok: false, error: '존재하지 않는 질문입니다.' };
+      }
+
+      if (form.owner.toString() !== owner._id.toString()) {
+        return { ok: false, error: '권한이 없습니다.' };
+      }
+
+      let answers = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+        { $unwind: '$submissions' },
+        { $unwind: '$submissions.answers' },
+        {
+          $match: {
+            'submissions.answers.question': new mongoose.Types.ObjectId(
+              questionId,
+            ),
+          },
+        },
+        {
+          $project: {
+            'submissions.answers': true,
+            'submissions._id': true,
+            _id: false,
+          },
+        },
+      ]);
+
+      const answersArg: AnswersInFindAnswerByQuestionId[] = answers.map(
+        (answer) => {
+          return {
+            answer: answer.submissions.answers,
+            submissionId: answer.submissions._id,
+          };
+        },
+      );
+
+      return { ok: true, answers: answersArg, question };
     } catch (error) {
       return { ok: false, error: error.message };
     }

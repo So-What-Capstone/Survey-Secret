@@ -1,8 +1,27 @@
-import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
-import { IsMongoId, IsOptional } from 'class-validator';
+import {
+  Field,
+  InputType,
+  ObjectType,
+  PickType,
+  registerEnumType,
+} from '@nestjs/graphql';
+import {
+  IsBoolean,
+  IsMongoId,
+  IsOptional,
+  IsString,
+  IsEnum,
+} from 'class-validator';
 import { Form } from '../schemas/form.schema';
 import { CoreOutput } from './../../common/dtos/output.dto';
 import { ObjectId } from 'mongoose';
+
+export enum SortKey {
+  expiredAt = 'expiredAt',
+  privacyExpiredAt = 'privacyExpiredAt',
+}
+
+registerEnumType(SortKey, { name: 'SortKey' });
 
 @InputType()
 export class SearchFormsInput extends PickType(Form, ['title']) {
@@ -10,6 +29,16 @@ export class SearchFormsInput extends PickType(Form, ['title']) {
   @IsMongoId()
   @IsOptional()
   lastId?: string;
+
+  @Field((type) => SortKey, { nullable: true })
+  @IsOptional()
+  @IsEnum(SortKey)
+  sortKey?: SortKey;
+
+  @Field((type) => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  desc?: boolean;
 }
 
 @ObjectType()
