@@ -146,12 +146,6 @@ function MarketBasketAnalysis({ form }) {
 
   function generateResult() {
     setAnalysis(undefined);
-    console.log(
-      JSON.stringify({
-        formId: form._id,
-        questionIds: questions.map((ques) => ques._id),
-      })
-    );
     getMarketBasket({
       variables: {
         formId: form._id,
@@ -161,6 +155,7 @@ function MarketBasketAnalysis({ form }) {
       try {
         const currAnalysis = res.data.getMarketBasket.result;
         setAnalysis(currAnalysis);
+        console.log(JSON.stringify(res.data.getMarketBasket));
       } catch (err) {
         message.error("데이터 산출에 실패했습니다.");
         console.error(JSON.stringify(err, null, 2));
@@ -408,12 +403,16 @@ function ResultStats() {
       }
 
       setFormId(id);
-      const res = await getForm({
-        variables: {
-          formId: id,
-        },
-      });
-      setForm(res.data.findFormById.form);
+      try {
+        const res = await getForm({
+          variables: {
+            formId: id,
+          },
+        });
+        setForm(res.data.findFormById.form);
+      } catch (err) {
+        console.error(JSON.stringify(err, null, 2));
+      }
     }
 
     fetchData();

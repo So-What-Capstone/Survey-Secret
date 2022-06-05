@@ -110,6 +110,8 @@ def stats_market_basket():
         rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.3)
         rules["antecedents"] = rules["antecedents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
         rules["consequents"] = rules["consequents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
+        rules.replace([np.inf], 2147483647, inplace=True)
+        rules.replace([-np.inf], -2147483648, inplace=True)
         result = list(rules.to_dict("index").values())
 
     return Response(json.dumps({"result":result}), status=200, mimetype="application/json")
