@@ -3,39 +3,62 @@ import React from "react";
 import "../styles/Banner.css";
 import PropTypes from "prop-types";
 import usage_banner from "../resources/banner2.png";
+import banner3 from "../resources/banner3.png";
+import banner4 from "../resources/banner4.png";
 
 function Banner({ sources }) {
-  const contentStyle = {
-    width: "auto",
-    height: "20vh",
-    textAlign: "center",
-    display: "flex",
-    justifyContent: "center",
-  };
-  const default_banner = {
-    title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
-    img_url: usage_banner,
-    link: ".",
+  const default_banners = [
+    {
+      title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
+      img_url: usage_banner,
+      link: ".",
+    },
+    {
+      title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
+      img_url: banner3,
+      link: ".",
+    },
+    {
+      title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
+      img_url: banner4,
+      link: ".",
+    },
+  ];
+
+  function CarouselItem({ value }) {
+    return (
+      <a title={value.title} href={value.link}>
+        <div className="img-in-banner-con">
+          <div className="img-in-banner-back-con">
+            <img
+              className="img-in-banner-back"
+              alt="asdf"
+              src={value.img_url}
+              style={{ objectFit: "cover" }}
+            />
+          </div>
+
+          <img className="img-in-banner" src={value.img_url} />
+        </div>
+      </a>
+    );
+  }
+  CarouselItem.propTypes = {
+    value: PropTypes.shape({
+      title: PropTypes.string,
+      link: PropTypes.string,
+      img_url: PropTypes.any,
+    }),
   };
 
   return (
     <div className="real-banner-con">
-      <Carousel autoplay infinite={false}>
-        <a title={default_banner.title} href={default_banner.link}>
-          <div style={contentStyle}>
-            <img
-              className="img-in-banner"
-              alt="asdf"
-              src={default_banner.img_url}
-            />
-          </div>
-        </a>
+      <Carousel infinite autoplay>
+        {default_banners.map((v, i) => (
+          <CarouselItem key={v.img_url + i} value={v} />
+        ))}
         {sources.map((v, i) => (
-          <a key={`banner-image-${v.i}`} title={v.title} href={v.link}>
-            <div style={contentStyle}>
-              <img className="img-in-banner" alt="asdf" src={v.img_url} />
-            </div>
-          </a>
+          <CarouselItem key={v.img_url + i} value={v} />
         ))}
       </Carousel>
     </div>

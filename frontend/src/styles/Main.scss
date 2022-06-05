@@ -5,16 +5,8 @@
   .main-banner-con {
     display: flex;
     flex-direction: row;
-    padding: 40px 5vw 10px 5vw;
     width: 100%;
-    .arrow-btn {
-      flex: 1 1 0;
-      background-color: #f5f5f500;
-      color: #f5f5f5;
-      border: none;
-      font-size: 60px;
-      padding: 20px;
-    }
+
     .banner {
       flex: 5 1 0;
       min-width: 500px;

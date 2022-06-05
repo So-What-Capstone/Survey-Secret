@@ -7,6 +7,7 @@ import { gql, useQuery } from "@apollo/client";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { Banner } from "../modules";
 import { getFormsQuery } from "../API";
+import usage_banner from "../resources/banner2.png";
 
 const GET_FORMS_QUERY = getFormsQuery;
 
@@ -24,7 +25,7 @@ function Main() {
         console.log(
           forms.filter((v) => v.state === "InProgress" && v.isPromoted)
         );
-        setOpenSurveys(forms);
+        setOpenSurveys(forms.filter((v) => v.state === "InProgress"));
         setLastId(data.getForms?.lastId);
       }
       //error처리
