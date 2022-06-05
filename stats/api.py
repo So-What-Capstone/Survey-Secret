@@ -105,10 +105,12 @@ def stats_market_basket():
     df = pd.DataFrame(te_ary, columns=te.columns_)
 
     frequent_itemsets = fpgrowth(df, min_support=0.3, use_colnames=True)
-    rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.7)
-    rules["antecedents"] = rules["antecedents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
-    rules["consequents"] = rules["consequents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
-    result = list(rules.to_dict("index").values())
+    result = []
+    if not frequent_itemsets.empty:
+        rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.3)
+        rules["antecedents"] = rules["antecedents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
+        rules["consequents"] = rules["consequents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
+        result = list(rules.to_dict("index").values())
 
     return Response(json.dumps({"result":result}), status=200, mimetype="application/json")
 
