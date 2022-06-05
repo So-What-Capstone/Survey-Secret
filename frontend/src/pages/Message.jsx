@@ -69,32 +69,36 @@ function Message() {
   const [sendSms] = useMutation(SEND_SMS);
 
   const sendMessage = async () => {
-    console.log("selectedForm Id: " + selectedForm.id);
-    checkedItems.forEach(function (value) {
-      console.log("receiverId: " + value);
-    });
-    console.log(textValue);
-
-    if (phoneQueId !== "") {
-      await sendSms({
-        variables: {
-          formId: selectedForm.id,
-          submissionIds: checkedItems,
-          questionId: phoneQueId, //개인정보 질문의 id?
-          msg: textValue,
-          msgType: smsType,
-        },
-        onCompleted: (data) => {
-          if (data.sendSms.ok) {
-            console.log("전송성공!");
-          } else {
-            console.log("전송실패!");
-            throw new Error(data.sendSms.error);
-          }
-        },
-      });
+    if (textByte < 1) {
+      alert("내용을 입력하세요.");
     } else {
-      alert("연락 정보가 없어 전송할 수 없습니다.");
+      console.log("selectedForm Id: " + selectedForm.id);
+      checkedItems.forEach(function (value) {
+        console.log("receiverId: " + value);
+      });
+      console.log(textValue);
+
+      if (phoneQueId !== "") {
+        await sendSms({
+          variables: {
+            formId: selectedForm.id,
+            submissionIds: checkedItems,
+            questionId: phoneQueId, //개인정보 질문의 id?
+            msg: textValue,
+            msgType: smsType,
+          },
+          onCompleted: (data) => {
+            if (data.sendSms.ok) {
+              console.log("전송성공!");
+            } else {
+              console.log("전송실패!");
+              throw new Error(data.sendSms.error);
+            }
+          },
+        });
+      } else {
+        alert("연락 정보가 없어 전송할 수 없습니다.");
+      }
     }
   };
 

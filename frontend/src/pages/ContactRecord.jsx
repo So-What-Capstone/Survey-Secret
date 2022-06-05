@@ -220,9 +220,6 @@ function ContactRecord() {
                   <div className="content-row one">
                     <ListItemText primary={message.time} />
                     <ListItemText primary={message.count + "건"} />
-                    <ListItemText
-                      primary={message.success ? "전송 성공" : "전송 실패"}
-                    />
                   </div>
                   <div className="content-row two">
                     {message.content.length > 20 ? (
@@ -259,9 +256,6 @@ function ContactRecord() {
                   <div className="content-row one">
                     <ListItemText primary={email.time} />
                     <ListItemText primary={email.count + "건"} />
-                    <ListItemText
-                      primary={email.success ? "전송 성공" : "전송 실패"}
-                    />
                   </div>
                   <div className="content-row two">
                     {email.content.length > 20 ? (
@@ -334,29 +328,7 @@ function ContactRecord() {
               disabled
             />
           </div>
-          <div className="content-row">
-            <div className="row-label-con">
-              <label>수신자 목록</label>
-            </div>
-            <List className="small-list-con">
-              <div className="content-con">
-                {mode === 0 &&
-                  selectedMessage.receivers.map((receiver, index) => (
-                    <ListItem key={receiver.id} className="content">
-                      <ListItemText primary={index + 1} />
-                      <ListItemText primary={receiver.name} />
-                    </ListItem>
-                  ))}
-                {mode === 1 &&
-                  selectedEmail.receivers.map((receiver, index) => (
-                    <ListItem key={receiver.id} className="content">
-                      <ListItemText primary={index + 1} />
-                      <ListItemText primary={receiver.name} />
-                    </ListItem>
-                  ))}
-              </div>
-            </List>
-          </div>
+          <div className="content-row"></div>
           <div className="content-row" hidden={mode !== 1}>
             <div className="row-label-con">
               <label>메일 제목</label>
