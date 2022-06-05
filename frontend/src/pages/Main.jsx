@@ -19,7 +19,12 @@ function Main() {
     // variables: { formId: undefined },
     onCompleted: (data) => {
       if (data.getForms?.ok) {
-        setOpenSurveys(data.getForms?.forms);
+        let forms = data.getForms?.forms;
+        console.log(forms);
+        console.log(
+          forms.filter((v) => v.state === "InProgress" && v.isPromoted)
+        );
+        setOpenSurveys(forms);
         setLastId(data.getForms?.lastId);
       }
       //error처리
