@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { ResultClipTray, ResultDescribe } from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import "../styles/ResultQuestion.css";
-
-import PropTypes from "prop-types";
 import { useQuery } from "@apollo/client";
 import { getDescribeQuery, findFormByIdForOwnerQuery } from "../API";
-import { BarGraph, StringTokens, Line, GridTable } from "../modules";
+import "../styles/ResultQuestion.css";
 
 function ResultQuestion() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [formId, setFormId] = useState(searchParams.get("id"));
+  const [formData, setForm] = useState({});
   const [secList, setSec] = useState();
   const [describe, setDescribe] = useState();
 
@@ -37,8 +35,12 @@ function ResultQuestion() {
     {
       variables: { formId: formId },
       onCompleted: (data) => {
-        console.log(data.findFormByIdForOwner.form.sections);
-        setSec(data.findFormByIdForOwner.form.sections);
+        let formData = data.findFormByIdForOwner.form;
+        setForm({
+          title: formData.title,
+          description: formData.description,
+        });
+        setSec(formData.sections);
       },
     }
   );
@@ -50,7 +52,8 @@ function ResultQuestion() {
     <div className="result-q-con">
       <ResultClipTray type="question" formId={formId} />
       <div className="result-q-white-panel">
-        <div className="result-q-form-title">폼 타이틀!</div>
+        <div className="result-q-form-title">{formData.title}</div>
+        <div className="result-q-form-desc">{formData.description}</div>
         <ResultDescribe sections={secList} describe={describe} />
       </div>
     </div>
