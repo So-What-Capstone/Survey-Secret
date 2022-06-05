@@ -12,13 +12,21 @@
     display: flex;
     flex-direction: column;
     text-align: left;
-    margin: 1rem 0px 1rem 0px;
+    margin: 0.3rem 0px 0.3rem 0px;
     width: 100%;
     min-width: 21rem;
     label {
       color: #65FFDC;
       margin: 0px 0px 0.8rem 0px;
       font-size: 18px;
+    }
+    .content-box {
+      background-color: #ffffff19;
+      color: #CCD6F6;
+      border: none;
+      border-radius: 0.2rem;
+      padding: 1rem 3vw 1rem 3vw;
+      font-size: 15px;
     }
     .row-select { //설문선택
       background-color: #ffffff19;
@@ -30,7 +38,7 @@
     .row-list { //수신인 리스트
       z-index: 0;
       background-color: #CCD6F610;
-      height: 50vh;
+      height: 45vh;
       min-height: 10rem;
       display: flex;
       flex-direction: column;
@@ -90,12 +98,12 @@
           .item-order {
             flex: 1 1 0;
             color: #CCD6F6;
-            font-size: 17px;
+            font-size: 15px;
           }
           .item-name {
             flex: 5 1 0;
             color: #CCD6F6;
-            font-size: 17px;
+            font-size: 15px;
           }
         }
       }
