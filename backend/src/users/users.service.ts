@@ -54,15 +54,15 @@ export class UsersService {
       });
 
       //email authentication
-      const verification = await this.verificationModel.create({
-        code: v4(),
-        user,
-      });
+      // const verification = await this.verificationModel.create({
+      //   code: v4(),
+      //   user,
+      // });
 
-      await this.mailsService.sendVerificationEmail(
-        user.email,
-        verification.code,
-      );
+      // await this.mailsService.sendVerificationEmail(
+      //   user.email,
+      //   verification.code,
+      // );
 
       return { ok: true };
     } catch (error) {

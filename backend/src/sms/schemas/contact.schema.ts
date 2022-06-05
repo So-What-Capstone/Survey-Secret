@@ -38,7 +38,7 @@ export class Contact extends CoreSchema {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Form' })
   form: Form;
 
-  @Field((type) => String)
+  @Field((type) => [Submission])
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Submission' }],
   })
