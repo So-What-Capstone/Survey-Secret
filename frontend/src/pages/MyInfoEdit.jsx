@@ -1,19 +1,31 @@
 import React, { useState, useRef } from "react";
 import { Avatar } from "antd";
+import { gql, useQuery, useMutation } from "@apollo/client";
+import { getUserQuery } from "../API/meQuery";
+import { editUserMutation } from "../API/meMutation";
 import "../styles/MyInfoEdit.scss";
 
-function MyInfoEdit() {
-  const email = "wus2363@gmail.com";
+const GET_USER_QUERY = getUserQuery;
+const EDIT_USER_MUTATION = editUserMutation;
 
+function MyInfoEdit() {
   //중복 제출 방지
   const [disabled, setDisabled] = useState(false);
 
+  const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [pwdConfirm, setPwdConfirm] = useState("");
-  const [username, setUsername] = useState("김윈터");
+  const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState(
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
   );
+
+  const { data, loading, error } = useQuery(GET_USER_QUERY, {
+    onCompleted: (data) => {
+      setUsername(data?.me?.user?.username);
+      setEmail(data?.me?.user?.email);
+    },
+  });
 
   const fileInput = useRef(null);
 
@@ -44,6 +56,8 @@ function MyInfoEdit() {
   const handlePwdChange = (e) => {
     setPwd(e.target.value);
     setPwdError(e.target.value.length < 2);
+    setPwdConfirmError(e.target.value !== pwdConfirm);
+
     if (e.target.value.length < 2) {
       setPwdError(true);
       setPwdMessage("2자 이상 입력하세요.");
@@ -53,6 +67,7 @@ function MyInfoEdit() {
   };
 
   const handlePwdConfirmChange = (e) => {
+    console.log(pwd);
     setPwdConfirm(e.target.value);
     setPwdConfirmError(e.target.value !== pwd);
   };
@@ -67,6 +82,22 @@ function MyInfoEdit() {
       setUsernameError(false);
     }
   };
+
+  const [editUser, { loading: mutationLoading }] = useMutation(
+    EDIT_USER_MUTATION,
+    {
+      onCompleted: (data) => {
+        const {
+          editUser: { ok, error },
+        } = data;
+        if (!ok) {
+          throw new Error(error);
+        } else {
+          alert("Edit Complete");
+        }
+      },
+    }
+  );
 
   const onSubmit = async (e) => {
     setDisabled(true);
@@ -89,7 +120,16 @@ function MyInfoEdit() {
 
     if (canSubmit) {
       console.log(pwd + "," + email + "," + username);
-      //register logic
+      //eidt logic
+      editUser({
+        variables: {
+          requset: {
+            username: username,
+            password: pwd,
+          },
+          file: avatar,
+        },
+      });
     }
 
     await new Promise((r) => setTimeout(r, 1000));

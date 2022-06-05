@@ -12,3 +12,5 @@ export { loginMutation } from "./loginMutation";
 export { getMyFormsSimpleQuery, getMyFormsQuery } from "./meQuery";
 export { searchFormsQuery } from "./serachFormsQuery";
 export { getDescribeQuery } from "./getDescribeQuery";
+export { getMarketBasketQuery } from "./getMarketBasketQuery";
+export { getKeywordAnalysisQuery } from "./getKeywordAnalysisQuery";

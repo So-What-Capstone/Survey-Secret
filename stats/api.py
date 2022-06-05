@@ -1,5 +1,7 @@
 from collections import defaultdict
 from sklearn.feature_extraction.text import TfidfVectorizer
+from mlxtend.preprocessing import TransactionEncoder
+from mlxtend.frequent_patterns import fpgrowth, association_rules
 from flask import Flask, request, Response
 from konlpy.tag import Okt
 import json, re
@@ -27,7 +29,7 @@ class Tokenizer:
 def stats_keywords():
     params = json.loads(request.get_data())
     if len(params) == 0 or "answers" not in params.keys() or len(params["answers"]) == 0:
-        return Response(json.dumps({"error":"Given arguments are not valid."}), status=400)
+        return Response(json.dumps({"error":"Given arguments are not valid."}), status=400, mimetype="application/json")
 
     answers = params["answers"]
     vectorizer = TfidfVectorizer(tokenizer=Tokenizer(app))
@@ -44,14 +46,14 @@ def stats_keywords():
 
     result = sorted(result.items(), key = lambda item: item[1], reverse = True)
     
-    return Response(json.dumps({"result":result}), status=200)
+    return Response(json.dumps({"result":result}), status=200, mimetype="application/json")
 
 
 @app.route("/stats/corr", methods=["POST"])
 def stats_corr():
     params = json.loads(request.get_data())
     if len(params) == 0 or "answers" not in params.keys() or len(params["answers"]) == 0:
-        return Response(json.dumps({"error":"Given arguments are not valid."}), status=400)
+        return Response(json.dumps({"error":"Given arguments are not valid."}), status=400, mimetype="application/json")
 
     answers = params["answers"]
     observs = defaultdict(list)
@@ -70,16 +72,16 @@ def stats_corr():
     for r in range(len(input_matrix)):
         result[index_key_map[r]] = {}
         for c in range(len(input_matrix)):
-            result[index_key_map[r]][index_key_map[c]] = corr_matrix[r, c]
+            result[index_key_map[r]][index_key_map[c]] = -100 if np.isnan(corr_matrix[r, c]) else corr_matrix[r, c]
 
-    return Response(json.dumps({"result":result}), status=200)
+    return Response(json.dumps({"result":result}), status=200, mimetype="application/json")
 
 
 @app.route("/stats/describe", methods=["POST"])
 def stats_describe():
     params = json.loads(request.get_data())
     if len(params) == 0 or "answers" not in params.keys() or len(params["answers"]) == 0:
-        return Response(json.dumps({"error":"Given arguments are not valid."}), status=400)
+        return Response(json.dumps({"error":"Given arguments are not valid."}), status=400, mimetype="application/json")
     
     answers = params["answers"]
     observs = defaultdict(list)
@@ -88,7 +90,27 @@ def stats_describe():
             observs[que_id].append(float(user_ans))
     
     df = pd.DataFrame(observs)
-    return Response(json.dumps({"result":df.describe(include='all').to_dict()}), status=200)
+    return Response(json.dumps({"result":df.describe(include='all').to_dict()}), status=200, mimetype="application/json")
+
+
+@app.route("/stats/market-basket", methods=["POST"])
+def stats_market_basket():
+    params = json.loads(request.get_data())
+    if len(params) == 0 or "answers" not in params.keys() or len(params["answers"]) == 0:
+        return Response(json.dumps({"error":"Given arguments are not valid."}), status=400, mimetype="application/json")
+    
+    answers = params["answers"]
+    te = TransactionEncoder()
+    te_ary = te.fit(answers).transform(answers)
+    df = pd.DataFrame(te_ary, columns=te.columns_)
+
+    frequent_itemsets = fpgrowth(df, min_support=0.3, use_colnames=True)
+    rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.7)
+    rules["antecedents"] = rules["antecedents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
+    rules["consequents"] = rules["consequents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
+    result = list(rules.to_dict("index").values())
+
+    return Response(json.dumps({"result":result}), status=200, mimetype="application/json")
 
 
 if __name__ == "__main__":

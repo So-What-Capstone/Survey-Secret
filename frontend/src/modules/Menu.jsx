@@ -50,7 +50,12 @@ function Menu() {
           <div className="menu-title">공지사항</div>
         </div>
         <div className="login-menus">
-          <div className="nickname">
+          <div
+            className="nickname"
+            onClick={() => {
+              if (isLoggedIn) navigate("/my-info");
+            }}
+          >
             {!isLoggedIn ? "Guest" : loggedInUser}님
           </div>
           {!isLoggedIn ? (

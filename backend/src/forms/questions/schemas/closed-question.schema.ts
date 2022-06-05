@@ -33,9 +33,8 @@ export class ClosedQuestionChoice {
   @Field((type) => String, { nullable: true })
   attachment?: string;
 
-  @Field((type) => String, { nullable: true })
-  @IsMongoId()
-  activatedSection?: string;
+  @Field((type) => Number, { nullable: true })
+  activatedSection?: number;
 }
 
 @InputType('ClosedQuestionInputType', { isAbstract: true })

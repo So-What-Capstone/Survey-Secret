@@ -108,12 +108,12 @@ function parseGridQuestion(ques) {
 }
 
 function parsePersonalQuestion(ques) {
-  if (ques.type === "Phone") {
+  if (ques.personalType === "Phone") {
     return {
       ...ques,
       type: "phone",
     };
-  } else if (ques.type === "Address") {
+  } else if (ques.personalType === "Address") {
     return {
       ...ques,
       type: "address",
@@ -210,25 +210,38 @@ function SurveyDesign() {
   }
 
   function generateInputFromTemplate(currTemp) {
+    const metaKeys = ["_id", "__typename"];
+
+    const removeMeta = (node) => {
+      for (const key in node) {
+        if (metaKeys.includes(key)) {
+          delete node[key];
+        } else if (typeof node[key] === "object") {
+          removeMeta(node[key]);
+        }
+      }
+      return node;
+    };
+
     const processSection = (sec) => {
       return {
         title: sec.title ? sec.title : "",
         order: sec.order,
         opened: sec.questions
           .filter((ques) => ques.kind === "Opened")
-          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+          .map((ques) => removeMeta(ques)),
         closed: sec.questions
           .filter((ques) => ques.kind === "Closed")
-          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+          .map((ques) => removeMeta(ques)),
         grid: sec.questions
           .filter((ques) => ques.kind === "Grid")
-          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+          .map((ques) => removeMeta(ques)),
         personal: sec.questions
           .filter((ques) => ques.kind === "Personal")
-          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+          .map((ques) => removeMeta(ques)),
         linear: sec.questions
           .filter((ques) => ques.kind === "Linear")
-          .map((ques) => ({ ...ques, _id: undefined, __typename: undefined })),
+          .map((ques) => removeMeta(ques)),
       };
     };
     return {
@@ -511,6 +524,9 @@ function SurveyDesign() {
   };
 
   async function save() {
+    if (!rawForm || rawForm.state !== "Ready") {
+      return true;
+    }
     try {
       let newForm = {
         formId: rawForm._id,
@@ -763,6 +779,73 @@ function SurveyDesign() {
     setSections(newSections);
   };
 
+  function changeState(e) {
+    const newState = e.target.value;
+    if (newState === "InProgress") {
+      Modal.confirm({
+        title: "정말 설문을 공개할까요?",
+        icon: <ExclamationCircleOutlined />,
+        content: (
+          <div className="design-modal-layout">
+            <ul>
+              <li>공개 후에는 더 이상 설문을 수정할 수 없습니다.</li>
+              <li>
+                <strong>
+                  {expiredAt.format("YYYY년 MM월 DD일 HH시 mm분 ss초")}
+                </strong>{" "}
+                까지 응답을 받습니다.
+              </li>
+              <li>
+                <strong>
+                  {privacyExpiredAt.format("YYYY년 MM월 DD일 HH시 mm분 ss초")}
+                </strong>{" "}
+                에 연락처 응답은 파기되어, 그 이후 피조사자에게 연락할 수
+                없습니다.
+              </li>
+            </ul>
+          </div>
+        ),
+        okText: "예",
+        okType: "danger",
+        cancelText: "취소",
+        onOk: () => setState(newState),
+        onCancel: () => {},
+        width: 700,
+        centered: true,
+      });
+    } else if (newState === "Expired") {
+      Modal.confirm({
+        title: "정말 설문을 마감할까요?",
+        icon: <ExclamationCircleOutlined />,
+        content: (
+          <div className="design-modal-layout">
+            <ul>
+              <li>
+                설문에 대한 응답을 받지 않으며, 설문지를 수정하는 것도
+                불가능합니다.
+              </li>
+              <li>필요시, 설문을 다시 공개할 수 있습니다.</li>
+              <li>
+                <strong>
+                  {privacyExpiredAt.format("YYYY년 MM월 DD일 HH시 mm분 ss초")}
+                </strong>{" "}
+                에 연락처 응답은 파기되어, 그 이후 피조사자에게 연락할 수
+                없습니다.
+              </li>
+            </ul>
+          </div>
+        ),
+        okText: "예",
+        okType: "danger",
+        cancelText: "취소",
+        onOk: () => setState(newState),
+        onCancel: () => {},
+        width: 700,
+        centered: true,
+      });
+    }
+  }
+
   return (
     <div className="design-root">
       <div className="design-palette">
@@ -780,7 +863,9 @@ function SurveyDesign() {
                   <img
                     className="design-ques-image"
                     src={ques.image}
-                    onClick={addQuestion(ques.init)}
+                    onClick={
+                      state === "Ready" ? addQuestion(ques.init) : undefined
+                    }
                   ></img>
                 </div>
               ))}
@@ -815,29 +900,34 @@ function SurveyDesign() {
                       addonBefore={`${i + 1}번째 섹션 제목`}
                       value={sect.title}
                       onChange={updateSectionTitleChange(i)}
+                      disabled={state !== "Ready"}
                     ></Input>
                     <Tooltip title="섹션을 아래로 옮기기">
                       <Button
                         icon={<CaretDownOutlined />}
                         onClick={moveSectionDown(i)}
+                        disabled={state !== "Ready"}
                       />
                     </Tooltip>
                     <Tooltip title="섹션을 위로 옮기기">
                       <Button
                         icon={<CaretUpOutlined />}
                         onClick={moveSectionUp(i)}
+                        disabled={state !== "Ready"}
                       />
                     </Tooltip>
                     <Tooltip title="이 섹션 제거">
                       <Button
                         icon={<DeleteOutlined />}
                         onClick={removeSection(i)}
+                        disabled={state !== "Ready"}
                       />
                     </Tooltip>
                     <Tooltip title="이 섹션 위에 새 섹션 추가">
                       <Button
                         icon={<PlusSquareOutlined />}
                         onClick={addSectionBefore(i)}
+                        disabled={state !== "Ready"}
                       />
                     </Tooltip>
                   </Input.Group>
@@ -856,6 +946,7 @@ function SurveyDesign() {
                       sectionCount={sections.length}
                       data={ques}
                       onDataChange={updateQuestionData(i, j)}
+                      disabled={state !== "Ready"}
                     ></EditQuestion>
                   ))
                 )}
@@ -867,29 +958,34 @@ function SurveyDesign() {
                       addonBefore={`${i + 1}번째 섹션 제목`}
                       value={sect.title}
                       onChange={updateSectionTitleChange(i)}
+                      disabled={state !== "Ready"}
                     ></Input>
                     <Tooltip title="섹션을 아래로 옮기기">
                       <Button
                         icon={<CaretDownOutlined />}
                         onClick={moveSectionDown(i)}
+                        disabled={state !== "Ready"}
                       />
                     </Tooltip>
                     <Tooltip title="섹션을 위로 옮기기">
                       <Button
                         icon={<CaretUpOutlined />}
                         onClick={moveSectionUp(i)}
+                        disabled={state !== "Ready"}
                       />
                     </Tooltip>
                     <Tooltip title="이 섹션 제거">
                       <Button
                         icon={<DeleteOutlined />}
                         onClick={removeSection(i)}
+                        disabled={state !== "Ready"}
                       />
                     </Tooltip>
                     <Tooltip title="이 섹션 아래에 새 섹션 추가">
                       <Button
                         icon={<PlusSquareOutlined />}
                         onClick={addSectionAfter(i)}
+                        disabled={state !== "Ready"}
                       />
                     </Tooltip>
                   </Input.Group>
@@ -927,6 +1023,8 @@ function SurveyDesign() {
             placeholder="설문 제목"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            maxLength={50}
+            disabled={state !== "Ready"}
           ></Input>
         </div>
         <div className="design-inner-info">
@@ -938,6 +1036,7 @@ function SurveyDesign() {
             placeholder="설문 설명"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            disabled={state !== "Ready"}
           ></Input.TextArea>
         </div>
         <div className="design-inner-info">
@@ -949,6 +1048,7 @@ function SurveyDesign() {
             showTime
             placeholder="응답 마감 시간"
             onChange={(date) => setExpiredAt(date)}
+            disabled={state !== "Ready"}
           ></DatePicker>
         </div>
         <div className="design-inner-info">
@@ -960,18 +1060,17 @@ function SurveyDesign() {
             showTime
             placeholder="개인정보 파기 시간"
             onChange={(date) => setPrivacyExpiredAt(date)}
+            disabled={state !== "Ready"}
           ></DatePicker>
         </div>
         <div className="design-inner-info">
           <Typography.Title level={5} className="design-subtitle">
             설문 상태
           </Typography.Title>
-          <Radio.Group
-            value={state}
-            buttonStyle="solid"
-            onChange={(e) => setState(e.target.value)}
-          >
-            <Radio.Button value="Ready">준비 중</Radio.Button>
+          <Radio.Group value={state} buttonStyle="solid" onChange={changeState}>
+            <Radio.Button value="Ready" disabled={state !== "Ready"}>
+              준비 중
+            </Radio.Button>
             <Radio.Button value="InProgress">공개됨</Radio.Button>
             <Radio.Button value="Expired">종료됨</Radio.Button>
           </Radio.Group>
@@ -985,6 +1084,7 @@ function SurveyDesign() {
             <Switch
               value={isPromoted}
               onChange={(value) => setIsPromoted(value)}
+              disabled={state !== "Ready"}
             ></Switch>
           </div>
         </div>

@@ -19,6 +19,11 @@ import { GetDescribeInput, GetDescribeOutput } from './dtos/get-describe.dto';
 import { QuestionType } from '../forms/questions/question.typeDefs';
 import { OpenedQuestion } from './../forms/questions/schemas/opened-question.schema';
 import { OpenedQuestionType } from '../forms/questions/schemas/opened-question.schema';
+import { ClosedAnswer } from './../submissions/answers/schemas/closed-answer.schema';
+import {
+  GetMarketBasketInput,
+  GetMarketBasketOutput,
+} from './dtos/get-market-basket.dto';
 
 @Injectable()
 export class StatService {
@@ -29,7 +34,6 @@ export class StatService {
     private readonly formModel: Model<FormDocument>,
   ) {}
 
-  //questionKind : 질문 종류(Opened,Closed,...) questionDetailType : Opened면 Default 등등, questionTypeKor,questionDetailTypeKor : 안내메세지에 들어갈 타입이름(한국어)
   async findQuestion(formId: string, questionIds: string[]) {
     const mongooseQuestionIds = questionIds.map(
       (id) => new mongoose.Types.ObjectId(id),
@@ -234,18 +238,178 @@ export class StatService {
     }
   }
 
-  async getDescribe({
+  async getDescribe({ formId }: GetDescribeInput): Promise<GetDescribeOutput> {
+    try {
+      const form = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+        { $unwind: '$submissions' },
+        { $unwind: '$submissions.answers' },
+        {
+          $group: {
+            _id: '$submissions.answers.question',
+            count: { $count: {} },
+            result: {
+              $accumulator: {
+                init: function () {
+                  return { count: 0, answer: {} };
+                },
+                accumulate: function (state, answer) {
+                  if (answer.kind === 'Closed') {
+                    const tempAnswer = state.answer;
+
+                    for (const choice of answer.closedAnswer) {
+                      tempAnswer[choice] = tempAnswer[choice]
+                        ? tempAnswer[choice] + 1
+                        : 1;
+                    }
+
+                    return { count: state.count + 1, answer: tempAnswer };
+                  } else if (answer.kind === 'Grid') {
+                    const tempAnswer = state.answer;
+
+                    for (const gridAnswer of answer.gridAnswer) {
+                      if (tempAnswer[gridAnswer.rowNo]) {
+                        const obj = tempAnswer[gridAnswer.rowNo];
+                        obj[gridAnswer.colNo] = obj[gridAnswer.colNo]
+                          ? obj[gridAnswer.colNo] + 1
+                          : 1;
+                        tempAnswer[gridAnswer.rowNo] = obj;
+                      } else {
+                        const obj = {};
+                        obj[gridAnswer.colNo] = 1;
+                        tempAnswer[gridAnswer.rowNo] = obj;
+                      }
+                    }
+
+                    return {
+                      count: state.count + 1,
+                      answer: tempAnswer,
+                    };
+                  } else if (answer.kind === 'Linear') {
+                    return {
+                      count: state.count + 1,
+                      sum: state.sum
+                        ? state.sum + answer.linearAnswer
+                        : answer.linearAnswer,
+                      min: state.min
+                        ? Math.min(state.min, answer.linearAnswer)
+                        : answer.linearAnswer,
+                      max: state.max
+                        ? Math.max(state.max, answer.linearAnswer)
+                        : answer.linearAnswer,
+                    };
+                  } else if (answer.kind === 'Opened') {
+                    if (Object.keys(state.answer).length === 0) {
+                      return {
+                        count: state.count + 1,
+                        answer: [answer.openedAnswer],
+                      };
+                    } else {
+                      return {
+                        count: state.count + 1,
+                        answer: [...state.answer, answer.openedAnswer],
+                      };
+                    }
+                  }
+                },
+                accumulateArgs: ['$submissions.answers'],
+                merge: function (state1, state2) {
+                  return {
+                    count: state1 + state2,
+                  };
+                },
+                lang: 'js',
+              },
+            },
+          },
+        },
+      ]);
+
+      const result = {};
+
+      for (const f of form) {
+        result[f._id] = f.result;
+      }
+
+      return { ok: true, result };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async getMarketBasket({
     formId,
     questionIds,
-  }: GetDescribeInput): Promise<GetDescribeOutput> {
+  }: GetMarketBasketInput): Promise<GetMarketBasketOutput> {
     try {
-      const END_POINT = `${process.env.STAT_END_POINT}/stats/describe`;
+      const END_POINT = `${process.env.STAT_END_POINT}/stats/market-basket`;
 
-      const jsonData = await this.createJsonData(formId, questionIds);
+      const form = await this.findQuestion(formId, questionIds);
+
+      for (const f of form) {
+        if (f.sections.questions.kind !== QuestionType.Closed) {
+          return {
+            ok: false,
+            error: '질문의 타입이 객관식이 아닙니다.',
+          };
+        }
+      }
+
+      const mongooseQuestionIds = questionIds.map(
+        (id) => new mongoose.Types.ObjectId(id),
+      );
+
+      const submissions = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        {
+          $lookup: {
+            from: 'submissions',
+            localField: 'submissions',
+            foreignField: '_id',
+            as: 'submissions',
+          },
+        },
+        { $unwind: '$submissions' },
+        { $unwind: '$submissions.answers' },
+        {
+          $match: {
+            'submissions.answers.question': { $in: [...mongooseQuestionIds] },
+          },
+        },
+        {
+          $project: {
+            submissions: { answers: { closedAnswer: true, question: true } },
+          },
+        },
+      ]);
+
+      const answers = [];
+
+      for (const {
+        submissions: {
+          answers: { closedAnswer, question },
+        },
+        _id,
+      } of submissions) {
+        const data = [];
+
+        for (const choice of closedAnswer) {
+          data.push(`${question}-${choice}`);
+        }
+        answers.push(data);
+      }
 
       const response = await fetch(END_POINT, {
         method: 'POST',
-        body: JSON.stringify({ answers: jsonData }),
+        body: JSON.stringify({ answers: [...answers] }),
         headers: { 'Content-Type': 'application/json' },
       });
 

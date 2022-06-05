@@ -20,17 +20,9 @@ export class ClosedAnswer {
   @IsEnum(QuestionType)
   kind: QuestionType;
 
-  @Field((type) => [Number])
-  @Prop({ type: [Number] })
+  @Field((type) => [Number!])
+  @Prop({ type: [{ type: Number, required: true }] })
   closedAnswer: number[];
-
-  // @Field((type) => ClosedQuestion)
-  // @Prop({
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'ClosedQuestion',
-  //   required: true,
-  // })
-  // closedQuestion: ClosedQuestion;
 }
 
 export const ClosedAnswerSchema = SchemaFactory.createForClass(ClosedAnswer);

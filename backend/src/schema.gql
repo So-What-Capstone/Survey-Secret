@@ -6,7 +6,7 @@ type ClosedQuestionChoice {
   no: Float!
   choice: String!
   attachment: String
-  activatedSection: String
+  activatedSection: Float
 }
 
 type Question {
@@ -344,6 +344,12 @@ type GetDescribeOutput {
   result: JSONObject
 }
 
+type GetMarketBasketOutput {
+  ok: Boolean!
+  error: String
+  result: [JSONObject!]
+}
+
 type GetSendHistoryOutput {
   ok: Boolean!
   error: String
@@ -371,6 +377,7 @@ type Query {
   getKeywordAnalysis(input: GetKeywordAnalysisInput!): GetKeywordAnalysisOutput!
   getCorr(input: GetCorrInput!): GetCorrOutput!
   getDescribe(input: GetDescribeInput!): GetDescribeOutput!
+  getMarketBasket(input: GetMarketBasketInput!): GetMarketBasketOutput!
 }
 
 input FindUserByIdInput {
@@ -420,6 +427,10 @@ input GetCorrInput {
 }
 
 input GetDescribeInput {
+  formId: String!
+}
+
+input GetMarketBasketInput {
   formId: String!
   questionIds: [String!]!
 }
@@ -498,7 +509,7 @@ input ClosedQuestionChoiceInput {
   no: Float!
   choice: String!
   attachment: String
-  activatedSection: String
+  activatedSection: Float
 }
 
 input CreateGridQuestionInput {
