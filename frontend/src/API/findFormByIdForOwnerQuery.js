@@ -8,6 +8,7 @@ export const findFormByIdForOwnerQuery = gql`
       form {
         _id
         title
+        description
         state
         createdAt
         representativeQuestion {

@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Progress, Row, Col, Slider } from "antd";
+import { Progress, Row, Col, Slider, Tooltip } from "antd";
 import PropTypes from "prop-types";
+import "../styles/ResultDescribe.scss";
 function BarGraph({ labels }) {
   return (
     <div>
       {labels.map((v, i) => (
         <Row key={i}>
-          <Col span={4}> {v.value}</Col>
+          <Col span={4}>
+            ({i + 1}) {v.value}
+          </Col>
           <Col span={13}>
-            <Progress percent={v.percent} showInfo={false} />
+            <Tooltip
+              placement="left"
+              title={`(${i + 1}) ${v.value}: ${v.percent}%`}
+            >
+              <Progress percent={v.percent} showInfo={false} />
+            </Tooltip>
           </Col>
           <Col span={1} />
           <Col span={4}> {v.percent}%</Col>

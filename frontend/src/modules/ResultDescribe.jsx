@@ -7,6 +7,8 @@ import {
   StringTokens,
 } from "./ResultQuestionModule";
 
+import "../styles/ResultDescribe.scss";
+
 export default function ResultDescribe({ sections, describe }) {
   function ResultSection({ section }) {
     function ResultQuestion({ question }) {
@@ -14,7 +16,7 @@ export default function ResultDescribe({ sections, describe }) {
       if (kind === "Personal") return null;
       const id = question._id;
       const q_desc = describe[id];
-      console.log(question.content, id, q_desc);
+
       let q_item = null;
       if (kind === "Opened") {
         q_item = <StringTokens labels={q_desc.answer} />;
@@ -57,7 +59,7 @@ export default function ResultDescribe({ sections, describe }) {
 
       return (
         <div className="result-desc-q-con">
-          <div className="result-desc-q-title">{question.content}</div>
+          <div className="result-desc-q-title">Q. {question.content}</div>
           <div className="result-desc-q-desc">{question.description}</div>
           <div className="result-desc-q">{q_item}</div>
         </div>

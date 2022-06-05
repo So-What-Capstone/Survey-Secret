@@ -18,41 +18,12 @@
 .result-q-form-title {
   font-size: 1.3rem;
   margin-bottom: 1rem;
-}
-.qna-con {
-  min-width: 100%;
-}
-.qna-line-con {
-  width: 100%;
-  padding: 0.5rem;
+  text-align: center;
 }
 
-.qna-line-tite {
-  width: 100%;
-  color: black;
-  font-size: 1rem;
-  word-break: break-word;
-}
-.qna-line-value {
-  width: 100%;
-  min-height: 2rem;
-  max-height: 12rem;
-  color: black;
-  background-color: gainsboro;
-  border-radius: 0.2rem;
-  padding: 0.5rem;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-  overflow: auto;
-}
-
-.qna-token {
-  /* background-color: #00000010; */
-  padding: 0.1rem;
-  border-radius: 0.1rem;
-  margin: 0.1rem 1rem 0.1rem 1rem;
-
-  border-bottom: 1px solid #00000030;
-  word-break: break-all;
-  cursor: default;
+.result-q-form-desc {
+  font-size: 1.1rem;
+  color: #616161;
+  text-align: center;
+  margin-bottom: 2rem;
 }

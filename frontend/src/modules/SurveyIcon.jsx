@@ -91,6 +91,20 @@ export default function SurveyIcon({
           </div>
           <div className="item-title">{title}</div>
           <a
+            title="미리보기"
+            className="survey-icon-btn"
+            onClick={onPreviewClicked}
+          >
+            <ZoomInOutlined
+              style={{
+                fontSize: "1.2rem",
+                color: "inherit",
+                marginRight: "0.2rem",
+              }}
+            />{" "}
+            미리보기
+          </a>
+          <a
             href={result_link}
             title="설문응답 확인"
             className="survey-icon-btn"
@@ -113,20 +127,6 @@ export default function SurveyIcon({
               }}
             />{" "}
             디자인 수정
-          </a>
-          <a
-            title="미리보기"
-            className="survey-icon-btn"
-            onClick={onPreviewClicked}
-          >
-            <ZoomInOutlined
-              style={{
-                fontSize: "1.2rem",
-                color: "inherit",
-                marginRight: "0.2rem",
-              }}
-            />{" "}
-            미리보기
           </a>
         </div>
       ) : null}
