@@ -16,9 +16,19 @@ export class FindAnswerByQuestionIdInput {
 }
 
 @ObjectType()
+export class AnswersInFindAnswerByQuestionId {
+  @Field((type) => AnswerUnion)
+  answer?: typeof AnswerUnion;
+
+  @Field((type) => String, { nullable: true })
+  @IsMongoId()
+  submissionId?: string;
+}
+
+@ObjectType()
 export class FindAnswerByQuestionIdOutput extends CoreOutput {
-  @Field((type) => [AnswerUnion], { nullable: true })
-  answers?: typeof AnswerUnion[];
+  @Field((type) => [AnswersInFindAnswerByQuestionId], { nullable: true })
+  answers?: AnswersInFindAnswerByQuestionId[];
 
   @Field((type) => QuestionUnion, { nullable: true })
   question?: typeof QuestionUnion;

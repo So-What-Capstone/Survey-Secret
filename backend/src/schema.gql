@@ -337,10 +337,15 @@ type SetFavoriteSubmissionsOutput {
   error: String
 }
 
+type AnswersInFindAnswerByQuestionId {
+  answer: AnswerUnion!
+  submissionId: String
+}
+
 type FindAnswerByQuestionIdOutput {
   ok: Boolean!
   error: String
-  answers: [AnswerUnion!]
+  answers: [AnswersInFindAnswerByQuestionId!]
   question: QuestionUnion
 }
 

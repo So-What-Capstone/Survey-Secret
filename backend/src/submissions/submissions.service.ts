@@ -38,6 +38,7 @@ import {
   SetFavoriteSubmissionsOutput,
 } from './dtos/set-favorite-submissions.dto';
 import {
+  AnswersInFindAnswerByQuestionId,
   FindAnswerByQuestionIdInput,
   FindAnswerByQuestionIdOutput,
 } from './dtos/find-answer-by-question-id-output.dto';
@@ -431,12 +432,25 @@ export class SubmissionsService {
             ),
           },
         },
-        { $project: { 'submissions.answers': true, _id: false } },
+        {
+          $project: {
+            'submissions.answers': true,
+            'submissions._id': true,
+            _id: false,
+          },
+        },
       ]);
 
-      answers = answers.map((answer) => answer.submissions.answers);
+      const answersArg: AnswersInFindAnswerByQuestionId[] = answers.map(
+        (answer) => {
+          return {
+            answer: answer.submissions.answers,
+            submissionId: answer.submissions._id,
+          };
+        },
+      );
 
-      return { ok: true, answers, question };
+      return { ok: true, answers: answersArg, question };
     } catch (error) {
       return { ok: false, error: error.message };
     }
