@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ClipTray from "../modules/ClipTray";
 import ContactList from "../modules/ContactList";
+import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
+import { getMyFormsForContactQuery } from "../API/meQuery";
 import "../styles/Clips.css";
 import "../styles/Message.scss";
+
+const GET_MY_FORMS_CONTACT_QUERY = getMyFormsForContactQuery;
 
 function Message() {
   const clips = [
@@ -14,31 +18,28 @@ function Message() {
     {
       id: "0",
       title: "누가 젤 귀여운가?",
-      receivers: [
-        { id: "0", name: "카리나", favorite: false },
-        { id: "1", name: "닝닝", favorite: false },
-        { id: "2", name: "윈터", favorite: false },
-        { id: "3", name: "지젤", favorite: true },
-        { id: "4", name: "카리나", favorite: false },
-        { id: "5", name: "카리나", favorite: true },
-        { id: "6", name: "카리나", favorite: false },
-        { id: "7", name: "카리나", favorite: false },
-        { id: "8", name: "카리나", favorite: false },
-      ],
     },
     {
       id: "1",
       title: "누가 젤 예쁜가??",
-      receivers: [
-        { id: "9", name: "고다현", favorite: true },
-        { id: "10", name: "김지윤", favorite: true },
-        { id: "11", name: "윈터", favorite: false },
-      ],
     },
   ];
 
+  const [myForms, setMyForms] = useState([
+    {
+      id: "",
+      title: "",
+    },
+  ]);
+
   /* 수신인 정보 */
-  const [selectedForm, setSelectedForm] = useState(forms[0]); //선택된 설문
+  const [selectedForm, setSelectedForm] = useState({
+    id: forms[0].id,
+    title: forms[0].title,
+    receivers: [{ id: "id", name: "name", favorite: false }],
+  });
+
+  //선택된 설문
   const [checkedItems, setCheckedItems] = useState(new Set()); //체크된 수신자들(receiverId들의 배열)
 
   /* 문자메시지 발신 정보 */
@@ -47,6 +48,20 @@ function Message() {
   const [textByte, setTextByte] = useState(0);
 
   const maxByte = 100; //최대 100바이트
+
+  const { data, loading, error } = useQuery(GET_MY_FORMS_CONTACT_QUERY, {
+    onCompleted: (data) => {
+      const myFormList = data?.me?.user?.forms.map((form) => {
+        const obj = {};
+        obj["id"] = form._id;
+        obj["title"] = form.title;
+        //obj["privacyExpiredAt"] = form.privacyExpiredAt;
+        return obj;
+      });
+      setMyForms(myFormList);
+      //setSelectedForm
+    },
+  });
 
   const handleTextValue = (e) => {
     setTextValue(e.target.value);
@@ -86,9 +101,10 @@ function Message() {
     }
 
     if (totalByte > maxByte) {
+      /*
       alert("메세지는 최대" + maxByte + "byte를 초과할 수 없습니다.");
       setTextValue(newTextValue.substring(0, newTextValue.length - 1));
-      totalByte -= lastByte;
+      totalByte -= lastByte;*/
     }
     setTextByte(totalByte);
   };
@@ -98,7 +114,7 @@ function Message() {
       <ClipTray clips={clips} />
       <div className="message-con">
         <ContactList
-          forms={forms}
+          forms={myForms}
           selectedForm={selectedForm}
           checkedItems={checkedItems}
           setSelectedForm={setSelectedForm}
@@ -113,9 +129,12 @@ function Message() {
             <div className="content-label">
               <label>문자 내용 입력</label>
               <span></span>
-              <label>
-                {textByte}/{maxByte}Byte
-              </label>
+              {textByte > maxByte && <label>MMS</label>}
+              {textByte <= maxByte && (
+                <label>
+                  {textByte}/{maxByte}Byte
+                </label>
+              )}
             </div>
             <textarea
               placeholder="내용을 입력하세요."
