@@ -103,7 +103,6 @@ type PersonalQuestion {
   required: Boolean
   order: Float!
   attachment: String
-  encoded: Boolean!
   personalType: PersonalQuestionType!
 }
 
@@ -194,6 +193,22 @@ enum FormState {
   Expired
 }
 
+type Contact {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  _id: String!
+  sender: User!
+  form: Form!
+  receivers: String!
+  content: String!
+  contactType: ContactType!
+}
+
+enum ContactType {
+  SMS
+  EMAIL
+}
+
 type User {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -206,6 +221,7 @@ type User {
   avatarImg: String
   forms: [Form!]
   isVerified: Boolean
+  contacts: [Contact!]
 }
 
 enum UserType {
@@ -305,6 +321,17 @@ type FindTemplateByIdOutput {
   template: Template
 }
 
+type FindQuestionByIdOutput {
+  ok: Boolean!
+  error: String
+  question: QuestionUnion
+}
+
+type SendEmailOutput {
+  ok: Boolean!
+  error: String
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -319,6 +346,23 @@ type FindSubmissionByIdOutput {
 type DeleteSubmissionOutput {
   ok: Boolean!
   error: String
+}
+
+type SetFavoriteSubmissionsOutput {
+  ok: Boolean!
+  error: String
+}
+
+type AnswersInFindAnswerByQuestionId {
+  answer: AnswerUnion!
+  submissionId: String
+}
+
+type FindAnswerByQuestionIdOutput {
+  ok: Boolean!
+  error: String
+  answers: [AnswersInFindAnswerByQuestionId!]
+  question: QuestionUnion
 }
 
 type GetKeywordAnalysisOutput {
@@ -372,8 +416,10 @@ type Query {
   getForms(input: GetFormsInput!): GetFormsOutput!
   getTemplates: GetTemplatesOutput!
   findTemplateById(input: FindTemplateByIdInput!): FindTemplateByIdOutput!
+  findQuestionById(input: FindQuestionByIdInput!): FindQuestionByIdOutput!
   getSendHistory(input: GetSendHistoryInput!): GetSendHistoryOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
+  findAnswerByQuestionId(input: FindAnswerByQuestionIdInput!): FindAnswerByQuestionIdOutput!
   getKeywordAnalysis(input: GetKeywordAnalysisInput!): GetKeywordAnalysisOutput!
   getCorr(input: GetCorrInput!): GetCorrOutput!
   getDescribe(input: GetDescribeInput!): GetDescribeOutput!
@@ -395,6 +441,13 @@ input FindFormByIdInput {
 input SearchFormsInput {
   title: String!
   lastId: String
+  sortKey: SortKey
+  desc: Boolean
+}
+
+enum SortKey {
+  expiredAt
+  privacyExpiredAt
 }
 
 input GetFormsInput {
@@ -405,15 +458,23 @@ input FindTemplateByIdInput {
   templateId: String!
 }
 
+input FindQuestionByIdInput {
+  formId: String!
+  questionId: String!
+}
+
 input GetSendHistoryInput {
-  page: Float!
-  pageSize: Float!
-  startDate: Float
-  limitDate: Float
+  formId: String!
+  contactType: ContactType!
 }
 
 input FindSubmissionByIdInput {
   submissionId: String!
+}
+
+input FindAnswerByQuestionIdInput {
+  formId: String!
+  questionId: String!
 }
 
 input GetKeywordAnalysisInput {
@@ -442,9 +503,11 @@ type Mutation {
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!
+  sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendSms(input: SendSmsInput!): SendSmsOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
+  setFavoriteSubmissions(input: SetFavoriteSubmissionsInput!): SetFavoriteSubmissionsOutput!
 }
 
 input CreateAccountInput {
@@ -529,7 +592,6 @@ input CreatePersonalQuestionInput {
   required: Boolean
   order: Float!
   attachment: String
-  encoded: Boolean!
   personalType: PersonalQuestionType!
 }
 
@@ -561,9 +623,29 @@ input EditFormInput {
   isPromoted: Boolean
 }
 
+input SendEmailInput {
+  subject: String!
+  to: String!
+  template: String
+  emailVars: [EmailVarInput!]!
+}
+
+input EmailVarInput {
+  key: String!
+  value: String!
+}
+
 input SendSmsInput {
-  receiver: String!
+  formId: String!
+  submissionIds: [String!]!
+  questionId: String!
   msg: String!
+  msgType: MsgType!
+}
+
+enum MsgType {
+  SMS
+  LMS
 }
 
 input CreateSubmissionInput {
@@ -621,4 +703,14 @@ input CreatePersonalAnswerInput {
 
 input DeleteSubmissionInput {
   submissionId: String!
+}
+
+input SetFavoriteSubmissionsInput {
+  formId: String!
+  favoriteSubmissions: [FavoriteSubmission!]!
+}
+
+input FavoriteSubmission {
+  submissionId: String!
+  isFavorite: Boolean!
 }
