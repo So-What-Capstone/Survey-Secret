@@ -72,7 +72,7 @@ function DrawLots({ answers, setFav }) {
 DrawLots.propTypes = {
   answers: PropTypes.arrayOf(
     PropTypes.shape({
-      key: PropTypes.string,
+      key: PropTypes.number,
       id: PropTypes.string,
       order: PropTypes.number,
     })
