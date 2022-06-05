@@ -1,6 +1,5 @@
 import React from "react";
-import { gql, useMutation } from "@apollo/client";
-import "../styles/Surveys.scss";
+import { useMutation } from "@apollo/client";
 import PropTypes from "prop-types";
 import {
   DeleteOutlined,
@@ -10,6 +9,8 @@ import {
 } from "@ant-design/icons";
 import { DELETE_FORM_MUTATION } from "../API";
 import { useNavigate } from "react-router-dom";
+import { message } from "antd";
+import "../styles/Surveys.scss";
 
 SurveyIcon.propTypes = {
   title: PropTypes.string,
@@ -60,12 +61,21 @@ export default function SurveyIcon({
     let ret = confirm('"' + title + '" 설문을 삭제하시겠습니까?');
     if (ret) {
       // delete the form
-      await deleteForm({
+      let ret = await deleteForm({
         variables: {
           formId: form_id,
         },
       });
-      alert("설문을 삭제했습니다.");
+
+      const {
+        deleteForm: { ok, error },
+      } = ret.data;
+      if (!ok || error) {
+        alert("삭제 실패했습니다.");
+        return;
+      } else {
+        alert("삭제 성공했습니다.");
+      }
       location.reload();
     }
   };

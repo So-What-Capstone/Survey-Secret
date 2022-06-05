@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import "../../styles/Question.css";
 import PropTypes from "prop-types";
-import { Input, Select } from "antd";
+import { Input, Select, Alert } from "antd";
 import { email, phone } from "./test_config";
 const privacy_info =
   "입력하신 소중한 개인정보는 안전하게 암호화하여 보관되며, 조사자에게 절대 제공되지 않습니다. ";
@@ -53,7 +53,9 @@ function PhoneQuestion({ config, setValue }) {
       {required ? (
         <label className="question-required">*필수 응답 문항입니다.</label>
       ) : null}
-      {info ? <div className="question-discription"> {info} </div> : null}
+      <label className="question-discription">
+        {info ? <Alert message={info} type="info" showIcon /> : null}
+      </label>
 
       <Input
         maxLength={13}
@@ -156,7 +158,11 @@ function EmailQuestion({ config, setValue }) {
       {required ? (
         <label className="question-required">*필수 응답 문항입니다.</label>
       ) : null}
-      {info ? <div className="question-discription"> {info} </div> : null}
+
+      <label className="question-discription">
+        {info ? <Alert message={info} type="info" showIcon /> : null}
+      </label>
+
       <Input
         addonAfter={selectAfter}
         value={internalVal.id}

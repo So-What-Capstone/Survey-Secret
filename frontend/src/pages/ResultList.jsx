@@ -11,6 +11,12 @@ import { CloseCircleFilled } from "@ant-design/icons";
 import { useMutation, useQuery } from "@apollo/client";
 import { editFormMutation, findFormByIdForOwnerQuery } from "../API";
 import "../styles/ResultList.scss";
+import { message } from "antd";
+
+message.config({
+  maxCount: 3,
+});
+
 function cutLongStr(str) {
   if (str.length > 20) return str.substr(0, 20);
   return str;
@@ -108,10 +114,16 @@ function ResultList() {
     console.log("mutation input", input);
 
     // send mutation
+    let ret = true;
 
     // if not ok, alert and return
+    if (!ret) {
+      message.error("즐겨찾기 설정/해제 실패했습니다.");
+      return false;
+    }
 
     // else: ok, then change the change the repList
+    message.success("즐겨찾기 설정/해제 성공했습니다.");
     let temp = repList.slice();
     for (let i = 0; i < temp.length; i++) {
       temp[i].favorite = favSubmissions[i].isFavorite;
@@ -139,9 +151,12 @@ function ResultList() {
     let favSubmList = [{ submssionId: sub_id, isFavorite: fav_value }];
 
     // mutation to set favorite
-    let retSetFav = true;
+    let ret = true;
 
-    if (retSetFav) {
+    if (!ret) {
+      message.error("즐겨찾기 설정/해제 실패했습니다.");
+    } else {
+      message.success("즐겨찾기 설정/해제 성공했습니다.");
       setRepList(temp);
     }
   };
