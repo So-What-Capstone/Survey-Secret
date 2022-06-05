@@ -9,7 +9,6 @@ import {
 } from "@ant-design/icons";
 import { DELETE_FORM_MUTATION } from "../API";
 import { useNavigate } from "react-router-dom";
-import { message } from "antd";
 import "../styles/Surveys.scss";
 
 SurveyIcon.propTypes = {
