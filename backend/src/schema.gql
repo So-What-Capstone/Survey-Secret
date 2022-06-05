@@ -103,7 +103,6 @@ type PersonalQuestion {
   required: Boolean
   order: Float!
   attachment: String
-  encoded: Boolean!
   personalType: PersonalQuestionType!
 }
 
@@ -194,6 +193,22 @@ enum FormState {
   Expired
 }
 
+type Contact {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  _id: String!
+  sender: User!
+  form: Form!
+  receivers: String!
+  content: String!
+  contactType: ContactType!
+}
+
+enum ContactType {
+  SMS
+  EMAIL
+}
+
 type User {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -206,6 +221,7 @@ type User {
   avatarImg: String
   forms: [Form!]
   isVerified: Boolean
+  contacts: [Contact!]
 }
 
 enum UserType {
@@ -448,10 +464,8 @@ input FindQuestionByIdInput {
 }
 
 input GetSendHistoryInput {
-  page: Float!
-  pageSize: Float!
-  startDate: Float
-  limitDate: Float
+  formId: String!
+  contactType: ContactType!
 }
 
 input FindSubmissionByIdInput {
@@ -578,7 +592,6 @@ input CreatePersonalQuestionInput {
   required: Boolean
   order: Float!
   attachment: String
-  encoded: Boolean!
   personalType: PersonalQuestionType!
 }
 
@@ -623,7 +636,9 @@ input EmailVarInput {
 }
 
 input SendSmsInput {
-  receiver: String!
+  formId: String!
+  submissionIds: [String!]!
+  questionId: String!
   msg: String!
   msgType: MsgType!
 }

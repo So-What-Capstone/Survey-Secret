@@ -3,8 +3,30 @@ import { SMS_CONFIG_OPTIONS } from '../common/common.constants';
 import { SmsService } from './sms.service';
 import { SmsModuleOptions } from './sms.interfaces';
 import { SmsResolver } from './sms.resolver';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Contact, ContactSchema } from './schemas/contact.schema';
+import { FormSchema } from 'src/forms/schemas/form.schema';
+import { Form } from './../forms/schemas/form.schema';
+import { User, UserSchema } from 'src/users/schemas/user.schema';
 
-@Module({})
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Contact.name,
+        schema: ContactSchema,
+      },
+      {
+        name: User.name,
+        schema: UserSchema,
+      },
+      {
+        name: Form.name,
+        schema: FormSchema,
+      },
+    ]),
+  ],
+})
 export class SmsModule {
   static forRoot(options: SmsModuleOptions): DynamicModule {
     return {
