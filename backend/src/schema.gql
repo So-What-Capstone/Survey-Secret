@@ -367,6 +367,7 @@ type SetFavoriteSubmissionsOutput {
 type AnswersInFindAnswerByQuestionId {
   answer: AnswerUnion!
   submissionId: String
+  isFavorite: Boolean
 }
 
 type FindAnswerByQuestionIdOutput {
