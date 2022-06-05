@@ -32,11 +32,14 @@ function Message() {
     },
   ]);
 
+  //대표질문 내용
+  const [repsQuestionContent, setRepsQuestionContent] = useState("");
+
   /* 수신인 정보 */
   const [selectedForm, setSelectedForm] = useState({
-    id: forms[0].id,
-    title: forms[0].title,
-    receivers: [{ id: "id", name: "name", favorite: false }],
+    id: "-1",
+    title: "설문을 선택해주세요",
+    receivers: [{ submissionId: "id", isFvorite: false, answer: "" }],
   });
 
   //선택된 설문
@@ -116,6 +119,8 @@ function Message() {
         <ContactList
           forms={myForms}
           selectedForm={selectedForm}
+          repsQuestionContent={repsQuestionContent}
+          setRepsQuestionContent={setRepsQuestionContent}
           checkedItems={checkedItems}
           setSelectedForm={setSelectedForm}
           setCheckedItems={setCheckedItems}
