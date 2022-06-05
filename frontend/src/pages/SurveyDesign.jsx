@@ -615,7 +615,6 @@ function SurveyDesign() {
             if (ques.type === "phone") {
               personal.push({
                 personalType: "Phone",
-                encoded: true,
                 order: j,
                 required: ques.required,
                 description: ques.description,
@@ -629,7 +628,6 @@ function SurveyDesign() {
             if (ques.type === "email") {
               personal.push({
                 personalType: "Email",
-                encoded: true,
                 order: j,
                 required: ques.required,
                 description: ques.description,
