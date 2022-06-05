@@ -6,6 +6,7 @@ import { ResultClipTray } from "../modules";
 import { findFormByIdQuery } from "../API/findFormByIdQuery";
 import { getCorrQuery } from "../API/getCorrQuery";
 import { getKeywordAnalysisQuery } from "../API/getKeywordAnalysisQuery";
+import { getMarketBasketQuery } from "../API/getMarketBasketQuery";
 import { useLazyQuery } from "@apollo/client";
 import WordCloud from "react-d3-cloud";
 
@@ -128,6 +129,8 @@ function NotSelected() {
 
 function MarketBasketAnalysis({ form }) {
   const [questions, setQuestions] = useState([]);
+  const [analysis, setAnalysis] = useState(undefined);
+  const [getMarketBasket, { loading }] = useLazyQuery(getMarketBasketQuery);
 
   useEffect(() => {
     const quesIds = [];
@@ -141,7 +144,24 @@ function MarketBasketAnalysis({ form }) {
     setQuestions(quesIds);
   }, [form]);
 
-  function generateResult() {}
+  function generateResult() {
+    getMarketBasket({
+      variables: {
+        formId: form._id,
+        questionIds: questions.map((ques) => ques._id),
+      },
+    }).then((res) => {
+      try {
+        const currAnalysis = res.data.getMarketBasket.error;
+        console.log(currAnalysis);
+        setAnalysis(currAnalysis);
+      } catch (err) {
+        message.error("데이터 산출에 실패했습니다.");
+        console.error(JSON.stringify(err, null, 2));
+        console.error(JSON.stringify(err.message, null, 2));
+      }
+    });
+  }
 
   return (
     <div className="market-root">
@@ -157,6 +177,9 @@ function MarketBasketAnalysis({ form }) {
           응답 경향 분석
         </Button>
       </Divider>
+
+      {!loading && !analysis && <Empty description=""></Empty>}
+      {loading && <Spin tip="정보를 가져오는 중..."></Spin>}
     </div>
   );
 }
