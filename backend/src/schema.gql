@@ -103,7 +103,6 @@ type PersonalQuestion {
   required: Boolean
   order: Float!
   attachment: String
-  encoded: Boolean!
   personalType: PersonalQuestionType!
 }
 
@@ -194,6 +193,22 @@ enum FormState {
   Expired
 }
 
+type Contact {
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  _id: String!
+  sender: User!
+  form: Form!
+  receivers: [Submission!]!
+  content: String!
+  contactType: ContactType!
+}
+
+enum ContactType {
+  SMS
+  EMAIL
+}
+
 type User {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -206,6 +221,7 @@ type User {
   avatarImg: String
   forms: [Form!]
   isVerified: Boolean
+  contacts: [Contact!]
 }
 
 enum UserType {
@@ -311,9 +327,20 @@ type FindQuestionByIdOutput {
   question: QuestionUnion
 }
 
+type SendSmsOutput {
+  ok: Boolean!
+  error: String
+}
+
 type SendEmailOutput {
   ok: Boolean!
   error: String
+}
+
+type GetSendHistoryOutput {
+  ok: Boolean!
+  error: String
+  contacts: [Contact!]
 }
 
 type CreateSubmissionOutput {
@@ -340,6 +367,7 @@ type SetFavoriteSubmissionsOutput {
 type AnswersInFindAnswerByQuestionId {
   answer: AnswerUnion!
   submissionId: String
+  isFavorite: Boolean
 }
 
 type FindAnswerByQuestionIdOutput {
@@ -376,17 +404,6 @@ type GetMarketBasketOutput {
   ok: Boolean!
   error: String
   result: [JSONObject!]
-}
-
-type GetSendHistoryOutput {
-  ok: Boolean!
-  error: String
-  data: [JSONObject!]
-}
-
-type SendSmsOutput {
-  ok: Boolean!
-  error: String
 }
 
 type Query {
@@ -448,10 +465,8 @@ input FindQuestionByIdInput {
 }
 
 input GetSendHistoryInput {
-  page: Float!
-  pageSize: Float!
-  startDate: Float
-  limitDate: Float
+  formId: String!
+  contactType: ContactType!
 }
 
 input FindSubmissionByIdInput {
@@ -489,8 +504,8 @@ type Mutation {
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!
-  sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendSms(input: SendSmsInput!): SendSmsOutput!
+  sendEmail(input: SendEmailInput!): SendEmailOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
   setFavoriteSubmissions(input: SetFavoriteSubmissionsInput!): SetFavoriteSubmissionsOutput!
@@ -578,7 +593,6 @@ input CreatePersonalQuestionInput {
   required: Boolean
   order: Float!
   attachment: String
-  encoded: Boolean!
   personalType: PersonalQuestionType!
 }
 
@@ -610,20 +624,10 @@ input EditFormInput {
   isPromoted: Boolean
 }
 
-input SendEmailInput {
-  subject: String!
-  to: String!
-  template: String
-  emailVars: [EmailVarInput!]!
-}
-
-input EmailVarInput {
-  key: String!
-  value: String!
-}
-
 input SendSmsInput {
-  receiver: String!
+  formId: String!
+  submissionIds: [String!]!
+  questionId: String!
   msg: String!
   msgType: MsgType!
 }
@@ -631,6 +635,20 @@ input SendSmsInput {
 enum MsgType {
   SMS
   LMS
+}
+
+input SendEmailInput {
+  formId: String!
+  submissionIds: [String!]!
+  questionId: String!
+  subject: String!
+  template: String
+  emailVars: [EmailVarInput!]!
+}
+
+input EmailVarInput {
+  key: String!
+  value: String!
 }
 
 input CreateSubmissionInput {
