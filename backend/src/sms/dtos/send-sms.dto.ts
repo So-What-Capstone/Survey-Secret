@@ -5,7 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { CoreOutput } from './../../common/dtos/output.dto';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsMongoId, IsString } from 'class-validator';
 
 export enum MsgType {
   SMS = 'SMS',
@@ -17,9 +17,21 @@ registerEnumType(MsgType, { name: 'MsgType' });
 @InputType()
 export class SendSmsInput {
   @Field((type) => String)
-  @IsString()
-  // 컴마(,)분기 입력으로 최대 1천명
-  receiver: string;
+  @IsMongoId()
+  formId: string;
+
+  @Field((type) => [String])
+  @IsMongoId({ each: true })
+  submissionIds: string[];
+
+  @Field((type) => String)
+  @IsMongoId()
+  questionId: string;
+
+  // @Field((type) => String)
+  // @IsString()
+  // // 컴마(,)분기 입력으로 최대 1천명
+  // receiver: string;
 
   @Field((type) => String)
   @IsString()

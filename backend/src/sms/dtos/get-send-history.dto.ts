@@ -1,31 +1,22 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsMongoId, IsEnum } from 'class-validator';
 import { CoreOutput } from './../../common/dtos/output.dto';
-import { GraphQLJSONObject } from 'graphql-type-json';
+import { ContactType } from '../schemas/contact.schema';
+import { Contact } from './../schemas/contact.schema';
 
 @InputType()
 export class GetSendHistoryInput {
-  @Field((type) => Number)
-  @IsNumber()
-  page: number;
+  @Field((type) => String)
+  @IsMongoId()
+  formId: string;
 
-  @Field((type) => Number)
-  @IsNumber()
-  pageSize: number;
-
-  @Field((type) => Number, { nullable: true })
-  @IsNumber()
-  @IsOptional()
-  startDate?: number;
-
-  @Field((type) => Number, { nullable: true })
-  @IsNumber()
-  @IsOptional()
-  limitDate?: number;
+  @Field((type) => ContactType)
+  @IsEnum(ContactType)
+  contactType: ContactType;
 }
 
 @ObjectType()
 export class GetSendHistoryOutput extends CoreOutput {
-  @Field((type) => [GraphQLJSONObject], { nullable: true })
-  data?: object[];
+  @Field((type) => [Contact], { nullable: true })
+  contacts?: Contact[];
 }

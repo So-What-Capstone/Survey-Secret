@@ -45,11 +45,6 @@ export class PersonalQuestion {
   @IsString()
   attachment?: string;
 
-  @Field((type) => Boolean)
-  @Prop({ type: Boolean, required: true, default: true })
-  @IsBoolean()
-  encoded: boolean;
-
   @Field((type) => PersonalQuestionType)
   @Prop({ type: String, enum: PersonalQuestionType, required: true })
   @IsEnum(PersonalQuestionType)

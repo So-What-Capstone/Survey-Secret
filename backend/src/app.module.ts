@@ -52,15 +52,16 @@ import { AllExceptionsFilter } from './exception.filter';
     UsersModule,
     FormsModule,
     AuthModule,
+    SmsModule.forRoot({
+      key: process.env.SMS_API_KEY,
+      user_id: process.env.SMS_USER_ID,
+    }),
     MailsModule.forRoot({
       apiKey: process.env.MAIL_API_KEY,
       fromEmail: process.env.MAIL_FROM_EMAIL,
       domain: process.env.MAIL_DOMAIN,
     }),
-    SmsModule.forRoot({
-      key: process.env.SMS_API_KEY,
-      user_id: process.env.SMS_USER_ID,
-    }),
+
     SubmissionsModule,
     UploaderModule,
     StatModule,
