@@ -305,6 +305,12 @@ type FindTemplateByIdOutput {
   template: Template
 }
 
+type FindQuestionByIdOutput {
+  ok: Boolean!
+  error: String
+  question: QuestionUnion
+}
+
 type SendEmailOutput {
   ok: Boolean!
   error: String
@@ -389,6 +395,7 @@ type Query {
   getForms(input: GetFormsInput!): GetFormsOutput!
   getTemplates: GetTemplatesOutput!
   findTemplateById(input: FindTemplateByIdInput!): FindTemplateByIdOutput!
+  findQuestionById(input: FindQuestionByIdInput!): FindQuestionByIdOutput!
   getSendHistory(input: GetSendHistoryInput!): GetSendHistoryOutput!
   findSubmissionById(input: FindSubmissionByIdInput!): FindSubmissionByIdOutput!
   findAnswerByQuestionId(input: FindAnswerByQuestionIdInput!): FindAnswerByQuestionIdOutput!
@@ -428,6 +435,11 @@ input GetFormsInput {
 
 input FindTemplateByIdInput {
   templateId: String!
+}
+
+input FindQuestionByIdInput {
+  formId: String!
+  questionId: String!
 }
 
 input GetSendHistoryInput {
