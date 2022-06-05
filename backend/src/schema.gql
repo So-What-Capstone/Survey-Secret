@@ -199,7 +199,7 @@ type Contact {
   _id: String!
   sender: User!
   form: Form!
-  receivers: String!
+  receivers: [Submission!]!
   content: String!
   contactType: ContactType!
 }
@@ -332,6 +332,17 @@ type SendEmailOutput {
   error: String
 }
 
+type GetSendHistoryOutput {
+  ok: Boolean!
+  error: String
+  contacts: [Contact!]
+}
+
+type SendSmsOutput {
+  ok: Boolean!
+  error: String
+}
+
 type CreateSubmissionOutput {
   ok: Boolean!
   error: String
@@ -392,17 +403,6 @@ type GetMarketBasketOutput {
   ok: Boolean!
   error: String
   result: [JSONObject!]
-}
-
-type GetSendHistoryOutput {
-  ok: Boolean!
-  error: String
-  data: [JSONObject!]
-}
-
-type SendSmsOutput {
-  ok: Boolean!
-  error: String
 }
 
 type Query {
@@ -503,8 +503,8 @@ type Mutation {
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!
-  sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendSms(input: SendSmsInput!): SendSmsOutput!
+  sendEmail(input: SendEmailInput!): SendEmailOutput!
   createSubmission(input: CreateSubmissionInput!): CreateSubmissionOutput!
   deleteSubmission(input: DeleteSubmissionInput!): DeleteSubmissionOutput!
   setFavoriteSubmissions(input: SetFavoriteSubmissionsInput!): SetFavoriteSubmissionsOutput!
@@ -623,18 +623,6 @@ input EditFormInput {
   isPromoted: Boolean
 }
 
-input SendEmailInput {
-  subject: String!
-  to: String!
-  template: String
-  emailVars: [EmailVarInput!]!
-}
-
-input EmailVarInput {
-  key: String!
-  value: String!
-}
-
 input SendSmsInput {
   formId: String!
   submissionIds: [String!]!
@@ -646,6 +634,18 @@ input SendSmsInput {
 enum MsgType {
   SMS
   LMS
+}
+
+input SendEmailInput {
+  subject: String!
+  to: String!
+  template: String
+  emailVars: [EmailVarInput!]!
+}
+
+input EmailVarInput {
+  key: String!
+  value: String!
 }
 
 input CreateSubmissionInput {

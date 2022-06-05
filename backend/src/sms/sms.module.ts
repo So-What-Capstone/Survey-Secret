@@ -9,28 +9,28 @@ import { FormSchema } from 'src/forms/schemas/form.schema';
 import { Form } from './../forms/schemas/form.schema';
 import { User, UserSchema } from 'src/users/schemas/user.schema';
 
-@Module({
-  imports: [
-    MongooseModule.forFeature([
-      {
-        name: Contact.name,
-        schema: ContactSchema,
-      },
-      {
-        name: User.name,
-        schema: UserSchema,
-      },
-      {
-        name: Form.name,
-        schema: FormSchema,
-      },
-    ]),
-  ],
-})
+@Module({})
+@Global()
 export class SmsModule {
   static forRoot(options: SmsModuleOptions): DynamicModule {
     return {
       module: SmsModule,
+      imports: [
+        MongooseModule.forFeature([
+          {
+            name: Contact.name,
+            schema: ContactSchema,
+          },
+          {
+            name: User.name,
+            schema: UserSchema,
+          },
+          {
+            name: Form.name,
+            schema: FormSchema,
+          },
+        ]),
+      ],
       providers: [
         SmsService,
         {

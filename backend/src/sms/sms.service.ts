@@ -137,8 +137,6 @@ export class SmsService {
         };
       }
 
-      console.log(form);
-
       const receivers = [];
 
       for (const { submissions } of form) {
@@ -174,9 +172,13 @@ export class SmsService {
     { formId, contactType }: GetSendHistoryInput,
   ): Promise<GetSendHistoryOutput> {
     try {
-      const contacts = await this.contactModel.find({ formId, contactType });
+      const contacts = await this.contactModel.find({
+        formId,
+        contactType,
+        sender: user,
+      });
 
-      console.log(contacts);
+      return { ok: true, contacts };
     } catch (error) {
       return { ok: false, error: error.message };
     }
