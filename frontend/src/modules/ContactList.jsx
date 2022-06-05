@@ -2,6 +2,16 @@ import React, { useState, useEffect, useCallback } from "react";
 import "../styles/ContactList.scss";
 import PropTypes from "prop-types";
 import { Select, MenuItem } from "@mui/material";
+import {
+  findRepsQueByFormId,
+  findRepsAnsByQueId,
+} from "../API/findRepresentativeQuery";
+import { findQueById } from "../API/findQuestionByIdQuery";
+import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
+
+const FIND_REPS_QUE_BY_FORM_ID = findRepsQueByFormId;
+const FIND_REPS_ANS_BY_QUE_ID = findRepsAnsByQueId;
+const FIND_QUE_BY_ID = findQueById;
 
 TableItem.propTypes = {
   id: PropTypes.string,
@@ -92,10 +102,80 @@ function ContactList({
   setSelectedForm,
   setCheckedItems,
 }) {
-  const handleFormChange = (event) => {
+  const [findRepsQueByFormId, { data, loading, error }] = useLazyQuery(
+    FIND_REPS_QUE_BY_FORM_ID
+  );
+  const [findQueById] = useLazyQuery(FIND_QUE_BY_ID);
+  const [findRepsAnsByQueId] = useLazyQuery(FIND_REPS_ANS_BY_QUE_ID);
+
+  const handleFormChange = async (event) => {
     const selectedId = event.target.value;
-    const newForm = forms.find((form) => form.id === selectedId);
-    setSelectedForm(newForm);
+    let newForm = forms.find((form) => form.id === selectedId); //selectedForm 가 될 것(현재 id, title만 있음)
+
+    console.log("form id:" + newForm.id);
+
+    let repsQueId; //대표문항 id
+    let repsQueType; //대표문항 type //Closed, Grid, Linear, Opened, Personal
+    let repsQueContent; //대표문항 질문내용
+    let receiverFavoriteList; //[{submission id, isFavorite}]
+    let receiverAnswerList; //[{submission id, answer {__typename, ㅇㅇanswer} }]
+
+    //formId -> 대표문항 id, submission id+isFavorite
+    //대표문항이 null이면 에러남
+    await findRepsQueByFormId({
+      variables: { formId: newForm.id },
+      onCompleted: (data) => {
+        //대표문항 id
+        repsQueId = data?.findFormById?.form?.representativeQuestion?._id;
+
+        //[{_id, isFavorite}]
+        receiverFavoriteList = data?.findFormById?.form?.submissions;
+      },
+    });
+
+    //대표문항 id -> 대표문항 type, content
+    await findQueById({
+      variables: {
+        formId: newForm.id,
+        queId: repsQueId,
+      },
+      onCompleted: (data) => {
+        repsQueType = data?.findQuestionById?.question?.__typename;
+        repsQueContent = data?.findQuestionById?.question?.content;
+      },
+    });
+
+    console.log("대표문항 id: " + repsQueId);
+    console.log("대표문항 type: " + repsQueType);
+    console.log("대표문항 content: " + repsQueContent);
+
+    //form id, 질문 id -> answer, submission id
+    //isFavorite를 같이 가져올 수만 있다면..
+    await findRepsAnsByQueId({
+      variables: {
+        formId: newForm.id,
+        questionId: repsQueId,
+      },
+      onCompleted: (data) => {
+        //[{submission id, answer객체}]
+        receiverAnswerList = data?.findAnswerByQuestionId?.answers;
+      },
+    });
+
+    //newForm 수정(receivers 추가)
+    newForm = {
+      id: newForm.id,
+      title: newForm.title,
+      receivers: [
+        {
+          id: "1",
+          name: "hello",
+          favorite: true,
+        },
+      ],
+    };
+
+    setSelectedForm(newForm); //id, title, receivers
     checkedItems.clear();
     setIsAllChecked(false);
     setAllChecked(false);
@@ -118,7 +198,7 @@ function ContactList({
 
   //즐겨찾기 등록 여부 리스트
   const [isFavoriteCheckedList, setIsFavoriteCheckedList] = useState(
-    forms[0].receivers.map((receiver) => receiver.favorite)
+    selectedForm.receivers.map((receiver) => receiver.favorite)
   );
 
   //체크박스 단일 선택
