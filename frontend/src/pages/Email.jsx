@@ -1,44 +1,59 @@
 import React, { useState } from "react";
 import ClipTray from "../modules/ClipTray";
 import ContactList from "../modules/ContactList";
+import { gql, useQuery, useMutation } from "@apollo/client";
+import { getMyFormsForContactQuery } from "../API/meQuery";
+import { sendEmail } from "../API/sendQuery";
 import "../styles/Clips.css";
 import "../styles/Email.scss";
+
+const GET_MY_FORMS_CONTACT_QUERY = getMyFormsForContactQuery;
+const SEND_EMAIL = sendEmail;
 
 function Email() {
   const clips = [
     { title: "이메일 서비스", link_enabled: false, link: "/", color_idx: 0 },
   ];
 
-  /* 설문 + 수신인 정보 dummy data*/
-  const forms = [
+  const [myForms, setMyForms] = useState([
     {
-      id: "0",
-      title: "누가 젤 귀여운가?",
-      receivers: [
-        { id: "0", name: "카리나", favorite: true }, //id:submission id, name:대표문항 답, favorite:즐겨찾기 여부
-        { id: "1", name: "닝닝", favorite: true },
-        { id: "2", name: "윈터", favorite: true },
-        { id: "3", name: "지젤", favorite: false },
-      ],
+      id: "",
+      title: "",
     },
-    {
-      id: "1",
-      title: "누가 젤 예쁜가??",
-      receivers: [
-        { id: "4", name: "고다현", favorite: true },
-        { id: "5", name: "김지윤", favorite: true },
-        { id: "6", name: "윈터", favorite: false },
-      ],
-    },
-  ];
+  ]);
+
+  //대표질문 내용
+  const [repsQuestionContent, setRepsQuestionContent] = useState("");
+
+  //개인정보질문 id
+  const [emailQueId, setEmailQueId] = useState("");
 
   /* 수신인 정보 */
-  const [selectedForm, setSelectedForm] = useState(forms[0]); //선택된 설문
+  const [selectedForm, setSelectedForm] = useState({
+    id: "",
+    title: "",
+    receivers: [],
+  });
+
   const [checkedItems, setCheckedItems] = useState(new Set()); //체크된 수신자들(num(id)들의 배열)
 
   /* 이메일 발신 정보 */
   const [textTitle, setTextTitle] = useState("");
   const [textValue, setTextValue] = useState("");
+
+  const { data, loading, error } = useQuery(GET_MY_FORMS_CONTACT_QUERY, {
+    onCompleted: (data) => {
+      const myFormList = data?.me?.user?.forms.map((form) => {
+        const obj = {};
+        obj["id"] = form._id;
+        obj["title"] = form.title;
+        //obj["privacyExpiredAt"] = form.privacyExpiredAt;
+        return obj;
+      });
+      setMyForms(myFormList);
+      //setSelectedForm
+    },
+  });
 
   const handleTextTitle = (e) => {
     setTextTitle(e.target.value);
@@ -48,13 +63,37 @@ function Email() {
     setTextValue(e.target.value);
   };
 
-  const sendEmail = () => {
+  // const [sendEmail] = useMutation(SEND_EMAIL);
+
+  const sendEmail = async () => {
     console.log("selectedFormId: " + selectedForm.id);
     checkedItems.forEach(function (value) {
       console.log("receiver id: " + value);
     });
     console.log(textTitle + ", " + textValue);
+
     //send Email logic
+    if (emailQueId !== "") {
+      /*
+      await sendEmail({
+        variables: {
+          formId: selectedForm.id,
+          submissionIds: checkedItems,
+          questionId: emailQueId, //개인정보 질문의 id?
+          //수정필요
+        },
+        onCompleted: (data) => {
+          if (data.sendEmail.ok) {
+            console.log("전송성공!");
+          } else {
+            console.log("전송실패!");
+            throw new Error(data.sendEmail.error);
+          }
+        },
+      });*/
+    } else {
+      alert("연락 정보가 없어 전송할 수 없습니다.");
+    }
   };
 
   return (
@@ -62,8 +101,12 @@ function Email() {
       <ClipTray clips={clips} />
       <div className="email-con">
         <ContactList
-          forms={forms}
+          forms={myForms}
           selectedForm={selectedForm}
+          repsQuestionContent={repsQuestionContent}
+          setRepsQuestionContent={setRepsQuestionContent}
+          emailQueId={emailQueId}
+          setEmailQueId={setEmailQueId}
           checkedItems={checkedItems}
           setSelectedForm={setSelectedForm}
           setCheckedItems={setCheckedItems}

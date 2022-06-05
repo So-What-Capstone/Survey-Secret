@@ -8,6 +8,14 @@ export const findRepsQueByFormId = gql`
       ok
       error
       form {
+        sections {
+          questions {
+            ... on PersonalQuestion {
+              _id
+              personalType
+            }
+          }
+        }
         representativeQuestion {
           _id
         }

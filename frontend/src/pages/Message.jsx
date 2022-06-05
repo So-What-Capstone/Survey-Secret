@@ -1,28 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ClipTray from "../modules/ClipTray";
 import ContactList from "../modules/ContactList";
-import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import { getMyFormsForContactQuery } from "../API/meQuery";
+import { sendSms } from "../API/sendQuery";
 import "../styles/Clips.css";
 import "../styles/Message.scss";
 
 const GET_MY_FORMS_CONTACT_QUERY = getMyFormsForContactQuery;
+const SEND_SMS = sendSms;
 
 function Message() {
   const clips = [
     { title: "문자 서비스", link_enabled: false, link: ".", color_idx: 0 },
-  ];
-
-  /* 설문 + 수신인 정보 dummy data*/
-  const forms = [
-    {
-      id: "0",
-      title: "누가 젤 귀여운가?",
-    },
-    {
-      id: "1",
-      title: "누가 젤 예쁜가??",
-    },
   ];
 
   const [myForms, setMyForms] = useState([
@@ -35,18 +25,23 @@ function Message() {
   //대표질문 내용
   const [repsQuestionContent, setRepsQuestionContent] = useState("");
 
+  //개인정보질문 id
+  const [phoneQueId, setPhoneQueId] = useState("");
+
+  //SMS, LMS
+  const [smsType, setSmsType] = useState("SMS");
+
   /* 수신인 정보 */
   const [selectedForm, setSelectedForm] = useState({
-    id: "-1",
-    title: "설문을 선택해주세요",
-    receivers: [{ submissionId: "id", isFvorite: false, answer: "" }],
+    id: "",
+    title: "",
+    receivers: [],
   });
 
   //선택된 설문
   const [checkedItems, setCheckedItems] = useState(new Set()); //체크된 수신자들(receiverId들의 배열)
 
   /* 문자메시지 발신 정보 */
-  const [senderTel, setSenderTel] = useState("01012341234");
   const [textValue, setTextValue] = useState("");
   const [textByte, setTextByte] = useState(0);
 
@@ -71,13 +66,36 @@ function Message() {
     checkByte(e.target.value);
   };
 
-  const sendMessage = () => {
+  const [sendSms] = useMutation(SEND_SMS);
+
+  const sendMessage = async () => {
     console.log("selectedForm Id: " + selectedForm.id);
     checkedItems.forEach(function (value) {
       console.log("receiverId: " + value);
     });
-    console.log(senderTel + ", " + textValue);
-    //send Message logic
+    console.log(textValue);
+
+    if (phoneQueId !== "") {
+      await sendSms({
+        variables: {
+          formId: selectedForm.id,
+          submissionIds: checkedItems,
+          questionId: phoneQueId, //개인정보 질문의 id?
+          msg: textValue,
+          msgType: smsType,
+        },
+        onCompleted: (data) => {
+          if (data.sendSms.ok) {
+            console.log("전송성공!");
+          } else {
+            console.log("전송실패!");
+            throw new Error(data.sendSms.error);
+          }
+        },
+      });
+    } else {
+      alert("연락 정보가 없어 전송할 수 없습니다.");
+    }
   };
 
   const checkByte = (newTextValue) => {
@@ -104,11 +122,11 @@ function Message() {
     }
 
     if (totalByte > maxByte) {
-      /*
-      alert("메세지는 최대" + maxByte + "byte를 초과할 수 없습니다.");
-      setTextValue(newTextValue.substring(0, newTextValue.length - 1));
-      totalByte -= lastByte;*/
+      setSmsType("LMS");
+    } else {
+      setSmsType("SMS");
     }
+
     setTextByte(totalByte);
   };
 
@@ -120,22 +138,20 @@ function Message() {
           forms={myForms}
           selectedForm={selectedForm}
           repsQuestionContent={repsQuestionContent}
+          phoneQueId={phoneQueId}
+          setPhoneQueId={setPhoneQueId}
           setRepsQuestionContent={setRepsQuestionContent}
           checkedItems={checkedItems}
           setSelectedForm={setSelectedForm}
           setCheckedItems={setCheckedItems}
         />
         <div className="detail-panel">
-          <div className="sender-row">
-            <label>발신번호</label>
-            <input type="tel" value={senderTel} disabled />
-          </div>
           <div className="content-row">
             <div className="content-label">
               <label>문자 내용 입력</label>
               <span></span>
-              {textByte > maxByte && <label>MMS</label>}
-              {textByte <= maxByte && (
+              {smsType === "LMS" && <label>LMS</label>}
+              {smsType === "SMS" && (
                 <label>
                   {textByte}/{maxByte}Byte
                 </label>

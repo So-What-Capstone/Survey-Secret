@@ -90,6 +90,10 @@ ContactList.propTypes = {
   selectedForm: PropTypes.object,
   repsQuestionContent: PropTypes.string,
   checkedItems: PropTypes.object,
+  phoneQueId: PropTypes.string,
+  setPhoneQueId: PropTypes.func,
+  emailQueId: PropTypes.string,
+  setEmailQueId: PropTypes.func,
   setSelectedForm: PropTypes.func,
   setRepsQuestionContent: PropTypes.func,
   setCheckedItems: PropTypes.func,
@@ -103,6 +107,10 @@ function ContactList({
   selectedForm,
   repsQuestionContent,
   checkedItems,
+  phoneQueId,
+  setPhoneQueId,
+  emailQueId,
+  setEmailQueId,
   setSelectedForm,
   setRepsQuestionContent,
   setCheckedItems,
@@ -123,59 +131,70 @@ function ContactList({
     let repsQueType; //대표문항 type //Closed, Grid, Linear, Opened, Personal
     let repsQueContent; //대표문항 질문내용
     let receiverList; //submission id, isFavorite, answer(string)
-
     let answersArray; //submission id, isFavorite, answer(no)
     let questionDetailsArray; //
 
     //formId -> 대표문항 id, submission id+isFavorite
-    try {
-      await findRepsQueByFormId({
-        variables: { formId: newForm.id },
-        onCompleted: (data) => {
-          //대표문항 id
-          if (data.findFormById.ok) {
-            if (data?.findFormById?.form?.representativeQuestion !== null) {
-              repsQueId = data?.findFormById?.form?.representativeQuestion?._id;
-            } else {
-              //대표문항이 없으면
-              repsQueId = null;
-            }
+    await findRepsQueByFormId({
+      variables: { formId: newForm.id },
+      onCompleted: (data) => {
+        //대표문항 id, 개인정보질문 id+type
+        if (data.findFormById.ok) {
+          if (data?.findFormById?.form?.representativeQuestion !== null) {
+            repsQueId = data?.findFormById?.form?.representativeQuestion?._id;
           } else {
-            throw new Error(data.findFormById.error);
+            //대표문항이 없으면
+            repsQueId = null;
           }
-        },
-      });
-    } catch (e) {
-      console.log(e);
-    }
+
+          if (data?.findFormById?.form?.sections?.questions !== null) {
+            console.log("개인정보 질문이 있다");
+            data?.findFormById?.form?.sections?.questions?.map((q) => {
+              if (q.personalType === "Phone") {
+                console.log("Phone");
+                setPhoneQueId(q._id);
+              } else if (q.personalType === "Email") {
+                console.log("Email");
+                setEmailQueId(q._id);
+              } else {
+                //주소문항
+              }
+            });
+          }
+        } else {
+          console.log("개인정보 질문이 없다");
+          setPhoneQueId("");
+          setEmailQueId("");
+          throw new Error(data.findFormById.error);
+        }
+      },
+    });
 
     console.log("repsQueId: " + repsQueId);
 
     //대표문항 id -> 대표문항 type, content
     //대표문항이 있으면
     if (repsQueId !== null) {
-      console.log("이게 실행"); //ok
+      console.log("대표문항이 있다"); //ok
 
       //실행이 안됨...
-      try {
-        await findQueById({
-          variables: {
-            formId: newForm.id,
-            queId: repsQueId,
-          },
-          onCompleted: (data) => {
-            console.log("query completed");
-            repsQueType = data?.findQuestionById?.question?.__typename;
-            repsQueContent = data?.findQuestionById?.question?.content;
+      await findQueById({
+        variables: {
+          formId: newForm.id,
+          queId: repsQueId,
+        },
+        onCompleted: (data) => {
+          console.log("대표문항 정보 가져오는 query completed");
+          repsQueType = data?.findQuestionById?.question?.__typename;
+          repsQueContent = data?.findQuestionById?.question?.content;
 
-            console.log("대표문항 id: " + repsQueId);
-            console.log("대표문항 type: " + repsQueType);
-            console.log("대표문항 content: " + repsQueContent);
-          },
-        });
-      } catch (e) {
-        console.log(e);
-      }
+          console.log("대표문항 id: " + repsQueId);
+          console.log("대표문항 type: " + repsQueType);
+          console.log("대표문항 content: " + repsQueContent);
+        },
+      });
+
+      setRepsQuestionContent(repsQueContent);
 
       //form id, 질문 id -> answers : {submission id, isFavorite, answer객체}, question
       switch (repsQueType) {
@@ -188,6 +207,7 @@ function ContactList({
               questionId: repsQueId,
             },
             onCompleted: (data) => {
+              console.log("ans 가져오는 쿼리 completed");
               /* answersArray =
             [
               {
@@ -216,7 +236,6 @@ function ContactList({
                 data?.findAnswerByQuestionId?.question.choices;
             },
           });
-          setRepsQuestionContent(repsQueContent);
 
           /* receiverList =
         [
@@ -253,6 +272,8 @@ function ContactList({
           break;
         case "OpenedQuestion":
           console.log("주관식");
+          console.log(newForm.id);
+          console.log(repsQueId);
 
           await findRepsAnsByQueId({
             variables: {
@@ -271,10 +292,10 @@ function ContactList({
               }
             ]
              */
+              console.log("ans 가져오는 쿼리 completed");
               answersArray = data?.findAnswerByQuestionId?.answers;
             },
           });
-          setRepsQuestionContent(repsQueContent);
 
           /* receiverList =
         [
@@ -303,6 +324,7 @@ function ContactList({
               questionId: repsQueId,
             },
             onCompleted: (data) => {
+              console.log("ans 가져오는 쿼리 completed");
               /* answersArray =
             [
               {
@@ -327,7 +349,6 @@ function ContactList({
               };
             },
           });
-          setRepsQuestionContent(repsQueContent);
 
           /* receiverList =
         [
@@ -361,6 +382,7 @@ function ContactList({
               questionId: repsQueId,
             },
             onCompleted: (data) => {
+              console.log("ans 가져오는 쿼리 completed");
               /* answersArray =
             [
               {
@@ -391,7 +413,6 @@ function ContactList({
               };
             },
           });
-          setRepsQuestionContent(repsQueContent);
 
           /* receiverList =
         [
@@ -421,6 +442,7 @@ function ContactList({
                   ")";
               } else {
                 obj["answer"] =
+                  obj["answer"] +
                   ", (" +
                   questionDetailsArray.rowContent[f.rowNo] +
                   ", " +
@@ -433,26 +455,22 @@ function ContactList({
 
           break;
         case "PersonalQuestion":
-          receiverList = answersArray.map((a) => {
-            let obj = {};
-            obj["submissionId"] = a.submissionId;
-            obj["isFavorite"] = a.isFavorite;
-            obj["answer"] = "조회할 수 없습니다.";
-            return obj;
-          });
+          console.log("개인정보");
+          receiverList = [
+            {
+              submissionId: "1",
+              isFavorite: false,
+              answer: "조회할 수 없습니다.",
+            },
+          ];
           break;
         default:
           break;
       }
     } else {
-      receiverList = [
-        {
-          submissionId: "",
-          isFavorite: false,
-          answer: "aaaa",
-        },
-      ];
+      receiverList = [];
       setRepsQuestionContent("");
+      alert("대표문항이 없습니다.");
     }
 
     newForm = {
@@ -483,9 +501,7 @@ function ContactList({
   const [isFavoriteChecked, setIsFavoriteChecked] = useState(false);
 
   //즐겨찾기 등록 여부 리스트
-  const [isFavoriteCheckedList, setIsFavoriteCheckedList] = useState(
-    selectedForm.receivers.map((receiver) => receiver.isFavorite)
-  );
+  const [isFavoriteCheckedList, setIsFavoriteCheckedList] = useState([]);
 
   //체크박스 단일 선택
   const checkedItemHandler = (id, isChecked) => {
@@ -555,8 +571,8 @@ function ContactList({
         </Select>
       </div>
       <div className="panel-row">
-        <label>대표질문</label>
-        <input value={repsQuestionContent} disabled />
+        <label>대표문항</label>
+        <input value={repsQuestionContent} className="content-box" disabled />
       </div>
       <div className="panel-row">
         <label>수신인 선택</label>
