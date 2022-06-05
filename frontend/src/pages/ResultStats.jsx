@@ -134,8 +134,8 @@ function MarketBasketAnalysis({ form }) {
 
   useEffect(() => {
     const quesIds = [];
-    form.sections.forEach((sect, i) => {
-      sect.questions.forEach((ques, j) => {
+    form.sections.forEach((sect) => {
+      sect.questions.forEach((ques) => {
         if (ques.kind === "Closed") {
           quesIds.push(ques);
         }
@@ -145,6 +145,13 @@ function MarketBasketAnalysis({ form }) {
   }, [form]);
 
   function generateResult() {
+    setAnalysis(undefined);
+    console.log(
+      JSON.stringify({
+        formId: form._id,
+        questionIds: questions.map((ques) => ques._id),
+      })
+    );
     getMarketBasket({
       variables: {
         formId: form._id,
@@ -152,8 +159,7 @@ function MarketBasketAnalysis({ form }) {
       },
     }).then((res) => {
       try {
-        const currAnalysis = res.data.getMarketBasket.error;
-        console.log(currAnalysis);
+        const currAnalysis = res.data.getMarketBasket.result;
         setAnalysis(currAnalysis);
       } catch (err) {
         message.error("데이터 산출에 실패했습니다.");
@@ -180,6 +186,9 @@ function MarketBasketAnalysis({ form }) {
 
       {!loading && !analysis && <Empty description=""></Empty>}
       {loading && <Spin tip="정보를 가져오는 중..."></Spin>}
+      {analysis && analysis.length === 0 && (
+        <Empty description="유의미한 응답 경향이 없습니다."></Empty>
+      )}
     </div>
   );
 }
@@ -254,7 +263,7 @@ function CorrAnalysis({ form }) {
       <Alert
         message="수치응답 상관계수"
         description={
-          "객관식(단일응답) 문항과 선형 배율 문항에 대하여 여러 응답 간 Pearson 상관계수를 계산할 수 있습니다. " +
+          "선형 배율 문항에 대하여 여러 응답 간 Pearson 상관계수를 계산할 수 있습니다. " +
           "왼쪽 테이블에서 분석할 문항을 선택하여 오른쪽 테이블에 옮기고, 분석 버튼을 클릭하세요."
         }
         type="info"
