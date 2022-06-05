@@ -17,43 +17,19 @@ import {
   ListItemButton,
 } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
-import { searchFormsQuery } from "./../API/serachFormsQuery";
+import { searchFormsQuery } from "./../API";
 
 const SEARCH_FORMS_QUERY = searchFormsQuery;
 
 function SearchResult() {
   const [forms, setForms] = useState([
     {
-      id: "1",
-      title: "폼제목1",
-      description: "폼설명어라어리어ㅏㄹ너ㅣㅇㄹ1",
-      expiredAt: "2022-3-20",
-      privacyExpiredAt: "2999/12/12",
-      owner: "김태리",
-    },
-    {
-      id: "2",
-      title: "폼제목2",
-      description: "폼설명어라vdfzzzzzzzㄹ1",
-      expiredAt: "2022-3-14",
-      privacyExpiredAt: "2999/11/12",
-      owner: "김태링",
-    },
-    {
-      id: "2",
-      title: "폼제목3",
-      description: "폼설명어라어리어ㅏㄹ너ㅣㅇㄹ1",
-      expiredAt: "2022-3-15",
-      privacyExpiredAt: "2999/12/13",
-      owner: "김태랑",
-    },
-    {
-      id: "3",
-      title: "폼제목3",
-      description: "폼설명어라어리어ㅏㄹ너ㅣㅇㄹ1",
-      expiredAt: "2022-3-16",
-      privacyExpiredAt: "2999/12/10",
-      owner: "김태령",
+      id: "",
+      title: "",
+      description: "",
+      expiredAt: "",
+      privacyExpiredAt: "",
+      owner: "",
     },
   ]);
   const [selectedForm, setSelectedForm] = useState("");
@@ -71,6 +47,7 @@ function SearchResult() {
       console.log(`value is ${value}`);
       setSearchedText(value);
       // 디버그를 위해 임의의 데이터로 설정
+      console.log(forms); //forms가 안바뀜
       setSearchedForms(forms);
     } else {
       navigate("/");
@@ -78,6 +55,10 @@ function SearchResult() {
   }, [searchParams]);
 
   const [searchedText, setSearchedText] = useState(searchParams);
+
+  const params = {
+    value: searchedText,
+  };
 
   const { loading, data, error } = useQuery(SEARCH_FORMS_QUERY, {
     variables: { title: searchParams.get("value") },
@@ -107,10 +88,6 @@ function SearchResult() {
   const searchSurvey = () => {
     console.log(searchedText);
     navigate({ pathname: "/search", search: `?${createSearchParams(params)}` });
-  };
-
-  const params = {
-    value: searchedText,
   };
 
   const handleListItemClick = (e, id) => {

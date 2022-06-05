@@ -27,14 +27,17 @@ function ClosedQuestion_one({ config, setValue, setTrigger }) {
 
   function RadioChoices() {
     return (
-      <Radio.Group name="radiogroup" value={selected} onChange={onChange}>
-        <Space direction="vertical">
-          {choices.map((val, idx) => (
-            <Radio key={idx} value={idx}>
-              {val}
-            </Radio>
-          ))}
-        </Space>
+      <Radio.Group
+        name="radiogroup"
+        value={selected}
+        onChange={onChange}
+        style={{ display: "flex", flexDirection: "column" }}
+      >
+        {choices.map((val, idx) => (
+          <Radio key={idx} value={idx}>
+            {val}
+          </Radio>
+        ))}
       </Radio.Group>
     );
   }

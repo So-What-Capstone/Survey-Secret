@@ -136,6 +136,7 @@ export function getFormConfigFromDB(formId, formDB, sectionsDB) {
     for (let j = 0; j < sec.questions.length; j++) {
       let q = sec.questions[j];
       const type = getQuestionType(q);
+
       // common config of question
       myqs[j] = {
         id: q._id,
@@ -179,8 +180,8 @@ export function getFormConfigFromDB(formId, formDB, sectionsDB) {
         // Phone, email
         myqs[j].config = {
           ...myqs[j].config,
-          isEncrypted: q.encoded,
-          exp_date: form.privacyExpiredAt,
+          isEncrypted: true,
+          exp_date: form.privacyExpiredAt, // TODO
         };
       }
     }

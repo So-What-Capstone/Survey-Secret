@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import ClipTray from "../modules/ClipTray";
 import { useNavigate, Link } from "react-router-dom";
 import Pagination from "@material-ui/lab/Pagination";
+import { gql, useQuery } from "@apollo/client";
+import { getMyCoinQuery } from "../API/meQuery";
 import "../styles/Clips.css";
 import "../styles/MyInfoCoin.scss";
 import {
@@ -16,6 +18,8 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import PropTypes from "prop-types";
+
+const GET_MY_COIN_QUERY = getMyCoinQuery;
 
 const useStyles = makeStyles({
   ul: {
@@ -40,7 +44,7 @@ function MyInfoCoin() {
   ];
 
   /* dummy data */
-  const coin = 3000;
+  //const coin = 3000;
   const coinChargeListDummy = [
     {
       id: "0",
@@ -72,6 +76,9 @@ function MyInfoCoin() {
     },
   ];
 
+  /* 코인 */
+  const [coin, setCoin] = useState(0);
+
   /* 코인 충전/사용 내역 */
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
@@ -94,6 +101,12 @@ function MyInfoCoin() {
       consumedAt: "",
     },
   ]);
+
+  const { data, loading, error } = useQuery(GET_MY_COIN_QUERY, {
+    onCompleted: (data) => {
+      setCoin(data?.me?.user?.type.toString());
+    },
+  });
 
   const fetchList = (mode) => {
     //코인 충전/사용 내역 받아오기

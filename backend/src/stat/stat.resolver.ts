@@ -6,6 +6,10 @@ import {
 } from './dtos/get-keyword-analysis.dto';
 import { GetCorrOutput, GetCorrInput } from './dtos/get-corr.dto';
 import { GetDescribeInput, GetDescribeOutput } from './dtos/get-describe.dto';
+import {
+  GetMarketBasketInput,
+  GetMarketBasketOutput,
+} from './dtos/get-market-basket.dto';
 
 @Resolver()
 export class StatResolver {
@@ -30,5 +34,10 @@ export class StatResolver {
     return this.statService.getDescribe(getDescribeInput);
   }
 
-  //market basket model
+  @Query((returns) => GetMarketBasketOutput)
+  getMarketBasket(
+    @Args('input') getMarketBasketInput: GetMarketBasketInput,
+  ): Promise<GetMarketBasketOutput> {
+    return this.statService.getMarketBasket(getMarketBasketInput);
+  }
 }

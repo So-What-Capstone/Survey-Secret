@@ -3,7 +3,11 @@ import SurveyIcon from "./SurveyIcon";
 import "../styles/Surveys.scss";
 import PropTypes from "prop-types";
 
-export default function SurveyIconsTray({ open_surveys, hover_enabled }) {
+export default function SurveyIconsTray({
+  open_surveys,
+  hover_enabled,
+  setPreviewId,
+}) {
   return (
     <div className="survey-tray">
       {open_surveys.map((survey, i) => (
@@ -14,6 +18,7 @@ export default function SurveyIconsTray({ open_surveys, hover_enabled }) {
           exp={survey.expiredAt}
           form_id={survey._id}
           hover_enabled={hover_enabled}
+          setPreviewId={setPreviewId}
         />
       ))}
     </div>
@@ -21,11 +26,14 @@ export default function SurveyIconsTray({ open_surveys, hover_enabled }) {
 }
 
 SurveyIconsTray.propTypes = {
-  open_surveys: PropTypes.arrayOf({
-    title: PropTypes.string,
-    description: PropTypes.string,
-    expiredAt: PropTypes.any,
-    _id: PropTypes.string,
-  }),
+  open_surveys: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+      description: PropTypes.string,
+      expiredAt: PropTypes.any,
+      _id: PropTypes.string,
+    })
+  ),
   hover_enabled: PropTypes.bool,
+  setPreviewId: PropTypes.func,
 };

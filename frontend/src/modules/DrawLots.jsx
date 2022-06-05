@@ -14,7 +14,7 @@ function DrawLots({ answers, setFav }) {
     if (!answers) return;
     if (numLots > answers.length) return;
     // draw lots
-    let array = answers.slice();
+    let array = answers.map((v, i) => i + 1);
     for (let i = array.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
@@ -27,7 +27,15 @@ function DrawLots({ answers, setFav }) {
     );
     if (!result) return;
     // 즐겨찾기 초기화 winNums만 즐겨찾기에 등록
-    // setFav(...)
+    let favSubList = [];
+    for (const ans of answers) {
+      favSubList.push({ submissionId: ans.id, isFavorite: false });
+    }
+
+    for (const submKey of winNums) {
+      favSubList[submKey - 1].isFavorite = true;
+    }
+    setFav(favSubList);
   };
   let max = answers ? answers.length : 1;
   return (
@@ -62,7 +70,13 @@ function DrawLots({ answers, setFav }) {
   );
 }
 DrawLots.propTypes = {
-  answers: PropTypes.arrayOf(PropTypes.any),
+  answers: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string,
+      id: PropTypes.string,
+      order: PropTypes.number,
+    })
+  ),
   setFav: PropTypes.func,
 };
 

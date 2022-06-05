@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { createSubmissionMutation } from "../API/createSubmissionMutation";
+import { createSubmissionMutation } from "../API";
 import { QType } from "../modules";
 import Form from "../modules/Form";
 import {
@@ -13,7 +13,7 @@ import "../styles/Respond.css";
 
 const CREATE_SUBMISSION_MUTATION = createSubmissionMutation;
 
-function FormRespToSubm(form_config, response) {
+function FormRespToSubm(form_config, response, secEnabled) {
   /*
   result shape:
   let submission = {
@@ -59,6 +59,7 @@ function FormRespToSubm(form_config, response) {
   for (let i = 0; i < sub_secs.length; i++) {
     let sec = form_config.sections[i];
     sub_secs[i] = { sectionId: sec.id, answers: [] };
+    if (!secEnabled[i]) continue;
 
     let answers = {
       Closed: [],
@@ -78,15 +79,18 @@ function FormRespToSubm(form_config, response) {
       if (QType.CLOSED_ONE <= type && type <= QType.CLOSED_INPUT) {
         //closed
         ansDic["closedAnswer"] = qVal.data;
+        if (ansDic["closedAnswer"].length === 0) continue;
       } else if (type === QType.LINEAR) {
         // linear
         ansDic["linearAnswer"] = qVal.data;
       } else if (type === QType.OPENED) {
         // Opened
         ansDic["openedAnswer"] = qVal.data;
+        if (ansDic["openedAnswer"].length === 0) continue;
       } else if (type === QType.PHONE) {
         // phone
         ansDic["personalAnswer"] = qVal.data;
+        if (ansDic["personalAnswer"].length === 0) continue;
       } else if (type === QType.GRID) {
         // grid
         ansDic["gridAnswer"] = qVal.data
@@ -99,23 +103,29 @@ function FormRespToSubm(form_config, response) {
               : null
           )
           .filter((v) => v !== null);
-        console.log("grid answer: ", ansDic);
       } else if (type === QType.EMAIL) {
         // email
+        if (qVal.id.length === 0) continue;
         ansDic["personalAnswer"] = qVal.id + qVal.domain;
       } else if (type === QType.DATE) {
         // date
         ansDic["opendAnswer"] = qVal.date_str;
       } else if (type === QType.ADDRESS) {
         // address
-        ansDic["personalAnswer"] = String(
+        ansDic["openedAnswer"] = String(
           qVal.zip_code + qVal.address + qVal.address_detail
         );
+        if (ansDic["openedAnswer"].length === 0) continue;
+      }
+      if (!qVal.isValid) {
+        console.log(qVal);
+        alert("답변이 유효하지 않습니다!");
+        return null;
       }
 
       answers[kind].push(ansDic);
     }
-    sub_secs[i]["answers"] = [answers];
+    sub_secs[i]["answers"] = answers;
   }
   let submission = {
     variables: {
@@ -133,6 +143,7 @@ function Respond() {
   const [form_config, setFormConfig] = useState();
   const [searchParams] = useSearchParams();
   const [formId, setFormId] = useState(0);
+  const [secEnabled, setSecEnabled] = useState();
   useEffect(() => {
     const id = searchParams.get("id");
     if (id) {
@@ -144,11 +155,14 @@ function Respond() {
   const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
     variables: { formId },
     onCompleted: (data) => {
-      const config = getFormConfigFromDB(
-        formId,
-        data.findFormById.form,
-        data.findFormById.form.sections
-      );
+      let formData = data.findFormById.form;
+      if (formData?.state !== "InProgress") {
+        let msg = "현재 설문을 이용할 수 없습니다.";
+        alert(msg);
+        navigate("/");
+      }
+      const config = getFormConfigFromDB(formId, formData, formData.sections);
+
       setFormConfig(config);
     },
   });
@@ -160,8 +174,9 @@ function Respond() {
         const {
           createSubmission: { ok, error },
         } = data;
-        if (!ok) {
-          throw new Error(error);
+        console.log(ok);
+        if (!ok || error) {
+          alert(error);
         } else {
           alert("제출되었습니다.");
           navigate("/");
@@ -173,36 +188,31 @@ function Respond() {
   const navigate = useNavigate();
   const [response, setResponse] = useState();
 
-  const onSubmitClick = () => {
+  const onSubmitClick = async () => {
     // submit the response
 
-    // check the validity of response
-    // let isValid = true;
-    // for (const idx in response) {
-    //   if (!response[idx].isValid) {
-    //     isValid = false;
-    //     break;
-    //   }
-    // }
     // make submission shape for the mutation
-    let submission = FormRespToSubm(form_config, response);
-
+    let submission = FormRespToSubm(form_config, response, secEnabled);
+    if (!submission) return;
+    console.log("submit", submission);
     //response => Submission.
-    createSubmission(submission);
-
-    console.log("submission", submission);
-    // if (isValid) {
-    //   alert("제출되었습니다.");
-    // } else {
-    //   alert("필수 응답문항을 모두 답해 주세요.");
-    // }
+    try {
+      await createSubmission(submission);
+    } catch (err) {
+      if (err) console.error(JSON.stringify(err, null, 2));
+    }
   };
 
   if (!form_config) return null;
   return (
     <div className="respond-container">
       <div className="preview">
-        <Form _config={form_config} _setResponse={setResponse} />
+        <Form
+          _config={form_config}
+          _setResponse={setResponse}
+          secEnabled={secEnabled}
+          setSecEnabled={setSecEnabled}
+        />
         <div className="respond-submit-container">
           <button className="respond-submit-btn" onClick={onSubmitClick}>
             제출하기

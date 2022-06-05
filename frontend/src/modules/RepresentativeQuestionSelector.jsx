@@ -35,7 +35,7 @@ export default function RepresentativeQ({
 }
 
 RepresentativeQ.propTypes = {
-  questions: PropTypes.shape(PropTypes.any),
+  questions: PropTypes.any,
   representative: PropTypes.string,
   setRepresentative: PropTypes.func,
 };

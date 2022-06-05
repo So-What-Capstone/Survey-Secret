@@ -2,8 +2,13 @@ import React from "react";
 import { gql, useMutation } from "@apollo/client";
 import "../styles/Surveys.scss";
 import PropTypes from "prop-types";
-import { DeleteOutlined, EditOutlined, BarsOutlined } from "@ant-design/icons";
-import { DELETE_FORM_MUTATION } from "../API/deleteForm";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  BarsOutlined,
+  ZoomInOutlined,
+} from "@ant-design/icons";
+import { DELETE_FORM_MUTATION } from "../API";
 import { useNavigate } from "react-router-dom";
 
 SurveyIcon.propTypes = {
@@ -19,6 +24,7 @@ export default function SurveyIcon({
   exp,
   form_id,
   hover_enabled,
+  setPreviewId,
 }) {
   let navigate = useNavigate();
   const [deleteForm, { loading: deleteLoading }] = useMutation(
@@ -50,11 +56,11 @@ export default function SurveyIcon({
 
   const expStr = "~ " + expArray[0] + " " + timeArray[0];
 
-  const onDelete = () => {
+  const onDelete = async () => {
     let ret = confirm('"' + title + '" 설문을 삭제하시겠습니까?');
     if (ret) {
       // delete the form
-      deleteForm({
+      await deleteForm({
         variables: {
           formId: form_id,
         },
@@ -66,9 +72,12 @@ export default function SurveyIcon({
 
   const onClick = () => {
     if (hover_enabled) return;
-    console.log("click");
     navigate("/respond?id=" + form_id);
   };
+  const onPreviewClicked = () => {
+    setPreviewId(form_id);
+  };
+
   return (
     <div className="survey-icon-con">
       {hover_enabled ? (
@@ -82,13 +91,27 @@ export default function SurveyIcon({
           </div>
           <div className="item-title">{title}</div>
           <a
+            title="미리보기"
+            className="survey-icon-btn"
+            onClick={onPreviewClicked}
+          >
+            <ZoomInOutlined
+              style={{
+                fontSize: "1.2rem",
+                color: "inherit",
+                marginRight: "0.2rem",
+              }}
+            />{" "}
+            미리보기
+          </a>
+          <a
             href={result_link}
             title="설문응답 확인"
             className="survey-icon-btn"
           >
             <BarsOutlined
               style={{
-                fontSize: "1.5rem",
+                fontSize: "1.2rem",
                 color: "inherit",
                 marginRight: "0.2rem",
               }}
@@ -98,7 +121,7 @@ export default function SurveyIcon({
           <a href={edit_link} title="디자인 수정" className="survey-icon-btn">
             <EditOutlined
               style={{
-                fontSize: "1.5rem",
+                fontSize: "1.2rem",
                 color: "inherit",
                 marginRight: "0.2rem",
               }}
@@ -123,4 +146,5 @@ SurveyIcon.propTypes = {
   exp: PropTypes.any,
   form_id: PropTypes.string,
   hover_enabled: PropTypes.bool,
+  setPreviewId: PropTypes.func,
 };

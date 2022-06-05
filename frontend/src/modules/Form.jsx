@@ -19,13 +19,13 @@ function Question({
   };
 
   let setTrigger = () => {};
-  if (type === 0) {
+  if (type === QType.CLOSED_ONE) {
     setTrigger = (trigger_sec_idx) => {
       let mySecEnabled = { ...secEnabled };
       for (let idx in config.trigger_sections) {
         mySecEnabled[config.trigger_sections[idx]] = false;
       }
-      mySecEnabled[config.trigger_sections[trigger_sec_idx]] = true;
+      mySecEnabled[Number(config.trigger_sections[trigger_sec_idx])] = true;
       setSecEnabled(mySecEnabled);
     };
   }
@@ -52,10 +52,15 @@ Question.propTypes = {
   }),
 };
 
-export default function Form({ _config, _setResponse }) {
+export default function Form({
+  _config,
+  _setResponse,
+  secEnabled,
+  setSecEnabled,
+}) {
   const [response, setResponse] = useState();
   const [config, setConfig] = useState(null);
-  const [secEnabled, setSecEnabled] = useState();
+  // const [secEnabled, setSecEnabled] = useState();
 
   useEffect(() => {
     if (!_config) return;
@@ -64,16 +69,18 @@ export default function Form({ _config, _setResponse }) {
     let mySec = {};
 
     for (let i = 0; i < myConfig.sections.length; i++) {
-      mySec[myConfig.sections[i].id] = true;
+      mySec[i] = true;
     }
     for (let i = 0; i < myConfig.sections.length; i++) {
       let qs = myConfig.sections[i].questions;
       for (let j = 0; j < qs.length; j++) {
         let q = qs[j];
         myRes[q.id] = { ...init_value[q.type], isValid: !q.config.required };
-        if (q.type === 0) {
+        if (q.type === QType.CLOSED_ONE) {
           for (let idx in q.config.trigger_sections) {
-            mySec[q.config.trigger_sections[idx]] = false;
+            let sec_idx = q.config.trigger_sections[idx];
+            if (sec_idx === "") continue;
+            mySec[Number(sec_idx)] = false;
           }
         }
       }
@@ -81,13 +88,22 @@ export default function Form({ _config, _setResponse }) {
     setResponse(myRes);
     setConfig(myConfig);
     setSecEnabled(mySec);
+    console.log("use effect");
   }, [_config]);
 
   useEffect(() => {
     if (_setResponse !== undefined) _setResponse(response);
   }, [response]);
 
-  if (config === null || config === undefined) {
+  useEffect(() => {
+    for (let i in secEnabled) {
+      if (secEnabled[i] === false) {
+        // TODO
+      }
+    }
+  }, [secEnabled]);
+
+  if (!config) {
     return null;
   }
   return (
@@ -96,8 +112,8 @@ export default function Form({ _config, _setResponse }) {
       <div className="form-container">
         <label className="form-desc"> {config.description}</label>
         {/* section */}
-        {config.sections.map((sec) =>
-          secEnabled[sec.id] ? (
+        {config.sections.map((sec, i) =>
+          secEnabled[i] ? (
             <div key={sec.id} className="section">
               <label className="section-title">{sec.title}</label>
               {/* question */}
@@ -127,4 +143,6 @@ Form.propTypes = {
     sections: PropTypes.arrayOf(PropTypes.any),
   }),
   _setResponse: PropTypes.func,
+  secEnabled: PropTypes.shape(PropTypes.any),
+  setSecEnabled: PropTypes.func,
 };

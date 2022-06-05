@@ -6,7 +6,7 @@ import { TextField, InputAdornment } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { Banner } from "../modules";
-import { getFormsQuery } from "../API/getFormsQuery";
+import { getFormsQuery } from "../API";
 
 const GET_FORMS_QUERY = getFormsQuery;
 
@@ -19,7 +19,6 @@ function Main() {
     // variables: { formId: undefined },
     onCompleted: (data) => {
       if (data.getForms?.ok) {
-        console.log("Query Completed");
         setOpenSurveys(data.getForms?.forms);
         setLastId(data.getForms?.lastId);
       }
