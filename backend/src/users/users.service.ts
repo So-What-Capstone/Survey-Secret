@@ -81,7 +81,13 @@ export class UsersService {
       if (!isMatched) {
         return { ok: false, error: '비밀번호를 확인해주세요.' };
       } else {
-        const token = jwt.sign(user._id.toString(), process.env.SECRET_KEY);
+        const token = jwt.sign(
+          {
+            data: user._id.toString(),
+            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 2,
+          },
+          process.env.SECRET_KEY,
+        );
         return { ok: true, token };
       }
     } catch (error) {

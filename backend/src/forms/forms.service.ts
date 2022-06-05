@@ -21,6 +21,10 @@ import { Section } from './schemas/section.schema';
 import { GetTemplatesOutput } from './dtos/get-templates.dto';
 import { Template, TemplateDocument } from './schemas/template.schema';
 import { FindTemplateByIdOutput } from './dtos/find-template-by-id.dto';
+import {
+  FindQuestionByIdInput,
+  FindQuestionByIdOutput,
+} from './dtos/find-question-by-id.dto';
 
 @Injectable()
 export class FormsService {
@@ -313,10 +317,16 @@ export class FormsService {
   async searchForms({
     title,
     lastId,
+    sortKey,
+    desc,
   }: SearchFormsInput): Promise<SearchFormsOutput> {
     try {
       //for testing
+
       const pageSize = 20;
+
+      const sortCondition = {};
+      sortCondition[sortKey] = desc ? -1 : 1;
 
       const forms = await this.formModel
         .find({
@@ -326,6 +336,8 @@ export class FormsService {
             lastId ? { _id: { $gt: lastId } } : {},
           ],
         })
+        //-1 is descending
+        .sort(sortCondition)
         .populate('owner')
         .limit(pageSize);
 
@@ -398,6 +410,35 @@ export class FormsService {
       }
 
       return { ok: true, template };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  async findQuestionById({
+    formId,
+    questionId,
+  }: FindQuestionByIdInput): Promise<FindQuestionByIdOutput> {
+    try {
+      const [form] = await this.formModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(formId) } },
+        { $unwind: '$sections' },
+        { $unwind: '$sections.questions' },
+        {
+          $match: {
+            'sections.questions._id': new mongoose.Types.ObjectId(questionId),
+          },
+        },
+        { $project: { 'sections.questions': true } },
+      ]);
+
+      if (!form) {
+        return { ok: false, error: '없는 질문이거나 폼이 존재하지 않습니다.' };
+      }
+
+      console.log(form);
+
+      return { ok: true, question: form.sections.questions };
     } catch (error) {
       return { ok: false, error: error.message };
     }

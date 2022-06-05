@@ -15,6 +15,14 @@ import {
   DeleteSubmissionInput,
   DeleteSubmissionOutput,
 } from './dtos/delete-submission.dto';
+import {
+  SetFavoriteSubmissionsInput,
+  SetFavoriteSubmissionsOutput,
+} from './dtos/set-favorite-submissions.dto';
+import {
+  FindAnswerByQuestionIdInput,
+  FindAnswerByQuestionIdOutput,
+} from './dtos/find-answer-by-question-id-output.dto';
 
 @Resolver()
 export class SubmissionsResolver {
@@ -53,6 +61,30 @@ export class SubmissionsResolver {
     return this.submissionsService.deleteSubmission(
       owner,
       deleteSubmissionInput.submissionId,
+    );
+  }
+
+  @Mutation((returns) => SetFavoriteSubmissionsOutput)
+  @Type(['Any'])
+  setFavoriteSubmissions(
+    @AuthUser() owner: User,
+    @Args('input') setFavoriteSubmissionInput: SetFavoriteSubmissionsInput,
+  ): Promise<SetFavoriteSubmissionsOutput> {
+    return this.submissionsService.setFavoriteSubmissions(
+      owner,
+      setFavoriteSubmissionInput,
+    );
+  }
+
+  @Query((returns) => FindAnswerByQuestionIdOutput)
+  @Type(['Any'])
+  findAnswerByQuestionId(
+    @AuthUser() owner: User,
+    @Args('input') findAnswerByQuestionIdInput: FindAnswerByQuestionIdInput,
+  ): Promise<FindAnswerByQuestionIdOutput> {
+    return this.submissionsService.findAnswerByQuestionId(
+      owner,
+      findAnswerByQuestionIdInput,
     );
   }
 }

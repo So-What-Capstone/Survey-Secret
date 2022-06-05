@@ -562,7 +562,7 @@ function SurveyDesign() {
                     activatedSection:
                       ch.trigger === -1 || sections.length <= ch.trigger
                         ? null
-                        : String(ch.trigger),
+                        : ch.trigger,
                   };
                 }),
               });
