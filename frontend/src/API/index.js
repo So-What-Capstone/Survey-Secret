@@ -14,3 +14,4 @@ export { searchFormsQuery } from "./serachFormsQuery";
 export { getDescribeQuery } from "./getDescribeQuery";
 export { getMarketBasketQuery } from "./getMarketBasketQuery";
 export { getKeywordAnalysisQuery } from "./getKeywordAnalysisQuery";
+export { setFavoriteSubmissionsMutation } from "./setFavoriteSubmissionsMutation";

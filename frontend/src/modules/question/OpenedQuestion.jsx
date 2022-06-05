@@ -22,7 +22,7 @@ function OpenedQuestion({ config, setValue }) {
   }, []);
   const onChange = (e) => {
     const data = e.target.value;
-    const isValid = required ? Boolean(data) : true;
+    const isValid = required ? data.length > 0 : true;
     setInternal({ data: data, isValid: isValid });
     setValue({ data: data, isValid: isValid });
   };

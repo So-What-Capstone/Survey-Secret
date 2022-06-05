@@ -28,7 +28,6 @@ function MyInfoPremium() {
   const navigate = useNavigate();
 
   /* dummy data */
-  //const userType = "Premium"; //현재 user type
   const expiredAt = ["2023", "8", "24"]; //멤버십 만료일
 
   /* 멤버십 정보 */

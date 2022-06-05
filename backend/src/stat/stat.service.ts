@@ -385,31 +385,29 @@ export class StatService {
           },
         },
         {
-          $project: {
-            submissions: { answers: { closedAnswer: true, question: true } },
+          $group: {
+            _id: '$submissions._id',
+            answers: { $push: '$submissions.answers' },
           },
         },
       ]);
 
-      const answers = [];
+      const jsonData = [];
 
-      for (const {
-        submissions: {
-          answers: { closedAnswer, question },
-        },
-        _id,
-      } of submissions) {
+      for (const { answers } of submissions) {
         const data = [];
 
-        for (const choice of closedAnswer) {
-          data.push(`${question}-${choice}`);
+        for (const { closedAnswer, question } of answers) {
+          for (const choice of closedAnswer) {
+            data.push(`${question}-${choice}`);
+          }
         }
-        answers.push(data);
+        jsonData.push(data);
       }
 
       const response = await fetch(END_POINT, {
         method: 'POST',
-        body: JSON.stringify({ answers: [...answers] }),
+        body: JSON.stringify({ answers: [...jsonData] }),
         headers: { 'Content-Type': 'application/json' },
       });
 

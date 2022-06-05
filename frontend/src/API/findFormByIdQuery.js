@@ -73,7 +73,6 @@ export const findFormByIdQuery = gql`
               description
               required
               kind
-              encoded
               attachment
               personalType
             }

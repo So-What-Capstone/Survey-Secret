@@ -9,9 +9,21 @@ import {
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { CloseCircleFilled } from "@ant-design/icons";
 import { useMutation, useQuery } from "@apollo/client";
-import { editFormMutation, findFormByIdForOwnerQuery } from "../API";
+import {
+  editFormMutation,
+  findFormByIdForOwnerQuery,
+  setFavoriteSubmissionsMutation,
+} from "../API";
 import "../styles/ResultList.scss";
+import { message } from "antd";
+
+message.config({
+  // 3 messages can be shown at once
+  maxCount: 3,
+});
+
 function cutLongStr(str) {
+  // cut the long string
   if (str.length > 20) return str.substr(0, 20);
   return str;
 }
@@ -29,9 +41,9 @@ function ResultList() {
     variables: { formId: formId },
     onCompleted: (data) => {
       // when error occured
-      if (!data.findFormByIdForOwner.ok) {
+      if (!data.findFormByIdForOwner.ok || data.findFormByIdForOwner.error) {
         alert(data.findFormByIdForOwner.error);
-        // navigate("/my-survey");
+        navigate("/my-survey");
         return;
       }
 
@@ -41,7 +53,7 @@ function ResultList() {
       // sections
       let sec = formData.sections;
       setSecList(sec);
-      console.log(formData);
+
       // representative question
       let repq = formData.representativeQuestion?._id;
       setRepQ(repq ? repq : "");
@@ -78,7 +90,7 @@ function ResultList() {
           key: i + 1,
           answer: repq_ans_str ? repq_ans_str : "",
           order: i + 1,
-          favorite: false, // TODO
+          favorite: subm_orig[i].isFavorite,
           id: subm_orig[i]._id,
         };
         ansl.push(ans);
@@ -89,6 +101,7 @@ function ResultList() {
     },
   });
   const [editForm] = useMutation(editFormMutation);
+  const [setFavSubm] = useMutation(setFavoriteSubmissionsMutation);
 
   const [drawLotsEnabled, setDrawLotsEnabled] = useState(false);
   useEffect(() => {
@@ -105,13 +118,21 @@ function ResultList() {
       formId: formId,
       favoriteSubmissions: favSubmissions,
     };
-    console.log("mutation input", input);
 
     // send mutation
+    let ret = await setFavSubm({ variables: input });
+    const {
+      setFavoriteSubmissions: { ok, error },
+    } = ret.data;
 
     // if not ok, alert and return
+    if (!ok || error) {
+      message.error("즐겨찾기 설정/해제 실패했습니다.");
+      return false;
+    }
 
     // else: ok, then change the change the repList
+    message.success("즐겨찾기 설정/해제 성공했습니다.");
     let temp = repList.slice();
     for (let i = 0; i < temp.length; i++) {
       temp[i].favorite = favSubmissions[i].isFavorite;
@@ -136,12 +157,23 @@ function ResultList() {
     const sub_id = temp[respIdx - 1].id;
     const fav_value = temp[respIdx - 1].favorite;
 
-    let favSubmList = [{ submssionId: sub_id, isFavorite: fav_value }];
+    let favSubmList = [{ submissionId: sub_id, isFavorite: fav_value }];
 
     // mutation to set favorite
-    let retSetFav = true;
+    let ret = await setFavSubm({
+      variables: {
+        formId: formId,
+        favoriteSubmissions: favSubmList,
+      },
+    });
+    const {
+      setFavoriteSubmissions: { ok, error },
+    } = ret.data;
 
-    if (retSetFav) {
+    if (!ok || error) {
+      message.error("즐겨찾기 설정/해제 실패했습니다.");
+    } else {
+      message.success("즐겨찾기 설정/해제 성공했습니다.");
       setRepList(temp);
     }
   };
