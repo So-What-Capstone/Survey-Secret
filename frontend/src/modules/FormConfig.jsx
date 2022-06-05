@@ -179,7 +179,7 @@ export function getFormConfigFromDB(formId, formDB, sectionsDB) {
         // Phone, email
         myqs[j].config = {
           ...myqs[j].config,
-          isEncrypted: q.encoded,
+          isEncrypted: true,
           exp_date: form.privacyExpiredAt,
         };
       }
