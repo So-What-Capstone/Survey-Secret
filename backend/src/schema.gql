@@ -259,6 +259,12 @@ type meOutput {
   user: User
 }
 
+type GetSignedUrlOutput {
+  ok: Boolean!
+  error: String
+  url: String
+}
+
 type Template {
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -410,7 +416,7 @@ type GetMarketBasketOutput {
 type Query {
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   me: meOutput!
-  getSignedUrl(input: String!): String!
+  getSignedUrl(input: GetSignedUrlInput!): GetSignedUrlOutput!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
   findFormById(input: FindFormByIdInput!): FindFormByIdOutput!
   findFormByIdForOwner(input: FindFormByIdInput!): FindFormByIdOutput!
@@ -430,6 +436,17 @@ type Query {
 
 input FindUserByIdInput {
   id: String!
+}
+
+input GetSignedUrlInput {
+  imageType: ImageType!
+  fileName: String!
+}
+
+enum ImageType {
+  User
+  Question
+  Submission
 }
 
 input FindSectionByIdInput {
