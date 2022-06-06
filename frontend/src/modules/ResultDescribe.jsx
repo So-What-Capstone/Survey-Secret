@@ -23,9 +23,12 @@ export default function ResultDescribe({ sections, describe }) {
       } else if (kind === "Closed") {
         let labels = [];
         for (let i = 0; i < question.choices.length; i++) {
+          console.log(q_desc);
           labels.push({
             value: question.choices[i].choice,
-            percent: Math.floor((q_desc.answer[i] / q_desc.count) * 100),
+            percent: q_desc.answer[i]
+              ? Math.floor((q_desc.answer[i] / q_desc.count) * 100)
+              : 0,
           });
         }
         q_item = <BarGraph labels={labels} />;

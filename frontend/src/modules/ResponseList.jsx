@@ -32,8 +32,12 @@ function ResponseList({ listItems, selected, onSelect, onFavChange }) {
     {
       title: "대표문항 답",
       dataIndex: "answer",
-      sorter: (a, b) => compareArray(a.answer, b.answer),
-      render: (a) => a.map((v, i) => <Tag key={i}>{v}</Tag>),
+      sorter: (a, b) =>
+        typeof a.answer === "string"
+          ? a.answer.localeCompare(b.answer)
+          : compareArray(a.answer, b.answer),
+      render: (a) =>
+        typeof a === "string" ? a : a.map((v, i) => <Tag key={i}>{v}</Tag>),
     },
     {
       title: "즐겨찾기",
