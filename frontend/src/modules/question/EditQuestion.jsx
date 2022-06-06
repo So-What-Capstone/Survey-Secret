@@ -247,6 +247,7 @@ function EditLinearQuestion({ data, onDataChange, disabled }) {
 
   function changeLeftRange(value) {
     setLeftRange(value);
+    setRightRange(Math.max(value + 1, data.rightRange));
     onDataChange({
       ...data,
       leftRange: value,
@@ -255,10 +256,11 @@ function EditLinearQuestion({ data, onDataChange, disabled }) {
   }
 
   function changeRightRange(value) {
+    setLeftRange(Math.min(value - 1, data.leftRange));
     setRightRange(value);
     onDataChange({
       ...data,
-      leftRange: Math.min(value - 1, data.leftLabel),
+      leftRange: Math.min(value - 1, data.leftRange),
       rightRange: value,
     });
   }

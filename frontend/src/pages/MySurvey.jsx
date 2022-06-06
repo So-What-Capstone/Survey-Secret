@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { SurveyIconsTray, Banner } from "../modules/index.js";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { Typography } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { useQuery, gql, useReactiveVar, useLazyQuery } from "@apollo/client";
+import { useQuery, useReactiveVar, useLazyQuery } from "@apollo/client";
 import { isLoggedInVar } from "./../apollo";
-import { getMyFormsSimpleQuery } from "../API/meQuery.js";
+import { getMyFormsSimpleQuery } from "../API";
 import Form from "../modules/Form";
-import "../styles/MySurvey.css";
+import "../styles/MySurvey.scss";
 
 import {
   FIND_FORM_BY_ID_QUERY,
@@ -18,12 +19,12 @@ function MySurvey() {
   const [readySurveys, setReadySurveys] = useState([]);
   const [inProgressSurveys, setInProgressSurveys] = useState([]);
   const [expiredSurveys, setExpiredSurveys] = useState([]);
-  const [secEnabled, setSecEnabled] = useState();
+  const [secEnabled, setSecEnabled] = useState({});
   const navigate = useNavigate();
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [previewId, setPreviewId] = useState("");
-  const [form_config, setFormConfig] = useState();
+  const [form_config, setFormConfig] = useState({});
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -48,28 +49,19 @@ function MySurvey() {
   const [FindFormQuery, { Formloading, Formdata, Formerror }] = useLazyQuery(
     FIND_FORM_BY_ID_QUERY
   );
-
-  useEffect(() => {
-    if (previewId === "") return;
-    FindFormQuery({
-      variables: { formId: previewId },
-      onCompleted: (data) => {
-        console.log("query complete");
-        let formData = data.findFormById.form;
-
-        const config = getFormConfigFromDB(
-          previewId,
-          formData,
-          formData.sections
-        );
-
-        setFormConfig(config);
-      },
-      onError: (err) => {
-        console.error(JSON.stringify(err, null, 2));
-      },
+  const onPreviewIdChange = async (id) => {
+    let queryData = await FindFormQuery({
+      variables: { formId: id },
     });
-  }, [previewId]);
+
+    let formData = queryData.data.findFormById.form;
+
+    const config = getFormConfigFromDB(id, formData, formData.sections);
+
+    setFormConfig(config);
+    setPreviewId(id);
+    console.log("query complete", id, form_config.title);
+  };
 
   return (
     <div className="mysurvey-con">
@@ -100,7 +92,7 @@ function MySurvey() {
                 open_surveys={inProgressSurveys}
                 color_idx={1}
                 hover_enabled={true}
-                setPreviewId={setPreviewId}
+                setPreviewId={onPreviewIdChange}
               />
 
               <div className="mysurvey-label">준비 중인 설문</div>
@@ -109,7 +101,7 @@ function MySurvey() {
                   open_surveys={readySurveys}
                   color_idx={0}
                   hover_enabled={true}
-                  setPreviewId={setPreviewId}
+                  setPreviewId={onPreviewIdChange}
                 />
 
                 <div className="mysurvey-label">마감된 설문</div>
@@ -118,21 +110,37 @@ function MySurvey() {
                     open_surveys={expiredSurveys}
                     color_idx={2}
                     hover_enabled={true}
-                    setPreviewId={setPreviewId}
+                    setPreviewId={onPreviewIdChange}
                   />
                 </div>
               </div>
             </div>
           </div>
           <div className="mysurvey-preview-con">
-            {form_config ? (
-              <Form
-                _config={form_config}
-                secEnabled={secEnabled}
-                setSecEnabled={setSecEnabled}
-              />
+            {previewId.length > 0 ? (
+              <>
+                <div className="mysurvey-respond-con">
+                  <div className="mysurvey-respond-title">설문참여 주소</div>
+                  <Typography.Paragraph
+                    copyable
+                    className="mysurvey-respond-addr"
+                  >
+                    {`${window.location.host}/respond?id=${previewId}`}
+                  </Typography.Paragraph>
+                </div>
+                <div className="mysurvey-form-con">
+                  <Form
+                    _config={form_config}
+                    secEnabled={secEnabled}
+                    setSecEnabled={setSecEnabled}
+                  />
+                </div>
+              </>
             ) : (
               <div className="mysurvey-preview-label">
+                <InfoCircleOutlined
+                  style={{ width: "100%", margin: "1rem", fontSize: "2rem" }}
+                />
                 미리보기 창입니다.
                 <br /> 미리 볼 설문을 선택해 주세요.
               </div>

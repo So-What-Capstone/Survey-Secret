@@ -10,6 +10,8 @@ export const getFormsQuery = gql`
         _id
         title
         description
+        state
+        isPromoted
         owner {
           username
         }

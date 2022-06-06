@@ -195,10 +195,7 @@ function Test() {
 
   return (
     <div className="root-container">
-      <div className="panel">
-        미리보기
-        <Form _config={form1} />
-      </div>
+      <div className="panel">미리보기</div>
       <div className="panel">
         디자인 수정하기
         <EditQuestion

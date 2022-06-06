@@ -4,7 +4,6 @@ export { default as Register } from "./Register";
 export { default as MySurvey } from "./MySurvey";
 export { default as SurveyCreate } from "./SurveyCreate";
 export { default as SurveyDesign } from "./SurveyDesign";
-export { default as SurveyInfo } from "./SurveyInfo";
 export { default as ResultList } from "./ResultList";
 export { default as ResultStats } from "./ResultStats";
 export { default as ResultQuestion } from "./ResultQuestion";

@@ -18,3 +18,13 @@ export { default as DrawLots } from "./DrawLots";
 export { default as RepresentativeQ } from "./RepresentativeQuestionSelector";
 export { default as ResponseList } from "./ResponseList";
 export { QType, questionTable } from "./question/QuestionType";
+export { default as ResultDescribe } from "./ResultDescribe";
+
+export {
+  BarGraph,
+  StringTokens,
+  Line,
+  Linear,
+  GridTable,
+} from "./ResultQuestionModule";
+export { default as MainSurveys } from "./MainSurveys";

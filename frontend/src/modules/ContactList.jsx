@@ -2,6 +2,17 @@ import React, { useState, useEffect, useCallback } from "react";
 import "../styles/ContactList.scss";
 import PropTypes from "prop-types";
 import { Select, MenuItem } from "@mui/material";
+import {
+  findRepsQueByFormId,
+  findRepsAnsByQueId,
+} from "../API/findRepresentativeQuery";
+import { findQueById } from "../API/findQuestionByIdQuery";
+import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
+import { ContentCutOutlined } from "@mui/icons-material";
+
+const FIND_REPS_QUE_BY_FORM_ID = findRepsQueByFormId;
+const FIND_REPS_ANS_BY_QUE_ID = findRepsAnsByQueId;
+const FIND_QUE_BY_ID = findQueById;
 
 TableItem.propTypes = {
   id: PropTypes.string,
@@ -77,8 +88,14 @@ function TableItem({
 ContactList.propTypes = {
   forms: PropTypes.array,
   selectedForm: PropTypes.object,
+  repsQuestionContent: PropTypes.string,
   checkedItems: PropTypes.object,
+  phoneQueId: PropTypes.string,
+  setPhoneQueId: PropTypes.func,
+  emailQueId: PropTypes.string,
+  setEmailQueId: PropTypes.func,
   setSelectedForm: PropTypes.func,
+  setRepsQuestionContent: PropTypes.func,
   setCheckedItems: PropTypes.func,
 };
 
@@ -88,14 +105,467 @@ ContactList.propTypes = {
 function ContactList({
   forms,
   selectedForm,
+  repsQuestionContent,
   checkedItems,
+  phoneQueId,
+  setPhoneQueId,
+  emailQueId,
+  setEmailQueId,
   setSelectedForm,
+  setRepsQuestionContent,
   setCheckedItems,
 }) {
-  const handleFormChange = (event) => {
+  const [findRepsQueByFormId, { data, loading, error }] = useLazyQuery(
+    FIND_REPS_QUE_BY_FORM_ID
+  );
+  const [findQueById] = useLazyQuery(FIND_QUE_BY_ID);
+  const [findRepsAnsByQueId] = useLazyQuery(FIND_REPS_ANS_BY_QUE_ID);
+
+  const handleFormChange = async (event) => {
     const selectedId = event.target.value;
-    const newForm = forms.find((form) => form.id === selectedId);
-    setSelectedForm(newForm);
+    let newForm = forms.find((form) => form.id === selectedId); //selectedForm 가 될 것(현재 id, title만 있음)
+
+    console.log("form id:" + newForm.id);
+
+    let repsQueId; //대표문항 id
+    let repsQueType; //대표문항 type //Closed, Grid, Linear, Opened, Personal
+    let repsQueContent; //대표문항 질문내용
+    let receiverList; //submission id, isFavorite, answer(string)
+    let answersArray; //submission id, isFavorite, answer(no)
+    let questionDetailsArray; //
+
+    //formId -> 대표문항 id, submission id+isFavorite
+    let queryData = await findRepsQueByFormId({
+      variables: { formId: newForm.id },
+    });
+
+    //onCompleted: (data) => {
+    //대표문항 id, 개인정보질문 id+type
+    if (queryData?.data?.findFormById?.form?.representativeQuestion !== null) {
+      repsQueId =
+        queryData?.data?.findFormById?.form?.representativeQuestion?._id;
+    } else {
+      //대표문항이 없으면
+      repsQueId = "";
+    }
+    console.log("repsQueId: " + repsQueId);
+
+    //개인정보질문 있어야 ok -> 개인정보질문id
+    let isPrivacyQueExist = false;
+    queryData?.data?.findFormById?.form?.sections?.map((s) => {
+      s.questions.map((q, index) => {
+        if (index > 0) {
+          isPrivacyQueExist = true;
+
+          //개인정보 파기기한 체크
+          const yearMonDate = [
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              0,
+              4
+            ),
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              5,
+              7
+            ),
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              8,
+              10
+            ),
+          ];
+
+          const time = [
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              11,
+              13
+            ),
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              14,
+              16
+            ),
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              17,
+              19
+            ),
+          ];
+
+          let canContact = false;
+          let today = new Date();
+          let year = today.getFullYear();
+          let month = ("0" + (today.getMonth() + 1)).slice(-2);
+          let date = ("0" + today.getDate()).slice(-2);
+          let hours = ("0" + today.getHours()).slice(-2);
+          var minutes = ("0" + today.getMinutes()).slice(-2);
+          var seconds = ("0" + today.getSeconds()).slice(-2);
+
+          if (Number(year) < Number(yearMonDate[0])) {
+            canContact = true;
+          } else if (Number(month) < Number(yearMonDate[1])) {
+            canContact = true;
+            console.log(canContact);
+          } else if (Number(date) < Number(yearMonDate[2])) {
+            canContact = true;
+            console.log(canContact);
+          } else if (Number(hours) < Number(time[0])) {
+            canContact = true;
+            console.log(canContact);
+          } else if (Number(minutes) < Number(time[1])) {
+            canContact = true;
+            console.log(canContact);
+          } else if (Number(seconds) < Number(time[2])) {
+            canContact = true;
+            console.log(canContact);
+          } else {
+            //
+          }
+
+          if (!canContact) {
+            alert("개인정보 파기기한이 지난 설문입니다.");
+            console.log("개인정보 파기기한 지남");
+          } else {
+            if (q.personalType === "Phone") {
+              console.log("Phone");
+              setPhoneQueId(q._id);
+            } else if (q.personalType === "Email") {
+              console.log("Email");
+              setEmailQueId(q._id);
+            } else {
+              console.log("Address");
+            }
+          }
+        }
+      });
+    });
+
+    if (!isPrivacyQueExist) {
+      console.log("개인정보 질문이 없다");
+      setPhoneQueId("");
+      setEmailQueId("");
+    }
+    //},
+    //});
+
+    //대표문항 id -> 대표문항 type, content
+    //대표문항이 있으면
+    if (repsQueId !== "") {
+      console.log("대표문항이 있다"); //ok
+
+      //때때로 실행이 안됨...
+      queryData = await findQueById({
+        variables: {
+          formId: newForm.id,
+          queId: repsQueId,
+        },
+      });
+
+      //onCompleted: (data) => {
+      console.log("대표문항 정보 가져오는 query completed");
+      repsQueType = queryData?.data?.findQuestionById?.question?.__typename;
+      repsQueContent = queryData?.data?.findQuestionById?.question?.content;
+
+      console.log("대표문항 id: " + repsQueId);
+      console.log("대표문항 type: " + repsQueType);
+      console.log("대표문항 content: " + repsQueContent);
+      //},
+      //});
+
+      setRepsQuestionContent(repsQueContent);
+
+      //form id, 질문 id -> answers : {submission id, isFavorite, answer객체}, question
+      switch (repsQueType) {
+        case "ClosedQuestion":
+          console.log("객관식");
+
+          queryData = await findRepsAnsByQueId({
+            variables: {
+              formId: newForm.id,
+              questionId: repsQueId,
+            },
+          });
+
+          //onCompleted: (data) => {
+          console.log("ans 가져오는 쿼리 completed");
+          /* answersArray =
+            [
+              {
+                submissionId
+                isFavorite
+                answer : {
+                  closedAnswer: []
+                }
+              }
+            ]
+             */
+          answersArray = queryData?.data?.findAnswerByQuestionId?.answers;
+
+          /* questionDetailsArray = question의 모든 선택지 내용
+            [
+              {
+                "no": 1,
+                "choice": "A"
+              },
+              {
+                "no": 2,
+                "choice": "B"
+              }
+            ] */
+          questionDetailsArray =
+            queryData?.data?.findAnswerByQuestionId?.question.choices;
+          //},
+          //});
+
+          /* receiverList =
+        [
+          {
+            submissionId
+            isFavorite
+            answer : "선지내용, 선지내용"
+            answerObject : answersArray의 answer객체
+          }
+        ]
+        */
+
+          receiverList = answersArray.map((a) => {
+            let obj = {};
+            obj["submissionId"] = a.submissionId;
+            obj["isFavorite"] = a.isFavorite;
+            obj["answer"] = "";
+            a.answer.closedAnswer.map((f, index) => {
+              //no가 f인 요소를 찾는다 -> 선지내용(string)
+              if (index === 0) {
+                obj["answer"] = questionDetailsArray.find(
+                  (e) => e.no === f
+                ).choice;
+              } else {
+                obj["answer"] =
+                  obj["answer"] +
+                  ", " +
+                  questionDetailsArray.find((e) => e.no === f).choice;
+              }
+            });
+            return obj;
+          });
+
+          break;
+        case "OpenedQuestion":
+          console.log("주관식");
+          console.log(newForm.id);
+          console.log(repsQueId);
+
+          queryData = await findRepsAnsByQueId({
+            variables: {
+              formId: newForm.id,
+              questionId: repsQueId,
+            },
+          });
+
+          //onCompleted: (data) => {
+          /* answersArray =
+            [
+              {
+                submissionId
+                isFavorite
+                answer : {
+                  openedAnswer: ""
+                }
+              }
+            ]
+             */
+          console.log("ans 가져오는 쿼리 completed");
+          answersArray = queryData?.data?.findAnswerByQuestionId?.answers;
+          //},
+          //});
+
+          /* receiverList =
+        [
+          {
+            submissionId
+            isFavorite
+            answer : "주관식답안"
+          }
+        ]
+        */
+
+          receiverList = answersArray.map((a) => {
+            let obj = {};
+            obj["submissionId"] = a.submissionId;
+            obj["isFavorite"] = a.isFavorite;
+            obj["answer"] = a.answer.openedAnswer;
+            return obj;
+          });
+          break;
+        case "LinearQuestion":
+          console.log("선형배율");
+
+          queryData = await findRepsAnsByQueId({
+            variables: {
+              formId: newForm.id,
+              questionId: repsQueId,
+            },
+          });
+
+          //onCompleted: (data) => {
+          console.log("ans 가져오는 쿼리 completed");
+          /* answersArray =
+            [
+              {
+                submissionId
+                isFavorite
+                answer : {
+                  linearAnswer: float
+                }
+              }
+            ]
+             */
+          answersArray = queryData?.data?.findAnswerByQuestionId?.answers;
+
+          /* questionDetailsArray = question의 모든 선택지 내용
+            {
+              leftLabel : string,
+              rightLabel : string
+            } */
+          questionDetailsArray = {
+            leftLabel:
+              queryData?.data?.findAnswerByQuestionId?.question.leftLabel,
+            rightLabel:
+              queryData?.data?.findAnswerByQuestionId?.question.rightLabel,
+          };
+          //},
+          //});
+
+          /* receiverList =
+        [
+          {
+            submissionId
+            isFavorite
+            answer
+          }
+        ]
+        */
+
+          receiverList = answersArray.map((a) => {
+            let obj = {};
+            obj["submissionId"] = a.submissionId;
+            obj["isFavorite"] = a.isFavorite;
+            obj["answer"] =
+              questionDetailsArray.leftLabel +
+              " -- " +
+              a.answer.linearAnswer +
+              " -- " +
+              questionDetailsArray.rightLabel;
+            return obj;
+          });
+          break;
+        case "GridQuestion":
+          console.log("그리드");
+
+          queryData = await findRepsAnsByQueId({
+            variables: {
+              formId: newForm.id,
+              questionId: repsQueId,
+            },
+          });
+
+          //onCompleted: (data) => {
+          console.log("ans 가져오는 쿼리 completed");
+          /* answersArray =
+            [
+              {
+                submissionId
+                isFavorite
+                answer : {
+                  gridAnswer: [
+                    {
+                      rowNo
+                      colNo
+                    }
+                  ]
+                }
+              }
+            ]
+             */
+          answersArray = queryData?.data?.findAnswerByQuestionId?.answers;
+
+          /* questionDetailsArray
+              {
+                rowContent: [ "dfd", "sdf"],
+                colContent: [ "sdf", "sdf"]
+              }
+             */
+          questionDetailsArray = {
+            rowContent:
+              queryData?.data?.findAnswerByQuestionId?.question.rowContent, //배열
+            colContent:
+              queryData?.data?.findAnswerByQuestionId?.question.colContent,
+          };
+          //},
+          //});
+
+          /* receiverList =
+        [
+          {
+            submissionId
+            isFavorite
+            answer : "(그리드1, 그리드2), (그리드2,그리드3)"
+          }
+        ]
+        */
+
+          receiverList = answersArray.map((a) => {
+            let obj = {};
+            obj["submissionId"] = a.submissionId;
+            obj["isFavorite"] = a.isFavorite;
+            obj["answer"] = "";
+            a.answer.gridAnswer.map((f, index) => {
+              //f: {rowNo, colNo}
+              //no가 f인 요소를 찾는다 -> 선지내용(string)
+
+              if (index === 0) {
+                obj["answer"] =
+                  "(" +
+                  questionDetailsArray.rowContent[f.rowNo] +
+                  ", " +
+                  questionDetailsArray.colContent[f.colNo] +
+                  ")";
+              } else {
+                obj["answer"] =
+                  obj["answer"] +
+                  ", (" +
+                  questionDetailsArray.rowContent[f.rowNo] +
+                  ", " +
+                  questionDetailsArray.colContent[f.colNo] +
+                  ")";
+              }
+            });
+            return obj;
+          });
+
+          break;
+        case "PersonalQuestion":
+          console.log("개인정보");
+          receiverList = [
+            {
+              submissionId: "1",
+              isFavorite: false,
+              answer: "개인정보 답변이므로 조회할 수 없습니다.",
+            },
+          ];
+          break;
+        default:
+          break;
+      }
+    } else {
+      receiverList = [];
+      setRepsQuestionContent("");
+      alert("대표문항이 없습니다.");
+    }
+
+    newForm = {
+      id: newForm.id,
+      title: newForm.title,
+      receivers: receiverList,
+    };
+
+    setSelectedForm(newForm); //id, title, receivers
     checkedItems.clear();
     setIsAllChecked(false);
     setAllChecked(false);
@@ -105,7 +575,7 @@ function ContactList({
     let newFavoriteArray = new Array();
     newForm.receivers &&
       newForm.receivers.map((receiver) => {
-        newFavoriteArray.push(receiver.favorite);
+        newFavoriteArray.push(receiver.isFavorite);
       });
     setIsFavoriteCheckedList(newFavoriteArray);
   };
@@ -117,9 +587,7 @@ function ContactList({
   const [isFavoriteChecked, setIsFavoriteChecked] = useState(false);
 
   //즐겨찾기 등록 여부 리스트
-  const [isFavoriteCheckedList, setIsFavoriteCheckedList] = useState(
-    forms[0].receivers.map((receiver) => receiver.favorite)
-  );
+  const [isFavoriteCheckedList, setIsFavoriteCheckedList] = useState([]);
 
   //체크박스 단일 선택
   const checkedItemHandler = (id, isChecked) => {
@@ -137,7 +605,9 @@ function ContactList({
   const allCheckedHandler = (isChecked) => {
     if (isChecked) {
       let allSet = new Set();
-      selectedForm.receivers.map((receiver) => allSet.add(receiver.id));
+      selectedForm.receivers.map((receiver) =>
+        allSet.add(receiver.submissionId)
+      );
       setCheckedItems(allSet);
       setIsAllChecked(true);
     } else {
@@ -162,8 +632,8 @@ function ContactList({
     //id 중복 없게 기존 checkedItems에 추가
     let newSet = checkedItems;
     selectedForm.receivers.map((receiver) => {
-      if (receiver.favorite) {
-        newSet.add(receiver.id);
+      if (receiver.isFavorite) {
+        newSet.add(receiver.submissionId);
       }
     });
     setCheckedItems(newSet);
@@ -187,6 +657,10 @@ function ContactList({
         </Select>
       </div>
       <div className="panel-row">
+        <label>대표문항</label>
+        <input value={repsQuestionContent} className="content-box" disabled />
+      </div>
+      <div className="panel-row">
         <label>수신인 선택</label>
         <div className="row-list">
           <div className="row-list-head">
@@ -205,20 +679,21 @@ function ContactList({
             />
           </div>
           <div className="list-con">
-            {selectedForm.receivers.map((receiver, index) => (
-              <TableItem
-                id={receiver.id}
-                name={receiver.name}
-                isAllChecked={isAllChecked}
-                isFavoriteChecked={isFavoriteChecked}
-                isFavoriteCheckedList={isFavoriteCheckedList}
-                checkedItemHandler={checkedItemHandler}
-                bAllChecked={bAllChecked}
-                setAllChecked={setAllChecked}
-                key={receiver.id}
-                order={index}
-              />
-            ))}
+            {selectedForm.receivers &&
+              selectedForm.receivers.map((receiver, index) => (
+                <TableItem
+                  id={receiver.submissionId}
+                  name={receiver.answer}
+                  isAllChecked={isAllChecked}
+                  isFavoriteChecked={isFavoriteChecked}
+                  isFavoriteCheckedList={isFavoriteCheckedList}
+                  checkedItemHandler={checkedItemHandler}
+                  bAllChecked={bAllChecked}
+                  setAllChecked={setAllChecked}
+                  key={receiver.submissionId}
+                  order={index}
+                />
+              ))}
           </div>
         </div>
       </div>

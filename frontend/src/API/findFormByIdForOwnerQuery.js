@@ -8,9 +8,14 @@ export const findFormByIdForOwnerQuery = gql`
       form {
         _id
         title
+        description
         state
         createdAt
+        representativeQuestion {
+          _id
+        }
         submissions {
+          isFavorite
           _id
           answers {
             ... on OpenedAnswer {
@@ -88,6 +93,8 @@ export const findFormByIdForOwnerQuery = gql`
               description
               required
               kind
+              rowContent
+              colContent
             }
             ... on PersonalQuestion {
               _id

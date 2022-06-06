@@ -1,0 +1,101 @@
+// survey card
+.survey-card {
+  background-color: white;
+  margin: 1%;
+  min-width: 20rem;
+  max-width: 20rem;
+  min-height: 22rem;
+  max-height: 22rem;
+  border-radius: 0.2rem;
+  border: 1px solid #00000030;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease-in;
+
+  display: flex;
+  flex-flow: column nowrap;
+  .survey-card-title {
+    font-size: 1.7rem;
+    padding: 1rem;
+    flex-grow: 1;
+  }
+  .survey-card-desc {
+    font-size: 1.2rem;
+    padding: 1rem;
+    flex-grow: 3;
+  }
+  .survey-card-ribbon {
+    width: 8rem;
+    height: fit-content;
+    background-color: #172c4b;
+    border-radius: 0 4rem 4rem 0;
+    padding: 0.5rem 0.5rem 0.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: white;
+    font-size: 2rem;
+    margin: 0;
+    transition: inherit;
+
+    .circle {
+      background-color: white;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 2rem;
+      transition: inherit;
+    }
+  }
+  .survey-card-exp {
+    flex-grow: 1;
+    font-size: 1rem;
+    padding: 1rem;
+  }
+  &:hover {
+    background-color: #caeee6;
+    border: 1px solid #ffffff;
+    animation: text-shadow-drop-center 0.6s both;
+    .survey-card-ribbon {
+      background-color: #174b44;
+      .circle {
+        background-color: #caeee6;
+        width: 4rem;
+        height: 4rem;
+        border-radius: 2rem;
+      }
+    }
+  }
+}
+
+// main surveys
+
+.main-survey-card-con {
+  display: flex;
+  flex-direction: row;
+  width: 96%;
+  max-width: 96%;
+
+  margin: 2%;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  .main-survey-card-overflow {
+    min-width: 100%;
+    display: flex;
+    flex-direction: row;
+    z-index: 20;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+}
+@keyframes text-shadow-drop-center {
+  0% {
+    text-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  100% {
+    text-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
+  }
+}

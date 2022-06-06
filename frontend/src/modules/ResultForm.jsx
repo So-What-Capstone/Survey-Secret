@@ -6,27 +6,24 @@ import { Row, Col, Radio } from "antd";
 
 function ResultForm({ sections, answers }) {
   function ResultSection({ sec }) {
-    // const sec_id = sec._id;
     const questions = sec.questions;
 
     function ResultQuestion({ ques }) {
       const id = ques._id;
-
       const qType = ques.kind;
       const ansUnion = answers[id];
       let temp;
       let qAns = "";
       let gridAns = [];
+      if (qType === "Personal") return null;
       if (ansUnion) {
-        if (qType == "Closed") {
-          temp = ansUnion.closedAnswer;
+        if (qType === "Closed") {
+          temp = ansUnion.closedAnswer; // temp = selected choices
           let tokens = [];
-          if (temp) {
-            if (temp.length > 0) {
-              for (let i = 0; i < temp.length; i++) {
-                if (temp[i] <= 0) continue;
-                tokens.push(String(ques.choices[temp[i] - 1].choice));
-              }
+          if (temp?.length > 0) {
+            for (let i = 0; i < temp.length; i++) {
+              if (temp[i] < 0) continue;
+              tokens.push(String(ques.choices[temp[i]].choice));
             }
           }
           qAns = tokens.map((v, i) => (
@@ -34,13 +31,15 @@ function ResultForm({ sections, answers }) {
               {v}
             </div>
           ));
-        } else if (qType == "Grid") {
-          gridAns = ansUnion.gridAnswer.map((v) => (v.colNo ? v.colNo : null));
-        } else if (qType == "Linear") {
+        } else if (qType === "Grid") {
+          gridAns = {};
+          for (const rowcol of ansUnion.gridAnswer)
+            gridAns[rowcol.rowNo] = rowcol.colNo;
+        } else if (qType === "Linear") {
           qAns = ansUnion.linearAnswer;
-        } else if (qType == "Opened") {
+        } else if (qType === "Opened") {
           qAns = ansUnion.openedAnswer;
-        } else if (qType == "Personal") {
+        } else if (qType === "Personal") {
           // qAns = ansUnion.personalAnswer;
         } else {
           qAns = "!error!";
@@ -48,9 +47,6 @@ function ResultForm({ sections, answers }) {
       }
 
       function GridResponse({ rowLabels, colLabels, colSelection }) {
-        if (colSelection.length === 0) {
-          colSelection = rowLabels.map(() => null);
-        }
         const val_lst = colLabels.map((val, idx) => idx);
         const num_col = colLabels.length;
         var text_span = 9;
@@ -112,7 +108,7 @@ function ResultForm({ sections, answers }) {
       GridResponse.propTypes = {
         rowLabels: PropTypes.arrayOf(PropTypes.string),
         colLabels: PropTypes.arrayOf(PropTypes.string),
-        colSelection: PropTypes.arrayOf(PropTypes.number),
+        colSelection: PropTypes.any,
       };
 
       return (
@@ -123,7 +119,7 @@ function ResultForm({ sections, answers }) {
           ) : (
             <GridResponse
               rowLabels={ques.rowContent}
-              colContent={ques.colContent}
+              colLabels={ques.colContent}
               colSelection={gridAns}
             />
           )}

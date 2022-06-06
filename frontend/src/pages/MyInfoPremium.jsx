@@ -28,12 +28,11 @@ function MyInfoPremium() {
   const navigate = useNavigate();
 
   /* dummy data */
-  //const userType = "Premium"; //현재 user type
   const expiredAt = ["2023", "8", "24"]; //멤버십 만료일
 
   /* 멤버십 정보 */
-  const [userType, setUserType] = useState("");
-  const [btnState, setBtnState] = useState(""); //선택한 멤버십
+  const [userType, setUserType] = useState("Free");
+  const [btnState, setBtnState] = useState(userType); //선택한 멤버십
 
   const { data, loading, error } = useQuery(GET_MY_TYPE_QUERY, {
     onCompleted: (data) => {

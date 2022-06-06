@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { createSubmissionMutation } from "../API/createSubmissionMutation";
+import { createSubmissionMutation } from "../API";
 import { QType } from "../modules";
 import Form from "../modules/Form";
 import {
@@ -55,10 +55,12 @@ function FormRespToSubm(form_config, response, secEnabled) {
   };
   */
   // make submission shape for the mutation
-  let sub_secs = new Array(form_config.sections.length);
-  for (let i = 0; i < sub_secs.length; i++) {
+  let sub_secs = [];
+
+  for (let i = 0; i < form_config.sections.length; i++) {
+    let num_in_sec = 0;
     let sec = form_config.sections[i];
-    sub_secs[i] = { sectionId: sec.id, answers: [] };
+    let temp_sec = { sectionId: sec.id, answers: [] };
     if (!secEnabled[i]) continue;
 
     let answers = {
@@ -76,6 +78,11 @@ function FormRespToSubm(form_config, response, secEnabled) {
 
       let ansDic = { kind: kind, question: q.id };
       let qVal = response[q.id];
+      if (!qVal.isValid) {
+        console.log(qVal);
+        alert("답변이 유효하지 않습니다!");
+        return null;
+      }
       if (QType.CLOSED_ONE <= type && type <= QType.CLOSED_INPUT) {
         //closed
         ansDic["closedAnswer"] = qVal.data;
@@ -117,15 +124,16 @@ function FormRespToSubm(form_config, response, secEnabled) {
         );
         if (ansDic["openedAnswer"].length === 0) continue;
       }
-      if (!qVal.isValid) {
-        alert("답변이 유효하지 않습니다!");
-        return null;
-      }
 
       answers[kind].push(ansDic);
+      num_in_sec++;
     }
-    sub_secs[i]["answers"] = answers;
+    if (num_in_sec > 0) {
+      temp_sec["answers"] = answers;
+      sub_secs.push(temp_sec);
+    }
   }
+
   let submission = {
     variables: {
       request: {
@@ -134,7 +142,8 @@ function FormRespToSubm(form_config, response, secEnabled) {
       },
     },
   };
-
+  console.log("submit", submission);
+  // return null;
   return submission;
 }
 
@@ -173,8 +182,8 @@ function Respond() {
         const {
           createSubmission: { ok, error },
         } = data;
-        if (!ok) {
-          throw new Error(error);
+        if (!ok || error) {
+          alert(error);
         } else {
           alert("제출되었습니다.");
           navigate("/");
@@ -192,15 +201,12 @@ function Respond() {
     // make submission shape for the mutation
     let submission = FormRespToSubm(form_config, response, secEnabled);
     if (!submission) return;
-    console.log("submit", submission);
     //response => Submission.
     try {
       await createSubmission(submission);
     } catch (err) {
       if (err) console.error(JSON.stringify(err, null, 2));
     }
-
-    console.log("submission", submission);
   };
 
   if (!form_config) return null;

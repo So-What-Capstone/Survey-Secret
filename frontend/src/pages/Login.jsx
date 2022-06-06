@@ -12,7 +12,7 @@ import back4 from "../resources/login-background-4.jpeg";
 import { useEffect } from "react";
 import { useState } from "react";
 const BACK_CANDS = [back1, back2, back3, back4];
-import { loginMutation } from "../API/loginMutation";
+import { loginMutation } from "../API";
 
 const LOGIN_MUTATION = loginMutation;
 

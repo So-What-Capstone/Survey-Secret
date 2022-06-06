@@ -7,13 +7,26 @@ import {
   ResponseList,
 } from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import "../styles/ResultList.scss";
 import { CloseCircleFilled } from "@ant-design/icons";
-import { useQuery } from "@apollo/client";
-import { findFormByIdForOwnerQuery } from "../API/findFormByIdForOwnerQuery";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  editFormMutation,
+  findFormByIdForOwnerQuery,
+  setFavoriteSubmissionsMutation,
+} from "../API";
+import "../styles/ResultList.scss";
+import { message } from "antd";
 
-const FIND_FORM_BY_ID_FOR_OWNER_QUERY = findFormByIdForOwnerQuery;
+message.config({
+  // 3 messages can be shown at once
+  maxCount: 3,
+});
 
+function cutLongStr(str) {
+  // cut the long string
+  if (str.length > 20) return str.substr(0, 20);
+  return str;
+}
 function ResultList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -22,15 +35,15 @@ function ResultList() {
   const [repQ, setRepQ] = useState("");
   const [repQCandi, setRepQCandi] = useState({});
   const [ansList, setAnsList] = useState([]); // [ {id1:ans1, id2:ans2, ...} ]
-  const [repList, setRepList] = useState([]); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool)} ]
+  const [repList, setRepList] = useState([]); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool), id: submission_id(str)} ]
   const [secList, setSecList] = useState([]);
-  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_FOR_OWNER_QUERY, {
+  const { loading, data, error } = useQuery(findFormByIdForOwnerQuery, {
     variables: { formId: formId },
     onCompleted: (data) => {
       // when error occured
-      if (!data.findFormByIdForOwner.ok) {
+      if (!data.findFormByIdForOwner.ok || data.findFormByIdForOwner.error) {
         alert(data.findFormByIdForOwner.error);
-        // navigate("/my-survey");
+        navigate("/my-survey");
         return;
       }
 
@@ -42,7 +55,7 @@ function ResultList() {
       setSecList(sec);
 
       // representative question
-      let repq = formData.representativeQuestion;
+      let repq = formData.representativeQuestion?._id;
       setRepQ(repq ? repq : "");
 
       // representative question candidates dictionary <string, string>: <id, question content>
@@ -70,14 +83,15 @@ function ResultList() {
         for (let j = 0; j < ans_orig.length; j++) {
           ans[ans_orig[j]["question"]] = { ...ans_orig[j] };
           if (ans_orig[j]["question"] === repq) {
-            repq_ans_str = ans_orig[j].openedAnswer;
+            repq_ans_str = cutLongStr(ans_orig[j].openedAnswer);
           }
         }
         rep = {
           key: i + 1,
           answer: repq_ans_str ? repq_ans_str : "",
           order: i + 1,
-          favorite: false, // TODO
+          favorite: subm_orig[i].isFavorite,
+          id: subm_orig[i]._id,
         };
         ansl.push(ans);
         repl.push(rep);
@@ -86,6 +100,8 @@ function ResultList() {
       setRepList(repl);
     },
   });
+  const [editForm] = useMutation(editFormMutation);
+  const [setFavSubm] = useMutation(setFavoriteSubmissionsMutation);
 
   const [drawLotsEnabled, setDrawLotsEnabled] = useState(false);
   useEffect(() => {
@@ -97,15 +113,39 @@ function ResultList() {
     }
   }, [searchParams]);
 
-  const onSaveClick = () => {
-    // save
-  };
+  const setFavForDrawing = async (favSubmissions) => {
+    let input = {
+      formId: formId,
+      favoriteSubmissions: favSubmissions,
+    };
 
-  const onFavChange = (respId) => () => {
+    // send mutation
+    let ret = await setFavSubm({ variables: input });
+    const {
+      setFavoriteSubmissions: { ok, error },
+    } = ret.data;
+
+    // if not ok, alert and return
+    if (!ok || error) {
+      message.error("즐겨찾기 설정/해제 실패했습니다.");
+      return false;
+    }
+
+    // else: ok, then change the change the repList
+    message.success("즐겨찾기 설정/해제 성공했습니다.");
+    let temp = repList.slice();
+    for (let i = 0; i < temp.length; i++) {
+      temp[i].favorite = favSubmissions[i].isFavorite;
+    }
+    setRepList(temp);
+
+    return true;
+  };
+  const onFavChange = (respIdx) => async () => {
     // do change the fav state (backend api?)
     if (!repList) return;
     let temp = repList.map((v) =>
-      v.key !== respId
+      v.key !== respIdx
         ? v
         : {
             ...v,
@@ -113,15 +153,54 @@ function ResultList() {
           }
     );
 
-    setRepList(temp);
+    // get submission id
+    const sub_id = temp[respIdx - 1].id;
+    const fav_value = temp[respIdx - 1].favorite;
+
+    let favSubmList = [{ submissionId: sub_id, isFavorite: fav_value }];
+
+    // mutation to set favorite
+    let ret = await setFavSubm({
+      variables: {
+        formId: formId,
+        favoriteSubmissions: favSubmList,
+      },
+    });
+    const {
+      setFavoriteSubmissions: { ok, error },
+    } = ret.data;
+
+    if (!ok || error) {
+      message.error("즐겨찾기 설정/해제 실패했습니다.");
+    } else {
+      message.success("즐겨찾기 설정/해제 성공했습니다.");
+      setRepList(temp);
+    }
   };
-  const RepQChange = (v) => {
+  const RepQChange = async (v) => {
+    let mut_input = {
+      formId: formId,
+      representativeQuestionId: v,
+    };
+    let edit_ret = await editForm({
+      variables: {
+        request: mut_input,
+      },
+    });
+
+    const {
+      editForm: { ok, error },
+    } = edit_ret.data;
+    if (!ok || error) {
+      alert("대표문항을 변경할 수 없습니다.");
+      return;
+    }
     setRepQ(v);
     let temp = repList.slice();
     for (let i = 0; i < temp.length; i++) {
       let ansStr = ansList[i][v]?.openedAnswer;
       ansStr = ansStr ? ansStr : "";
-      if (ansStr.length > 10) ansStr = ansStr.substr(0, 10);
+      ansStr = cutLongStr(ansStr);
       temp[i] = {
         ...temp[i],
         answer: ansStr,
@@ -129,6 +208,7 @@ function ResultList() {
     }
     setRepList(temp);
   };
+
   if (loading) {
     return null;
   }
@@ -147,11 +227,9 @@ function ResultList() {
             </div>
           </div>
           {drawLotsEnabled ? (
-            <DrawLots answers={[1, 2, 3, 4, 5, 6, 7, 8, 9]} />
+            <DrawLots answers={repList} setFav={setFavForDrawing} />
           ) : null}
-          <div className="repq-fav-save-btn" onClick={onSaveClick}>
-            즐겨찾기 저장
-          </div>
+
           <RepresentativeQ
             questions={repQCandi}
             representative={repQ}
