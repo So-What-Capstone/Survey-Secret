@@ -193,16 +193,13 @@ export class SmsService {
 
   async getSendHistory(
     user: User,
-    { formId, contactType }: GetSendHistoryInput,
+    { contactType }: GetSendHistoryInput,
   ): Promise<GetSendHistoryOutput> {
     try {
       const contacts = await this.contactModel.find({
-        formId,
-        contactType,
         sender: user,
+        contactType,
       });
-
-      console.log(contacts);
 
       return { ok: true, contacts };
     } catch (error) {
