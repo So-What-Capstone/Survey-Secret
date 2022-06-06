@@ -135,115 +135,138 @@ function ContactList({
     let questionDetailsArray; //
 
     //formId -> 대표문항 id, submission id+isFavorite
-    await findRepsQueByFormId({
+    let queryData = await findRepsQueByFormId({
       variables: { formId: newForm.id },
-      onCompleted: (data) => {
-        //대표문항 id, 개인정보질문 id+type
-        if (data?.findFormById?.form?.representativeQuestion !== null) {
-          repsQueId = data?.findFormById?.form?.representativeQuestion?._id;
-        } else {
-          //대표문항이 없으면
-          repsQueId = null;
-        }
-        console.log("repsQueId: " + repsQueId);
-
-        //개인정보질문 있어야 ok -> 개인정보질문id
-        let isPrivacyQueExist = false;
-        data?.findFormById?.form?.sections?.map((s) => {
-          s.questions.map((q, index) => {
-            if (index > 0) {
-              isPrivacyQueExist = true;
-
-              //개인정보 파기기한 체크
-              const yearMonDate = [
-                data?.findFormById?.form?.privacyExpiredAt.substring(0, 4),
-                data?.findFormById?.form?.privacyExpiredAt.substring(5, 7),
-                data?.findFormById?.form?.privacyExpiredAt.substring(8, 10),
-              ];
-
-              const time = [
-                data?.findFormById?.form?.privacyExpiredAt.substring(11, 13),
-                data?.findFormById?.form?.privacyExpiredAt.substring(14, 16),
-                data?.findFormById?.form?.privacyExpiredAt.substring(17, 19),
-              ];
-
-              let canContact = false;
-              let today = new Date();
-              let year = today.getFullYear();
-              let month = ("0" + (today.getMonth() + 1)).slice(-2);
-              let date = ("0" + today.getDate()).slice(-2);
-              let hours = ("0" + today.getHours()).slice(-2);
-              var minutes = ("0" + today.getMinutes()).slice(-2);
-              var seconds = ("0" + today.getSeconds()).slice(-2);
-
-              if (Number(year) < Number(yearMonDate[0])) {
-                canContact = true;
-              } else if (Number(month) < Number(yearMonDate[1])) {
-                canContact = true;
-                console.log(canContact);
-              } else if (Number(date) < Number(yearMonDate[2])) {
-                canContact = true;
-                console.log(canContact);
-              } else if (Number(hours) < Number(time[0])) {
-                canContact = true;
-                console.log(canContact);
-              } else if (Number(minutes) < Number(time[1])) {
-                canContact = true;
-                console.log(canContact);
-              } else if (Number(seconds) < Number(time[2])) {
-                canContact = true;
-                console.log(canContact);
-              } else {
-                //
-              }
-
-              if (!canContact) {
-                alert("개인정보 파기기한이 지난 설문입니다.");
-                console.log("개인정보 파기기한 지남");
-              } else {
-                if (q.personalType === "Phone") {
-                  console.log("Phone");
-                  setPhoneQueId(q._id);
-                } else if (q.personalType === "Email") {
-                  console.log("Email");
-                  setEmailQueId(q._id);
-                } else {
-                  console.log("Address");
-                }
-              }
-            }
-          });
-        });
-
-        if (!isPrivacyQueExist) {
-          console.log("개인정보 질문이 없다");
-          setPhoneQueId("");
-          setEmailQueId("");
-        }
-      },
     });
+
+    //onCompleted: (data) => {
+    //대표문항 id, 개인정보질문 id+type
+    if (queryData?.data?.findFormById?.form?.representativeQuestion !== null) {
+      repsQueId =
+        queryData?.data?.findFormById?.form?.representativeQuestion?._id;
+    } else {
+      //대표문항이 없으면
+      repsQueId = "";
+    }
+    console.log("repsQueId: " + repsQueId);
+
+    //개인정보질문 있어야 ok -> 개인정보질문id
+    let isPrivacyQueExist = false;
+    queryData?.data?.findFormById?.form?.sections?.map((s) => {
+      s.questions.map((q, index) => {
+        if (index > 0) {
+          isPrivacyQueExist = true;
+
+          //개인정보 파기기한 체크
+          const yearMonDate = [
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              0,
+              4
+            ),
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              5,
+              7
+            ),
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              8,
+              10
+            ),
+          ];
+
+          const time = [
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              11,
+              13
+            ),
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              14,
+              16
+            ),
+            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
+              17,
+              19
+            ),
+          ];
+
+          let canContact = false;
+          let today = new Date();
+          let year = today.getFullYear();
+          let month = ("0" + (today.getMonth() + 1)).slice(-2);
+          let date = ("0" + today.getDate()).slice(-2);
+          let hours = ("0" + today.getHours()).slice(-2);
+          var minutes = ("0" + today.getMinutes()).slice(-2);
+          var seconds = ("0" + today.getSeconds()).slice(-2);
+
+          if (Number(year) < Number(yearMonDate[0])) {
+            canContact = true;
+          } else if (Number(month) < Number(yearMonDate[1])) {
+            canContact = true;
+            console.log(canContact);
+          } else if (Number(date) < Number(yearMonDate[2])) {
+            canContact = true;
+            console.log(canContact);
+          } else if (Number(hours) < Number(time[0])) {
+            canContact = true;
+            console.log(canContact);
+          } else if (Number(minutes) < Number(time[1])) {
+            canContact = true;
+            console.log(canContact);
+          } else if (Number(seconds) < Number(time[2])) {
+            canContact = true;
+            console.log(canContact);
+          } else {
+            //
+          }
+
+          if (!canContact) {
+            alert("개인정보 파기기한이 지난 설문입니다.");
+            console.log("개인정보 파기기한 지남");
+          } else {
+            if (q.personalType === "Phone") {
+              console.log("Phone");
+              setPhoneQueId(q._id);
+            } else if (q.personalType === "Email") {
+              console.log("Email");
+              setEmailQueId(q._id);
+            } else {
+              console.log("Address");
+            }
+          }
+        }
+      });
+    });
+
+    if (!isPrivacyQueExist) {
+      console.log("개인정보 질문이 없다");
+      setPhoneQueId("");
+      setEmailQueId("");
+    }
+    //},
+    //});
 
     //대표문항 id -> 대표문항 type, content
     //대표문항이 있으면
-    if (repsQueId !== null) {
+    if (repsQueId !== "") {
       console.log("대표문항이 있다"); //ok
 
       //때때로 실행이 안됨...
-      await findQueById({
+      queryData = await findQueById({
         variables: {
           formId: newForm.id,
           queId: repsQueId,
         },
-        onCompleted: (data) => {
-          console.log("대표문항 정보 가져오는 query completed");
-          repsQueType = data?.findQuestionById?.question?.__typename;
-          repsQueContent = data?.findQuestionById?.question?.content;
-
-          console.log("대표문항 id: " + repsQueId);
-          console.log("대표문항 type: " + repsQueType);
-          console.log("대표문항 content: " + repsQueContent);
-        },
       });
+
+      //onCompleted: (data) => {
+      console.log("대표문항 정보 가져오는 query completed");
+      repsQueType = queryData?.data?.findQuestionById?.question?.__typename;
+      repsQueContent = queryData?.data?.findQuestionById?.question?.content;
+
+      console.log("대표문항 id: " + repsQueId);
+      console.log("대표문항 type: " + repsQueType);
+      console.log("대표문항 content: " + repsQueContent);
+      //},
+      //});
 
       setRepsQuestionContent(repsQueContent);
 
@@ -252,14 +275,16 @@ function ContactList({
         case "ClosedQuestion":
           console.log("객관식");
 
-          await findRepsAnsByQueId({
+          queryData = await findRepsAnsByQueId({
             variables: {
               formId: newForm.id,
               questionId: repsQueId,
             },
-            onCompleted: (data) => {
-              console.log("ans 가져오는 쿼리 completed");
-              /* answersArray =
+          });
+
+          //onCompleted: (data) => {
+          console.log("ans 가져오는 쿼리 completed");
+          /* answersArray =
             [
               {
                 submissionId
@@ -270,9 +295,9 @@ function ContactList({
               }
             ]
              */
-              answersArray = data?.findAnswerByQuestionId?.answers;
+          answersArray = queryData?.data?.findAnswerByQuestionId?.answers;
 
-              /* questionDetailsArray = question의 모든 선택지 내용
+          /* questionDetailsArray = question의 모든 선택지 내용
             [
               {
                 "no": 1,
@@ -283,10 +308,10 @@ function ContactList({
                 "choice": "B"
               }
             ] */
-              questionDetailsArray =
-                data?.findAnswerByQuestionId?.question.choices;
-            },
-          });
+          questionDetailsArray =
+            queryData?.data?.findAnswerByQuestionId?.question.choices;
+          //},
+          //});
 
           /* receiverList =
         [
@@ -326,13 +351,15 @@ function ContactList({
           console.log(newForm.id);
           console.log(repsQueId);
 
-          await findRepsAnsByQueId({
+          queryData = await findRepsAnsByQueId({
             variables: {
               formId: newForm.id,
               questionId: repsQueId,
             },
-            onCompleted: (data) => {
-              /* answersArray =
+          });
+
+          //onCompleted: (data) => {
+          /* answersArray =
             [
               {
                 submissionId
@@ -343,10 +370,10 @@ function ContactList({
               }
             ]
              */
-              console.log("ans 가져오는 쿼리 completed");
-              answersArray = data?.findAnswerByQuestionId?.answers;
-            },
-          });
+          console.log("ans 가져오는 쿼리 completed");
+          answersArray = queryData?.data?.findAnswerByQuestionId?.answers;
+          //},
+          //});
 
           /* receiverList =
         [
@@ -369,14 +396,16 @@ function ContactList({
         case "LinearQuestion":
           console.log("선형배율");
 
-          await findRepsAnsByQueId({
+          queryData = await findRepsAnsByQueId({
             variables: {
               formId: newForm.id,
               questionId: repsQueId,
             },
-            onCompleted: (data) => {
-              console.log("ans 가져오는 쿼리 completed");
-              /* answersArray =
+          });
+
+          //onCompleted: (data) => {
+          console.log("ans 가져오는 쿼리 completed");
+          /* answersArray =
             [
               {
                 submissionId
@@ -387,19 +416,21 @@ function ContactList({
               }
             ]
              */
-              answersArray = data?.findAnswerByQuestionId?.answers;
+          answersArray = queryData?.data?.findAnswerByQuestionId?.answers;
 
-              /* questionDetailsArray = question의 모든 선택지 내용
+          /* questionDetailsArray = question의 모든 선택지 내용
             {
               leftLabel : string,
               rightLabel : string
             } */
-              questionDetailsArray = {
-                leftLabel: data?.findAnswerByQuestionId?.question.leftLabel,
-                rightLabel: data?.findAnswerByQuestionId?.question.rightLabel,
-              };
-            },
-          });
+          questionDetailsArray = {
+            leftLabel:
+              queryData?.data?.findAnswerByQuestionId?.question.leftLabel,
+            rightLabel:
+              queryData?.data?.findAnswerByQuestionId?.question.rightLabel,
+          };
+          //},
+          //});
 
           /* receiverList =
         [
@@ -427,14 +458,16 @@ function ContactList({
         case "GridQuestion":
           console.log("그리드");
 
-          await findRepsAnsByQueId({
+          queryData = await findRepsAnsByQueId({
             variables: {
               formId: newForm.id,
               questionId: repsQueId,
             },
-            onCompleted: (data) => {
-              console.log("ans 가져오는 쿼리 completed");
-              /* answersArray =
+          });
+
+          //onCompleted: (data) => {
+          console.log("ans 가져오는 쿼리 completed");
+          /* answersArray =
             [
               {
                 submissionId
@@ -450,20 +483,22 @@ function ContactList({
               }
             ]
              */
-              answersArray = data?.findAnswerByQuestionId?.answers;
+          answersArray = queryData?.data?.findAnswerByQuestionId?.answers;
 
-              /* questionDetailsArray
+          /* questionDetailsArray
               {
                 rowContent: [ "dfd", "sdf"],
                 colContent: [ "sdf", "sdf"]
               }
              */
-              questionDetailsArray = {
-                rowContent: data?.findAnswerByQuestionId?.question.rowContent, //배열
-                colContent: data?.findAnswerByQuestionId?.question.colContent,
-              };
-            },
-          });
+          questionDetailsArray = {
+            rowContent:
+              queryData?.data?.findAnswerByQuestionId?.question.rowContent, //배열
+            colContent:
+              queryData?.data?.findAnswerByQuestionId?.question.colContent,
+          };
+          //},
+          //});
 
           /* receiverList =
         [
@@ -644,20 +679,21 @@ function ContactList({
             />
           </div>
           <div className="list-con">
-            {selectedForm.receivers.map((receiver, index) => (
-              <TableItem
-                id={receiver.submissionId}
-                name={receiver.answer}
-                isAllChecked={isAllChecked}
-                isFavoriteChecked={isFavoriteChecked}
-                isFavoriteCheckedList={isFavoriteCheckedList}
-                checkedItemHandler={checkedItemHandler}
-                bAllChecked={bAllChecked}
-                setAllChecked={setAllChecked}
-                key={receiver.submissionId}
-                order={index}
-              />
-            ))}
+            {selectedForm.receivers &&
+              selectedForm.receivers.map((receiver, index) => (
+                <TableItem
+                  id={receiver.submissionId}
+                  name={receiver.answer}
+                  isAllChecked={isAllChecked}
+                  isFavoriteChecked={isFavoriteChecked}
+                  isFavoriteCheckedList={isFavoriteCheckedList}
+                  checkedItemHandler={checkedItemHandler}
+                  bAllChecked={bAllChecked}
+                  setAllChecked={setAllChecked}
+                  key={receiver.submissionId}
+                  order={index}
+                />
+              ))}
           </div>
         </div>
       </div>
