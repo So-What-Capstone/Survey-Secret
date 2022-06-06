@@ -26,9 +26,6 @@ import {
   Tooltip,
 } from "antd";
 import TableTransfer from "../modules/TableTransfer";
-// import Plotly from "plotly.js-basic-dist";
-// import createPlotlyComponent from "react-plotly.js/factory";
-// const Plot = createPlotlyComponent(Plotly);
 
 String.prototype.hashCode = function () {
   let hash = 0,
@@ -345,14 +342,14 @@ function CorrAnalysis({ form }) {
     form.sections.forEach((sec, i) => {
       sec.questions.forEach((ques, j) => {
         if (
-          (ques.kind === "Closed" && ques.closedType === "One") ||
+          (ques.kind === "Opened" && ques.openedType === "Number") ||
           ques.kind === "Linear"
         ) {
           currQues.push({
             sectionIndex: i,
             questionIndex: j,
             content: ques.content,
-            key: `${ques._id}:${i}:${j}`,
+            key: `${ques._id}`,
           });
         }
       });
@@ -380,20 +377,25 @@ function CorrAnalysis({ form }) {
     },
   ];
 
-  function generateResult() {
+  async function generateResult() {
     if (targetKeys.length <= 1) {
-      alert(
-        "적어도 두 개 이상의 문항을 선택해야 합니다." +
+      message.error(
+        "적어도 두 개 이상의 문항을 선택해야 합니다. " +
           "왼쪽 테이블에서 오른쪽 테이블로 문항을 옮기세요."
       );
       return;
     }
-    getCorr({
-      variables: {
-        formId: form._id,
-        questionIds: questions,
-      },
-    });
+    try {
+      const result = await getCorr({
+        variables: {
+          formId: form._id,
+          questionIds: questions.map((ques) => ques.key),
+        },
+      });
+      console.log(JSON.stringify(result.data.getCorr.error));
+    } catch (err) {
+      console.log(JSON.stringify(err.message));
+    }
   }
 
   return (
@@ -425,6 +427,8 @@ function CorrAnalysis({ form }) {
           item.content && item.content.indexOf(inputValue) !== -1
         }
       />
+
+      {}
     </div>
   );
 }

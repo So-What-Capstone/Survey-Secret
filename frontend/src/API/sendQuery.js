@@ -30,8 +30,7 @@ export const sendEmail = gql`
     $questionId: String!
     $subject: String!
     $template: String
-    $key: String!
-    $value: String!
+    $emailVars: [{String!, String!}]
   ) {
     sendEmail(
       input: {
@@ -61,7 +60,7 @@ export const getContactsId = gql`
   }
 `;
 
-export const getContactsDetail = gql`
+export const getContacts = gql`
   query getContactsDetail($contactType: ContactType!) {
     getSendHistory(input: { contactType: $contactType }) {
       ok
@@ -69,8 +68,41 @@ export const getContactsDetail = gql`
       contacts {
         updatedAt
         _id
+        receivers {
+          _id
+        }
         content
         contactType
+      }
+    }
+  }
+`;
+
+export const getContactsDetail = gql`
+  query getContactsDetail($formId: String!) {
+    findFormByIdForOwner(input: { formId: $formId }) {
+      ok
+      error
+      form {
+        title
+        owner {
+          email
+        }
+      }
+    }
+  }
+`;
+
+export const getMyFormsTitle = gql`
+  query {
+    me {
+      ok
+      error
+      user {
+        forms {
+          _id
+          title
+        }
       }
     }
   }

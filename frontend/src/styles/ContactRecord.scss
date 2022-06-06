@@ -120,12 +120,13 @@
         }
       }
       .small-list-con { //수신인 목록 con
-        min-height: 5rem;
-        max-height: 5rem;
+        height: 5rem;
         overflow: auto;
         background-color: #F5F5F5;
         border-radius: 0.2rem;
         .content-con {
+          height: 5rem;
+        overflow: auto;
           display: flex;
           flex-direction: column;
           .content {

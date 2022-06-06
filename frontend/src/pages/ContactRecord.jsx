@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ClipTray from "../modules/ClipTray";
 import "../styles/Clips.css";
 import "../styles/ContactRecord.scss";
@@ -10,15 +10,19 @@ import {
   ListItemText,
   Divider,
 } from "@mui/material";
-import { getContactsDetail } from "../API/sendQuery";
+import { getContacts, getMyFormsTitle } from "../API/sendQuery";
 import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import PropTypes from "prop-types";
 
-const GET_CONTACTS_DETAIL = getContactsDetail;
+const GET_CONTACTS_DETAIL = getContacts;
+const GET_MY_FORMS_TITLE = getMyFormsTitle;
 
 function ContactRecord() {
   const [contactList, setContactList] = useState([]);
   const [mode, setMode] = useState(0); //0:문자 메시지, 1:이메일
+  //SMS, LMS
+  const [smsType, setSmsType] = useState("SMS");
+  const [myForms, setMyForms] = useState([]);
 
   const { data, loading, error } = useQuery(GET_CONTACTS_DETAIL, {
     variables: {
@@ -33,82 +37,36 @@ function ContactRecord() {
           obj["id"] = c._id;
           obj["content"] = c.content;
           obj["contactType"] = c.contactType;
-          obj["count"] = 3;
-          obj["success"] = true;
-          obj["senderInfo"] = "전송자";
-          obj["title"] = "title";
+          obj["success"] = true; //
+          obj["title"] = "title"; //
+          let tempArray = [];
+          c.receivers.map((r) => {
+            tempArray.push(r._id);
+            console.log(tempArray);
+          });
+
+          obj["receivers"] = tempArray;
+          obj["count"] = tempArray.length;
           return obj;
         })
       );
     },
   });
 
-  const [getContactsDetail] = useLazyQuery(GET_CONTACTS_DETAIL);
+  const { data2, loading2, error2 } = useQuery(GET_MY_FORMS_TITLE, {
+    onCompleted: (data) => {
+      setMyForms(
+        data2.me.user.forms.map((f) => {
+          const obj = {};
+          obj["id"] = f._id;
+          obj["title"] = f._title;
+          return obj;
+        })
+      );
+    },
+  });
 
-  /*
-  const messages = [
-    {
-      title: "설문제목1", //이거 추가해야함
-      time: "2022/3/24 3:59",
-      count: 3,
-      success: true,
-      receivers: [
-        {
-          id: "0",
-          name: "닝닝",
-        },
-        {
-          id: "1",
-          name: "카리나",
-        },
-      ],
-      senderInfo: "01012341234",
-      content: "전송내용1",
-      id: "0",
-    },
-    {
-      title: "설문제목2",
-      time: "1997/3/14 2:33",
-      count: 2,
-      success: false,
-      receivers: [
-        {
-          id: "2",
-          name: "닝닝닝",
-        },
-        {
-          id: "3",
-          name: "카리나",
-        },
-      ],
-      senderInfo: "01010041004",
-      content: "전송내용2 룰루랄라 올로랄라 릴리리맘보",
-      id: "1",
-    },
-  ];
-
-  const emails = [
-    {
-      title: "설문제목2",
-      time: "전송일시2",
-      count: 2,
-      success: true,
-      receivers: [
-        {
-          id: "10",
-          name: "윈터",
-        },
-        {
-          id: "13",
-          name: "지젤",
-        },
-      ],
-      senderInfo: "wusdfl@naver.com",
-      textTitle: "제목입니당",
-      content: "전송내용2 룰루랄라 올로랄라 릴리리맘보 올릴리리",
-      id: "9",
-    },
-  ];*/
+  const [getContacts] = useLazyQuery(GET_CONTACTS_DETAIL);
 
   const clips = [
     {
@@ -128,62 +86,71 @@ function ContactRecord() {
     time: "",
     count: 0,
     success: false,
-    senderInfo: "",
     content: "",
     id: "",
     contactType: "",
+    receivers: [],
   });
   const [selectedEmail, setSelectedEmail] = useState({
     title: "",
     time: "",
     count: 0,
     success: false,
-    senderInfo: "",
     textTitle: "",
     content: "",
     id: "",
     contactType: "",
+    receivers: [],
   });
 
   const maxByte = 100; //최대 100바이트
 
-  const handleModeChange = (e, newMode) => {
+  const handleModeChange = async (e, newMode) => {
     setMode(newMode);
     console.log(newMode);
-    getContactsDetail({
+    let queryData = await getContacts({
       variables: {
         contactType: newMode === 0 ? "SMS" : "EMAIL",
       },
-      onCompleted: (data) => {
-        console.log("query completed");
-        setContactList(
-          data?.getSendHistory?.contacts.map((c) => {
-            const obj = {};
-            obj["time"] =
-              c.updatedAt.substring(0, 10) +
-              " " +
-              c.updatedAt.substring(11, 19);
-            obj["id"] = c._id;
-            obj["content"] = c.content;
-            obj["contactType"] = c.contactType;
-            obj["count"] = 3;
-            obj["success"] = true;
-            obj["senderInfo"] = "전송자";
-            obj["title"] = "title";
-            return obj;
-          })
-        );
-      },
     });
+
+    //onCompleted: (data) => {
+    console.log("query completed");
+    console.log(queryData?.data?.getSendHistory?.contacts[0].content);
+    setContactList(
+      queryData?.data?.getSendHistory?.contacts.map((c) => {
+        const obj = {};
+        obj["time"] =
+          c.updatedAt.substring(0, 10) + " " + c.updatedAt.substring(11, 19);
+        obj["id"] = c._id;
+        obj["content"] = c.content;
+        obj["contactType"] = c.contactType;
+        obj["success"] = true;
+        obj["title"] = "title";
+        let tempArray = [];
+        c.receivers.map((r) => {
+          tempArray.push(r._id);
+          console.log(tempArray);
+        });
+
+        obj["receivers"] = tempArray;
+        obj["count"] = tempArray.length;
+        return obj;
+      })
+    );
+    //},
+    //});
   };
 
   const handleListItemClick = (e, listItem, mode) => {
+    console.log("form id : " + listItem.id);
     if (mode === 0) {
       setSelectedMessage(listItem);
       setTextValue(listItem.content);
       checkByte(listItem.content);
     } else {
       //mode===1
+
       setSelectedEmail(listItem);
       setTextTitle(listItem.textTitle);
       setTextValue(listItem.content);
@@ -233,9 +200,9 @@ function ContactRecord() {
     }
 
     if (totalByte > maxByte) {
-      alert("메세지는 최대" + maxByte + "byte를 초과할 수 없습니다.");
-      setTextValue(newTextValue.substring(0, newTextValue.length - 1));
-      totalByte -= lastByte;
+      setSmsType("LMS");
+    } else {
+      setSmsType("SMS");
     }
     setTextByte(totalByte);
   };
@@ -249,80 +216,82 @@ function ContactRecord() {
       <div>
         <div role="tabpanel" hidden={mode !== 0}>
           <List className="list-con">
-            {contactList.map(
-              (contact) =>
-                contact.contactType === "SMS" && (
-                  <div key={contact.id} className="content-con">
-                    <ListItem
-                      button
-                      selected={selectedMessage === contact}
-                      onClick={(e) => handleListItemClick(e, contact, mode)}
-                      className={
-                        selectedMessage.id === contact.id
-                          ? "content-wrap selected"
-                          : "content-wrap"
-                      }
-                    >
-                      <div className="content-row one">
-                        <ListItemText primary={contact.title} />
-                      </div>
-                      <div className="content-row one">
-                        <ListItemText primary={contact.time} />
-                        <ListItemText primary={contact.count + "건"} />
-                      </div>
-                      <div className="content-row two">
-                        {contact.content.length > 20 ? (
-                          <ListItemText
-                            primary={contact.content.substring(0, 22) + "..."}
-                          />
-                        ) : (
-                          <ListItemText primary={contact.content} />
-                        )}
-                      </div>
-                    </ListItem>
-                    <Divider component="li" className="content-div" />
-                  </div>
-                )
-            )}
+            {contactList &&
+              contactList.map(
+                (contact) =>
+                  contact.contactType === "SMS" && (
+                    <div key={contact.id} className="content-con">
+                      <ListItem
+                        button
+                        selected={selectedMessage === contact}
+                        onClick={(e) => handleListItemClick(e, contact, mode)}
+                        className={
+                          selectedMessage.id === contact.id
+                            ? "content-wrap selected"
+                            : "content-wrap"
+                        }
+                      >
+                        <div className="content-row one">
+                          <ListItemText primary={contact.title} />
+                        </div>
+                        <div className="content-row one">
+                          <ListItemText primary={contact.time} />
+                          <ListItemText primary={contact.count + "건"} />
+                        </div>
+                        <div className="content-row two">
+                          {contact.content.length > 20 ? (
+                            <ListItemText
+                              primary={contact.content.substring(0, 22) + "..."}
+                            />
+                          ) : (
+                            <ListItemText primary={contact.content} />
+                          )}
+                        </div>
+                      </ListItem>
+                      <Divider component="li" className="content-div" />
+                    </div>
+                  )
+              )}
           </List>
         </div>
         <div role="tabpanel" hidden={mode !== 1}>
           <List className="list-con">
-            {contactList.map(
-              (contact) =>
-                contact.contactType === "EMAIL" && (
-                  <div key={contact.id} className="content-con">
-                    <ListItem
-                      button
-                      selected={selectedEmail === contact}
-                      onClick={(e) => handleListItemClick(e, contact, mode)}
-                      className={
-                        selectedEmail.id === contact.id
-                          ? "content-wrap selected"
-                          : "content-wrap"
-                      }
-                    >
-                      <div className="content-row one">
-                        <ListItemText primary={contact.title} />
-                      </div>
-                      <div className="content-row one">
-                        <ListItemText primary={contact.time} />
-                        <ListItemText primary={contact.count + "건"} />
-                      </div>
-                      <div className="content-row two">
-                        {contact.content.length > 20 ? (
-                          <ListItemText
-                            primary={contact.content.substring(0, 22) + "..."}
-                          />
-                        ) : (
-                          <ListItemText primary={contact.content} />
-                        )}
-                      </div>
-                    </ListItem>
-                    <Divider component="li" className="content-div" />
-                  </div>
-                )
-            )}
+            {contactList &&
+              contactList.map(
+                (contact) =>
+                  contact.contactType === "EMAIL" && (
+                    <div key={contact.id} className="content-con">
+                      <ListItem
+                        button
+                        selected={selectedEmail === contact}
+                        onClick={(e) => handleListItemClick(e, contact, mode)}
+                        className={
+                          selectedEmail.id === contact.id
+                            ? "content-wrap selected"
+                            : "content-wrap"
+                        }
+                      >
+                        <div className="content-row one">
+                          <ListItemText primary={contact.title} />
+                        </div>
+                        <div className="content-row one">
+                          <ListItemText primary={contact.time} />
+                          <ListItemText primary={contact.count + "건"} />
+                        </div>
+                        <div className="content-row two">
+                          {contact.content.length > 20 ? (
+                            <ListItemText
+                              primary={contact.content.substring(0, 22) + "..."}
+                            />
+                          ) : (
+                            <ListItemText primary={contact.content} />
+                          )}
+                        </div>
+                      </ListItem>
+                      <Divider component="li" className="content-div" />
+                    </div>
+                  )
+              )}
           </List>
         </div>
       </div>
@@ -368,7 +337,31 @@ function ContactRecord() {
               disabled
             />
           </div>
-          <div className="content-row"></div>
+          <div className="content-row">
+            <div className="row-label-con">
+              <label>수신자 목록</label>
+            </div>
+            <div className="small-list-con">
+              <List>
+                <div className="content-con">
+                  {mode === 0 &&
+                    selectedMessage.receivers.map((receiver, index) => (
+                      <ListItem key={index} className="content">
+                        <ListItemText primary={index + 1} />
+                        <ListItemText primary={receiver} />
+                      </ListItem>
+                    ))}
+                  {mode === 1 &&
+                    selectedEmail.receivers.map((receiver, index) => (
+                      <ListItem key={index} className="content">
+                        <ListItemText primary={index + 1} />
+                        <ListItemText primary={receiver} />
+                      </ListItem>
+                    ))}
+                </div>
+              </List>
+            </div>
+          </div>
           <div className="content-row" hidden={mode !== 1}>
             <div className="row-label-con">
               <label>메일 제목</label>
@@ -385,7 +378,12 @@ function ContactRecord() {
               <label>발신 내용</label>
               <span></span>
               <label hidden={mode !== 0}>
-                {textByte}/{maxByte}Byte
+                {smsType === "LMS" && <label>LMS</label>}
+                {smsType === "SMS" && (
+                  <label>
+                    {textByte}/{maxByte}Byte
+                  </label>
+                )}
               </label>
             </div>
             <textarea
