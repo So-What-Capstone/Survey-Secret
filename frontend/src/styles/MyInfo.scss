@@ -10,10 +10,13 @@
     align-items: center;
     padding: 2rem 2vw 2rem 2vw;
     justify-content: center;
-    background-color: #0A182D60;
+    background-color: #ffffff20;
     border-radius: 10px;
     margin: 13rem 2vw 13rem 2vw;
     min-width: 20rem;
+    &:hover {
+      background-color: #65FFDC30;
+    }
     .box-icon {
       flex: 4 1 0;
       width: 12rem;

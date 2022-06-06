@@ -83,15 +83,17 @@ function Message() {
           variables: {
             formId: selectedForm.id,
             submissionIds: checkedItems,
-            questionId: phoneQueId, //개인정보 질문의 id?
+            questionId: phoneQueId,
             msg: textValue,
             msgType: smsType,
           },
           onCompleted: (data) => {
             if (data.sendSms.ok) {
               console.log("전송성공!");
+              alert("전송하였습니다.");
             } else {
               console.log("전송실패!");
+              alert("전송 실패하였습니다.");
               throw new Error(data.sendSms.error);
             }
           },

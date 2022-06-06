@@ -239,7 +239,7 @@ function MyInfoPremium() {
                     : "table-text none"
                 }
               >
-                건 당 50원
+                SMS: 40원, LMS: 50원
               </TableCell>
               <TableCell
                 className={
@@ -248,7 +248,7 @@ function MyInfoPremium() {
                     : "table-text none"
                 }
               >
-                건 당 40원
+                SMS: 20원, LMS: 30원
               </TableCell>
             </TableRow>
           </TableBody>

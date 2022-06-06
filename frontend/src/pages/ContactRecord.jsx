@@ -24,6 +24,64 @@ function ContactRecord() {
   const [smsType, setSmsType] = useState("SMS");
   const [myForms, setMyForms] = useState([]);
 
+  const [getContactsDetail, { data, loading, error }] =
+    useLazyQuery(GET_CONTACTS_DETAIL);
+
+  const [getMyFormsTitle] = useLazyQuery(GET_MY_FORMS_TITLE);
+
+  useEffect(() => {
+    const getContactsFunc = async () => {
+      let queryData = await getContactsDetail({
+        variables: {
+          contactType: mode === 0 ? "SMS" : "EMAIL",
+        },
+      });
+
+      let contactListArray = [];
+      contactListArray = queryData?.data?.getSendHistory?.contacts.map((c) => {
+        const obj = {};
+        obj["time"] =
+          c.updatedAt.substring(0, 10) + " " + c.updatedAt.substring(11, 19);
+        obj["id"] = c._id;
+        obj["content"] = c.content;
+        obj["contactType"] = c.contactType;
+        obj["success"] = true;
+        obj["title"] = "title"; //
+        let tempArray = [];
+        c.receivers.map((r) => {
+          tempArray.push(r._id);
+          console.log(tempArray);
+        });
+
+        obj["receivers"] = tempArray;
+        obj["count"] = tempArray.length;
+        return obj;
+      });
+
+      let myFormsTitleArray = []; //[{id, title}]
+
+      queryData = await getMyFormsTitle({});
+
+      myFormsTitleArray = queryData?.data.me.user.forms.map((f) => {
+        const obj = {};
+        obj["id"] = f._id;
+        obj["title"] = f._title;
+        return obj;
+      });
+
+      //form id 비교 -> title 설정
+      contactListArray.map((c) => {
+        //c.id와 같은 title 찾기
+        let titleObject = myFormsTitleArray.find((e) => e.id === c.id); //{id, title}
+        c.title = titleObject.title;
+      });
+
+      setContactList(contactListArray);
+    };
+    getContactsFunc();
+  }, [mode]);
+
+  /*
   const { data, loading, error } = useQuery(GET_CONTACTS_DETAIL, {
     variables: {
       contactType: mode === 0 ? "SMS" : "EMAIL",
@@ -51,22 +109,7 @@ function ContactRecord() {
         })
       );
     },
-  });
-
-  const { data2, loading2, error2 } = useQuery(GET_MY_FORMS_TITLE, {
-    onCompleted: (data) => {
-      setMyForms(
-        data2.me.user.forms.map((f) => {
-          const obj = {};
-          obj["id"] = f._id;
-          obj["title"] = f._title;
-          return obj;
-        })
-      );
-    },
-  });
-
-  const [getContacts] = useLazyQuery(GET_CONTACTS_DETAIL);
+  });*/
 
   const clips = [
     {

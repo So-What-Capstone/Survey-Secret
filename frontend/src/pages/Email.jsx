@@ -75,29 +75,48 @@ function Email() {
 
     if (textTitle === "" || textValue === "") {
       alert("내용을 입력하세요.");
-    }
-
-    //send Email logic
-    if (emailQueId !== "") {
-      /*
-      await sendEmail({
-        variables: {
-          formId: selectedForm.id,
-          submissionIds: checkedItems,
-          questionId: emailQueId, //개인정보 질문의 id?
-          //수정필요
-        },
-        onCompleted: (data) => {
-          if (data.sendEmail.ok) {
-            console.log("전송성공!");
-          } else {
-            console.log("전송실패!");
-            throw new Error(data.sendEmail.error);
-          }
-        },
-      });*/
     } else {
-      alert("연락 정보가 없어 전송할 수 없습니다.");
+      //send Email logic
+
+      if (emailQueId !== "") {
+        console.log("개인정보질문 id :" + emailQueId);
+
+        await sendEmail({
+          variables: {
+            formId: selectedForm.id,
+            submissionIds: checkedItems,
+            questionId: emailQueId,
+            subject: "",
+            emailVars: [
+              {
+                key: "title",
+                value: textTitle,
+              },
+              {
+                key: "owner",
+                value: "",
+              },
+              {
+                key: "body",
+                value: textValue,
+              },
+            ],
+            //수정필요
+          },
+          onCompleted: (data) => {
+            if (data.sendEmail.ok) {
+              console.log("전송성공!");
+              alert("전송하였습니다.");
+            } else {
+              console.log("전송실패!");
+              alert("전송 실패하였습니다.");
+              throw new Error(data.sendEmail.error);
+            }
+          },
+        });
+      } else {
+        alert("연락 정보가 없어 전송할 수 없습니다.");
+      }
     }
   };
 
