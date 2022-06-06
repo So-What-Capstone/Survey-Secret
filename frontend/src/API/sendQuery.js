@@ -30,7 +30,7 @@ export const sendEmail = gql`
     $questionId: String!
     $subject: String!
     $template: String
-    $emailVars: [EmailVarInput!]
+    $emailVars: [EmailVarInput!]!
   ) {
     sendEmail(
       input: {
@@ -39,7 +39,7 @@ export const sendEmail = gql`
         questionId: $questionId
         subject: $subject
         template: $template
-        emailVars: [{ key: $key, value: $value }]
+        emailVars: $emailVars
       }
     ) {
       ok
@@ -66,8 +66,11 @@ export const getContacts = gql`
       ok
       error
       contacts {
-        updatedAt
         _id
+        updatedAt
+        form {
+          _id
+        }
         receivers {
           _id
         }

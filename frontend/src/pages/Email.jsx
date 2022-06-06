@@ -56,6 +56,20 @@ function Email() {
     },
   });
 
+  const [sendEmailMutation, { loading: mutationLoading }] = useMutation(
+    SEND_EMAIL,
+    {
+      onCompleted: (data) => {
+        const {
+          sendEmailMutation: { ok, error },
+        } = data;
+        if (!ok) {
+          throw new Error(error);
+        }
+      },
+    }
+  );
+
   const handleTextTitle = (e) => {
     setTextTitle(e.target.value);
   };
@@ -64,56 +78,54 @@ function Email() {
     setTextValue(e.target.value);
   };
 
-  // const [sendEmail] = useMutation(SEND_EMAIL);
-
   const sendEmail = async () => {
     console.log("selectedFormId: " + selectedForm.id);
-    checkedItems.forEach(function (value) {
-      console.log("receiver id: " + value);
-    });
     console.log(textTitle + ", " + textValue);
+    const checkedItemsArray = Array.from(checkedItems); //set to array
+    console.log(checkedItemsArray);
 
     if (textTitle === "" || textValue === "") {
       alert("내용을 입력하세요.");
     } else {
       //send Email logic
+      console.log("개인정보질문 id :" + emailQueId);
 
       if (emailQueId !== "") {
-        console.log("개인정보질문 id :" + emailQueId);
-
-        await sendEmail({
+        const emailVarsInput = [
+          {
+            key: "title",
+            value: textTitle,
+          },
+          {
+            key: "owner",
+            value: "",
+          },
+          {
+            key: "body",
+            value: textValue,
+          },
+        ];
+        let result = await sendEmailMutation({
           variables: {
-            formId: selectedForm.id,
-            submissionIds: checkedItems,
+            formId: selectedForm,
+            submissionIds: checkedItemsArray,
             questionId: emailQueId,
             subject: "",
-            emailVars: [
-              {
-                key: "title",
-                value: textTitle,
-              },
-              {
-                key: "owner",
-                value: "",
-              },
-              {
-                key: "body",
-                value: textValue,
-              },
-            ],
-            //수정필요
-          },
-          onCompleted: (data) => {
-            if (data.sendEmail.ok) {
-              console.log("전송성공!");
-              alert("전송하였습니다.");
-            } else {
-              console.log("전송실패!");
-              alert("전송 실패하였습니다.");
-              throw new Error(data.sendEmail.error);
-            }
+            emailVars: emailVarsInput,
           },
         });
+
+        const {
+          sendEmailMutation: { ok, error },
+        } = result.data;
+        if (!ok || error) {
+          alert("전송 실패하였습니다.");
+          console.log("전송실패");
+          return;
+        } else {
+          alert("전송 성공하였습니다.");
+          console.log("전송성공");
+        }
       } else {
         alert("연락 정보가 없어 전송할 수 없습니다.");
       }
