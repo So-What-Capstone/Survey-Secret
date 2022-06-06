@@ -139,45 +139,96 @@ function ContactList({
       variables: { formId: newForm.id },
       onCompleted: (data) => {
         //대표문항 id, 개인정보질문 id+type
-        if (data.findFormById.ok) {
-          if (data?.findFormById?.form?.representativeQuestion !== null) {
-            repsQueId = data?.findFormById?.form?.representativeQuestion?._id;
-          } else {
-            //대표문항이 없으면
-            repsQueId = null;
-          }
-
-          if (data?.findFormById?.form?.sections?.questions !== null) {
-            console.log("개인정보 질문이 있다");
-            data?.findFormById?.form?.sections?.questions?.map((q) => {
-              if (q.personalType === "Phone") {
-                console.log("Phone");
-                setPhoneQueId(q._id);
-              } else if (q.personalType === "Email") {
-                console.log("Email");
-                setEmailQueId(q._id);
-              } else {
-                //주소문항
-              }
-            });
-          }
+        if (data?.findFormById?.form?.representativeQuestion !== null) {
+          repsQueId = data?.findFormById?.form?.representativeQuestion?._id;
         } else {
+          //대표문항이 없으면
+          repsQueId = null;
+        }
+        console.log("repsQueId: " + repsQueId);
+
+        //개인정보질문 있어야 ok -> 개인정보질문id
+        let isPrivacyQueExist = false;
+        data?.findFormById?.form?.sections?.map((s) => {
+          s.questions.map((q, index) => {
+            if (index > 0) {
+              isPrivacyQueExist = true;
+
+              //개인정보 파기기한 체크
+              const yearMonDate = [
+                data?.findFormById?.form?.privacyExpiredAt.substring(0, 4),
+                data?.findFormById?.form?.privacyExpiredAt.substring(5, 7),
+                data?.findFormById?.form?.privacyExpiredAt.substring(8, 10),
+              ];
+
+              const time = [
+                data?.findFormById?.form?.privacyExpiredAt.substring(11, 13),
+                data?.findFormById?.form?.privacyExpiredAt.substring(14, 16),
+                data?.findFormById?.form?.privacyExpiredAt.substring(17, 19),
+              ];
+
+              let canContact = false;
+              let today = new Date();
+              let year = today.getFullYear();
+              let month = ("0" + (today.getMonth() + 1)).slice(-2);
+              let date = ("0" + today.getDate()).slice(-2);
+              let hours = ("0" + today.getHours()).slice(-2);
+              var minutes = ("0" + today.getMinutes()).slice(-2);
+              var seconds = ("0" + today.getSeconds()).slice(-2);
+
+              if (Number(year) < Number(yearMonDate[0])) {
+                canContact = true;
+              } else if (Number(month) < Number(yearMonDate[1])) {
+                canContact = true;
+                console.log(canContact);
+              } else if (Number(date) < Number(yearMonDate[2])) {
+                canContact = true;
+                console.log(canContact);
+              } else if (Number(hours) < Number(time[0])) {
+                canContact = true;
+                console.log(canContact);
+              } else if (Number(minutes) < Number(time[1])) {
+                canContact = true;
+                console.log(canContact);
+              } else if (Number(seconds) < Number(time[2])) {
+                canContact = true;
+                console.log(canContact);
+              } else {
+                //
+              }
+
+              if (!canContact) {
+                alert("개인정보 파기기한이 지난 설문입니다.");
+                console.log("개인정보 파기기한 지남");
+              } else {
+                if (q.personalType === "Phone") {
+                  console.log("Phone");
+                  setPhoneQueId(q._id);
+                } else if (q.personalType === "Email") {
+                  console.log("Email");
+                  setEmailQueId(q._id);
+                } else {
+                  console.log("Address");
+                }
+              }
+            }
+          });
+        });
+
+        if (!isPrivacyQueExist) {
           console.log("개인정보 질문이 없다");
           setPhoneQueId("");
           setEmailQueId("");
-          throw new Error(data.findFormById.error);
         }
       },
     });
-
-    console.log("repsQueId: " + repsQueId);
 
     //대표문항 id -> 대표문항 type, content
     //대표문항이 있으면
     if (repsQueId !== null) {
       console.log("대표문항이 있다"); //ok
 
-      //실행이 안됨...
+      //때때로 실행이 안됨...
       await findQueById({
         variables: {
           formId: newForm.id,
@@ -460,7 +511,7 @@ function ContactList({
             {
               submissionId: "1",
               isFavorite: false,
-              answer: "조회할 수 없습니다.",
+              answer: "개인정보 답변이므로 조회할 수 없습니다.",
             },
           ];
           break;

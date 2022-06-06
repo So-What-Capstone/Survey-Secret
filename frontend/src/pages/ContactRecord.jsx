@@ -10,13 +10,42 @@ import {
   ListItemText,
   Divider,
 } from "@mui/material";
+import { getContactsDetail } from "../API/sendQuery";
+import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import PropTypes from "prop-types";
 
+const GET_CONTACTS_DETAIL = getContactsDetail;
+
 function ContactRecord() {
-  /* dummy data */
+  const [contactList, setContactList] = useState([]);
+
+  const { data, loading, error } = useQuery(GET_CONTACTS_DETAIL, {
+    onCompleted: (data) => {
+      setContactList(
+        data?.getSendHistory?.contacts.map((c) => {
+          const obj = {};
+          obj["time"] = c.updatedAt;
+          console.log(c.updatedAt);
+          obj["id"] = c._id;
+          console.log(c.updatedAt);
+          obj["content"] = c.content;
+          console.log(c.updatedAt);
+          obj["contactType"] = c.contactType;
+          console.log(c.updatedAt);
+          obj["count"] = 3;
+          obj["success"] = true;
+          obj["senderInfo"] = "전송자";
+          obj["title"] = "title";
+          return obj;
+        })
+      );
+    },
+  });
+
+  /*
   const messages = [
     {
-      title: "설문제목1",
+      title: "설문제목1", //이거 추가해야함
       time: "2022/3/24 3:59",
       count: 3,
       success: true,
@@ -76,7 +105,7 @@ function ContactRecord() {
       content: "전송내용2 룰루랄라 올로랄라 릴리리맘보 올릴리리",
       id: "9",
     },
-  ];
+  ];*/
 
   const clips = [
     {
@@ -97,31 +126,21 @@ function ContactRecord() {
     time: "",
     count: 0,
     success: false,
-    receivers: [
-      {
-        id: "",
-        name: "",
-      },
-    ],
     senderInfo: "",
     content: "",
     id: "",
+    contactType: "",
   });
   const [selectedEmail, setSelectedEmail] = useState({
     title: "",
     time: "",
     count: 0,
     success: false,
-    receivers: [
-      {
-        id: "",
-        name: "",
-      },
-    ],
     senderInfo: "",
     textTitle: "",
     content: "",
     id: "",
+    contactType: "",
   });
 
   const maxByte = 100; //최대 100바이트
@@ -202,74 +221,80 @@ function ContactRecord() {
       <div>
         <div role="tabpanel" hidden={mode !== 0}>
           <List className="list-con">
-            {messages.map((message) => (
-              <div key={message.id} className="content-con">
-                <ListItem
-                  button
-                  selected={selectedMessage === message}
-                  onClick={(e) => handleListItemClick(e, message, mode)}
-                  className={
-                    selectedMessage.id === message.id
-                      ? "content-wrap selected"
-                      : "content-wrap"
-                  }
-                >
-                  <div className="content-row one">
-                    <ListItemText primary={message.title} />
+            {contactList.map(
+              (contact) =>
+                contact.contactType === "SMS" && (
+                  <div key={contact.id} className="content-con">
+                    <ListItem
+                      button
+                      selected={selectedMessage === contact}
+                      onClick={(e) => handleListItemClick(e, contact, mode)}
+                      className={
+                        selectedMessage.id === contact.id
+                          ? "content-wrap selected"
+                          : "content-wrap"
+                      }
+                    >
+                      <div className="content-row one">
+                        <ListItemText primary={contact.title} />
+                      </div>
+                      <div className="content-row one">
+                        <ListItemText primary={contact.time} />
+                        <ListItemText primary={contact.count + "건"} />
+                      </div>
+                      <div className="content-row two">
+                        {contact.content.length > 20 ? (
+                          <ListItemText
+                            primary={contact.content.substring(0, 22) + "..."}
+                          />
+                        ) : (
+                          <ListItemText primary={contact.content} />
+                        )}
+                      </div>
+                    </ListItem>
+                    <Divider component="li" className="content-div" />
                   </div>
-                  <div className="content-row one">
-                    <ListItemText primary={message.time} />
-                    <ListItemText primary={message.count + "건"} />
-                  </div>
-                  <div className="content-row two">
-                    {message.content.length > 20 ? (
-                      <ListItemText
-                        primary={message.content.substring(0, 22) + "..."}
-                      />
-                    ) : (
-                      <ListItemText primary={message.content} />
-                    )}
-                  </div>
-                </ListItem>
-                <Divider component="li" className="content-div" />
-              </div>
-            ))}
+                )
+            )}
           </List>
         </div>
         <div role="tabpanel" hidden={mode !== 1}>
           <List className="list-con">
-            {emails.map((email) => (
-              <div key={email.id} className="content-con">
-                <ListItem
-                  button
-                  selected={selectedEmail === email}
-                  onClick={(e) => handleListItemClick(e, email, mode)}
-                  className={
-                    selectedEmail.id === email.id
-                      ? "content-wrap selected"
-                      : "content-wrap"
-                  }
-                >
-                  <div className="content-row one">
-                    <ListItemText primary={email.title} />
+            {contactList.map(
+              (contact) =>
+                contact.contactType === "SMS" && (
+                  <div key={contact.id} className="content-con">
+                    <ListItem
+                      button
+                      selected={selectedEmail === contact}
+                      onClick={(e) => handleListItemClick(e, contact, mode)}
+                      className={
+                        selectedEmail.id === contact.id
+                          ? "content-wrap selected"
+                          : "content-wrap"
+                      }
+                    >
+                      <div className="content-row one">
+                        <ListItemText primary={contact.title} />
+                      </div>
+                      <div className="content-row one">
+                        <ListItemText primary={contact.time} />
+                        <ListItemText primary={contact.count + "건"} />
+                      </div>
+                      <div className="content-row two">
+                        {contact.content.length > 20 ? (
+                          <ListItemText
+                            primary={contact.content.substring(0, 22) + "..."}
+                          />
+                        ) : (
+                          <ListItemText primary={contact.content} />
+                        )}
+                      </div>
+                    </ListItem>
+                    <Divider component="li" className="content-div" />
                   </div>
-                  <div className="content-row one">
-                    <ListItemText primary={email.time} />
-                    <ListItemText primary={email.count + "건"} />
-                  </div>
-                  <div className="content-row two">
-                    {email.content.length > 20 ? (
-                      <ListItemText
-                        primary={email.content.substring(0, 22) + "..."}
-                      />
-                    ) : (
-                      <ListItemText primary={email.content} />
-                    )}
-                  </div>
-                </ListItem>
-                <Divider component="li" className="content-div" />
-              </div>
-            ))}
+                )
+            )}
           </List>
         </div>
       </div>
@@ -306,19 +331,6 @@ function ContactRecord() {
         </div>
         <div className="detail-panel">
           <label className="panel-title">상세 내역</label>
-          <div className="sender-row">
-            <label className="row-label">발신 정보</label>
-            <input
-              type="text"
-              value={
-                mode === 0
-                  ? selectedMessage.senderInfo
-                  : selectedEmail.senderInfo
-              }
-              className="row-input"
-              disabled
-            />
-          </div>
           <div className="sender-row">
             <label className="row-label">발신 시각</label>
             <input

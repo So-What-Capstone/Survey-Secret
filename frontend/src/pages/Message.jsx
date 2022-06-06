@@ -27,6 +27,7 @@ function Message() {
 
   //개인정보질문 id
   const [phoneQueId, setPhoneQueId] = useState("");
+  const [emailQueId, setEmailQueId] = useState("");
 
   //SMS, LMS
   const [smsType, setSmsType] = useState("SMS");
@@ -53,7 +54,6 @@ function Message() {
         const obj = {};
         obj["id"] = form._id;
         obj["title"] = form.title;
-        //obj["privacyExpiredAt"] = form.privacyExpiredAt;
         return obj;
       });
       setMyForms(myFormList);
@@ -76,7 +76,7 @@ function Message() {
       checkedItems.forEach(function (value) {
         console.log("receiverId: " + value);
       });
-      console.log(textValue);
+      console.log("개인정보질문id + " + phoneQueId);
 
       if (phoneQueId !== "") {
         await sendSms({
@@ -144,6 +144,8 @@ function Message() {
           repsQuestionContent={repsQuestionContent}
           phoneQueId={phoneQueId}
           setPhoneQueId={setPhoneQueId}
+          emailQueId={emailQueId}
+          setEmailQueId={setEmailQueId}
           setRepsQuestionContent={setRepsQuestionContent}
           checkedItems={checkedItems}
           setSelectedForm={setSelectedForm}
