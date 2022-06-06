@@ -367,7 +367,7 @@ export class FormsService {
       const pageSize = 4;
       console.log(lastId);
 
-      const forms = await this.formModel.aggregate([
+      const forms: Form[] = await this.formModel.aggregate([
         {
           $match: {
             // $and: [
@@ -384,10 +384,16 @@ export class FormsService {
             as: 'owner',
           },
         },
+        { $unwind: '$owner' },
         {
           $sample: { size: pageSize },
         },
       ]);
+
+      console.log('start');
+      for (const f of forms) {
+        console.log(f);
+      }
 
       if (forms.length === 0) {
         return { ok: false, error: '진행중인 폼이 없습니다.' };
