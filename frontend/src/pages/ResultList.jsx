@@ -16,7 +16,7 @@ import {
   findAnswerByQuestionIdQuery,
 } from "../API";
 import "../styles/ResultList.scss";
-import { message, Tag } from "antd";
+import { message } from "antd";
 
 message.config({
   // 3 messages can be shown at once
@@ -29,16 +29,16 @@ function cutLongStr(str) {
   return str;
 }
 
-function getAnsStringOrTag(ans, kind) {
+function getAnsItem(ans, kind) {
   let ansStr = "";
   if (kind === "Opened")
     ansStr = cutLongStr(String(ans?.openedAnswer ? ans?.openedAnswer : "-"));
   else if (kind === "Linear")
     ansStr = cutLongStr(String(ans?.linearAnswer ? ans?.linearAnswer : "-"));
   else if (kind === "Closed") {
-    ansStr = ans?.closedAnswer?.map((v, i) => (
-      <Tag key={`tag-${i}`}>{v + 1}</Tag>
-    ));
+    ansStr = ans?.closedAnswer;
+    ansStr = ansStr ? ansStr : [];
+    ansStr = ansStr.map((v) => v + 1);
   }
   ansStr = ansStr ? ansStr : "-";
   return ansStr;
@@ -107,7 +107,7 @@ function ResultList() {
         for (let j = 0; j < ans_orig.length; j++) {
           ans[ans_orig[j]["question"]] = { ...ans_orig[j] };
           if (ans_orig[j]["question"] === repq) {
-            repq_ans_str = getAnsStringOrTag(ans_orig[j], ans_orig[j].kind);
+            repq_ans_str = getAnsItem(ans_orig[j], ans_orig[j].kind);
           }
         }
         rep = {
@@ -231,7 +231,7 @@ function ResultList() {
     let repQkind = repQCandi[v].kind;
     let temp = repList.slice();
     for (let i = 0; i < temp.length; i++) {
-      let ansStr = getAnsStringOrTag(ansList[i][v], repQkind);
+      let ansStr = getAnsItem(ansList[i][v], repQkind);
 
       temp[i] = {
         ...temp[i],
