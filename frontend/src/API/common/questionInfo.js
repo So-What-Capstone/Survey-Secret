@@ -2,6 +2,10 @@ export const questionInfo = `question {
   __typename
   ... on ClosedQuestion {
     content
+    choices {
+      no
+      choice
+    }
   }
   ... on OpenedQuestion {
     content
