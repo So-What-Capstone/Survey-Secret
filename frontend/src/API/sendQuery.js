@@ -30,7 +30,7 @@ export const sendEmail = gql`
     $questionId: String!
     $subject: String!
     $template: String
-    $emailVars: [EmailVarInput!]!
+    $emailVars: [EmailVarInput!]
   ) {
     sendEmail(
       input: {

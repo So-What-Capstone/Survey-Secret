@@ -173,29 +173,11 @@ function ContactList({
             ),
           ];
 
-          const time = [
-            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
-              11,
-              13
-            ),
-            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
-              14,
-              16
-            ),
-            queryData?.data?.findFormById?.form?.privacyExpiredAt.substring(
-              17,
-              19
-            ),
-          ];
-
           let canContact = false;
           let today = new Date();
           let year = today.getFullYear();
           let month = ("0" + (today.getMonth() + 1)).slice(-2);
           let date = ("0" + today.getDate()).slice(-2);
-          let hours = ("0" + today.getHours()).slice(-2);
-          var minutes = ("0" + today.getMinutes()).slice(-2);
-          var seconds = ("0" + today.getSeconds()).slice(-2);
 
           if (Number(year) < Number(yearMonDate[0])) {
             canContact = true;
@@ -203,15 +185,6 @@ function ContactList({
             canContact = true;
             console.log(canContact);
           } else if (Number(date) < Number(yearMonDate[2])) {
-            canContact = true;
-            console.log(canContact);
-          } else if (Number(hours) < Number(time[0])) {
-            canContact = true;
-            console.log(canContact);
-          } else if (Number(minutes) < Number(time[1])) {
-            canContact = true;
-            console.log(canContact);
-          } else if (Number(seconds) < Number(time[2])) {
             canContact = true;
             console.log(canContact);
           } else {
