@@ -465,7 +465,6 @@ input FindQuestionByIdInput {
 }
 
 input GetSendHistoryInput {
-  formId: String!
   contactType: ContactType!
 }
 
