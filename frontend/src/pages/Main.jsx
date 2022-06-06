@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import "../styles/Main.scss";
-import SurveyIconsTray from "../modules/SurveyIconsTray";
 import SearchIcon from "@mui/icons-material/Search";
 import { TextField, InputAdornment } from "@mui/material";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import { Banner, MainSurveys } from "../modules";
 import { getFormsQuery } from "../API";
+import { GithubFilled } from "@ant-design/icons";
 
 const GET_FORMS_QUERY = getFormsQuery;
 
@@ -104,8 +104,18 @@ function Main() {
         <MainSurveys surveys={openSurveys} />
       </div>
       <div className="main-site-map">
+        <div className="title">
+          쉽고 안전한 온라인 설문조사 플랫폼 Survey Secret!
+        </div>
+        <br />
         2022 Spring Capstone Project in Univ. of Seoul <br />
-        Powered By. So what? Capstone
+        Powered By. So what? Capstone <br />
+        <a
+          href="https://github.com/So-What-Capstone/Survey-Secret"
+          style={{ color: "inherit" }}
+        >
+          <GithubFilled /> Survey-Secret GitHub
+        </a>
       </div>
     </div>
   );

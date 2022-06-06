@@ -150,7 +150,7 @@ function FormRespToSubm(form_config, response, secEnabled) {
 function Respond() {
   const [form_config, setFormConfig] = useState();
   const [searchParams] = useSearchParams();
-  const [formId, setFormId] = useState(0);
+  const [formId, setFormId] = useState("");
   const [secEnabled, setSecEnabled] = useState();
   const [findForm] = useLazyQuery(FIND_FORM_BY_ID_QUERY);
   useEffect(() => {
@@ -173,7 +173,7 @@ function Respond() {
         alert(msg);
         navigate("/");
       }
-      const config = getFormConfigFromDB(formId, formData, formData.sections);
+      const config = getFormConfigFromDB(id, formData, formData.sections);
 
       setFormConfig(config);
     }

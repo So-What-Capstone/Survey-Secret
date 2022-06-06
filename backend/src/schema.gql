@@ -181,6 +181,7 @@ type Form {
   isPromoted: Boolean!
   expiredAt: DateTime
   privacyExpiredAt: DateTime
+  isPrivacyExpired: Boolean!
   owner: User!
   sections: [Section!]
   submissions: [Submission!]
@@ -256,6 +257,12 @@ type meOutput {
   ok: Boolean!
   error: String
   user: User
+}
+
+type GetSignedUrlOutput {
+  ok: Boolean!
+  error: String
+  url: String
 }
 
 type Template {
@@ -409,7 +416,7 @@ type GetMarketBasketOutput {
 type Query {
   findUserById(input: FindUserByIdInput!): FindUserByIdOutput!
   me: meOutput!
-  getSignedUrl(input: String!): String!
+  getSignedUrl(input: GetSignedUrlInput!): GetSignedUrlOutput!
   findSectionById(input: FindSectionByIdInput!): FindSectionByIdOutput!
   findFormById(input: FindFormByIdInput!): FindFormByIdOutput!
   findFormByIdForOwner(input: FindFormByIdInput!): FindFormByIdOutput!
@@ -429,6 +436,17 @@ type Query {
 
 input FindUserByIdInput {
   id: String!
+}
+
+input GetSignedUrlInput {
+  imageType: ImageType!
+  fileName: String!
+}
+
+enum ImageType {
+  User
+  Question
+  Submission
 }
 
 input FindSectionByIdInput {
@@ -499,7 +517,7 @@ input GetMarketBasketInput {
 type Mutation {
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   login(input: LoginInput!): LoginOutput!
-  editUser(input: EditUserInput!, file: Upload!): EditUserOutput!
+  editUser(input: EditUserInput!): EditUserOutput!
   createForm(input: CreateFormInput!): CreateFormOutput!
   deleteForm(input: DeleteFormInput!): DeleteFormOutput!
   editForm(input: EditFormInput!): EditFormOutput!
@@ -524,10 +542,8 @@ input LoginInput {
 input EditUserInput {
   username: String
   password: String
+  avatarImg: String
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input CreateFormInput {
   title: String!

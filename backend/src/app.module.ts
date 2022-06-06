@@ -18,6 +18,7 @@ import { StatModule } from './stat/stat.module';
 import { SmsModule } from './sms/sms.module';
 import { APP_FILTER } from '@nestjs/core';
 import { AllExceptionsFilter } from './exception.filter';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -38,6 +39,8 @@ import { AllExceptionsFilter } from './exception.filter';
         STAT_END_POINT: Joi.string().required(),
       }),
     }),
+    ScheduleModule.forRoot(),
+
     //set DB logger(raw query), DB error/connect log
     MongooseModule.forRoot(process.env.DB_URL),
 

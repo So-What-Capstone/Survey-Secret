@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { FileUpload } from 'graphql-upload';
+import {
+  GetSignedUrlInput,
+  GetSignedUrlOutput,
+} from './dtos/get-signed-url.dto';
 
 @Injectable()
 export class UploaderService {
@@ -29,14 +33,28 @@ export class UploaderService {
     return Location;
   }
 
-  getSignedUrl(key: string) {
-    const s3 = new AWS.S3({ signatureVersion: 'v4', region: 'ap-northeast-2' });
-    const params = {
-      Bucket: 'surveysecret',
-      Key: key,
-      Expires: 60,
-    };
-    const url = s3.getSignedUrl('putObject', params);
-    return url;
+  getSignedUrl({ imageType, fileName }: GetSignedUrlInput): GetSignedUrlOutput {
+    try {
+      const s3 = new AWS.S3({
+        signatureVersion: 'v4',
+        region: 'ap-northeast-2',
+      });
+
+      const params = {
+        Bucket: 'surveysecret',
+        Key: `${imageType}/${Date.now()}-${fileName}`,
+        Expires: 60,
+        ACL: 'public-read',
+        // contentType:""
+      };
+
+      console.log(params);
+
+      const url = s3.getSignedUrl('putObject', params);
+
+      return { ok: true, url };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
   }
 }

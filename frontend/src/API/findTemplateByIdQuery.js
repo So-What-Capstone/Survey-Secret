@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client";
-import { sectionsInfo } from "./common/sectionsInfo";
 
 export const findTemplateByIdQuery = gql`
   query findTemplateById($templateId: String!) {
@@ -9,7 +8,67 @@ export const findTemplateByIdQuery = gql`
       template {
         title
         description
-        ${sectionsInfo}
+        sections {
+          _id
+          title
+          order
+          questions {
+            ... on ClosedQuestion {
+              _id
+              order
+              content
+              description
+              required
+              kind
+              closedType
+              choices {
+                no
+                choice
+                activatedSection
+              }
+            }
+            ... on OpenedQuestion {
+              _id
+              order
+              content
+              description
+              required
+              kind
+              openedType
+            }
+            ... on LinearQuestion {
+              _id
+              order
+              content
+              description
+              required
+              kind
+              leftRange
+              rightRange
+              leftLabel
+              rightLabel
+            }
+            ... on GridQuestion {
+              _id
+              order
+              content
+              description
+              required
+              rowContent
+              colContent
+              kind
+            }
+            ... on PersonalQuestion {
+              _id
+              order
+              content
+              description
+              required
+              kind
+              personalType
+            }
+          }
+        }
       }
     }
   }

@@ -2,26 +2,26 @@ import { Carousel } from "antd";
 import React from "react";
 import "../styles/Banner.css";
 import PropTypes from "prop-types";
-import usage_banner from "../resources/banner2.png";
-import banner3 from "../resources/banner3.png";
-import banner4 from "../resources/banner4.png";
+import usage_banner from "../resources/banner_manual.png";
+import banner3 from "../resources/banner_safe.png";
+import banner4 from "../resources/banner_premium.png";
 
 function Banner({ sources }) {
   const default_banners = [
     {
       title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
       img_url: usage_banner,
-      link: ".",
+      link: "/intro?type=manual",
     },
     {
       title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
       img_url: banner3,
-      link: ".",
+      link: "/intro?type=safe",
     },
     {
       title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
       img_url: banner4,
-      link: ".",
+      link: "/intro?type=premium",
     },
   ];
 
