@@ -434,6 +434,7 @@ export class SubmissionsService {
         },
         {
           $project: {
+            'submissions.isFavorite': true,
             'submissions.answers': true,
             'submissions._id': true,
             _id: false,
@@ -446,6 +447,7 @@ export class SubmissionsService {
           return {
             answer: answer.submissions.answers,
             submissionId: answer.submissions._id,
+            isFavorite: answer.submissions.isFavorite,
           };
         },
       );
