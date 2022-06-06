@@ -11,8 +11,9 @@
   margin-left: 4rem;
   padding: 5%;
   background-image: url("../resources/pen-write.jpeg");
+  background-size: cover;
+  background-position: center;
   background-attachment: fixed;
-  background-size: 100% 100%;
   background-color: #ffffff60;
   border-radius: 0.2rem;
   display: flex;

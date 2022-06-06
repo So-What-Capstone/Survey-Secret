@@ -145,6 +145,21 @@
   }
 }
 
+.keyword-result {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+
+  .keyword-result-table {
+    flex-grow: 4;
+    flex-basis: 0;
+  }
+
+  .keyword-result-cloud {
+    flex-grow: 5;
+  }
+}
+
 .stats-tag {
   white-space: break-spaces !important;
   word-break: break-word !important;

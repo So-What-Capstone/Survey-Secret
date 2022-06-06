@@ -132,7 +132,7 @@ const MarketBasketColumns = [
     dataIndex: "antecedents",
     key: "antecedents",
     fixed: "left",
-    width: 300,
+    width: 220,
     render: (tags) => <div>{tags.map((tag) => renderTag(tag))}</div>,
   },
   {
@@ -140,7 +140,7 @@ const MarketBasketColumns = [
     dataIndex: "consequents",
     key: "consequents",
     fixed: "left",
-    width: 300,
+    width: 270,
     render: (tags) => <div>{tags.map((tag) => renderTag(tag))}</div>,
   },
   {
@@ -241,6 +241,7 @@ function MarketBasketAnalysis({ form }) {
       try {
         setAnalysis(
           res.data.getMarketBasket.result
+            .filter((x) => Number(x.support) > 0.5)
             .sort((a, b) => Number(b.support) - Number(a.support))
             .map((rule, i) => ({
               ...rule,
@@ -419,6 +420,25 @@ CorrAnalysis.propTypes = {
   form: PropTypes.any,
 };
 
+const KeywordColumns = [
+  {
+    title: "번호",
+    dataIndex: "index",
+    key: "index",
+  },
+  {
+    title: "키워드",
+    dataIndex: "text",
+    key: "text",
+  },
+  {
+    title: "TF-IDF 점수",
+    dataIndex: "value",
+    key: "value",
+    render: (x) => String((Number(x) / 100000).toFixed(4)),
+  },
+];
+
 function KeywordAnalysis({ form }) {
   const [questions, setQuestions] = useState([]);
   const [selected, setSelected] = useState(undefined);
@@ -457,9 +477,11 @@ function KeywordAnalysis({ form }) {
     }).then((res) => {
       try {
         const currAnalysis = res.data.getKeywordAnalysis.result.map(
-          ([t, v]) => ({
+          ([t, v], i) => ({
+            index: i,
             text: t,
             value: Number(v) * 100000,
+            key: `${t}`,
           })
         );
         setAnalysis(currAnalysis);
@@ -506,7 +528,20 @@ function KeywordAnalysis({ form }) {
 
       {!loading && !analysis && <Empty description=""></Empty>}
       {loading && <Spin tip="정보를 가져오는 중..."></Spin>}
-      {analysis && <WordCloud data={analysis}></WordCloud>}
+      {analysis && (
+        <div className="keyword-result">
+          <div className="keyword-result-table">
+            <Table
+              columns={KeywordColumns}
+              dataSource={analysis}
+              pagination={{ pageSize: 7 }}
+            ></Table>
+          </div>
+          <div className="keyword-result-cloud">
+            <WordCloud data={analysis}></WordCloud>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
