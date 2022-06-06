@@ -2,9 +2,9 @@ import { Carousel } from "antd";
 import React from "react";
 import "../styles/Banner.css";
 import PropTypes from "prop-types";
-import usage_banner from "../resources/banner2.png";
-import banner3 from "../resources/banner3.png";
-import banner4 from "../resources/banner4.png";
+import usage_banner from "../resources/banner_manual.png";
+import banner3 from "../resources/banner_safe.png";
+import banner4 from "../resources/banner_premium.png";
 
 function Banner({ sources }) {
   const default_banners = [

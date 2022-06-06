@@ -64,12 +64,18 @@
 
   .main-site-map {
     font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-    font-size: 1rem;
+    font-size: 1.2rem;
     width: 100%;
-    background-color: black;
+    background-color: #00000050;
     min-height: 20rem;
     height: max-content;
     color: white;
+
+    text-align: center;
+    padding-top: 10rem;
+    .title {
+      font-family: "Cafe24Oneprettynight";
+    }
   }
 }
 

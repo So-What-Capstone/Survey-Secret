@@ -3,12 +3,13 @@
   /* max-height: calc(100vh-3rem);
   overflow-y: auto; */
   .my-survey-banner {
-    width: 96%;
-    margin: 2%;
+    width: 100%;
+    // margin: 2%;
     /* padding: 7%; */
-    height: 20vh;
+    height: fit-content;
     background-color: #98b8b920;
     color: wheat;
+    margin-bottom: 2%;
   }
 }
 .new-survey-con {
