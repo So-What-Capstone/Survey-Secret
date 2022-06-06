@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import { answerInfo } from "./common/answerInfo";
+import { questionInfo } from "./common/questionInfo";
 
 export const findRepsQueByFormId = gql`
   query findRepsQueByFormId($formId: String!) {
@@ -7,12 +8,16 @@ export const findRepsQueByFormId = gql`
       ok
       error
       form {
+        sections {
+          questions {
+            ... on PersonalQuestion {
+              _id
+              personalType
+            }
+          }
+        }
         representativeQuestion {
           _id
-        }
-        submissions {
-          _id
-          isFavorite
         }
       }
     }
@@ -28,8 +33,10 @@ export const findRepsAnsByQueId = gql`
       error
       answers {
         submissionId
+        isFavorite
         ${answerInfo}
       }
+      ${questionInfo}
     }
   }
 `;
