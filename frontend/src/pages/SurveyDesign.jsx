@@ -524,169 +524,186 @@ function SurveyDesign() {
   };
 
   async function save() {
-    if (!rawForm || rawForm.state !== "Ready") {
+    if (!rawForm) {
       return true;
-    }
-    try {
-      let newForm = {
-        formId: rawForm._id,
-        title: title,
-        description: description,
-        state: state,
-        isPromoted: isPromoted,
-        expiredAt: expiredAt.toDate(),
-        privacyExpiredAt: privacyExpiredAt.toDate(),
-        representativeQuestionId: null,
-        sections: sections.map((sect, i) => {
-          let opened = [],
-            closed = [],
-            grid = [],
-            personal = [],
-            linear = [];
+    } else if (rawForm.state !== "Ready") {
+      try {
+        let newForm = {
+          formId: rawForm._id,
+          isPromoted: isPromoted,
+        };
+        console.log(JSON.stringify(newForm));
+        await editForm({
+          variables: {
+            request: newForm,
+          },
+        });
+      } catch (err) {
+        console.log(JSON.stringify(err));
+        return false;
+      }
+    } else {
+      try {
+        let newForm = {
+          formId: rawForm._id,
+          title: title,
+          description: description,
+          state: state,
+          isPromoted: isPromoted,
+          expiredAt: expiredAt.toDate(),
+          privacyExpiredAt: privacyExpiredAt.toDate(),
+          representativeQuestionId: null,
+          sections: sections.map((sect, i) => {
+            let opened = [],
+              closed = [],
+              grid = [],
+              personal = [],
+              linear = [];
 
-          sect.questions.forEach((ques, j) => {
-            if (ques.type === "closed") {
-              closed.push({
-                order: j,
-                required: ques.required,
-                description: ques.description,
-                kind: "Closed",
-                content: ques.content
-                  ? ques.content
-                  : "(문항 제목이 없습니다.)",
-                closedType: ques.allowMultiple ? "Multiple" : "One",
-                choices: ques.choices.map((ch, k) => {
-                  return {
-                    no: k,
-                    choice: ch.content,
-                    activatedSection:
-                      ch.trigger === -1 || sections.length <= ch.trigger
-                        ? null
-                        : ch.trigger,
-                  };
-                }),
-              });
-            }
+            sect.questions.forEach((ques, j) => {
+              if (ques.type === "closed") {
+                closed.push({
+                  order: j,
+                  required: ques.required,
+                  description: ques.description,
+                  kind: "Closed",
+                  content: ques.content
+                    ? ques.content
+                    : "(문항 제목이 없습니다.)",
+                  closedType: ques.allowMultiple ? "Multiple" : "One",
+                  choices: ques.choices.map((ch, k) => {
+                    return {
+                      no: k,
+                      choice: ch.content,
+                      activatedSection:
+                        ch.trigger === -1 || sections.length <= ch.trigger
+                          ? null
+                          : ch.trigger,
+                    };
+                  }),
+                });
+              }
 
-            if (ques.type === "opened") {
-              opened.push({
-                openedType: "Default",
-                order: j,
-                required: ques.required,
-                description: ques.description,
-                kind: "Opened",
-                content: ques.content
-                  ? ques.content
-                  : "(문항 제목이 없습니다.)",
-                attachment: "",
-              });
-            }
+              if (ques.type === "opened") {
+                opened.push({
+                  openedType: "Default",
+                  order: j,
+                  required: ques.required,
+                  description: ques.description,
+                  kind: "Opened",
+                  content: ques.content
+                    ? ques.content
+                    : "(문항 제목이 없습니다.)",
+                  attachment: "",
+                });
+              }
 
-            if (ques.type === "linear") {
-              linear.push({
-                leftRange: ques.leftRange,
-                rightRange: ques.rightRange,
-                leftLabel: ques.leftLabel,
-                rightLabel: ques.rightLabel,
-                order: j,
-                required: ques.required,
-                description: ques.description,
-                kind: "Linear",
-                content: ques.content
-                  ? ques.content
-                  : "(문항 제목이 없습니다.)",
-              });
-            }
+              if (ques.type === "linear") {
+                linear.push({
+                  leftRange: ques.leftRange,
+                  rightRange: ques.rightRange,
+                  leftLabel: ques.leftLabel,
+                  rightLabel: ques.rightLabel,
+                  order: j,
+                  required: ques.required,
+                  description: ques.description,
+                  kind: "Linear",
+                  content: ques.content
+                    ? ques.content
+                    : "(문항 제목이 없습니다.)",
+                });
+              }
 
-            if (ques.type === "grid") {
-              grid.push({
-                colContent: ques.colContent,
-                rowContent: ques.rowContent,
-                order: j,
-                required: ques.required,
-                description: ques.description,
-                kind: "Grid",
-                content: ques.content
-                  ? ques.content
-                  : "(문항 제목이 없습니다.)",
-              });
-            }
+              if (ques.type === "grid") {
+                grid.push({
+                  colContent: ques.colContent,
+                  rowContent: ques.rowContent,
+                  order: j,
+                  required: ques.required,
+                  description: ques.description,
+                  kind: "Grid",
+                  content: ques.content
+                    ? ques.content
+                    : "(문항 제목이 없습니다.)",
+                });
+              }
 
-            if (ques.type === "phone") {
-              personal.push({
-                personalType: "Phone",
-                order: j,
-                required: ques.required,
-                description: ques.description,
-                kind: "Personal",
-                content: ques.content
-                  ? ques.content
-                  : "(문항 제목이 없습니다.)",
-              });
-            }
+              if (ques.type === "phone") {
+                personal.push({
+                  personalType: "Phone",
+                  order: j,
+                  required: ques.required,
+                  description: ques.description,
+                  kind: "Personal",
+                  content: ques.content
+                    ? ques.content
+                    : "(문항 제목이 없습니다.)",
+                });
+              }
 
-            if (ques.type === "email") {
-              personal.push({
-                personalType: "Email",
-                order: j,
-                required: ques.required,
-                description: ques.description,
-                kind: "Personal",
-                content: ques.content
-                  ? ques.content
-                  : "(문항 제목이 없습니다.)",
-              });
-            }
+              if (ques.type === "email") {
+                personal.push({
+                  personalType: "Email",
+                  order: j,
+                  required: ques.required,
+                  description: ques.description,
+                  kind: "Personal",
+                  content: ques.content
+                    ? ques.content
+                    : "(문항 제목이 없습니다.)",
+                });
+              }
 
-            if (ques.type === "date") {
-              opened.push({
-                openedType: "Date",
-                order: j,
-                required: ques.required,
-                description: ques.description,
-                kind: "Opened",
-                content: ques.content
-                  ? ques.content
-                  : "(문항 제목이 없습니다.)",
-                attachment: "",
-              });
-            }
+              if (ques.type === "date") {
+                opened.push({
+                  openedType: "Date",
+                  order: j,
+                  required: ques.required,
+                  description: ques.description,
+                  kind: "Opened",
+                  content: ques.content
+                    ? ques.content
+                    : "(문항 제목이 없습니다.)",
+                  attachment: "",
+                });
+              }
 
-            if (ques.type === "address") {
-              opened.push({
-                openedType: "Address",
-                order: j,
-                required: ques.required,
-                description: ques.description,
-                kind: "Opened",
-                content: ques.content
-                  ? ques.content
-                  : "(문항 제목이 없습니다.)",
-                attachment: "",
-              });
-            }
-          });
+              if (ques.type === "address") {
+                opened.push({
+                  openedType: "Address",
+                  order: j,
+                  required: ques.required,
+                  description: ques.description,
+                  kind: "Opened",
+                  content: ques.content
+                    ? ques.content
+                    : "(문항 제목이 없습니다.)",
+                  attachment: "",
+                });
+              }
+            });
 
-          return {
-            title: sect.title,
-            order: i,
-            opened: opened,
-            closed: closed,
-            grid: grid,
-            personal: personal,
-            linear: linear,
-          };
-        }),
-      };
+            return {
+              title: sect.title,
+              order: i,
+              opened: opened,
+              closed: closed,
+              grid: grid,
+              personal: personal,
+              linear: linear,
+            };
+          }),
+        };
 
-      await editForm({
-        variables: {
-          request: newForm,
-        },
-      });
-    } catch (err) {
-      console.log(JSON.stringify(err));
-      return false;
+        await editForm({
+          variables: {
+            request: newForm,
+          },
+        });
+      } catch (err) {
+        console.log(JSON.stringify(err));
+        return false;
+      }
     }
     return true;
   }
@@ -1043,7 +1060,8 @@ function SurveyDesign() {
           </Typography.Title>
           <DatePicker
             value={expiredAt}
-            showTime
+            showTime={{ format: "HH:mm" }}
+            format="YYYY-MM-DD HH:mm"
             placeholder="응답 마감 시간"
             onChange={(date) => setExpiredAt(date)}
             disabled={state !== "Ready"}
@@ -1051,11 +1069,10 @@ function SurveyDesign() {
         </div>
         <div className="design-inner-info">
           <Typography.Title level={5} className="design-subtitle">
-            개인정보 파기 시간
+            개인정보 파기 날짜
           </Typography.Title>
           <DatePicker
             value={privacyExpiredAt}
-            showTime
             placeholder="개인정보 파기 시간"
             onChange={(date) => setPrivacyExpiredAt(date)}
             disabled={state !== "Ready"}
@@ -1080,9 +1097,8 @@ function SurveyDesign() {
           <div className="design-switch-layout">
             <span>메인 페이지에 설문을 노출하기</span>
             <Switch
-              value={isPromoted}
+              checked={isPromoted}
               onChange={(value) => setIsPromoted(value)}
-              disabled={state !== "Ready"}
             ></Switch>
           </div>
         </div>

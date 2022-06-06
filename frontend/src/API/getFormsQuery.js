@@ -14,6 +14,7 @@ export const getFormsQuery = gql`
         isPromoted
         owner {
           username
+          avatarImg
         }
         expiredAt
         privacyExpiredAt

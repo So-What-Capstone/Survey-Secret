@@ -60,7 +60,6 @@ function MySurvey() {
 
     setFormConfig(config);
     setPreviewId(id);
-    console.log("query complete", id, form_config.title);
   };
 
   return (

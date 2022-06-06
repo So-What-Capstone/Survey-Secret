@@ -111,27 +111,16 @@ export class UsersService {
 
   async editUser(
     user: User,
-    { username, password }: EditUserInput,
-    avatarImg: FileUpload,
+    { username, password, avatarImg }: EditUserInput,
   ): Promise<EditUserOutput> {
     try {
-      let avatarImgUrl: string;
-      if (avatarImg) {
-        avatarImgUrl = await this.uploaderService.uploadToS3(
-          avatarImg,
-          user._id.toString(),
-          'Users',
-        );
-      }
-
       await this.userModel.updateOne(
         { _id: user._id },
         {
           $set: {
             username: username ? username : undefined,
             password: password ? await bcrypt.hash(password, 10) : undefined,
-            //need phone verification
-            avatarImg: avatarImg ? avatarImgUrl : undefined,
+            avatarImg: avatarImg ? avatarImg : undefined,
           },
         },
       );

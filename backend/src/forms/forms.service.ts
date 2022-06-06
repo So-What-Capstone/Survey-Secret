@@ -25,6 +25,7 @@ import {
   FindQuestionByIdInput,
   FindQuestionByIdOutput,
 } from './dtos/find-question-by-id.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class FormsService {
@@ -304,7 +305,7 @@ export class FormsService {
             representativeQuestion: representativeQuestionId
               ? representativeQuestionId
               : undefined,
-            isPromoted: isPromoted ? isPromoted : undefined,
+            isPromoted: isPromoted !== undefined ? isPromoted : undefined,
           },
         },
       );
@@ -363,21 +364,39 @@ export class FormsService {
   async getForms({ lastId }: GetFormsInput): Promise<GetFormsOutput> {
     try {
       //for testing
-      const pageSize = 20;
+      const pageSize = 4;
       console.log(lastId);
 
-      const forms = await this.formModel
-        .find({
-          $and: [
-            lastId ? { _id: { $gt: lastId } } : {},
-            { state: FormState.InProgress },
-          ],
-        })
-        .populate('owner')
-        .limit(pageSize);
+      const forms: Form[] = await this.formModel.aggregate([
+        {
+          $match: {
+            // $and: [
+            // lastId ? { _id: { $gt: lastId } } : {},
+            state: FormState.InProgress,
+            // ],
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'owner',
+            foreignField: '_id',
+            as: 'owner',
+          },
+        },
+        { $unwind: '$owner' },
+        {
+          $sample: { size: pageSize },
+        },
+      ]);
+
+      console.log('start');
+      for (const f of forms) {
+        console.log(f);
+      }
 
       if (forms.length === 0) {
-        return { ok: false, error: '검색된 폼이 없습니다.' };
+        return { ok: false, error: '진행중인 폼이 없습니다.' };
       }
 
       return {
@@ -444,5 +463,64 @@ export class FormsService {
     } catch (error) {
       return { ok: false, error: error.message };
     }
+  }
+
+  //for testing
+  //@Cron("* * * * * *")
+  //per every minute
+  @Cron('0 * * * * *')
+  async expireForm() {
+    const expiredForm = await this.formModel.updateMany(
+      {
+        $and: [
+          { expiredAt: { $lte: Date.now() } },
+          { state: FormState.InProgress },
+        ],
+      },
+      { $set: { state: FormState.Expired } },
+    );
+  }
+
+  // for testing
+  // @Cron('* * * * * *')
+  //per every day
+  @Cron('0 0 0 * * *')
+  async expirePersonalQuestion() {
+    const session = await this.connection.startSession();
+
+    await session.withTransaction(async () => {
+      const forms = await this.formModel.find(
+        {
+          $and: [
+            { privacyExpiredAt: { $lte: Date.now() } },
+            { isPrivacyExpired: false },
+          ],
+        },
+        null,
+        { session },
+      );
+
+      console.log(forms);
+
+      if (forms.length === 0) {
+        return;
+      }
+
+      const result = await this.submissionModel.updateMany(
+        { form: { $in: forms } },
+        { $pull: { answers: { kind: 'Personal' } } },
+      );
+
+      const privacyExpiredForm = await this.formModel.updateMany(
+        {
+          $and: [
+            { privacyExpiredAt: { $lte: Date.now() } },
+            { isPrivacyExpired: false },
+          ],
+        },
+        { $set: { isPrivacyExpired: true } },
+      );
+    });
+    await session.endSession();
   }
 }

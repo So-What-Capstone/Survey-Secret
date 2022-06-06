@@ -4,7 +4,7 @@ import { User } from '../schemas/user.schema';
 
 @InputType()
 export class EditUserInput extends PartialType(
-  PickType(User, ['password', 'username']),
+  PickType(User, ['password', 'username', 'avatarImg']),
 ) {}
 
 @ObjectType()

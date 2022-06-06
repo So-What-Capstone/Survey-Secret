@@ -195,9 +195,9 @@ export class StatService {
       if (jsonData[_id]) {
         const obj = jsonData[_id];
 
-        if (answers.openedAnswer) {
+        if (answers.openedAnswer !== undefined) {
           obj[answers.question] = answers.openedAnswer.toString();
-        } else if (answers.linearAnswer) {
+        } else if (answers.linearAnswer !== undefined) {
           obj[answers.question] = answers.linearAnswer.toString();
         }
 
@@ -205,9 +205,9 @@ export class StatService {
       } else {
         const obj = {};
 
-        if (answers.openedAnswer) {
+        if (answers.openedAnswer !== undefined) {
           obj[answers.question] = answers.openedAnswer.toString();
-        } else if (answers.linearAnswer) {
+        } else if (answers.linearAnswer !== undefined) {
           obj[answers.question] = answers.linearAnswer.toString();
         }
 
