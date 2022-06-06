@@ -21,6 +21,9 @@ export class GetSignedUrlInput {
 
   @Field((type) => String)
   fileName: string;
+
+  @Field((type) => String)
+  contentType: string;
 }
 
 @ObjectType()
