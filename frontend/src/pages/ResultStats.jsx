@@ -157,7 +157,11 @@ function renderTag(tag) {
       key={tag.text}
       title={`문항 "${tag.question}"에서 ${tag.choice}를 선택`}
     >
-      <Tag color={palette[tag.text.hashCode() % 101]} key={tag.text}>
+      <Tag
+        className="stats-tag"
+        color={palette[tag.text.hashCode() % 101]}
+        key={tag.text}
+      >
         {tag.text}
       </Tag>
     </Tooltip>
@@ -170,7 +174,7 @@ const MarketBasketColumns = [
     dataIndex: "antecedents",
     key: "antecedents",
     fixed: "left",
-    width: 250,
+    width: 300,
     render: (tags) => <div>{tags.map((tag) => renderTag(tag))}</div>,
   },
   {
@@ -178,49 +182,49 @@ const MarketBasketColumns = [
     dataIndex: "consequents",
     key: "consequents",
     fixed: "left",
-    width: 250,
+    width: 300,
     render: (tags) => <div>{tags.map((tag) => renderTag(tag))}</div>,
   },
   {
     title: "원인 선택지의 Support",
     dataIndex: "antecedent support",
     key: "antecedent support",
-    width: 150,
+    width: 120,
     render: (text) => <span>{Number(text).toFixed(3)}</span>,
   },
   {
     title: "결과 선택지의 Support",
     dataIndex: "consequent support",
     key: "consequent support",
-    width: 150,
+    width: 120,
     render: (text) => <span>{Number(text).toFixed(3)}</span>,
   },
   {
     title: "Confidence",
     dataIndex: "confidence",
     key: "confidence",
-    width: 150,
+    width: 120,
     render: (text) => <span>{Number(text).toFixed(3)}</span>,
   },
   {
     title: "Lift",
     dataIndex: "lift",
     key: "lift",
-    width: 150,
+    width: 120,
     render: (text) => <span>{Number(text).toFixed(3)}</span>,
   },
   {
     title: "Leverage",
     dataIndex: "leverage",
     key: "leverage",
-    width: 150,
+    width: 120,
     render: (text) => <span>{Number(text).toFixed(3)}</span>,
   },
   {
     title: "Conviction",
     dataIndex: "conviction",
     key: "conviction",
-    width: 150,
+    width: 120,
     render: (text) => <span>{Number(text).toFixed(3)}</span>,
   },
   {
@@ -261,7 +265,7 @@ function MarketBasketAnalysis({ form }) {
       return {
         text: `S${questionDict[quesId].sectIndex + 1}-Q${
           questionDict[quesId].order + 1
-        }-C${Number(chIndex) + 1}`,
+        }-${questionDict[quesId].choices[Number(chIndex)].choice}`,
         question: questionDict[quesId].content,
         choice: questionDict[quesId].choices[Number(chIndex)].choice,
       };
@@ -320,6 +324,7 @@ function MarketBasketAnalysis({ form }) {
           columns={MarketBasketColumns}
           dataSource={analysis}
           scroll={{ x: "100%" }}
+          pagination={{ pageSize: 7 }}
         ></Table>
       )}
     </div>
