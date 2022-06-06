@@ -327,6 +327,11 @@ type FindQuestionByIdOutput {
   question: QuestionUnion
 }
 
+type SendSmsOutput {
+  ok: Boolean!
+  error: String
+}
+
 type SendEmailOutput {
   ok: Boolean!
   error: String
@@ -336,11 +341,6 @@ type GetSendHistoryOutput {
   ok: Boolean!
   error: String
   contacts: [Contact!]
-}
-
-type SendSmsOutput {
-  ok: Boolean!
-  error: String
 }
 
 type CreateSubmissionOutput {
@@ -367,6 +367,7 @@ type SetFavoriteSubmissionsOutput {
 type AnswersInFindAnswerByQuestionId {
   answer: AnswerUnion!
   submissionId: String
+  isFavorite: Boolean
 }
 
 type FindAnswerByQuestionIdOutput {
@@ -637,8 +638,10 @@ enum MsgType {
 }
 
 input SendEmailInput {
+  formId: String!
+  submissionIds: [String!]!
+  questionId: String!
   subject: String!
-  to: String!
   template: String
   emailVars: [EmailVarInput!]!
 }

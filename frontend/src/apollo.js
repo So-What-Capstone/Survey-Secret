@@ -20,6 +20,7 @@ export const logUserOut = () => {
   window.location.reload();
 };
 
+//"http://localhost:5000/graphql"
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_BACKEND
     ? process.env.REACT_APP_BACKEND
