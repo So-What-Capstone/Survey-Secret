@@ -16,7 +16,6 @@ function SurveyCard({ survey }) {
   const onClick = () => {
     navigate("/respond?id=" + survey._id);
   };
-  console.log(survey.owner.avatarImg);
   return (
     <div className="survey-card" onClick={onClick}>
       <div className="survey-card-title" title={survey.title}>
