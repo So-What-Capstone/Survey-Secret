@@ -103,7 +103,7 @@ function ResultList() {
         let ans = {};
         let rep = {};
         let ans_orig = subm_orig[i].answers;
-        let repq_ans_str = "";
+        let repq_ans_str = "-";
         for (let j = 0; j < ans_orig.length; j++) {
           ans[ans_orig[j]["question"]] = { ...ans_orig[j] };
           if (ans_orig[j]["question"] === repq) {
@@ -112,7 +112,7 @@ function ResultList() {
         }
         rep = {
           key: i + 1,
-          answer: repq_ans_str ? repq_ans_str : "",
+          answer: repq_ans_str,
           order: i + 1,
           favorite: subm_orig[i].isFavorite,
           id: subm_orig[i]._id,

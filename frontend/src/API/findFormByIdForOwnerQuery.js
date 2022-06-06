@@ -20,27 +20,32 @@ export const findFormByIdForOwnerQuery = gql`
           answers {
             ... on OpenedAnswer {
               _id
+              kind
               question
               openedAnswer
             }
             ... on LinearAnswer {
               _id
+              kind
               question
               linearAnswer
             }
             ... on PersonalAnswer {
               _id
+              kind
               question
               personalAnswer
               attachment
             }
             ... on ClosedAnswer {
               _id
+              kind
               question
               closedAnswer
             }
             ... on GridAnswer {
               _id
+              kind
               question
               gridAnswer {
                 rowNo
