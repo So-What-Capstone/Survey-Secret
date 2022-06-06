@@ -12,12 +12,21 @@ function SurveyCard({ survey }) {
   const expStr = "~ " + expArray[0] + " " + timeArray[0];
   return (
     <div className="survey-card">
-      <div className="survey-card-title"> {survey.title} </div>
-      <div className="survey-card-desc"> {survey.description} </div>
+      <div className="survey-card-title" title={survey.title}>
+        {" "}
+        {survey.title}{" "}
+      </div>
+      <div className="survey-card-desc" title={survey.description}>
+        {" "}
+        {survey.description}{" "}
+      </div>
       <div className="survey-card-ribbon">
         <div className="circle" />
       </div>
-      <div className="survey-card-exp"> {expStr} </div>
+      <div className="survey-card-exp" title={expStr}>
+        {" "}
+        {expStr}{" "}
+      </div>
     </div>
   );
 }
