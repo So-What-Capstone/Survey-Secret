@@ -36,18 +36,14 @@ function Main() {
     onCompleted: (data) => {
       if (data.getForms?.ok) {
         let forms = data.getForms?.forms;
-        console.log(forms);
-        console.log(
-          forms.filter((v) => v.state === "InProgress" && v.isPromoted)
-        );
-        let formsToShow = forms.filter((v) => v.state === "InProgress");
-        let indice = selectRandom(formsToShow.length, 4);
-        console.log(indice);
-        let temp = [];
-        for (const i of indice) {
-          temp.push(formsToShow[i]);
-        }
-        setOpenSurveys(temp);
+
+        // let formsToShow = forms.filter((v) => v.state === "InProgress");
+        // let indice = selectRandom(formsToShow.length, 4);
+        // let temp = [];
+        // for (const i of indice) {
+        //   temp.push(formsToShow[i]);
+        // }
+        setOpenSurveys(forms);
         setLastId(data.getForms?.lastId);
       }
       //error처리
