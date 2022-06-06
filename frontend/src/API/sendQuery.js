@@ -48,3 +48,30 @@ export const sendEmail = gql`
     }
   }
 `;
+
+export const getContactsId = gql`
+  query {
+    me {
+      user {
+        contacts {
+          _id
+        }
+      }
+    }
+  }
+`;
+
+export const getContactsDetail = gql`
+  query getContactsDetail($contactType: ContactType!) {
+    getSendHistory(input: { contactType: $contactType }) {
+      ok
+      error
+      contacts {
+        updatedAt
+        _id
+        content
+        contactType
+      }
+    }
+  }
+`;

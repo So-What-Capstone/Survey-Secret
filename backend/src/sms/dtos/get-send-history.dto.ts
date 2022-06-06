@@ -6,9 +6,9 @@ import { Contact } from './../schemas/contact.schema';
 
 @InputType()
 export class GetSendHistoryInput {
-  @Field((type) => String)
-  @IsMongoId()
-  formId: string;
+  // @Field((type) => String)
+  // @IsMongoId()
+  // formId: string;
 
   @Field((type) => ContactType)
   @IsEnum(ContactType)

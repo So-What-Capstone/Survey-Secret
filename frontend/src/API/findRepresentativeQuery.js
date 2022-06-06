@@ -8,6 +8,7 @@ export const findRepsQueByFormId = gql`
       ok
       error
       form {
+        privacyExpiredAt
         sections {
           questions {
             ... on PersonalQuestion {
