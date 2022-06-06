@@ -1,9 +1,20 @@
 import React from "react";
 
 import "../styles/ResultList.scss";
-import { Table } from "antd";
+import { Table, Tag } from "antd";
 import PropTypes from "prop-types";
 import { StarFilled, StarOutlined } from "@ant-design/icons";
+
+function compareArray(a, b) {
+  let minLen = Math.min(a.length, b.length);
+  let ret = 0;
+  for (let i = 0; i < minLen; i++) {
+    if (a[i] === b[i]) continue;
+    ret = a[i] - b[i];
+  }
+  if (ret === 0) ret = a.length - b.length;
+  return ret;
+}
 
 function ResponseList({ listItems, selected, onSelect, onFavChange }) {
   let dataForList = listItems.map((v) => ({
@@ -21,7 +32,12 @@ function ResponseList({ listItems, selected, onSelect, onFavChange }) {
     {
       title: "대표문항 답",
       dataIndex: "answer",
-      sorter: (a, b) => a.answer.localeCompare(b.answer),
+      sorter: (a, b) =>
+        typeof a.answer === "string"
+          ? a.answer.localeCompare(b.answer)
+          : compareArray(a.answer, b.answer),
+      render: (a) =>
+        typeof a === "string" ? a : a.map((v, i) => <Tag key={i}>{v}</Tag>),
     },
     {
       title: "즐겨찾기",
@@ -35,7 +51,7 @@ function ResponseList({ listItems, selected, onSelect, onFavChange }) {
           )}
         </div>
       ),
-      sorter: (a, b) => a.favorite - b.favorite,
+      sorter: (a, b) => a.favorite.fav - b.favorite.fav,
     },
   ];
 
@@ -65,7 +81,7 @@ ResponseList.propTypes = {
     PropTypes.arrayOf(
       PropTypes.shape({
         key: PropTypes.number,
-        answer: PropTypes.string,
+        answer: PropTypes.any,
         order: PropTypes.number,
         favorite: PropTypes.bool,
       })
