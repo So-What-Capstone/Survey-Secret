@@ -1,11 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { MAIL_CONFIG_OPTIONS } from './../common/common.constants';
 import { EmailVar, MailsModuleOptions } from './mails.interfaces';
-import * as FormData from 'form-data';
-import Mailgun from 'mailgun.js';
 import { SendEmailInput, SendEmailOutput } from './dtos/send-email.dto';
 import { SmsService } from 'src/sms/sms.service';
 import { User } from './../users/schemas/user.schema';
+import { PersonalQuestionType } from 'src/forms/questions/schemas/personal-question.schema';
+import * as FormData from 'form-data';
+import { ContactType } from 'src/sms/schemas/contact.schema';
+const Mailgun = require('mailgun.js');
 
 @Injectable()
 export class MailsService {
@@ -16,9 +18,24 @@ export class MailsService {
 
   async sendEmail(
     user: User,
-    { subject, to, template, emailVars }: SendEmailInput,
+    {
+      subject,
+      template,
+      emailVars,
+      formId,
+      questionId,
+      submissionIds,
+    }: SendEmailInput,
   ): Promise<SendEmailOutput> {
     try {
+      const receivers: string[] = await this.smsService.getReceivers(
+        formId,
+        submissionIds,
+        questionId,
+        user,
+        PersonalQuestionType.Email,
+      );
+
       const mailgun = new Mailgun(FormData);
       const client = mailgun.client({
         username: 'api',
@@ -27,20 +44,40 @@ export class MailsService {
 
       const messageData = {
         from: `${this.options.fromEmail}@${this.options.domain}`,
-        to,
+        to: receivers,
         subject,
         template: 'default',
       };
 
-      emailVars?.forEach(
-        (emailVar) => (messageData[`v:${emailVar.key}`] = emailVar.value),
+      let msg: string;
+
+      emailVars?.forEach((emailVar) => {
+        if (emailVar.key === 'body') {
+          msg = emailVar.value;
+        }
+        messageData[`v:${emailVar.key}`] = emailVar.value;
+      });
+
+      console.log(emailVars);
+
+      const { status, message } = await client.messages.create(
+        this.options.domain,
+        messageData,
       );
 
-      await client.messages.create(this.options.domain, messageData);
+      if (status == 200) {
+        await this.smsService.addHistoryInDB(
+          user,
+          msg,
+          formId,
+          submissionIds,
+          ContactType.EMAIL,
+        );
 
-      // this.smsService.addHistoryInDB()
-
-      return { ok: true };
+        return { ok: true };
+      } else {
+        throw new Error(message);
+      }
     } catch (error) {
       return { ok: false, error: error.message };
     }

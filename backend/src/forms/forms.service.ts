@@ -258,6 +258,7 @@ export class FormsService {
       privacyExpiredAt,
       expiredAt,
       state,
+      isPromoted,
       representativeQuestionId,
     }: EditFormInput,
   ): Promise<EditFormOutput> {
@@ -303,6 +304,7 @@ export class FormsService {
             representativeQuestion: representativeQuestionId
               ? representativeQuestionId
               : undefined,
+            isPromoted: isPromoted ? isPromoted : undefined,
           },
         },
       );
