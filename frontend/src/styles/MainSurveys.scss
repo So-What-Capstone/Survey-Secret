@@ -2,8 +2,8 @@
 .survey-card {
   background-color: white;
   margin: 1%;
-  min-width: 20rem;
-  max-width: 20rem;
+  min-width: 23%;
+  max-width: 23%;
   min-height: 22rem;
   max-height: 22rem;
   border-radius: 0.2rem;
@@ -16,13 +16,19 @@
   flex-flow: column nowrap;
   .survey-card-title {
     font-size: 1.7rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
     padding: 1rem;
-    flex-grow: 1;
+    flex: 1;
   }
   .survey-card-desc {
     font-size: 1.2rem;
+    height: min-content;
     padding: 1rem;
-    flex-grow: 3;
+    flex: 3;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
   }
   .survey-card-ribbon {
     width: 8rem;
@@ -47,9 +53,12 @@
     }
   }
   .survey-card-exp {
-    flex-grow: 1;
+    flex: 1;
     font-size: 1rem;
     padding: 1rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   &:hover {
     background-color: #caeee6;
@@ -85,7 +94,7 @@
   .main-survey-card-overflow {
     min-width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-flow: row nowrap;
     z-index: 20;
     overflow-x: auto;
     overflow-y: hidden;

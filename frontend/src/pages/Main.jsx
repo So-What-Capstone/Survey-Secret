@@ -57,7 +57,6 @@ function Main() {
   const navigate = useNavigate();
 
   const searchSurvey = () => {
-    console.log(searchedText);
     navigate({ pathname: "/search", search: `?${createSearchParams(params)}` });
   };
 
