@@ -26,6 +26,7 @@ function Email() {
   const [repsQuestionContent, setRepsQuestionContent] = useState("");
 
   //개인정보질문 id
+  const [phoneQueId, setPhoneQueId] = useState("");
   const [emailQueId, setEmailQueId] = useState("");
 
   /* 수신인 정보 */
@@ -72,6 +73,10 @@ function Email() {
     });
     console.log(textTitle + ", " + textValue);
 
+    if (textTitle === "" || textValue === "") {
+      alert("내용을 입력하세요.");
+    }
+
     //send Email logic
     if (emailQueId !== "") {
       /*
@@ -105,6 +110,8 @@ function Email() {
           selectedForm={selectedForm}
           repsQuestionContent={repsQuestionContent}
           setRepsQuestionContent={setRepsQuestionContent}
+          phoneQueId={phoneQueId}
+          setPhoneQueId={setPhoneQueId}
           emailQueId={emailQueId}
           setEmailQueId={setEmailQueId}
           checkedItems={checkedItems}
