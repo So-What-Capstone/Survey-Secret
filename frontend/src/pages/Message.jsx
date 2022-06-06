@@ -1,65 +1,105 @@
 import React, { useState } from "react";
 import ClipTray from "../modules/ClipTray";
 import ContactList from "../modules/ContactList";
+import { gql, useQuery, useMutation } from "@apollo/client";
+import { getMyFormsForContactQuery } from "../API/meQuery";
+import { sendSms } from "../API/sendQuery";
 import "../styles/Clips.css";
 import "../styles/Message.scss";
+
+const GET_MY_FORMS_CONTACT_QUERY = getMyFormsForContactQuery;
+const SEND_SMS = sendSms;
 
 function Message() {
   const clips = [
     { title: "문자 서비스", link_enabled: false, link: ".", color_idx: 0 },
   ];
 
-  /* 설문 + 수신인 정보 dummy data*/
-  const forms = [
+  const [myForms, setMyForms] = useState([
     {
-      id: "0",
-      title: "누가 젤 귀여운가?",
-      receivers: [
-        { id: "0", name: "카리나", favorite: false },
-        { id: "1", name: "닝닝", favorite: false },
-        { id: "2", name: "윈터", favorite: false },
-        { id: "3", name: "지젤", favorite: true },
-        { id: "4", name: "카리나", favorite: false },
-        { id: "5", name: "카리나", favorite: true },
-        { id: "6", name: "카리나", favorite: false },
-        { id: "7", name: "카리나", favorite: false },
-        { id: "8", name: "카리나", favorite: false },
-      ],
+      id: "",
+      title: "",
     },
-    {
-      id: "1",
-      title: "누가 젤 예쁜가??",
-      receivers: [
-        { id: "9", name: "고다현", favorite: true },
-        { id: "10", name: "김지윤", favorite: true },
-        { id: "11", name: "윈터", favorite: false },
-      ],
-    },
-  ];
+  ]);
+
+  //대표질문 내용
+  const [repsQuestionContent, setRepsQuestionContent] = useState("");
+
+  //개인정보질문 id
+  const [phoneQueId, setPhoneQueId] = useState("");
+
+  //SMS, LMS
+  const [smsType, setSmsType] = useState("SMS");
 
   /* 수신인 정보 */
-  const [selectedForm, setSelectedForm] = useState(forms[0]); //선택된 설문
+  const [selectedForm, setSelectedForm] = useState({
+    id: "",
+    title: "",
+    receivers: [],
+  });
+
+  //선택된 설문
   const [checkedItems, setCheckedItems] = useState(new Set()); //체크된 수신자들(receiverId들의 배열)
 
   /* 문자메시지 발신 정보 */
-  const [senderTel, setSenderTel] = useState("01012341234");
   const [textValue, setTextValue] = useState("");
   const [textByte, setTextByte] = useState(0);
 
   const maxByte = 100; //최대 100바이트
+
+  const { data, loading, error } = useQuery(GET_MY_FORMS_CONTACT_QUERY, {
+    onCompleted: (data) => {
+      const myFormList = data?.me?.user?.forms.map((form) => {
+        const obj = {};
+        obj["id"] = form._id;
+        obj["title"] = form.title;
+        //obj["privacyExpiredAt"] = form.privacyExpiredAt;
+        return obj;
+      });
+      setMyForms(myFormList);
+      //setSelectedForm
+    },
+  });
 
   const handleTextValue = (e) => {
     setTextValue(e.target.value);
     checkByte(e.target.value);
   };
 
-  const sendMessage = () => {
-    console.log("selectedForm Id: " + selectedForm.id);
-    checkedItems.forEach(function (value) {
-      console.log("receiverId: " + value);
-    });
-    console.log(senderTel + ", " + textValue);
-    //send Message logic
+  const [sendSms] = useMutation(SEND_SMS);
+
+  const sendMessage = async () => {
+    if (textByte < 1) {
+      alert("내용을 입력하세요.");
+    } else {
+      console.log("selectedForm Id: " + selectedForm.id);
+      checkedItems.forEach(function (value) {
+        console.log("receiverId: " + value);
+      });
+      console.log(textValue);
+
+      if (phoneQueId !== "") {
+        await sendSms({
+          variables: {
+            formId: selectedForm.id,
+            submissionIds: checkedItems,
+            questionId: phoneQueId, //개인정보 질문의 id?
+            msg: textValue,
+            msgType: smsType,
+          },
+          onCompleted: (data) => {
+            if (data.sendSms.ok) {
+              console.log("전송성공!");
+            } else {
+              console.log("전송실패!");
+              throw new Error(data.sendSms.error);
+            }
+          },
+        });
+      } else {
+        alert("연락 정보가 없어 전송할 수 없습니다.");
+      }
+    }
   };
 
   const checkByte = (newTextValue) => {
@@ -86,10 +126,11 @@ function Message() {
     }
 
     if (totalByte > maxByte) {
-      alert("메세지는 최대" + maxByte + "byte를 초과할 수 없습니다.");
-      setTextValue(newTextValue.substring(0, newTextValue.length - 1));
-      totalByte -= lastByte;
+      setSmsType("LMS");
+    } else {
+      setSmsType("SMS");
     }
+
     setTextByte(totalByte);
   };
 
@@ -98,24 +139,27 @@ function Message() {
       <ClipTray clips={clips} />
       <div className="message-con">
         <ContactList
-          forms={forms}
+          forms={myForms}
           selectedForm={selectedForm}
+          repsQuestionContent={repsQuestionContent}
+          phoneQueId={phoneQueId}
+          setPhoneQueId={setPhoneQueId}
+          setRepsQuestionContent={setRepsQuestionContent}
           checkedItems={checkedItems}
           setSelectedForm={setSelectedForm}
           setCheckedItems={setCheckedItems}
         />
         <div className="detail-panel">
-          <div className="sender-row">
-            <label>발신번호</label>
-            <input type="tel" value={senderTel} disabled />
-          </div>
           <div className="content-row">
             <div className="content-label">
               <label>문자 내용 입력</label>
               <span></span>
-              <label>
-                {textByte}/{maxByte}Byte
-              </label>
+              {smsType === "LMS" && <label>LMS</label>}
+              {smsType === "SMS" && (
+                <label>
+                  {textByte}/{maxByte}Byte
+                </label>
+              )}
             </div>
             <textarea
               placeholder="내용을 입력하세요."
