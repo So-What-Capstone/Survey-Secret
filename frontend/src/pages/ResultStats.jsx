@@ -9,6 +9,7 @@ import { getKeywordAnalysisQuery } from "../API/getKeywordAnalysisQuery";
 import { getMarketBasketQuery } from "../API/getMarketBasketQuery";
 import { useLazyQuery } from "@apollo/client";
 import WordCloud from "react-d3-cloud";
+import randomColor from "randomcolor";
 
 import {
   Checkbox,
@@ -20,11 +21,34 @@ import {
   Button,
   Select,
   message,
+  Table,
+  Tag,
+  Tooltip,
 } from "antd";
 import TableTransfer from "../modules/TableTransfer";
 // import Plotly from "plotly.js-basic-dist";
 // import createPlotlyComponent from "react-plotly.js/factory";
 // const Plot = createPlotlyComponent(Plotly);
+
+String.prototype.hashCode = function () {
+  let hash = 0,
+    i,
+    chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr = this.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+};
+
+const palette = randomColor({
+  count: 101,
+  luminosity: "dark",
+  format: "rgb",
+  seed: 1000,
+});
 
 function ResultStatsOption({ onChange }) {
   const [option, setOption] = useState();
@@ -127,22 +151,122 @@ function NotSelected() {
   );
 }
 
+function renderTag(tag) {
+  return (
+    <Tooltip
+      key={tag.text}
+      title={`문항 "${tag.question}"에서 ${tag.choice}를 선택`}
+    >
+      <Tag color={palette[tag.text.hashCode() % 101]} key={tag.text}>
+        {tag.text}
+      </Tag>
+    </Tooltip>
+  );
+}
+
+const MarketBasketColumns = [
+  {
+    title: "이 선택지를 선택한 사람은...",
+    dataIndex: "antecedents",
+    key: "antecedents",
+    fixed: "left",
+    width: 250,
+    render: (tags) => <div>{tags.map((tag) => renderTag(tag))}</div>,
+  },
+  {
+    title: "주로 이 선택지도 함께 선택했습니다.",
+    dataIndex: "consequents",
+    key: "consequents",
+    fixed: "left",
+    width: 250,
+    render: (tags) => <div>{tags.map((tag) => renderTag(tag))}</div>,
+  },
+  {
+    title: "원인 선택지의 Support",
+    dataIndex: "antecedent support",
+    key: "antecedent support",
+    width: 150,
+    render: (text) => <span>{Number(text).toFixed(3)}</span>,
+  },
+  {
+    title: "결과 선택지의 Support",
+    dataIndex: "consequent support",
+    key: "consequent support",
+    width: 150,
+    render: (text) => <span>{Number(text).toFixed(3)}</span>,
+  },
+  {
+    title: "Confidence",
+    dataIndex: "confidence",
+    key: "confidence",
+    width: 150,
+    render: (text) => <span>{Number(text).toFixed(3)}</span>,
+  },
+  {
+    title: "Lift",
+    dataIndex: "lift",
+    key: "lift",
+    width: 150,
+    render: (text) => <span>{Number(text).toFixed(3)}</span>,
+  },
+  {
+    title: "Leverage",
+    dataIndex: "leverage",
+    key: "leverage",
+    width: 150,
+    render: (text) => <span>{Number(text).toFixed(3)}</span>,
+  },
+  {
+    title: "Conviction",
+    dataIndex: "conviction",
+    key: "conviction",
+    width: 150,
+    render: (text) => <span>{Number(text).toFixed(3)}</span>,
+  },
+  {
+    title: "Support",
+    dataIndex: "support",
+    key: "support",
+    fixed: "right",
+    width: 150,
+    render: (text) => <span>{Number(text).toFixed(3)}</span>,
+  },
+];
+
 function MarketBasketAnalysis({ form }) {
   const [questions, setQuestions] = useState([]);
+  const [questionDict, setQuestionDict] = useState({});
   const [analysis, setAnalysis] = useState(undefined);
   const [getMarketBasket, { loading }] = useLazyQuery(getMarketBasketQuery);
 
   useEffect(() => {
     const quesIds = [];
-    form.sections.forEach((sect) => {
+    const quesDict = {};
+    form.sections.forEach((sect, i) => {
       sect.questions.forEach((ques) => {
         if (ques.kind === "Closed") {
           quesIds.push(ques);
+          quesDict[ques._id] = ques;
+          quesDict[ques._id].sectIndex = i;
         }
       });
     });
     setQuestions(quesIds);
+    setQuestionDict(quesDict);
   }, [form]);
+
+  function toTags(chStr) {
+    return chStr.split(", ").map((ch) => {
+      const [quesId, chIndex] = ch.split("-");
+      return {
+        text: `S${questionDict[quesId].sectIndex + 1}-Q${
+          questionDict[quesId].order + 1
+        }-C${Number(chIndex) + 1}`,
+        question: questionDict[quesId].content,
+        choice: questionDict[quesId].choices[Number(chIndex)].choice,
+      };
+    });
+  }
 
   function generateResult() {
     setAnalysis(undefined);
@@ -153,9 +277,16 @@ function MarketBasketAnalysis({ form }) {
       },
     }).then((res) => {
       try {
-        const currAnalysis = res.data.getMarketBasket.result;
-        setAnalysis(currAnalysis);
-        console.log(JSON.stringify(res.data.getMarketBasket));
+        setAnalysis(
+          res.data.getMarketBasket.result
+            .sort((a, b) => Number(b.support) - Number(a.support))
+            .map((rule, i) => ({
+              ...rule,
+              key: String(i),
+              antecedents: toTags(rule.antecedents),
+              consequents: toTags(rule.consequents),
+            }))
+        );
       } catch (err) {
         message.error("데이터 산출에 실패했습니다.");
         console.error(JSON.stringify(err, null, 2));
@@ -183,6 +314,13 @@ function MarketBasketAnalysis({ form }) {
       {loading && <Spin tip="정보를 가져오는 중..."></Spin>}
       {analysis && analysis.length === 0 && (
         <Empty description="유의미한 응답 경향이 없습니다."></Empty>
+      )}
+      {analysis && analysis.length > 0 && (
+        <Table
+          columns={MarketBasketColumns}
+          dataSource={analysis}
+          scroll={{ x: "100%" }}
+        ></Table>
       )}
     </div>
   );
