@@ -1,14 +1,16 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
+import { SendSmsInput } from 'src/sms/dtos/send-sms.dto';
 import { EmailVar } from '../mails.interfaces';
 import { CoreOutput } from './../../common/dtos/output.dto';
 
 @InputType()
-export class SendEmailInput {
+export class SendEmailInput extends PickType(SendSmsInput, [
+  'formId',
+  'submissionIds',
+  'questionId',
+]) {
   @Field((type) => String)
   subject: string;
-
-  @Field((type) => String)
-  to: string;
 
   @Field((type) => String, { nullable: true })
   template?: string;
