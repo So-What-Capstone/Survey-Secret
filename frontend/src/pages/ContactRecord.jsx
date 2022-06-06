@@ -18,20 +18,21 @@ const GET_CONTACTS_DETAIL = getContactsDetail;
 
 function ContactRecord() {
   const [contactList, setContactList] = useState([]);
+  const [mode, setMode] = useState(0); //0:문자 메시지, 1:이메일
 
   const { data, loading, error } = useQuery(GET_CONTACTS_DETAIL, {
+    variables: {
+      contactType: mode === 0 ? "SMS" : "EMAIL",
+    },
     onCompleted: (data) => {
       setContactList(
         data?.getSendHistory?.contacts.map((c) => {
           const obj = {};
-          obj["time"] = c.updatedAt;
-          console.log(c.updatedAt);
+          obj["time"] =
+            c.updatedAt.substring(0, 10) + " " + c.updatedAt.substring(11, 19);
           obj["id"] = c._id;
-          console.log(c.updatedAt);
           obj["content"] = c.content;
-          console.log(c.updatedAt);
           obj["contactType"] = c.contactType;
-          console.log(c.updatedAt);
           obj["count"] = 3;
           obj["success"] = true;
           obj["senderInfo"] = "전송자";
@@ -41,6 +42,8 @@ function ContactRecord() {
       );
     },
   });
+
+  const [getContactsDetail] = useLazyQuery(GET_CONTACTS_DETAIL);
 
   /*
   const messages = [
@@ -117,7 +120,6 @@ function ContactRecord() {
   ];
 
   /* 문자메시지/이메일 발신 정보 */
-  const [mode, setMode] = useState(0); //0:문자 메시지, 1:이메일
   const [textTitle, setTextTitle] = useState(""); //이메일 제목
   const [textValue, setTextValue] = useState(""); //문자/이메일 내용
   const [textByte, setTextByte] = useState(0); //문자 바이트수
@@ -147,6 +149,32 @@ function ContactRecord() {
 
   const handleModeChange = (e, newMode) => {
     setMode(newMode);
+    console.log(newMode);
+    getContactsDetail({
+      variables: {
+        contactType: newMode === 0 ? "SMS" : "EMAIL",
+      },
+      onCompleted: (data) => {
+        console.log("query completed");
+        setContactList(
+          data?.getSendHistory?.contacts.map((c) => {
+            const obj = {};
+            obj["time"] =
+              c.updatedAt.substring(0, 10) +
+              " " +
+              c.updatedAt.substring(11, 19);
+            obj["id"] = c._id;
+            obj["content"] = c.content;
+            obj["contactType"] = c.contactType;
+            obj["count"] = 3;
+            obj["success"] = true;
+            obj["senderInfo"] = "전송자";
+            obj["title"] = "title";
+            return obj;
+          })
+        );
+      },
+    });
   };
 
   const handleListItemClick = (e, listItem, mode) => {
@@ -262,7 +290,7 @@ function ContactRecord() {
           <List className="list-con">
             {contactList.map(
               (contact) =>
-                contact.contactType === "SMS" && (
+                contact.contactType === "EMAIL" && (
                   <div key={contact.id} className="content-con">
                     <ListItem
                       button

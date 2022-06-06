@@ -26,7 +26,7 @@ export default function RepresentativeQ({
       >
         {Object.keys(questions).map((v, i) => (
           <Option key={i} value={v}>
-            {questions[v]}
+            {questions[v].content}
           </Option>
         ))}
       </Select>
