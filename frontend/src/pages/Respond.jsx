@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createSubmissionMutation } from "../API";
@@ -152,17 +152,21 @@ function Respond() {
   const [searchParams] = useSearchParams();
   const [formId, setFormId] = useState(0);
   const [secEnabled, setSecEnabled] = useState();
+  const [findForm] = useLazyQuery(FIND_FORM_BY_ID_QUERY);
   useEffect(() => {
-    const id = searchParams.get("id");
-    if (id) {
-      setFormId(id);
-    } else {
-      navigate("/");
-    }
-  }, [searchParams]);
-  const { loading, data, error } = useQuery(FIND_FORM_BY_ID_QUERY, {
-    variables: { formId },
-    onCompleted: (data) => {
+    async function myEffect() {
+      console.log("useeffect");
+      // location.reload();
+      const id = searchParams.get("id");
+      if (id) {
+        setFormId(id);
+      } else {
+        navigate("/");
+      }
+      let findform_ret = await findForm({ variables: { formId: id } });
+      console.log(findform_ret.data);
+      let data = findform_ret.data;
+
       let formData = data.findFormById.form;
       if (formData?.state !== "InProgress") {
         let msg = "현재 설문을 이용할 수 없습니다.";
@@ -172,8 +176,9 @@ function Respond() {
       const config = getFormConfigFromDB(formId, formData, formData.sections);
 
       setFormConfig(config);
-    },
-  });
+    }
+    myEffect();
+  }, [searchParams]);
 
   const [createSubmission, { loading: mutationLoading }] = useMutation(
     CREATE_SUBMISSION_MUTATION,
