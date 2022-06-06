@@ -15,3 +15,5 @@ export { getDescribeQuery } from "./getDescribeQuery";
 export { getMarketBasketQuery } from "./getMarketBasketQuery";
 export { getKeywordAnalysisQuery } from "./getKeywordAnalysisQuery";
 export { setFavoriteSubmissionsMutation } from "./setFavoriteSubmissionsMutation";
+export { findQueById } from "./findQuestionByIdQuery";
+export { findAnswerByQuestionIdQuery } from "./findAnswerByQuestionIdQuery";

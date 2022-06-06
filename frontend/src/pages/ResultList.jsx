@@ -8,14 +8,15 @@ import {
 } from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { CloseCircleFilled } from "@ant-design/icons";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   editFormMutation,
   findFormByIdForOwnerQuery,
   setFavoriteSubmissionsMutation,
+  findAnswerByQuestionIdQuery,
 } from "../API";
 import "../styles/ResultList.scss";
-import { message } from "antd";
+import { message, Tag } from "antd";
 
 message.config({
   // 3 messages can be shown at once
@@ -27,13 +28,28 @@ function cutLongStr(str) {
   if (str.length > 20) return str.substr(0, 20);
   return str;
 }
+
+function getAnsStringOrTag(ans, kind) {
+  let ansStr = "";
+  if (kind === "Opened")
+    ansStr = cutLongStr(String(ans?.openedAnswer ? ans?.openedAnswer : "-"));
+  else if (kind === "Linear")
+    ansStr = cutLongStr(String(ans?.linearAnswer ? ans?.linearAnswer : "-"));
+  else if (kind === "Closed") {
+    ansStr = ans?.closedAnswer?.map((v, i) => (
+      <Tag key={`tag-${i}`}>{v + 1}</Tag>
+    ));
+  }
+  ansStr = ansStr ? ansStr : "-";
+  return ansStr;
+}
 function ResultList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [formId, setFormId] = useState("");
-  const [selectedRespNo, setSelectedResp] = useState(-1);
-  const [repQ, setRepQ] = useState("");
-  const [repQCandi, setRepQCandi] = useState({});
+  const [selectedRespNo, setSelectedResp] = useState(-1); // index of list
+  const [repQ, setRepQ] = useState(""); // representataive question id
+  const [repQCandi, setRepQCandi] = useState({}); //{questionId: content(str)}
   const [ansList, setAnsList] = useState([]); // [ {id1:ans1, id2:ans2, ...} ]
   const [repList, setRepList] = useState([]); // [ {key: order(str), answer: ans_of_repQ(str), order: order(num), favorite: isFav(bool), id: submission_id(str)} ]
   const [secList, setSecList] = useState([]);
@@ -63,8 +79,16 @@ function ResultList() {
       for (let i = 0; i < sec.length; i++) {
         let que = sec[i].questions;
         for (let j = 0; j < que.length; j++) {
-          if (que[j].kind !== "Opened") continue;
-          repQCandi_temp[que[j]._id] = que[j].content;
+          switch (que[j].kind) {
+            case "Opened":
+            case "Closed":
+            case "Linear":
+              repQCandi_temp[que[j]._id] = {
+                content: que[j].content,
+                kind: que[j].kind,
+              };
+              break;
+          }
         }
       }
       setRepQCandi(repQCandi_temp);
@@ -83,7 +107,7 @@ function ResultList() {
         for (let j = 0; j < ans_orig.length; j++) {
           ans[ans_orig[j]["question"]] = { ...ans_orig[j] };
           if (ans_orig[j]["question"] === repq) {
-            repq_ans_str = cutLongStr(ans_orig[j].openedAnswer);
+            repq_ans_str = getAnsStringOrTag(ans_orig[j], ans_orig[j].kind);
           }
         }
         rep = {
@@ -100,6 +124,7 @@ function ResultList() {
       setRepList(repl);
     },
   });
+  const [findAnswer] = useLazyQuery(findAnswerByQuestionIdQuery);
   const [editForm] = useMutation(editFormMutation);
   const [setFavSubm] = useMutation(setFavoriteSubmissionsMutation);
 
@@ -196,11 +221,18 @@ function ResultList() {
       return;
     }
     setRepQ(v);
+    let ans_ret = await findAnswer({
+      variables: {
+        formId: formId,
+        questionId: v,
+      },
+    });
+
+    let repQkind = repQCandi[v].kind;
     let temp = repList.slice();
     for (let i = 0; i < temp.length; i++) {
-      let ansStr = ansList[i][v]?.openedAnswer;
-      ansStr = ansStr ? ansStr : "";
-      ansStr = cutLongStr(ansStr);
+      let ansStr = getAnsStringOrTag(ansList[i][v], repQkind);
+
       temp[i] = {
         ...temp[i],
         answer: ansStr,

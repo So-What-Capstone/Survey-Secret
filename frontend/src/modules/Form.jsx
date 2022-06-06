@@ -88,7 +88,6 @@ export default function Form({
     setResponse(myRes);
     setConfig(myConfig);
     setSecEnabled(mySec);
-    console.log("use effect");
   }, [_config]);
 
   useEffect(() => {
