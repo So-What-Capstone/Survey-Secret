@@ -99,7 +99,11 @@ export class User extends CoreSchema {
 
   //값이 안들어와도 되는 경우에는 graphql에서 nullable option 넣고, typescript에도 ? 꼭 맞춰주셔야 됩니다!
   @Field((type) => String, { nullable: true })
-  @Prop({ type: String }) //default : AWS 기본 프로필사진 링크
+  @Prop({
+    type: String,
+    default:
+      'https://surveysecret.s3.ap-northeast-2.amazonaws.com/Users/blank-profile-image.png',
+  })
   @IsString()
   avatarImg?: string;
 

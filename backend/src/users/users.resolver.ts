@@ -45,9 +45,9 @@ export class UsersResolver {
   editUser(
     @AuthUser() user: User,
     @Args('input') editUserInput: EditUserInput,
-    @Args('file', { type: () => GraphQLUpload }) avatarImg: FileUpload,
+    // @Args('file', { type: () => GraphQLUpload }) avatarImg: FileUpload,
   ): Promise<EditUserOutput> {
-    return this.usersService.editUser(user, editUserInput, avatarImg);
+    return this.usersService.editUser(user, editUserInput);
   }
 
   @Query((returns) => meOutput)
