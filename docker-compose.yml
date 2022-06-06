@@ -1,0 +1,100 @@
+version: "3"
+services:
+    nginx-proxy:
+        image: jwilder/nginx-proxy
+        container_name: nginx-proxy
+        volumes:
+            - conf:/etc/nginx/conf.d
+            - vhost:/etc/nginx/vhost.d
+            - html:/usr/share/nginx/html
+            - dhparam:/etc/nginx/dhparam
+            - /srv/nginx/certs:/etc/nginx/certs:ro
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+        ports:
+            - 80:80
+            - 443:443
+
+    letsencrypt:
+        image: jrcs/letsencrypt-nginx-proxy-companion
+        container_name: letsencrypt
+        depends_on:
+            - nginx-proxy
+        volumes:
+            - vhost:/etc/nginx/vhost.d
+            - html:/usr/share/nginx/html
+            - dhparam:/etc/nginx/dhparam:ro
+            - /srv/nginx/certs:/etc/nginx/certs
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - acme:/etc/acme.sh
+        environment:
+            - DEFAULT_EMAIL=<서버 관리자의 Email>
+            - NGINX_PROXY_CONTAINER=nginx-proxy
+
+    ss-main-front:
+        image: node:14
+        environment:
+            - VIRTUAL_HOST=<서비스될 도메인>
+            - LETSENCRYPT_HOST=<서비스될 도메인>
+            - REACT_APP_BACKEND=https://api.<서비스될 도메인>/graphql
+        volumes:
+            - /srv/Main:/app
+        working_dir: /app/frontend
+        tty: true
+        expose:
+            - 3000
+        entrypoint: ["npm", "start"]
+
+    ss-main-back:
+        image: node:14
+        environment:
+            - VIRTUAL_HOST=api.<서비스될 도메인>
+            - LETSENCRYPT_HOST=api.<서비스될 도메인>
+            - DB_URL=mongodb://ss-main-db/survey
+            - PORT=5000
+            - SECRET_KEY=<임의의 난수 문자열>
+            - MAIL_API_KEY=<Mailgun API KEY>
+            - MAIL_DOMAIN=<Mailgun Sandbox Domain>
+            - MAIL_FROM_EMAIL=admin
+            - AWS_SECRET=<AWS 비밀키>
+            - AWS_KEY=<AWS 키>
+            - SMS_USER_ID=<알리고 User ID>
+            - SMS_API_KEY=<알리고 API Key>
+            - SMS_SENDER=<알리고 가입 전화번호>
+            - STAT_END_POINT=http://ss-main-stats:4000
+        volumes:
+            - /srv/Main:/app
+        working_dir: /app/backend
+        tty: true
+        expose:
+            - 5000
+        entrypoint: ["npm", "run", "start:dev"]
+
+    ss-main-stats:
+        build:
+            context: /srv/Main/stats
+        volumes:
+            - /srv/Main/stats:/app
+        working_dir: /app
+        tty: true
+        expose:
+            - 4000
+        environment:
+            - FLASK_APP=/app/api.py
+            - FLASK_ENV=development
+            - STATIC_FOLDER=/app/static
+            - FLASK_DEBUG=1
+        entrypoint: flask run --host=0.0.0.0 --port=4000
+        
+    ss-main-db:
+        image: mongo
+        restart: unless-stopped
+        environment:
+            MONGO_INITDB_DATABASE: survey
+            MONGODB_DATA_DIR: /data/db
+            MONDODB_LOG_DIR: /dev/null
+        volumes:
+            - type: bind
+              source: /srv/db
+              target: /data/db
+        expose:
+            - 27017
