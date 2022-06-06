@@ -364,21 +364,33 @@ export class FormsService {
   async getForms({ lastId }: GetFormsInput): Promise<GetFormsOutput> {
     try {
       //for testing
-      const pageSize = 20;
+      const pageSize = 4;
       console.log(lastId);
 
-      const forms = await this.formModel
-        .find({
-          $and: [
-            lastId ? { _id: { $gt: lastId } } : {},
-            { state: FormState.InProgress },
-          ],
-        })
-        .populate('owner')
-        .limit(pageSize);
+      const forms = await this.formModel.aggregate([
+        {
+          $match: {
+            // $and: [
+            // lastId ? { _id: { $gt: lastId } } : {},
+            state: FormState.InProgress,
+            // ],
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'owner',
+            foreignField: '_id',
+            as: 'owner',
+          },
+        },
+        {
+          $sample: { size: pageSize },
+        },
+      ]);
 
       if (forms.length === 0) {
-        return { ok: false, error: '검색된 폼이 없습니다.' };
+        return { ok: false, error: '진행중인 폼이 없습니다.' };
       }
 
       return {
