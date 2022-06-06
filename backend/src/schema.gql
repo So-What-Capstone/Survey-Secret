@@ -181,6 +181,7 @@ type Form {
   isPromoted: Boolean!
   expiredAt: DateTime
   privacyExpiredAt: DateTime
+  isPrivacyExpired: Boolean!
   owner: User!
   sections: [Section!]
   submissions: [Submission!]

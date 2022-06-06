@@ -71,6 +71,7 @@ export class Form extends CoreSchema {
   @Prop({
     type: Date,
     default: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+    index: true,
   })
   expiredAt?: Date;
 
@@ -78,8 +79,13 @@ export class Form extends CoreSchema {
   @Prop({
     type: Date,
     default: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+    index: true,
   })
   privacyExpiredAt: Date;
+
+  @Field((type) => Boolean)
+  @Prop({ type: Boolean, default: false })
+  isPrivacyExpired: boolean;
 
   @Field((type) => User)
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })

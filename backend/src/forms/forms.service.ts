@@ -25,6 +25,7 @@ import {
   FindQuestionByIdInput,
   FindQuestionByIdOutput,
 } from './dtos/find-question-by-id.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class FormsService {
@@ -304,7 +305,7 @@ export class FormsService {
             representativeQuestion: representativeQuestionId
               ? representativeQuestionId
               : undefined,
-            isPromoted: isPromoted ? isPromoted : undefined,
+            isPromoted: isPromoted !== undefined ? isPromoted : undefined,
           },
         },
       );
@@ -444,5 +445,65 @@ export class FormsService {
     } catch (error) {
       return { ok: false, error: error.message };
     }
+  }
+
+  //per every minute
+  @Cron('0 * * * * *')
+  async expireForm() {
+    const expiredForm = await this.formModel.updateMany(
+      {
+        $and: [
+          { expiredAt: { $lte: Date.now() } },
+          { state: FormState.InProgress },
+        ],
+      },
+      { $set: { state: FormState.Expired } },
+    );
+  }
+
+  //per every day
+  // @Cron('0 0 0 * * *')
+  // for testing
+  @Cron('* * * * * *')
+  async expirePersonalQuestion() {
+    const session = await this.connection.startSession();
+
+    // await session.withTransaction(async () => {
+    //   const forms = await this.formModel.find(
+    //     {
+    //       $and: [
+    //         { privacyExpiredAt: { $lte: Date.now() } },
+    //         { isPrivacyExpired: false },
+    //       ],
+    //     },
+    //     null,
+    //     { session },
+    //   );
+
+    //   console.log(forms);
+
+    //   if (forms.length === 0) {
+    //     return;
+    //   }
+
+    //   const result = await this.submissionModel.updateMany(
+    //     { form: { $in: forms } },
+    //     { $pull: { 'answers.kind': 'Personal' } },
+    //   );
+
+    //   const privacyExpiredForm = await this.formModel.updateMany(
+    //     {
+    //       $and: [
+    //         { privacyExpiredAt: { $lte: Date.now() } },
+    //         { isPrivacyExpired: false },
+    //       ],
+    //     },
+    //     { $set: { isPrivacyExpired: true } },
+    //   );
+
+    //   console.log(privacyExpiredForm);
+    //   console.log(result);
+    // });
+    // await session.endSession();
   }
 }
