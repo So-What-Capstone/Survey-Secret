@@ -49,6 +49,7 @@ export const sectionsInfo = `sections {
         content
         description
         required
+        personalType
         kind
       }
     }
