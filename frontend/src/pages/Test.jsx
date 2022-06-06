@@ -193,44 +193,43 @@ function Test() {
     type: "phone",
   });
 
-  return (
-    <div className="root-container">
-      <div className="panel">미리보기</div>
-      <div className="panel">
-        디자인 수정하기
-        <EditQuestion
-          sectionCount={1}
-          data={data1}
-          onDataChange={(d) => setData1(d)}
-        ></EditQuestion>
-        <EditQuestion
-          sectionCount={1}
-          data={data2}
-          onDataChange={(d) => setData2(d)}
-        ></EditQuestion>
-        <EditQuestion
-          sectionCount={1}
-          data={data3}
-          onDataChange={(d) => setData3(d)}
-        ></EditQuestion>
-        <EditQuestion
-          sectionCount={1}
-          data={data4}
-          onDataChange={(d) => setData4(d)}
-        ></EditQuestion>
-        <EditQuestion
-          sectionCount={1}
-          data={data5}
-          onDataChange={(d) => setData5(d)}
-        ></EditQuestion>
-        <EditQuestion
-          sectionCount={1}
-          data={data6}
-          onDataChange={(d) => setData6(d)}
-        ></EditQuestion>
-      </div>
-    </div>
-  );
+  return null;
+  // <div className="root-container">
+  //   <div className="panel">미리보기</div>
+  //   <div className="panel">
+  //     디자인 수정하기
+  //     <EditQuestion
+  //       sectionCount={1}
+  //       data={data1}
+  //       onDataChange={(d) => setData1(d)}
+  //     ></EditQuestion>
+  //     <EditQuestion
+  //       sectionCount={1}
+  //       data={data2}
+  //       onDataChange={(d) => setData2(d)}
+  //     ></EditQuestion>
+  //     <EditQuestion
+  //       sectionCount={1}
+  //       data={data3}
+  //       onDataChange={(d) => setData3(d)}
+  //     ></EditQuestion>
+  //     <EditQuestion
+  //       sectionCount={1}
+  //       data={data4}
+  //       onDataChange={(d) => setData4(d)}
+  //     ></EditQuestion>
+  //     <EditQuestion
+  //       sectionCount={1}
+  //       data={data5}
+  //       onDataChange={(d) => setData5(d)}
+  //     ></EditQuestion>
+  //     <EditQuestion
+  //       sectionCount={1}
+  //       data={data6}
+  //       onDataChange={(d) => setData6(d)}
+  //     ></EditQuestion>
+  //   </div>
+  // </div>
 }
 
 export default Test;

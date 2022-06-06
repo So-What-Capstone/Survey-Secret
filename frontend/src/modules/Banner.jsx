@@ -11,17 +11,17 @@ function Banner({ sources }) {
     {
       title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
       img_url: usage_banner,
-      link: ".",
+      link: "/intro?type=manual",
     },
     {
       title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
       img_url: banner3,
-      link: ".",
+      link: "/intro?type=safe",
     },
     {
       title: "쉽고 안전한 온라인 설문조사 - Survey Secret",
       img_url: banner4,
-      link: ".",
+      link: "/intro?type=premium",
     },
   ];
 
