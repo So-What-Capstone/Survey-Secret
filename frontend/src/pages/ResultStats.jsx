@@ -10,6 +10,7 @@ import { getMarketBasketQuery } from "../API";
 import { useLazyQuery } from "@apollo/client";
 import WordCloud from "react-d3-cloud";
 import randomColor from "randomcolor";
+import Plot from "react-plotly.js";
 
 import {
   Checkbox,
@@ -24,7 +25,14 @@ import {
   Table,
   Tag,
   Tooltip,
+  Menu,
 } from "antd";
+
+import {
+  PieChartOutlined,
+  HeatMapOutlined,
+  FontSizeOutlined,
+} from "@ant-design/icons";
 import TableTransfer from "../modules/TableTransfer";
 
 String.prototype.hashCode = function () {
@@ -46,53 +54,6 @@ const palette = randomColor({
   format: "rgb",
   seed: 1000,
 });
-
-function ResultStatsOption({ onChange }) {
-  const [option, setOption] = useState();
-
-  const onClick = (e) => {
-    const { id } = e.target.dataset;
-    if (!id) {
-      return;
-    }
-    setOption(id);
-    onChange(id);
-  };
-
-  return (
-    <div className="result-option-list" onClick={onClick} option={option}>
-      <div className="panel-title">
-        <div className="title-label">개요</div>
-      </div>
-      <div className="choices">
-        <div
-          className={"choice" + (option === "1" ? " selected" : "")}
-          data-id="1"
-        >
-          객관식 응답 경향
-        </div>
-        <div
-          className={"choice" + (option === "2" ? " selected" : "")}
-          data-id="2"
-        >
-          수치응답 상관 계수
-        </div>
-        <div
-          className={"choice" + (option === "3" ? " selected" : "")}
-          data-id="3"
-        >
-          주관식 응답 키워드
-        </div>
-      </div>
-
-      {/* choose Question */}
-    </div>
-  );
-}
-
-ResultStatsOption.propTypes = {
-  onChange: PropTypes.func,
-};
 
 function Result({ option, form }) {
   if (option === "1") {
@@ -142,7 +103,7 @@ function NotSelected() {
     <div className="not-selected">
       <Empty
         image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-        description="왼쪽 메뉴에서 분석 항목과 분석 질문을 선택해주세요."
+        description="위쪽 메뉴에서 분석 항목과 분석 질문을 선택해주세요."
       />
     </div>
   );
@@ -171,7 +132,7 @@ const MarketBasketColumns = [
     dataIndex: "antecedents",
     key: "antecedents",
     fixed: "left",
-    width: 300,
+    width: 220,
     render: (tags) => <div>{tags.map((tag) => renderTag(tag))}</div>,
   },
   {
@@ -179,7 +140,7 @@ const MarketBasketColumns = [
     dataIndex: "consequents",
     key: "consequents",
     fixed: "left",
-    width: 300,
+    width: 270,
     render: (tags) => <div>{tags.map((tag) => renderTag(tag))}</div>,
   },
   {
@@ -280,6 +241,7 @@ function MarketBasketAnalysis({ form }) {
       try {
         setAnalysis(
           res.data.getMarketBasket.result
+            .filter((x) => Number(x.support) > 0.5)
             .sort((a, b) => Number(b.support) - Number(a.support))
             .map((rule, i) => ({
               ...rule,
@@ -334,11 +296,14 @@ MarketBasketAnalysis.propTypes = {
 
 function CorrAnalysis({ form }) {
   const [questions, setQuestions] = useState([]);
+  const [questionsIdDict, setQuestionsIdDict] = useState({});
   const [targetKeys, setTargetKeys] = useState([]);
+  const [plotData, setPlotData] = useState(undefined);
   const [getCorr] = useLazyQuery(getCorrQuery);
 
   useEffect(() => {
-    const currQues = [];
+    const currQues = [],
+      quesIdDict = {};
     form.sections.forEach((sec, i) => {
       sec.questions.forEach((ques, j) => {
         if (
@@ -351,10 +316,12 @@ function CorrAnalysis({ form }) {
             content: ques.content,
             key: `${ques._id}`,
           });
+          quesIdDict[ques._id] = ques.content;
         }
       });
     });
     setQuestions(currQues);
+    setQuestionsIdDict(quesIdDict);
   }, [form]);
 
   const columns = [
@@ -386,13 +353,24 @@ function CorrAnalysis({ form }) {
       return;
     }
     try {
-      const result = await getCorr({
-        variables: {
-          formId: form._id,
-          questionIds: questions.map((ques) => ques.key),
-        },
+      const result = (
+        await getCorr({
+          variables: {
+            formId: form._id,
+            questionIds: targetKeys,
+          },
+        })
+      ).data.getCorr.result;
+
+      const labels = Object.keys(result).map((id) => questionsIdDict[id]);
+      const values = Object.values(result).map((row) => Object.values(row));
+      setPlotData({
+        z: values,
+        x: labels,
+        y: labels,
+        type: "heatmap",
+        hoverongaps: false,
       });
-      console.log(JSON.stringify(result.data.getCorr.error));
     } catch (err) {
       console.log(JSON.stringify(err.message));
     }
@@ -428,7 +406,11 @@ function CorrAnalysis({ form }) {
         }
       />
 
-      {}
+      {plotData && (
+        <div className="corr-plot-layout">
+          <Plot data={[plotData]} layout={{ width: 1000, height: 850 }}></Plot>
+        </div>
+      )}
     </div>
   );
 }
@@ -437,6 +419,25 @@ CorrAnalysis.propTypes = {
   option: PropTypes.string,
   form: PropTypes.any,
 };
+
+const KeywordColumns = [
+  {
+    title: "번호",
+    dataIndex: "index",
+    key: "index",
+  },
+  {
+    title: "키워드",
+    dataIndex: "text",
+    key: "text",
+  },
+  {
+    title: "TF-IDF 점수",
+    dataIndex: "value",
+    key: "value",
+    render: (x) => String((Number(x) / 100000).toFixed(4)),
+  },
+];
 
 function KeywordAnalysis({ form }) {
   const [questions, setQuestions] = useState([]);
@@ -476,9 +477,11 @@ function KeywordAnalysis({ form }) {
     }).then((res) => {
       try {
         const currAnalysis = res.data.getKeywordAnalysis.result.map(
-          ([t, v]) => ({
+          ([t, v], i) => ({
+            index: i,
             text: t,
             value: Number(v) * 100000,
+            key: `${t}`,
           })
         );
         setAnalysis(currAnalysis);
@@ -525,7 +528,20 @@ function KeywordAnalysis({ form }) {
 
       {!loading && !analysis && <Empty description=""></Empty>}
       {loading && <Spin tip="정보를 가져오는 중..."></Spin>}
-      {analysis && <WordCloud data={analysis}></WordCloud>}
+      {analysis && (
+        <div className="keyword-result">
+          <div className="keyword-result-table">
+            <Table
+              columns={KeywordColumns}
+              dataSource={analysis}
+              pagination={{ pageSize: 7 }}
+            ></Table>
+          </div>
+          <div className="keyword-result-cloud">
+            <WordCloud data={analysis}></WordCloud>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -565,14 +581,31 @@ function ResultStats() {
     fetchData();
   }, [searchParams]);
 
+  function handleMenuClick(e) {
+    setOption(e.key);
+  }
+
   return (
     <div className="result-stats">
       <ResultClipTray type="stats" formId={formId} />
       <div className="result-stats-inner">
-        <div className="result-stats-option-con">
-          <ResultStatsOption onChange={setOption} />
-        </div>
         <div className="result-stats-result-con">
+          <Menu
+            mode="horizontal"
+            onClick={handleMenuClick}
+            selectedKeys={[option]}
+            className="result-stats-menu"
+          >
+            <Menu.Item key="1" icon={<PieChartOutlined />}>
+              객관식 응답 경향
+            </Menu.Item>
+            <Menu.Item key="2" icon={<HeatMapOutlined />}>
+              수치응답 상관계수
+            </Menu.Item>
+            <Menu.Item key="3" icon={<FontSizeOutlined />}>
+              주관식 응답 키워드
+            </Menu.Item>
+          </Menu>
           {form ? (
             <Result option={option} form={form} />
           ) : (

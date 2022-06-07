@@ -16,22 +16,13 @@ import {
   Divider,
   ListItemButton,
 } from "@mui/material";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useLazyQuery } from "@apollo/client";
 import { searchFormsQuery } from "./../API";
 
 const SEARCH_FORMS_QUERY = searchFormsQuery;
 
 function SearchResult() {
-  const [forms, setForms] = useState([
-    {
-      id: "",
-      title: "",
-      description: "",
-      expiredAt: "",
-      privacyExpiredAt: "",
-      owner: "",
-    },
-  ]);
+  const [forms, setForms] = useState([]);
   const [selectedForm, setSelectedForm] = useState("");
   const [selectedSort, setSelectedSort] = useState(0);
   const [searchedForms, setSearchedForms] = useState([]); //검색결과 form들
@@ -46,9 +37,22 @@ function SearchResult() {
     if (value) {
       console.log(`value is ${value}`);
       setSearchedText(value);
-      // 디버그를 위해 임의의 데이터로 설정
-      console.log(forms); //forms가 안바뀜
-      setSearchedForms(forms);
+      let formList;
+
+      const queryFunc = async () => {
+        let queryData = await searchFormsQuery({
+          variables: {
+            title: searchParams.get("value"),
+          },
+        });
+        setForms(queryData?.data?.searchForms?.forms);
+        formList = queryData?.data?.searchForms?.forms;
+      };
+
+      queryFunc();
+
+      //console.log(forms);
+      setSearchedForms(formList);
     } else {
       navigate("/");
     }
@@ -60,6 +64,7 @@ function SearchResult() {
     value: searchedText,
   };
 
+  /*
   const { loading, data, error } = useQuery(SEARCH_FORMS_QUERY, {
     variables: { title: searchParams.get("value") },
     onCompleted: (data) => {
@@ -73,7 +78,9 @@ function SearchResult() {
         setForms(forms);
       }
     },
-  });
+  });*/
+
+  const [searchFormsQuery] = useLazyQuery(SEARCH_FORMS_QUERY);
 
   const handleSearchedText = (e) => {
     setSearchedText(e.target.value);
@@ -98,41 +105,71 @@ function SearchResult() {
     });
   };
 
-  const handleSortItemClick = (e, idx) => {
+  const handleSortItemClick = async (e, idx) => {
     setSelectedSort(idx);
     if (idx === 0) {
-      //폼 만료 빠른순
-      const sortedForms = forms.sort((a, b) => {
-        return new Date(a.expiredAt) - new Date(b.expiredAt);
+      //정확도순
+      let queryData = await searchFormsQuery({
+        variables: {
+          title: searchParams.get("value"),
+        },
       });
-      setForms(sortedForms);
+      setForms(queryData?.data?.searchForms?.forms);
     } else if (idx === 1) {
-      //폼 만료 늦은순
-      const sortedForms = forms.sort((a, b) => {
-        return new Date(b.expiredAt) - new Date(a.expiredAt);
+      //폼 만료 빠른순
+      let queryData = await searchFormsQuery({
+        variables: {
+          title: searchParams.get("value"),
+          sortKey: "expiredAt",
+          desc: false,
+        },
       });
-      setForms(sortedForms);
+      setForms(queryData?.data?.searchForms?.forms);
     } else if (idx === 2) {
-      //개인정보 파기일 빠른순
-      const sortedForms = forms.sort((a, b) => {
-        return new Date(a.privacyExpiredAt) - new Date(b.privacyExpiredAt);
+      //폼 만료 늦은순
+      let queryData = await searchFormsQuery({
+        variables: {
+          title: searchParams.get("value"),
+          sortKey: "expiredAt",
+          desc: true,
+        },
       });
+      setForms(queryData?.data?.searchForms?.forms);
+    } else if (idx === 3) {
+      //개인정보 파기일 빠른순
+      let queryData = await searchFormsQuery({
+        variables: {
+          title: searchParams.get("value"),
+          sortKey: "privacyExpiredAt",
+          desc: false,
+        },
+      });
+      setForms(queryData?.data?.searchForms?.forms);
     } else {
       //개인정보 파기일순 느린순
-      const sortedForms = forms.sort((a, b) => {
-        return new Date(b.privacyExpiredAt) - new Date(a.privacyExpiredAt);
+      let queryData = await searchFormsQuery({
+        variables: {
+          title: searchParams.get("value"),
+          sortKey: "privacyExpiredAt",
+          desc: true,
+        },
       });
+      setForms(queryData?.data?.searchForms?.forms);
     }
   };
 
   const sorts = [
     {
       idx: 0,
+      type: "정확도순",
+    },
+    {
+      idx: 1,
       type: "폼 만료일 빠른순",
     },
-    { idx: 1, type: "폼 만료일 늦은순" },
-    { idx: 2, type: "개인정보 파기일 빠른순" },
-    { idx: 3, type: "개인정보 파기일 느린순" },
+    { idx: 2, type: "폼 만료일 늦은순" },
+    { idx: 3, type: "개인정보 파기일 빠른순" },
+    { idx: 4, type: "개인정보 파기일 느린순" },
   ];
 
   return (
@@ -204,7 +241,12 @@ function SearchResult() {
                       primaryTypographyProps={{ fontSize: "0.8rem" }}
                     />
                     <ListItemText
-                      primary={"폼 만료일: " + form.expiredAt.substring(0, 10)}
+                      primary={
+                        "폼 만료일: " +
+                        form.expiredAt.substring(0, 10) +
+                        " " +
+                        form.expiredAt.substring(11, 19)
+                      }
                       className="row-item"
                       primaryTypographyProps={{ fontSize: "0.8rem" }}
                     />

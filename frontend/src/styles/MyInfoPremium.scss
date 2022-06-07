@@ -126,6 +126,9 @@
         padding: 0.7rem 0px 0.7rem 0px;
         width: 40%;
         border-radius: 4px;
+        &:hover {
+          background-color: #65FFDC39;
+        }
       }
     }
     

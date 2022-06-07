@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 export const sendSms = gql`
   mutation sendSms(
     $formId: String!
-    $submissionIds: [String!]
+    $submissionIds: [String!]!
     $questionId: String!
     $msg: String!
     $msgType: MsgType!
@@ -26,11 +26,11 @@ export const sendSms = gql`
 export const sendEmail = gql`
   mutation sendEmail(
     $formId: String!
-    $submissionIds: [String!]
+    $submissionIds: [String!]!
     $questionId: String!
     $subject: String!
     $template: String
-    $emailVars: [EmailVarInput!]
+    $emailVars: [EmailVarInput!]!
   ) {
     sendEmail(
       input: {
@@ -39,7 +39,7 @@ export const sendEmail = gql`
         questionId: $questionId
         subject: $subject
         template: $template
-        emailVars: [{ key: $key, value: $value }]
+        emailVars: $emailVars
       }
     ) {
       ok
@@ -66,8 +66,11 @@ export const getContacts = gql`
       ok
       error
       contacts {
-        updatedAt
         _id
+        updatedAt
+        form {
+          _id
+        }
         receivers {
           _id
         }

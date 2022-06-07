@@ -24,49 +24,80 @@ function ContactRecord() {
   const [smsType, setSmsType] = useState("SMS");
   const [myForms, setMyForms] = useState([]);
 
-  const { data, loading, error } = useQuery(GET_CONTACTS_DETAIL, {
-    variables: {
-      contactType: mode === 0 ? "SMS" : "EMAIL",
-    },
-    onCompleted: (data) => {
-      setContactList(
-        data?.getSendHistory?.contacts.map((c) => {
-          const obj = {};
-          obj["time"] =
-            c.updatedAt.substring(0, 10) + " " + c.updatedAt.substring(11, 19);
-          obj["id"] = c._id;
-          obj["content"] = c.content;
-          obj["contactType"] = c.contactType;
-          obj["success"] = true; //
-          obj["title"] = "title"; //
-          let tempArray = [];
-          c.receivers.map((r) => {
-            tempArray.push(r._id);
-            console.log(tempArray);
-          });
+  const [getContactsDetail, { data, loading, error }] =
+    useLazyQuery(GET_CONTACTS_DETAIL);
 
-          obj["receivers"] = tempArray;
-          obj["count"] = tempArray.length;
-          return obj;
-        })
-      );
-    },
-  });
+  const [
+    getMyFormsTitle,
+    { data: formData, loading: formLoading, error: formError },
+  ] = useLazyQuery(GET_MY_FORMS_TITLE);
 
-  const { data2, loading2, error2 } = useQuery(GET_MY_FORMS_TITLE, {
-    onCompleted: (data) => {
-      setMyForms(
-        data2.me.user.forms.map((f) => {
-          const obj = {};
-          obj["id"] = f._id;
-          obj["title"] = f._title;
-          return obj;
-        })
-      );
-    },
-  });
+  //const [getMyFormsTitle] = useLazyQuery(GET_MY_FORMS_TITLE);
 
-  const [getContacts] = useLazyQuery(GET_CONTACTS_DETAIL);
+  useEffect(() => {
+    const getContactsFunc = async () => {
+      let queryData = await getContactsDetail({
+        variables: {
+          contactType: mode === 0 ? "SMS" : "EMAIL",
+        },
+      });
+
+      let contactListArray = [];
+      contactListArray = queryData?.data?.getSendHistory?.contacts.map((c) => {
+        const obj = {};
+        obj["time"] =
+          c.updatedAt.substring(0, 10) + " " + c.updatedAt.substring(11, 19);
+        obj["id"] = c._id;
+        obj["formId"] = c.form._id;
+        obj["content"] = c.content;
+        obj["contactType"] = c.contactType;
+        obj["success"] = true;
+        obj["title"] = ""; //
+        let tempArray = [];
+        c.receivers.map((r) => {
+          tempArray.push(r._id);
+        });
+
+        obj["receivers"] = tempArray;
+        obj["count"] = tempArray.length;
+        return obj;
+      });
+
+      console.log(contactListArray);
+
+      let myFormsTitleArray = []; //[{id, title}]
+
+      let queryData2 = await getMyFormsTitle();
+
+      myFormsTitleArray = queryData2.data?.me?.user?.forms?.map((f) => {
+        const obj = {};
+        obj["id"] = f._id;
+        obj["title"] = f.title;
+        return obj;
+      });
+
+      console.log(myFormsTitleArray);
+
+      //form id 비교 -> title 설정
+
+      contactListArray.map((c) => {
+        //c.id와 같은 title 찾기
+        myFormsTitleArray.map((m) => {
+          //console.log("c.id : " + c.id);
+          //console.log("m.id : " + m.id);
+          if (m.id == c.formId) {
+            console.log("m.title : " + m.title);
+            c.title = m.title;
+          }
+        });
+      });
+
+      console.log(contactListArray);
+
+      setContactList(contactListArray);
+    };
+    getContactsFunc();
+  }, [mode]);
 
   const clips = [
     {
@@ -107,7 +138,6 @@ function ContactRecord() {
 
   const handleModeChange = async (e, newMode) => {
     setMode(newMode);
-    console.log(newMode);
     let queryData = await getContacts({
       variables: {
         contactType: newMode === 0 ? "SMS" : "EMAIL",
@@ -116,7 +146,7 @@ function ContactRecord() {
 
     //onCompleted: (data) => {
     console.log("query completed");
-    console.log(queryData?.data?.getSendHistory?.contacts[0].content);
+    //console.log(queryData?.data?.getSendHistory?.contacts[0].content);
     setContactList(
       queryData?.data?.getSendHistory?.contacts.map((c) => {
         const obj = {};
@@ -130,7 +160,6 @@ function ContactRecord() {
         let tempArray = [];
         c.receivers.map((r) => {
           tempArray.push(r._id);
-          console.log(tempArray);
         });
 
         obj["receivers"] = tempArray;
@@ -166,15 +195,89 @@ function ContactRecord() {
     checkByte(e.target.value);
   };
 
-  const sendMessage = () => {
-    console.log(textValue);
-    //send Message logic
-  };
-
-  const sendEmail = () => {
+  /*
+  const sendEmail = async () => {
+    console.log("selectedFormId: " + selectedForm.id);
     console.log(textTitle + ", " + textValue);
-    //send Email logic
-  };
+    const checkedItemsArray = Array.from(checkedItems); //set to array
+    console.log(checkedItemsArray);
+
+    if (textTitle === "" || textValue === "") {
+      alert("내용을 입력하세요.");
+    } else {
+      //send Email logic
+      console.log("개인정보질문 id :" + emailQueId);
+
+      if (emailQueId !== "") {
+        const emailVarsInput = [
+          {
+            key: "title",
+            value: textTitle,
+          },
+          {
+            key: "owner",
+            value: "",
+          },
+          {
+            key: "body",
+            value: textValue,
+          },
+        ];
+
+        let result = await sendEmailMutation({
+          variables: {
+            formId: selectedForm.id,
+            submissionIds: checkedItemsArray,
+            questionId: emailQueId,
+            subject: "",
+            emailVars: emailVarsInput,
+          },
+        });
+
+        const {
+          sendEmail: { ok, error },
+        } = result.data;
+        if (!ok || error) {
+          alert("전송 실패하였습니다.");
+          console.log("전송실패");
+          return;
+        } else {
+          alert("전송 성공하였습니다.");
+          console.log("전송성공");
+        }
+      } else {
+        alert("연락 정보가 없어 전송할 수 없습니다.");
+      }
+    }
+  };*/
+
+  /*
+  const sendMessage = async () => {
+    if (textByte < 1) {
+      alert("내용을 입력하세요.");
+    } else {
+      console.log("selectedForm Id: " + selectedForm.id);
+      checkedItems.forEach(function (value) {
+        console.log("receiverId: " + value);
+      });
+      console.log("개인정보질문id + " + phoneQueId);
+      const checkedItemsArray = Array.from(checkedItems); //set to array
+
+      if (phoneQueId !== "") {
+        await sendSms({
+          variables: {
+            formId: selectedForm.id,
+            submissionIds: checkedItemsArray,
+            questionId: phoneQueId,
+            msg: textValue,
+            msgType: smsType,
+          },
+        });
+      } else {
+        alert("연락 정보가 없어 전송할 수 없습니다.");
+      }
+    }
+  };*/
 
   const checkByte = (newTextValue) => {
     let totalByte = 0; //현재 바이트
@@ -339,42 +442,6 @@ function ContactRecord() {
           </div>
           <div className="content-row">
             <div className="row-label-con">
-              <label>수신자 목록</label>
-            </div>
-            <div className="small-list-con">
-              <List>
-                <div className="content-con">
-                  {mode === 0 &&
-                    selectedMessage.receivers.map((receiver, index) => (
-                      <ListItem key={index} className="content">
-                        <ListItemText primary={index + 1} />
-                        <ListItemText primary={receiver} />
-                      </ListItem>
-                    ))}
-                  {mode === 1 &&
-                    selectedEmail.receivers.map((receiver, index) => (
-                      <ListItem key={index} className="content">
-                        <ListItemText primary={index + 1} />
-                        <ListItemText primary={receiver} />
-                      </ListItem>
-                    ))}
-                </div>
-              </List>
-            </div>
-          </div>
-          <div className="content-row" hidden={mode !== 1}>
-            <div className="row-label-con">
-              <label>메일 제목</label>
-            </div>
-            <input
-              type="text"
-              value={textTitle}
-              onChange={handleTextTitle}
-              className="row-input"
-            />
-          </div>
-          <div className="content-row">
-            <div className="row-label-con">
               <label>발신 내용</label>
               <span></span>
               <label hidden={mode !== 0}>
@@ -388,17 +455,12 @@ function ContactRecord() {
             </div>
             <textarea
               value={textValue}
-              placeholder="내용을 입력하세요."
+              placeholder=""
               onChange={handleTextValue}
               className="row-input wide"
+              disabled
             />
           </div>
-          <input
-            type="submit"
-            value="해당 수신자에게 재전송"
-            className="send-btn"
-            onClick={mode === 0 ? sendMessage : sendEmail}
-          />
         </div>
       </div>
     </div>

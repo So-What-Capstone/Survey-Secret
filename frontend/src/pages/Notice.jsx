@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ClipTray from "../modules/ClipTray";
 import Pagination from "@material-ui/lab/Pagination";
-import { Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  InputBase,
+} from "@mui/material";
 import "../styles/Clips.css";
 import "../styles/Notice.scss";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -36,28 +41,33 @@ function Notice() {
   const notices = [
     {
       id: "3",
-      title: "외부감사인 선임 공고",
+      title:
+        "[서비스 장애 발생 공지] 🚨 2021년 6월 5일 서비스 오류 원인 - 죄송합니다.",
       detail:
-        "노래 잘하는 사람 뽑았어요. 아아알일이ㅏ러이럼ㄴ아ㅣㄹ어ㅣ라ㅓㅁㄴㅇ리너리ㅓㄴㅇ미라ㅓㄴㅇ미렁니라ㅓㅣㅇㄴ러미ㅏ러ㅣㅇㄴㅁ러미ㅏㅇㄴ러ㅣㄴㅇ머린ㅁ얼;ㅣ",
-      date: "2022-04-03",
+        "안녕하세요!운영팀 입니다. 2022년 1월 4일 오후 3시간 서비스 장애가 발생했습니다. 불편을 겪으신 많은 유저분들께 죄송하다는 말씀을 드립니다.",
+      date: "2022-06-04",
     },
     {
       id: "2",
-      title: "서버 점검 안내",
-      detail: "하루종일 서버 점검함",
-      date: "2022-04-02",
+      title:
+        "[서비스 장애 발생 공지] 🚨 2021년 6월 4일 서비스 오류 원인 - 죄송합니다.",
+      detail:
+        "안녕하세요!운영팀 입니다.  2022년 1월 4일 오후 10시 3시간 서비스 장애가 발생했습니다. 불편을 겪으신 많은 유저분들께 죄송하다는 말씀을 드립니다.",
+      date: "2022-06-04",
     },
     {
       id: "1",
-      title: "비정기 채용 안내(경력직)",
-      detail: "아이폰 쓰는 사람 뽑아여",
-      date: "2022-03-11",
+      title: "[서비스 장애 발생 공지] 🚨 2022년 1월 3일, 4일 서비스 오류",
+      detail:
+        " 안녕하세요!운영팀 입니다.  2022년 1월 4일 오후 10시 3시간 서비스 장애가 발생했습니다. 불편을 겪으신 많은 유저분들께 죄송하다는 말씀을 드립니다.",
+      date: "2022-06-04",
     },
     {
       id: "0",
-      title: "새 기능 업데이트 예정 안내",
-      detail: "게임기능 도입해여^^",
-      date: "2022-03-10",
+      title: "[공지] 개인정보 취급방침 개정 안내",
+      detail:
+        "2022년 6월 5일부터「개인정보 취급방침」 이 개정됨을 안내드리오니 서비스 이용에 참고하시기 바랍니다. ",
+      date: "2022-06-03",
     },
   ];
 

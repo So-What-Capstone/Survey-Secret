@@ -66,7 +66,18 @@ function Message() {
     checkByte(e.target.value);
   };
 
-  const [sendSms] = useMutation(SEND_SMS);
+  const [sendSms] = useMutation(SEND_SMS, {
+    onCompleted: (data) => {
+      if (data.sendSms.ok) {
+        console.log("전송성공!");
+        alert("전송하였습니다.");
+      } else {
+        console.log("전송실패!");
+        alert("전송 실패하였습니다.");
+        throw new Error(data.sendSms.error);
+      }
+    },
+  });
 
   const sendMessage = async () => {
     if (textByte < 1) {
@@ -77,23 +88,24 @@ function Message() {
         console.log("receiverId: " + value);
       });
       console.log("개인정보질문id + " + phoneQueId);
+      const checkedItemsArray = Array.from(checkedItems); //set to array
+
+      console.log(
+        selectedForm.id,
+        checkedItemsArray,
+        phoneQueId,
+        textValue,
+        smsType
+      );
 
       if (phoneQueId !== "") {
         await sendSms({
           variables: {
             formId: selectedForm.id,
-            submissionIds: checkedItems,
-            questionId: phoneQueId, //개인정보 질문의 id?
+            submissionIds: checkedItemsArray,
+            questionId: phoneQueId,
             msg: textValue,
             msgType: smsType,
-          },
-          onCompleted: (data) => {
-            if (data.sendSms.ok) {
-              console.log("전송성공!");
-            } else {
-              console.log("전송실패!");
-              throw new Error(data.sendSms.error);
-            }
           },
         });
       } else {

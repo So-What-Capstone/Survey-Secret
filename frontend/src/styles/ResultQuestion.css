@@ -3,6 +3,7 @@
   height: 100vh;
   overflow: hidden;
 }
+
 .result-q-white-panel {
   width: 90%;
   height: 95%;
@@ -10,8 +11,9 @@
   margin-left: 4rem;
   padding: 5%;
   background-image: url("../resources/pen-write.jpeg");
+  background-size: cover;
+  background-position: center;
   background-attachment: fixed;
-  background-size: 100% 100%;
   background-color: #ffffff60;
   border-radius: 0.2rem;
   display: flex;
@@ -19,6 +21,7 @@
   align-items: center;
   overflow: auto;
 }
+
 .result-q-form-title {
   font-size: 1.6rem;
   margin-bottom: 1rem;
@@ -30,4 +33,13 @@
   color: #616161;
   text-align: center;
   margin-bottom: 5%;
+}
+
+.result-q-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
 }

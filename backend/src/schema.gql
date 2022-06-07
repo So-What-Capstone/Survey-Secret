@@ -441,6 +441,7 @@ input FindUserByIdInput {
 input GetSignedUrlInput {
   imageType: ImageType!
   fileName: String!
+  contentType: String!
 }
 
 enum ImageType {

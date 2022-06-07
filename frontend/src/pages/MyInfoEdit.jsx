@@ -91,9 +91,10 @@ function MyInfoEdit() {
           editUser: { ok, error },
         } = data;
         if (!ok) {
+          alert("회원정보 수정을 실패하였습니다.");
           throw new Error(error);
         } else {
-          alert("Edit Complete");
+          alert("회원정보 수정을 성공하였습니다.");
         }
       },
     }
@@ -123,11 +124,8 @@ function MyInfoEdit() {
       //eidt logic
       editUser({
         variables: {
-          requset: {
-            username: username,
-            password: pwd,
-          },
-          file: avatar,
+          username: username,
+          password: pwd,
         },
       });
     }

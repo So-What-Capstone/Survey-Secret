@@ -20,7 +20,7 @@
       }
     .list-con { //List
       min-height: 30rem;
-      height: 70vh;
+      height: 60vh;
       overflow: auto;
       border-radius: 0px 0.2rem 0.2rem 0.2rem / 0px 0.2rem 0.2rem 0.2rem;
       border: 1px solid #EA99D5;
@@ -61,7 +61,7 @@
     display: flex;
     flex-direction: column;
     padding: 1rem 1.5vw 1rem 1.5vw;
-    background-color: #0A182D60;
+    background-color: #ffffff20;
     border-radius: 0.2rem;
     flex: 4 1 0;
     margin: 3rem 1.5vw 3rem 0.5vw;
@@ -87,12 +87,12 @@
         background-color: #F5F5F5;
         border: none;
         border-radius: 0.2rem;
-        padding: 0.8rem 2vw 0.8rem 2vw;
+        padding: 0.7rem 2vw 0.7rem 2vw;
         flex: 4 1 0;
         color: #818181;
       }
     }
-    .content-row { //수신자목록/ 발신내용 틀
+    .content-row { //발신내용 틀
       display: flex;
       flex-direction: column;
       text-align: center;
@@ -113,26 +113,10 @@
         border: none;
         border-radius: 0.2rem;
         background-color: #F5F5F5;
-        padding: 0.8rem 2vw 0.8rem 2vw;
+        padding: 2rem 2vw 2rem 2vw;
         &.wide { //발신내용
-          height: 25vh;
-          min-height: 5rem;
-        }
-      }
-      .small-list-con { //수신인 목록 con
-        height: 5rem;
-        overflow: auto;
-        background-color: #F5F5F5;
-        border-radius: 0.2rem;
-        .content-con {
-          height: 5rem;
-        overflow: auto;
-          display: flex;
-          flex-direction: column;
-          .content {
-            padding: 0px 2vw 0px 2vw;
-            color: #818181;
-          }
+          min-height: 10rem;
+          height: 50vh;
         }
       }
     }
@@ -145,6 +129,9 @@
       color: #65FFDC;
       font-size: 23px;
       width: 100%;
+      &:hover {
+        background-color: #65FFDC39;
+      }
     }
   }
 }

@@ -22,7 +22,7 @@
       .sort-header {
         display: flex;
         flex-direction: row;
-        color: #f5f5f5;
+        color: #CCD6F6;
         padding-left: 3rem;
         min-width: 300px;
       }
@@ -33,9 +33,9 @@
             text-align: left;
             background-color: #3d455900;
             padding: 0.5rem 0px 0.5rem 0px;
-            color: #f5f5f5;
+            color: #CCD6F6;
             border: none;
-            border-bottom: 1px solid #f5f5f5;
+            border-bottom: 1px solid #CCD6F6;
             &.selected {
               color: #65ffdc !important;
             }
@@ -61,21 +61,22 @@
             text-align: left;
             padding: 1px 1vw 1px 1vw;
             min-width: 300px;
-            color: #f5f5f5;
+            color: #CCD6F6;
             &.title {
-              color: #f5f5f5;
+              color: #CCD6F6;
+              font-weight: 500;
             }
             &.des {
-              color: gray;
+              color: #CCD6F6BB;
             }
             &.info {
-              color: gray;
+              color: #CCD6F6BB;
             }
           }
         }
       }
       .content-div {
-        background-color: #172a46;
+        background-color: #65ffdc30;
       }
     }
   }
