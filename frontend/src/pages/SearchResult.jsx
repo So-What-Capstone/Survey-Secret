@@ -37,9 +37,22 @@ function SearchResult() {
     if (value) {
       console.log(`value is ${value}`);
       setSearchedText(value);
+      let formList;
 
-      console.log(forms);
-      setSearchedForms(forms);
+      const queryFunc = async () => {
+        let queryData = await searchFormsQuery({
+          variables: {
+            title: searchParams.get("value"),
+          },
+        });
+        setForms(queryData?.data?.searchForms?.forms);
+        formList = queryData?.data?.searchForms?.forms;
+      };
+
+      queryFunc();
+
+      //console.log(forms);
+      setSearchedForms(formList);
     } else {
       navigate("/");
     }
@@ -51,6 +64,7 @@ function SearchResult() {
     value: searchedText,
   };
 
+  /*
   const { loading, data, error } = useQuery(SEARCH_FORMS_QUERY, {
     variables: { title: searchParams.get("value") },
     onCompleted: (data) => {
@@ -64,7 +78,7 @@ function SearchResult() {
         setForms(forms);
       }
     },
-  });
+  });*/
 
   const [searchFormsQuery] = useLazyQuery(SEARCH_FORMS_QUERY);
 

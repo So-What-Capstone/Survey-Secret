@@ -50,29 +50,29 @@ function MyInfoCoin() {
       id: "0",
       coinAmount: 1000,
       paymentType: "계좌이체",
-      cashAmount: 2124123,
-      chargedAt: "2022/3/14",
+      cashAmount: 1000,
+      chargedAt: "2022/6/4",
     },
     {
       id: "1",
-      coinAmount: 2000,
-      paymentType: "무통장입금",
-      cashAmount: 23231,
-      chargedAt: "2022/3/15",
+      coinAmount: 5000,
+      paymentType: "계좌이체",
+      cashAmount: 5000,
+      chargedAt: "2022/6/6",
     },
   ];
   const coinConsumeListDummy = [
     {
       id: "0",
-      coinAmount: 0,
+      coinAmount: "120",
       usedFor: "문자 발송",
-      consumedAt: "2022/3/14",
+      consumedAt: "2022/6/5",
     },
     {
       id: "1",
-      coinAmount: 2,
+      coinAmount: "1600",
       usedFor: "문자 발송",
-      consumedAt: "2022/3/17",
+      consumedAt: "2022/6/5",
     },
   ];
 
@@ -104,7 +104,8 @@ function MyInfoCoin() {
 
   const { data, loading, error } = useQuery(GET_MY_COIN_QUERY, {
     onCompleted: (data) => {
-      setCoin(data?.me?.user?.type.toString());
+      //setCoin(data?.me?.user?.type.toString());
+      setCoin(4280);
     },
   });
 
@@ -112,7 +113,7 @@ function MyInfoCoin() {
     //코인 충전/사용 내역 받아오기
     if (mode === 0) {
       setCoinChargeList(coinChargeListDummy);
-      setTotalPage(3);
+      setTotalPage(1);
     } else {
       setCoinConsumeList(coinConsumeListDummy);
       setTotalPage(1);
