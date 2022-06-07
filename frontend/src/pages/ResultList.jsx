@@ -16,7 +16,7 @@ import {
   findAnswerByQuestionIdQuery,
 } from "../API";
 import "../styles/ResultList.scss";
-import { message } from "antd";
+import { message, Spin } from "antd";
 
 message.config({
   // 3 messages can be shown at once
@@ -241,52 +241,56 @@ function ResultList() {
     setRepList(temp);
   };
 
-  if (loading) {
-    return null;
-  }
   return (
     <div className="result-list-con">
       <ResultClipTray type="list" formId={formId} />
       <div className="result-list-white-panel">
-        <div className="result-list-left-con">
-          <div className="result-list-con-title">
-            <div>답변 목록</div>
-            <div
-              className="shuffle-btn"
-              onClick={() => setDrawLotsEnabled(!drawLotsEnabled)}
-            >
-              답변 추첨 {drawLotsEnabled ? <CloseCircleFilled /> : null}
+        {!loading ? (
+          <>
+            <div className="result-list-left-con">
+              <div className="result-list-con-title">
+                <div>답변 목록</div>
+                <div
+                  className="shuffle-btn"
+                  onClick={() => setDrawLotsEnabled(!drawLotsEnabled)}
+                >
+                  답변 추첨 {drawLotsEnabled ? <CloseCircleFilled /> : null}
+                </div>
+              </div>
+              {drawLotsEnabled ? (
+                <DrawLots answers={repList} setFav={setFavForDrawing} />
+              ) : null}
+
+              <RepresentativeQ
+                questions={repQCandi}
+                representative={repQ}
+                setRepresentative={RepQChange}
+              />
+              {/* list */}
+              <div className="result-list-list">
+                <ResponseList
+                  listItems={repList}
+                  selected={selectedRespNo}
+                  onSelect={setSelectedResp}
+                  onFavChange={onFavChange}
+                />
+              </div>
             </div>
+            {/* detail */}
+            <div className="result-list-right-con">
+              {selectedRespNo > 0 ? (
+                <ResultForm
+                  sections={secList}
+                  answers={ansList[selectedRespNo - 1]}
+                />
+              ) : null}
+            </div>
+          </>
+        ) : (
+          <div className="result-list-loading">
+            <Spin size="large" tip="답변 데이터를 가져오는 중입니다!"></Spin>
           </div>
-          {drawLotsEnabled ? (
-            <DrawLots answers={repList} setFav={setFavForDrawing} />
-          ) : null}
-
-          <RepresentativeQ
-            questions={repQCandi}
-            representative={repQ}
-            setRepresentative={RepQChange}
-          />
-          {/* list */}
-          <div className="result-list-list">
-            <ResponseList
-              listItems={repList}
-              selected={selectedRespNo}
-              onSelect={setSelectedResp}
-              onFavChange={onFavChange}
-            />
-          </div>
-        </div>
-
-        {/* detail */}
-        <div className="result-list-right-con">
-          {selectedRespNo > 0 ? (
-            <ResultForm
-              sections={secList}
-              answers={ansList[selectedRespNo - 1]}
-            />
-          ) : null}
-        </div>
+        )}
       </div>
     </div>
   );

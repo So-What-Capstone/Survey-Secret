@@ -3,6 +3,7 @@ import { ResultClipTray, ResultDescribe } from "../modules";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { getDescribeQuery, findFormByIdForOwnerQuery } from "../API";
+import { Spin } from "antd";
 import "../styles/ResultQuestion.css";
 
 function ResultQuestion() {
@@ -44,17 +45,22 @@ function ResultQuestion() {
       },
     }
   );
-  if (!(secList && describe)) {
-    return null;
-  }
 
   return (
     <div className="result-q-con">
       <ResultClipTray type="question" formId={formId} />
       <div className="result-q-white-panel">
-        <div className="result-q-form-title">{formData.title}</div>
-        <div className="result-q-form-desc">{formData.description}</div>
-        <ResultDescribe sections={secList} describe={describe} />
+        {secList && describe ? (
+          <>
+            <div className="result-q-form-title">{formData.title}</div>
+            <div className="result-q-form-desc">{formData.description}</div>
+            <ResultDescribe sections={secList} describe={describe} />
+          </>
+        ) : (
+          <div className="result-q-loading">
+            <Spin size="large" tip="답변 데이터를 가져오는 중입니다!"></Spin>
+          </div>
+        )}
       </div>
     </div>
   );

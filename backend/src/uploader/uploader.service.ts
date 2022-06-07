@@ -33,7 +33,11 @@ export class UploaderService {
     return Location;
   }
 
-  getSignedUrl({ imageType, fileName }: GetSignedUrlInput): GetSignedUrlOutput {
+  getSignedUrl({
+    imageType,
+    fileName,
+    contentType,
+  }: GetSignedUrlInput): GetSignedUrlOutput {
     try {
       const s3 = new AWS.S3({
         signatureVersion: 'v4',
@@ -45,7 +49,7 @@ export class UploaderService {
         Key: `${imageType}/${Date.now()}-${fileName}`,
         Expires: 60,
         ACL: 'public-read',
-        // contentType:""
+        ContentType: contentType,
       };
 
       console.log(params);
