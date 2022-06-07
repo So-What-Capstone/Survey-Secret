@@ -152,6 +152,8 @@ function ContactList({
 
     //개인정보질문 있어야 ok -> 개인정보질문id
     let isPrivacyQueExist = false;
+    let canContact = false; //개인정보파기기한 지났는지
+
     queryData?.data?.findFormById?.form?.sections?.map((s) => {
       s.questions.map((q, index) => {
         if (index > 0) {
@@ -173,7 +175,6 @@ function ContactList({
             ),
           ];
 
-          let canContact = false;
           let today = new Date();
           let year = today.getFullYear();
           let month = ("0" + (today.getMonth() + 1)).slice(-2);
@@ -192,7 +193,6 @@ function ContactList({
           }
 
           if (!canContact) {
-            alert("개인정보 파기기한이 지난 설문입니다.");
             console.log("개인정보 파기기한 지남");
           } else {
             if (q.personalType === "Phone") {
@@ -208,6 +208,10 @@ function ContactList({
         }
       });
     });
+
+    if (!canContact) {
+      alert("개인정보 파기기한이 지난 설문입니다.");
+    }
 
     if (!isPrivacyQueExist) {
       console.log("개인정보 질문이 없다");
@@ -539,6 +543,9 @@ function ContactList({
     };
 
     setSelectedForm(newForm); //id, title, receivers
+
+    console.log(newForm.receivers);
+
     checkedItems.clear();
     setIsAllChecked(false);
     setAllChecked(false);

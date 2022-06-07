@@ -27,7 +27,12 @@ function ContactRecord() {
   const [getContactsDetail, { data, loading, error }] =
     useLazyQuery(GET_CONTACTS_DETAIL);
 
-  const [getMyFormsTitle] = useLazyQuery(GET_MY_FORMS_TITLE);
+  const [
+    getMyFormsTitle,
+    { data: formData, loading: formLoading, error: formError },
+  ] = useLazyQuery(GET_MY_FORMS_TITLE);
+
+  //const [getMyFormsTitle] = useLazyQuery(GET_MY_FORMS_TITLE);
 
   useEffect(() => {
     const getContactsFunc = async () => {
@@ -43,14 +48,14 @@ function ContactRecord() {
         obj["time"] =
           c.updatedAt.substring(0, 10) + " " + c.updatedAt.substring(11, 19);
         obj["id"] = c._id;
+        obj["formId"] = c.form._id;
         obj["content"] = c.content;
         obj["contactType"] = c.contactType;
         obj["success"] = true;
-        obj["title"] = "title"; //
+        obj["title"] = ""; //
         let tempArray = [];
         c.receivers.map((r) => {
           tempArray.push(r._id);
-          console.log(tempArray);
         });
 
         obj["receivers"] = tempArray;
@@ -58,58 +63,41 @@ function ContactRecord() {
         return obj;
       });
 
+      console.log(contactListArray);
+
       let myFormsTitleArray = []; //[{id, title}]
 
-      queryData = await getMyFormsTitle({});
+      let queryData2 = await getMyFormsTitle();
 
-      myFormsTitleArray = queryData?.data.me.user.forms.map((f) => {
+      myFormsTitleArray = queryData2.data?.me?.user?.forms?.map((f) => {
         const obj = {};
         obj["id"] = f._id;
-        obj["title"] = f._title;
+        obj["title"] = f.title;
         return obj;
       });
 
+      console.log(myFormsTitleArray);
+
       //form id 비교 -> title 설정
+
       contactListArray.map((c) => {
         //c.id와 같은 title 찾기
-        let titleObject = myFormsTitleArray.find((e) => e.id === c.id); //{id, title}
-        c.title = titleObject.title;
+        myFormsTitleArray.map((m) => {
+          //console.log("c.id : " + c.id);
+          //console.log("m.id : " + m.id);
+          if (m.id == c.formId) {
+            console.log("m.title : " + m.title);
+            c.title = m.title;
+          }
+        });
       });
+
+      console.log(contactListArray);
 
       setContactList(contactListArray);
     };
     getContactsFunc();
   }, [mode]);
-
-  /*
-  const { data, loading, error } = useQuery(GET_CONTACTS_DETAIL, {
-    variables: {
-      contactType: mode === 0 ? "SMS" : "EMAIL",
-    },
-    onCompleted: (data) => {
-      setContactList(
-        data?.getSendHistory?.contacts.map((c) => {
-          const obj = {};
-          obj["time"] =
-            c.updatedAt.substring(0, 10) + " " + c.updatedAt.substring(11, 19);
-          obj["id"] = c._id;
-          obj["content"] = c.content;
-          obj["contactType"] = c.contactType;
-          obj["success"] = true; //
-          obj["title"] = "title"; //
-          let tempArray = [];
-          c.receivers.map((r) => {
-            tempArray.push(r._id);
-            console.log(tempArray);
-          });
-
-          obj["receivers"] = tempArray;
-          obj["count"] = tempArray.length;
-          return obj;
-        })
-      );
-    },
-  });*/
 
   const clips = [
     {
@@ -150,7 +138,6 @@ function ContactRecord() {
 
   const handleModeChange = async (e, newMode) => {
     setMode(newMode);
-    console.log(newMode);
     let queryData = await getContacts({
       variables: {
         contactType: newMode === 0 ? "SMS" : "EMAIL",
@@ -159,7 +146,7 @@ function ContactRecord() {
 
     //onCompleted: (data) => {
     console.log("query completed");
-    console.log(queryData?.data?.getSendHistory?.contacts[0].content);
+    //console.log(queryData?.data?.getSendHistory?.contacts[0].content);
     setContactList(
       queryData?.data?.getSendHistory?.contacts.map((c) => {
         const obj = {};
@@ -173,7 +160,6 @@ function ContactRecord() {
         let tempArray = [];
         c.receivers.map((r) => {
           tempArray.push(r._id);
-          console.log(tempArray);
         });
 
         obj["receivers"] = tempArray;

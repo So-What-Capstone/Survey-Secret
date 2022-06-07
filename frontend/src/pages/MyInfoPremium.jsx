@@ -28,16 +28,19 @@ function MyInfoPremium() {
   const navigate = useNavigate();
 
   /* dummy data */
-  const expiredAt = ["2023", "8", "24"]; //멤버십 만료일
+  const expiredAt = ["2022", "7", "7"]; //멤버십 만료일
 
   /* 멤버십 정보 */
-  const [userType, setUserType] = useState("Free");
+  const [userType, setUserType] = useState("");
   const [btnState, setBtnState] = useState(userType); //선택한 멤버십
 
   const { data, loading, error } = useQuery(GET_MY_TYPE_QUERY, {
     onCompleted: (data) => {
-      setUserType(data?.me?.user?.type);
-      setBtnState(data?.me?.user?.type);
+      setUserType("Premium");
+      setBtnState("Premium");
+
+      //setUserType("data?.me?.user?.type");
+      //setBtnState(data?.me?.user?.type);
     },
   });
 
@@ -48,9 +51,9 @@ function MyInfoPremium() {
   const goToNextLevel = () => {
     if (userType === "Free") {
       if (btnState === "Premium") {
-        navigate("/my-info/pay", {
-          state: { productName: "프리미엄 회원", cashAmount: 10000 },
-        });
+        //navigate("/my-info/pay", {
+        //state: { productName: "프리미엄 회원", cashAmount: 10000 },
+        // });
       } else {
         Swal.fire({
           icon: "warning",
