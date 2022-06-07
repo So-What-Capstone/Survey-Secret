@@ -102,7 +102,7 @@ export default function Form({
     }
   }, [secEnabled]);
 
-  if (!config) {
+  if (!config || !response) {
     return null;
   }
   return (

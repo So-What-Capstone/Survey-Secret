@@ -11,10 +11,10 @@ function ClosedQuestion_one({ config, setValue, setTrigger }) {
   const required = config.required;
   const [internalVal, setInternal] = useState(closed1);
   const selected = internalVal.data.length > 0 ? internalVal.data[0] : -1;
-  useEffect((e) => {
-    setInternal({ ...internalVal, isValid: !required });
-    setValue({ ...internalVal, isValid: !required });
-  }, []);
+  // useEffect((e) => {
+  //   setInternal({ ...internalVal, isValid: !required });
+  //   setValue({ ...internalVal, isValid: !required });
+  // }, []);
   const onChange = (e) => {
     const v = e.target.value;
     const temp = { data: [v], isValid: true };
@@ -70,10 +70,10 @@ function ClosedQuestion_mult({ config, setValue }) {
   const choices = config.choices;
   const required = config.required;
   const [internalVal, setInternal] = useState(closed1);
-  useEffect((e) => {
-    setInternal({ ...internalVal, isValid: !required });
-    setValue({ ...internalVal, isValid: !required });
-  }, []);
+  // useEffect((e) => {
+  //   setInternal({ ...internalVal, isValid: !required });
+  //   setValue({ ...internalVal, isValid: !required });
+  // }, []);
   const onChange = (e) => {
     const data = e.slice();
     const isValid = required ? data.length > 0 : true;

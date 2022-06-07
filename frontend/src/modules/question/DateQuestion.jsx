@@ -10,10 +10,10 @@ function DateQuestion({ config, setValue }) {
   const description = config.description;
   const required = config.required;
   const [internalVal, setInternal] = useState(date);
-  useEffect(() => {
-    setInternal({ ...internalVal, isValid: !required });
-    setValue({ ...internalVal, isValid: !required });
-  }, []);
+  // useEffect(() => {
+  //   setInternal({ ...internalVal, isValid: !required });
+  //   setValue({ ...internalVal, isValid: !required });
+  // }, []);
   const onChange = (e) => {
     let date_str = "";
     let moment = null;
