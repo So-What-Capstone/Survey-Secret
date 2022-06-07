@@ -60,8 +60,9 @@ function Email() {
     SEND_EMAIL,
     {
       onCompleted: (data) => {
+        console.log(data);
         const {
-          sendEmailMutation: { ok, error },
+          sendEmail: { ok, error },
         } = data;
         if (!ok) {
           throw new Error(error);
@@ -105,9 +106,10 @@ function Email() {
             value: textValue,
           },
         ];
+
         let result = await sendEmailMutation({
           variables: {
-            formId: selectedForm,
+            formId: selectedForm.id,
             submissionIds: checkedItemsArray,
             questionId: emailQueId,
             subject: "",
@@ -116,7 +118,7 @@ function Email() {
         });
 
         const {
-          sendEmailMutation: { ok, error },
+          sendEmail: { ok, error },
         } = result.data;
         if (!ok || error) {
           alert("전송 실패하였습니다.");

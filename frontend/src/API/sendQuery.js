@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 export const sendSms = gql`
   mutation sendSms(
     $formId: String!
-    $submissionIds: [String!]
+    $submissionIds: [String!]!
     $questionId: String!
     $msg: String!
     $msgType: MsgType!
@@ -26,7 +26,7 @@ export const sendSms = gql`
 export const sendEmail = gql`
   mutation sendEmail(
     $formId: String!
-    $submissionIds: [String!]
+    $submissionIds: [String!]!
     $questionId: String!
     $subject: String!
     $template: String

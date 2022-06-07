@@ -90,6 +90,14 @@ function Message() {
       console.log("개인정보질문id + " + phoneQueId);
       const checkedItemsArray = Array.from(checkedItems); //set to array
 
+      console.log(
+        selectedForm.id,
+        checkedItemsArray,
+        phoneQueId,
+        textValue,
+        smsType
+      );
+
       if (phoneQueId !== "") {
         await sendSms({
           variables: {
