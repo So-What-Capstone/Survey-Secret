@@ -11,10 +11,10 @@ function AddressQuestion({ config, setValue }) {
   const description = config.description;
   const required = config.required;
   const [internalVal, setInternal] = useState(addr);
-  useEffect((e) => {
-    setInternal({ ...internalVal, isValid: !required });
-    setValue({ ...internalVal, isValid: !required });
-  }, []);
+  // useEffect((e) => {
+  //   setInternal({ ...internalVal, isValid: !required });
+  //   setValue({ ...internalVal, isValid: !required });
+  // }, []);
   const [show_postcode, setShowPostCode] = useState(false);
   const onComplete = (data) => {
     var addr = "";

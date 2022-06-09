@@ -142,7 +142,7 @@ function FormRespToSubm(form_config, response, secEnabled) {
       },
     },
   };
-  console.log("submit", submission);
+
   // return null;
   return submission;
 }
@@ -153,9 +153,10 @@ function Respond() {
   const [formId, setFormId] = useState("");
   const [secEnabled, setSecEnabled] = useState();
   const [findForm] = useLazyQuery(FIND_FORM_BY_ID_QUERY);
+  const navigate = useNavigate();
+  const [response, setResponse] = useState();
   useEffect(() => {
     async function myEffect() {
-      console.log("useeffect");
       // location.reload();
       const id = searchParams.get("id");
       if (id) {
@@ -164,7 +165,7 @@ function Respond() {
         navigate("/");
       }
       let findform_ret = await findForm({ variables: { formId: id } });
-      console.log(findform_ret.data);
+
       let data = findform_ret.data;
 
       let formData = data.findFormById.form;
@@ -196,9 +197,6 @@ function Respond() {
       },
     }
   );
-
-  const navigate = useNavigate();
-  const [response, setResponse] = useState();
 
   const onSubmitClick = async () => {
     // submit the response

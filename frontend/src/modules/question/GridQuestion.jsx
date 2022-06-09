@@ -21,14 +21,14 @@ function GridQuestion({ config, setValue }) {
     text_span = 5;
   }
 
-  useEffect(() => {
-    let data = internalVal.data;
-    if (internalVal.data.length !== rowLabels.length) {
-      data = rowLabels.map(() => -1);
-    }
-    setInternal({ data: data, isValid: !required });
-    setValue({ data: data, isValid: !required });
-  }, []);
+  // useEffect(() => {
+  //   let data = internalVal.data;
+  //   if (internalVal.data.length !== rowLabels.length) {
+  //     data = rowLabels.map(() => -1);
+  //   }
+  //   setInternal({ data: data, isValid: !required });
+  //   setValue({ data: data, isValid: !required });
+  // }, []);
 
   const onChange = (e, rowNum) => {
     let val = e.target.value;

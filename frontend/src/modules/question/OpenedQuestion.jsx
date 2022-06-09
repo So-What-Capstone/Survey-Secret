@@ -10,16 +10,16 @@ function OpenedQuestion({ config, setValue }) {
   const required = config.required;
   const { TextArea } = Input;
   const [internalVal, setInternal] = useState(shortOpen);
-  useEffect((e) => {
-    setInternal({
-      ...internalVal,
-      isValid: !required,
-    });
-    setValue({
-      ...internalVal,
-      isValid: !required,
-    });
-  }, []);
+  // useEffect((e) => {
+  //   setInternal({
+  //     ...internalVal,
+  //     isValid: !required,
+  //   });
+  //   setValue({
+  //     ...internalVal,
+  //     isValid: !required,
+  //   });
+  // }, []);
   const onChange = (e) => {
     const data = e.target.value;
     const isValid = required ? data.length > 0 : true;

@@ -27,10 +27,10 @@ function PhoneQuestion({ config, setValue }) {
   let info = "";
   if (isEncrypted) info += privacy_info;
   if (exp_date) info += exp_info_1 + exp_date + exp_info_2;
-  useEffect(() => {
-    setInternal({ ...internalVal, isValid: !required });
-    setValue({ ...internalVal, isValid: !required });
-  }, []);
+  // useEffect(() => {
+  //   setInternal({ ...internalVal, isValid: !required });
+  //   setValue({ ...internalVal, isValid: !required });
+  // }, []);
   const onChange = (e) => {
     let v = e.target.value;
     let isValid = false;
@@ -95,10 +95,10 @@ function EmailQuestion({ config, setValue }) {
   if (isEncrypted) info += privacy_info;
   if (exp_date) info += exp_info_1 + exp_date + exp_info_2;
   const { Option } = Select;
-  useEffect(() => {
-    setInternal({ ...internalVal, isValid: !required });
-    setValue({ ...internalVal, isValid: !required });
-  }, []);
+  // useEffect(() => {
+  //   setInternal({ ...internalVal, isValid: !required });
+  //   setValue({ ...internalVal, isValid: !required });
+  // }, []);
 
   const onDomainChanged = (e) => {
     let idx = e;
