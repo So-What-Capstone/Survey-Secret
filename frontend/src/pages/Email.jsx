@@ -72,7 +72,7 @@ function Email() {
     SEND_EMAIL,
     {
       onCompleted: (data) => {
-        console.log(data);
+        //console.log(data);
         const {
           sendEmail: { ok, error },
         } = data;
@@ -92,16 +92,16 @@ function Email() {
   };
 
   const sendEmail = async () => {
-    console.log("selectedFormId: " + selectedForm.id);
-    console.log(textTitle + ", " + textValue);
+    //console.log("selectedFormId: " + selectedForm.id);
+    //console.log(textTitle + ", " + textValue);
     const checkedItemsArray = Array.from(checkedItems); //set to array
-    console.log(checkedItemsArray);
+    //console.log(checkedItemsArray);
 
     if (textTitle === "" || textValue === "") {
       alert("내용을 입력하세요.");
     } else {
       //send Email logic
-      console.log("개인정보질문 id :" + emailQueId);
+      //console.log("개인정보질문 id :" + emailQueId);
 
       if (emailQueId !== "") {
         const emailVarsInput = [
@@ -134,11 +134,9 @@ function Email() {
         } = result.data;
         if (!ok || error) {
           alert("전송 실패하였습니다.");
-          console.log("전송실패");
           return;
         } else {
           alert("전송 성공하였습니다.");
-          console.log("전송성공");
         }
       } else {
         alert("연락 정보가 없어 전송할 수 없습니다.");

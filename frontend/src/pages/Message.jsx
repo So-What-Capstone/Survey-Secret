@@ -31,7 +31,6 @@ function Message() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   useEffect(() => {
-    console.log("Ddd");
     if (!isLoggedIn) {
       alert("로그인 후 이용해 주세요.");
       navigate("/login");
@@ -85,10 +84,8 @@ function Message() {
   const [sendSms] = useMutation(SEND_SMS, {
     onCompleted: (data) => {
       if (data.sendSms.ok) {
-        console.log("전송성공!");
         alert("전송하였습니다.");
       } else {
-        console.log("전송실패!");
         alert("전송 실패하였습니다.");
         throw new Error(data.sendSms.error);
       }
@@ -99,20 +96,12 @@ function Message() {
     if (textByte < 1) {
       alert("내용을 입력하세요.");
     } else {
-      console.log("selectedForm Id: " + selectedForm.id);
+      //console.log("selectedForm Id: " + selectedForm.id);
       checkedItems.forEach(function (value) {
-        console.log("receiverId: " + value);
+        //console.log("receiverId: " + value);
       });
-      console.log("개인정보질문id + " + phoneQueId);
+      //console.log("개인정보질문id + " + phoneQueId);
       const checkedItemsArray = Array.from(checkedItems); //set to array
-
-      console.log(
-        selectedForm.id,
-        checkedItemsArray,
-        phoneQueId,
-        textValue,
-        smsType
-      );
 
       if (phoneQueId !== "") {
         await sendSms({

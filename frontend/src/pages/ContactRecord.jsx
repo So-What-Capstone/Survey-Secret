@@ -79,10 +79,7 @@ function ContactRecord() {
       contactListArray.map((c) => {
         //c.id와 같은 title 찾기
         myFormsTitleArray.map((m) => {
-          //console.log("c.id : " + c.id);
-          //console.log("m.id : " + m.id);
           if (m.id == c.formId) {
-            console.log("m.title : " + m.title);
             c.title = m.title;
           }
         });
@@ -138,7 +135,6 @@ function ContactRecord() {
   };
 
   const handleListItemClick = (e, listItem, mode) => {
-    console.log("form id : " + listItem.id);
     if (mode === 0) {
       setSelectedMessage(listItem);
       setTextValue(listItem.content);

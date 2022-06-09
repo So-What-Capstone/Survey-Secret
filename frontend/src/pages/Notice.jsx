@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import ClipTray from "../modules/ClipTray";
 import Pagination from "@material-ui/lab/Pagination";
 import {
   Accordion,
@@ -27,10 +26,6 @@ const useStyles = makeStyles({
 });
 
 function Notice() {
-  const clips = [
-    { title: "공지사항", link_enabled: false, link: "/", color_idx: 0 },
-  ];
-
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [noticeList, setNoticeList] = useState([]);
@@ -91,7 +86,6 @@ function Notice() {
 
   return (
     <div className="notice-con">
-      <ClipTray clips={clips} />
       <div className="notice-panel">
         <div className="panel-row">
           <div className="panel-title">공지사항</div>
