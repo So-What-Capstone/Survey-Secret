@@ -2,7 +2,7 @@ import { List } from "antd";
 import React, { useEffect, useState } from "react";
 import Form from "../modules/Form";
 import "../styles/SurveyCreate.css";
-import { isLoggedInVar } from "./../apollo";
+import { tokenVar, verifyToken, logUserOut } from "./../apollo";
 import { useReactiveVar } from "@apollo/client";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
@@ -45,7 +45,7 @@ function SurveyCreate() {
   const [my_templates, setMyTemplates] = useState([]);
   const [my_templates_names, setMyTemplateNames] = useState([]);
 
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const token = useReactiveVar(tokenVar);
   const [secEnabled, setSecEnabled] = useState({});
 
   const {
@@ -78,11 +78,13 @@ function SurveyCreate() {
     },
   });
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!token || !verifyToken()) {
       alert("로그인 후 이용해 주세요.");
+      logUserOut(false);
       navigate("/login");
     }
-  }, [isLoggedIn]);
+  }, []);
+
   const onExampleChange = (idx) => () => {
     setSelected([idx, -1]);
   };

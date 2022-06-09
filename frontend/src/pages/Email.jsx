@@ -4,7 +4,7 @@ import ContactList from "../modules/ContactList";
 import { gql, useQuery, useMutation, useReactiveVar } from "@apollo/client";
 import { getMyFormsForContactQuery } from "../API/meQuery";
 import { sendEmail } from "../API/sendQuery";
-import { isLoggedInVar } from "./../apollo";
+import { tokenVar, verifyToken, logUserOut } from "./../apollo";
 import { useNavigate } from "react-router-dom";
 import "../styles/Clips.css";
 import "../styles/Email.scss";
@@ -17,15 +17,16 @@ function Email() {
     { title: "이메일 서비스", link_enabled: false, link: "/", color_idx: 0 },
   ];
 
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const token = useReactiveVar(tokenVar);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!token || !verifyToken()) {
       alert("로그인 후 이용해 주세요.");
+      logUserOut(false);
       navigate("/login");
     }
-  }, [isLoggedIn]);
+  }, []);
 
   const [myForms, setMyForms] = useState([
     {

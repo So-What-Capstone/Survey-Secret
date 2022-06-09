@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/Menu.css";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { isLoggedInVar, logUserOut } from "./../apollo";
+import { tokenVar, usernameVar, logUserOut } from "./../apollo";
 import { useQuery, gql, useReactiveVar } from "@apollo/client";
 // reference: https://intrepidgeeks.com/tutorial/implement-htmlcssdropdown-list-animation
 
@@ -20,19 +20,8 @@ const ME_QUERY = gql`
 
 function Menu() {
   const navigate = useNavigate();
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
-
-  const { loading, data, error, refetch } = useQuery(ME_QUERY, {
-    onCompleted: (data) => {
-      setLoggedInUser(data?.me?.user?.username);
-    },
-  });
-  //나중에 고치기, 메뉴는 맨 위에 올라와있으므로 매번 query 요청해야함
-  //localStorage 이용, token안에 넣고 decode를 하던
-  const [loggedInUser, setLoggedInUser] = useState();
-  useEffect(() => {
-    refetch();
-  }, [isLoggedIn]);
+  const token = useReactiveVar(tokenVar);
+  const username = useReactiveVar(usernameVar);
 
   const move = (url) => () => {
     navigate(url);
@@ -53,12 +42,12 @@ function Menu() {
           <div
             className="nickname"
             onClick={() => {
-              if (isLoggedIn) navigate("/my-info");
+              if (token) navigate("/my-info");
             }}
           >
-            {!isLoggedIn ? "Guest" : loggedInUser}님
+            {!token ? "Guest" : username}님
           </div>
-          {!isLoggedIn ? (
+          {!token ? (
             <>
               <div
                 className="login-menus-button"

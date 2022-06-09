@@ -4,7 +4,7 @@ import ContactList from "../modules/ContactList";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { getMyFormsForContactQuery } from "../API/meQuery";
 import { sendSms } from "../API/sendQuery";
-import { isLoggedInVar } from "./../apollo";
+import { tokenVar, verifyToken, logUserOut } from "./../apollo";
 import { useReactiveVar } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import "../styles/Clips.css";
@@ -28,11 +28,12 @@ function Message() {
 
   const navigate = useNavigate();
 
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const token = useReactiveVar(tokenVar);
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!token || !verifyToken()) {
       alert("로그인 후 이용해 주세요.");
+      logUserOut(false);
       navigate("/login");
     }
   }, []);

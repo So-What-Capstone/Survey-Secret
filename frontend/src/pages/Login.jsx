@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,11 +13,11 @@ import { useEffect } from "react";
 import { useState } from "react";
 const BACK_CANDS = [back1, back2, back3, back4];
 import { loginMutation } from "../API";
+import { getUserQuery } from "../API/meQuery";
 
 const LOGIN_MUTATION = loginMutation;
 
 //로그인 한 사람만 올 수 있께 처리 필요...
-//isLoggedInVar 사용
 function Login() {
   const [backIndex, setBackIndex] = useState(0);
   let navigate = useNavigate();
@@ -31,26 +31,30 @@ function Login() {
   } = useForm({
     mode: "onChange",
   });
+  const [getUser] = useLazyQuery(getUserQuery);
 
   useEffect(() => {
     setBackIndex(Math.floor(Math.random() * 4));
   }, []);
 
-  const onCompleted = (data) => {
+  const onCompleted = async (data) => {
     const {
       login: { ok, error, token },
     } = data;
-    //for testing
-    console.log(ok, error, token);
     if (!ok) {
       return setError("result", {
         message: error,
       });
     }
-    if (token) {
+    try {
       logUserIn(token);
-
-      navigate("/", { state: { message: "XX님 hi" } });
+      const user = await getUser();
+      logUserIn(token, user.data.me.user.username);
+      navigate("/");
+    } catch (err) {
+      return setError("result", {
+        message: err.message,
+      });
     }
   };
 

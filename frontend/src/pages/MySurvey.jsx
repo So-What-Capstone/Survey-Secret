@@ -4,7 +4,7 @@ import { PlusCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { Typography } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useReactiveVar, useLazyQuery } from "@apollo/client";
-import { isLoggedInVar } from "./../apollo";
+import { tokenVar, verifyToken, logUserOut } from "./../apollo";
 import { getMyFormsSimpleQuery } from "../API";
 import Form from "../modules/Form";
 import "../styles/MySurvey.scss";
@@ -22,16 +22,18 @@ function MySurvey() {
   const [secEnabled, setSecEnabled] = useState({});
   const navigate = useNavigate();
 
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const token = useReactiveVar(tokenVar);
   const [previewId, setPreviewId] = useState("");
   const [form_config, setFormConfig] = useState({});
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!token || !verifyToken()) {
       alert("로그인 후 이용해 주세요.");
+      logUserOut(false);
       navigate("/login");
     }
-  }, [isLoggedIn]);
+  }, []);
+
   const { loading, data, error } = useQuery(ME_QUERY, {
     onCompleted: (data) => {
       setReadySurveys(
