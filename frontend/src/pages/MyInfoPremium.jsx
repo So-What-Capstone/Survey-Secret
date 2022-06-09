@@ -22,9 +22,6 @@ const GET_MY_TYPE_QUERY = getMyTypeQuery;
 */
 
 function MyInfoPremium() {
-  const clips = [
-    { title: "멤버십", link_enabled: false, link: "/", color_idx: 0 },
-  ];
   const navigate = useNavigate();
 
   /* dummy data */
@@ -129,7 +126,6 @@ function MyInfoPremium() {
 
   return (
     <div className="premium-con">
-      <ClipTray clips={clips} />
       <div className="premium-panel">
         <div className="panel-title">멤버십</div>
         <div className="panel-title-small">나의 멤버십</div>

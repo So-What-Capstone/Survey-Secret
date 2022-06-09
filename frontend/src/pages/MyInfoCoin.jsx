@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import ClipTray from "../modules/ClipTray";
 import { useNavigate, Link } from "react-router-dom";
 import Pagination from "@material-ui/lab/Pagination";
 import { gql, useQuery } from "@apollo/client";
@@ -38,10 +37,6 @@ const useStyles = makeStyles({
 function MyInfoCoin() {
   const navigate = useNavigate();
   const classes = useStyles();
-
-  const clips = [
-    { title: "코인 충전", link_enabled: false, link: "/", color_idx: 0 },
-  ];
 
   /* dummy data */
   //const coin = 3000;
@@ -211,7 +206,6 @@ function MyInfoCoin() {
 
   return (
     <div className="coin-con">
-      <ClipTray clips={clips} />
       <div className="coin-panel">
         <div className="panel-title">코인 충전</div>
         <div className="panel-title-small">나의 코인</div>
