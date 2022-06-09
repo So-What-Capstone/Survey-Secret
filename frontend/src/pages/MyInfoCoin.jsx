@@ -45,6 +45,11 @@ function MyInfoCoin() {
 
   /* dummy data */
   //const coin = 3000;
+
+  const coinChargeListDummy = [];
+  const coinConsumeListDummy = [];
+
+  /*
   const coinChargeListDummy = [
     {
       id: "0",
@@ -74,7 +79,7 @@ function MyInfoCoin() {
       usedFor: "문자 발송",
       consumedAt: "2022/6/5",
     },
-  ];
+  ];*/
 
   /* 코인 */
   const [coin, setCoin] = useState(0);
@@ -104,8 +109,7 @@ function MyInfoCoin() {
 
   const { data, loading, error } = useQuery(GET_MY_COIN_QUERY, {
     onCompleted: (data) => {
-      //setCoin(data?.me?.user?.type.toString());
-      setCoin(4280);
+      setCoin(data?.me?.user?.type.toString());
     },
   });
 

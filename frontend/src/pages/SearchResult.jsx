@@ -64,22 +64,6 @@ function SearchResult() {
     value: searchedText,
   };
 
-  /*
-  const { loading, data, error } = useQuery(SEARCH_FORMS_QUERY, {
-    variables: { title: searchParams.get("value") },
-    onCompleted: (data) => {
-      let {
-        searchForms: { ok, error, forms },
-      } = data;
-
-      if (!ok) {
-        throw new Error(error);
-      } else {
-        setForms(forms);
-      }
-    },
-  });*/
-
   const [searchFormsQuery] = useLazyQuery(SEARCH_FORMS_QUERY);
 
   const handleSearchedText = (e) => {
@@ -243,9 +227,7 @@ function SearchResult() {
                     <ListItemText
                       primary={
                         "폼 만료일: " +
-                        form.expiredAt.substring(0, 10) +
-                        " " +
-                        form.expiredAt.substring(11, 19)
+                        new Date(form.expiredAt).toLocaleString("ko-KR")
                       }
                       className="row-item"
                       primaryTypographyProps={{ fontSize: "0.8rem" }}

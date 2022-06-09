@@ -45,14 +45,14 @@ function ContactRecord() {
       let contactListArray = [];
       contactListArray = queryData?.data?.getSendHistory?.contacts.map((c) => {
         const obj = {};
-        obj["time"] =
-          c.updatedAt.substring(0, 10) + " " + c.updatedAt.substring(11, 19);
+        const dateTime = new Date(c.updatedAt);
+        obj["time"] = dateTime.toLocaleString("ko-KR");
         obj["id"] = c._id;
         obj["formId"] = c.form._id;
         obj["content"] = c.content;
         obj["contactType"] = c.contactType;
         obj["success"] = true;
-        obj["title"] = ""; //
+        obj["title"] = "삭제된 설문입니다.";
         let tempArray = [];
         c.receivers.map((r) => {
           tempArray.push(r._id);
@@ -62,8 +62,6 @@ function ContactRecord() {
         obj["count"] = tempArray.length;
         return obj;
       });
-
-      console.log(contactListArray);
 
       let myFormsTitleArray = []; //[{id, title}]
 
@@ -75,8 +73,6 @@ function ContactRecord() {
         obj["title"] = f.title;
         return obj;
       });
-
-      console.log(myFormsTitleArray);
 
       //form id 비교 -> title 설정
 
@@ -92,9 +88,10 @@ function ContactRecord() {
         });
       });
 
-      console.log(contactListArray);
-
-      setContactList(contactListArray);
+      const contactListArraySorted = contactListArray.sort((a, b) =>
+        a.time > b.time ? -1 : 1
+      );
+      setContactList(contactListArraySorted);
     };
     getContactsFunc();
   }, [mode]);
@@ -138,37 +135,6 @@ function ContactRecord() {
 
   const handleModeChange = async (e, newMode) => {
     setMode(newMode);
-    let queryData = await getContacts({
-      variables: {
-        contactType: newMode === 0 ? "SMS" : "EMAIL",
-      },
-    });
-
-    //onCompleted: (data) => {
-    console.log("query completed");
-    //console.log(queryData?.data?.getSendHistory?.contacts[0].content);
-    setContactList(
-      queryData?.data?.getSendHistory?.contacts.map((c) => {
-        const obj = {};
-        obj["time"] =
-          c.updatedAt.substring(0, 10) + " " + c.updatedAt.substring(11, 19);
-        obj["id"] = c._id;
-        obj["content"] = c.content;
-        obj["contactType"] = c.contactType;
-        obj["success"] = true;
-        obj["title"] = "title";
-        let tempArray = [];
-        c.receivers.map((r) => {
-          tempArray.push(r._id);
-        });
-
-        obj["receivers"] = tempArray;
-        obj["count"] = tempArray.length;
-        return obj;
-      })
-    );
-    //},
-    //});
   };
 
   const handleListItemClick = (e, listItem, mode) => {
@@ -194,90 +160,6 @@ function ContactRecord() {
     setTextValue(e.target.value);
     checkByte(e.target.value);
   };
-
-  /*
-  const sendEmail = async () => {
-    console.log("selectedFormId: " + selectedForm.id);
-    console.log(textTitle + ", " + textValue);
-    const checkedItemsArray = Array.from(checkedItems); //set to array
-    console.log(checkedItemsArray);
-
-    if (textTitle === "" || textValue === "") {
-      alert("내용을 입력하세요.");
-    } else {
-      //send Email logic
-      console.log("개인정보질문 id :" + emailQueId);
-
-      if (emailQueId !== "") {
-        const emailVarsInput = [
-          {
-            key: "title",
-            value: textTitle,
-          },
-          {
-            key: "owner",
-            value: "",
-          },
-          {
-            key: "body",
-            value: textValue,
-          },
-        ];
-
-        let result = await sendEmailMutation({
-          variables: {
-            formId: selectedForm.id,
-            submissionIds: checkedItemsArray,
-            questionId: emailQueId,
-            subject: "",
-            emailVars: emailVarsInput,
-          },
-        });
-
-        const {
-          sendEmail: { ok, error },
-        } = result.data;
-        if (!ok || error) {
-          alert("전송 실패하였습니다.");
-          console.log("전송실패");
-          return;
-        } else {
-          alert("전송 성공하였습니다.");
-          console.log("전송성공");
-        }
-      } else {
-        alert("연락 정보가 없어 전송할 수 없습니다.");
-      }
-    }
-  };*/
-
-  /*
-  const sendMessage = async () => {
-    if (textByte < 1) {
-      alert("내용을 입력하세요.");
-    } else {
-      console.log("selectedForm Id: " + selectedForm.id);
-      checkedItems.forEach(function (value) {
-        console.log("receiverId: " + value);
-      });
-      console.log("개인정보질문id + " + phoneQueId);
-      const checkedItemsArray = Array.from(checkedItems); //set to array
-
-      if (phoneQueId !== "") {
-        await sendSms({
-          variables: {
-            formId: selectedForm.id,
-            submissionIds: checkedItemsArray,
-            questionId: phoneQueId,
-            msg: textValue,
-            msgType: smsType,
-          },
-        });
-      } else {
-        alert("연락 정보가 없어 전송할 수 없습니다.");
-      }
-    }
-  };*/
 
   const checkByte = (newTextValue) => {
     let totalByte = 0; //현재 바이트

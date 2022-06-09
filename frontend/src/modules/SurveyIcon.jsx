@@ -40,21 +40,21 @@ export default function SurveyIcon({
       },
     }
   );
-  let expArray = "";
-  let timeArray = "";
+
+  let dateTime = "";
 
   if (exp) {
-    expArray = exp.split("T");
-    timeArray = expArray[1].split(".");
+    const dateTimeArray = new Date(exp);
+    dateTime = dateTimeArray.toLocaleString("ko-KR");
   }
   let short_des = "";
   if (des) {
-    short_des = des.length <= 25 ? des : des.substr(0, 25);
+    short_des = des.length <= 40 ? des : des.substr(0, 40) + "...";
   }
   const result_link = "/my-survey/result/list?id=" + form_id;
   const edit_link = "/my-survey/design?id=" + form_id;
 
-  const expStr = "~ " + expArray[0] + " " + timeArray[0];
+  const expStr = "~ " + dateTime;
 
   const onDelete = async () => {
     let ret = confirm('"' + title + '" 설문을 삭제하시겠습니까?');

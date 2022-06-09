@@ -1,21 +1,16 @@
 .content {
   display: flex;
-  flex-flow: row nowrap;
+  flex-direction: row;
   width: 100%;
-  max-height: 100%;
-  overflow-y: auto;
-  justify-content: space-between;
 }
 
 .select-template {
-  width: 40%;
-  margin-left: 5%;
-  margin-right: 5%;
-  margin-top: 2%;
-  padding: 1%;
+  flex: 1 1 0;
+  margin: 4rem 1.5vw 4rem 0.5vw;
+  padding: 1rem 1.5vw 1rem 1.5vw;
   height: fit-content;
-  background-color: #384d6d90;
-  border-radius: 0.1rem;
+  background-color: #ffffff25;
+  border-radius: 0.2rem;
 }
 .example-templates {
   width: 100%;
@@ -35,18 +30,14 @@
 }
 
 .preview {
-  width: 40%;
-  min-width: min(40rem, 90vw);
-  margin-left: 5%;
-  margin-right: 5%;
-  margin-top: 2%;
-  padding: 1%;
-  background-color: #384d6d90;
+  flex: 1 1 0;
+  padding: 1rem 1.5vw 1rem 1.5vw;
+  margin: 4rem 1.5vw 4rem 0.5vw;
+  background-color: #ffffff25;
   border-radius: 0.1rem;
 }
 
 .list-item-template {
-  width: 100%;
   padding: 1%;
   border: 0;
   outline: 0;
@@ -71,6 +62,7 @@
   margin-bottom: 0.2rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid #ccd6f650;
+  min-width: 21rem;
 }
 
 .template-select-btn {

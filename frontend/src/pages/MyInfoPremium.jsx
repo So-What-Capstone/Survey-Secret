@@ -36,11 +36,8 @@ function MyInfoPremium() {
 
   const { data, loading, error } = useQuery(GET_MY_TYPE_QUERY, {
     onCompleted: (data) => {
-      setUserType("Premium");
-      setBtnState("Premium");
-
-      //setUserType("data?.me?.user?.type");
-      //setBtnState(data?.me?.user?.type);
+      setUserType(data?.me?.user?.type);
+      setBtnState(data?.me?.user?.type);
     },
   });
 

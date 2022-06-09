@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ClipTray from "../modules/ClipTray";
 import ContactList from "../modules/ContactList";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { getMyFormsForContactQuery } from "../API/meQuery";
 import { sendSms } from "../API/sendQuery";
+import { isLoggedInVar } from "./../apollo";
+import { useReactiveVar } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 import "../styles/Clips.css";
 import "../styles/Message.scss";
+import "../styles/Main.scss";
 
 const GET_MY_FORMS_CONTACT_QUERY = getMyFormsForContactQuery;
 const SEND_SMS = sendSms;
@@ -21,6 +25,18 @@ function Message() {
       title: "",
     },
   ]);
+
+  const navigate = useNavigate();
+
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+
+  useEffect(() => {
+    console.log("Ddd");
+    if (!isLoggedIn) {
+      alert("로그인 후 이용해 주세요.");
+      navigate("/login");
+    }
+  }, []);
 
   //대표질문 내용
   const [repsQuestionContent, setRepsQuestionContent] = useState("");

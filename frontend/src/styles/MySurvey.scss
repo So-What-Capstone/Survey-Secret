@@ -3,7 +3,6 @@
   /* max-height: calc(100vh-3rem);
   overflow-y: auto; */
   .my-survey-banner {
-    width: 100%;
     // margin: 2%;
     /* padding: 7%; */
     height: fit-content;
@@ -15,11 +14,11 @@
 .new-survey-con {
   display: flex;
   justify-content: center;
-  width: 100%;
   .new-survey-btn {
     display: flex;
-    justify-content: center;
+    //justify-content: center;
     align-items: center;
+    min-width: 13rem;
     padding: 0.5rem;
     border-radius: 0.1rem;
     background-color: #65ffdc50;
@@ -43,11 +42,12 @@
 
 .my-survey-bottom-con {
   display: flex;
-  flex-flow: row wrap;
+  flex-direction: row;
+  //flex-flow: row wrap;
   .survey-tray-container {
+    flex: 2 1 0;
     border-radius: 0.1rem;
     /* background-color: #ffffff20; */
-    width: 60%;
     margin: 2%;
 
     /* padding: 2%; */
@@ -71,13 +71,14 @@
     }
   }
   .mysurvey-preview-con {
-    width: 30%;
+    flex: 1 1 0;
+    min-width: 20rem;
     margin: 2%;
     min-height: 90vh;
     height: 90vh;
     position: sticky;
     top: 6vh;
-    background-color: #172a46;
+    background-color: #ffffff20;
     border-radius: 0.2rem;
     padding: 1rem;
     overflow-y: auto;

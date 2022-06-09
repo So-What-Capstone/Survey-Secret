@@ -5,13 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 function SurveyCard({ survey }) {
   const navigate = useNavigate();
-  let expArray = "";
-  let timeArray = "";
+  let dateTime = "";
   if (survey.expiredAt) {
-    expArray = survey.expiredAt.split("T");
-    timeArray = expArray[1].split(".");
+    const dateTimeArray = new Date(survey.expiredAt);
+    dateTime = dateTimeArray.toLocaleString("ko-KR");
   }
-  const expStr = "~ " + expArray[0] + " " + timeArray[0];
+  const expStr = "~ " + dateTime;
 
   const onClick = () => {
     navigate("/respond?id=" + survey._id);
