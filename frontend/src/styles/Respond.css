@@ -5,6 +5,15 @@
   justify-content: center;
 }
 
+.respond-preview {
+  width: 60%;
+  height: fit-content;
+  padding: 1rem 1.5vw 1rem 1.5vw;
+  margin: 4rem 1.5vw 4rem 0.5vw;
+  background-color: #ffffff25;
+  border-radius: 0.1rem;
+}
+
 .respond-submit-btn {
   width: 100%;
   border: 1px solid #65ffdc;

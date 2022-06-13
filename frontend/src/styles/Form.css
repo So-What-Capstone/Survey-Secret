@@ -12,19 +12,30 @@
   border-radius: 0.5rem;
   min-height: 3rem;
 }
+.section-title {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  width: 100%;
+  height: fit-content;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
 .form-container {
   width: 100%;
   padding: 2%;
   border-radius: 0.2rem;
 }
 .form-title {
-  font-size: 1rem;
+  font-size: 1.2rem;
   word-wrap: break-word;
   color: #65ffdc;
 }
 .form-desc {
+  display: block;
   font-size: 1rem;
   word-wrap: break-word;
   color: #ccd6f6;
   white-space: pre-wrap;
+  padding-bottom: 1rem;
 }

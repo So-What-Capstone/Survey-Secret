@@ -215,7 +215,7 @@ function Respond() {
   if (!form_config) return null;
   return (
     <div className="respond-container">
-      <div className="preview">
+      <div className="respond-preview">
         <Form
           _config={form_config}
           _setResponse={setResponse}
