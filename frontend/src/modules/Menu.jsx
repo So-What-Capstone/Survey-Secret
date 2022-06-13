@@ -3,20 +3,8 @@ import "../styles/Menu.css";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { tokenVar, usernameVar, logUserOut } from "./../apollo";
-import { useQuery, gql, useReactiveVar } from "@apollo/client";
+import { useReactiveVar } from "@apollo/client";
 // reference: https://intrepidgeeks.com/tutorial/implement-htmlcssdropdown-list-animation
-
-const ME_QUERY = gql`
-  query {
-    me {
-      ok
-      error
-      user {
-        username
-      }
-    }
-  }
-`;
 
 function Menu() {
   const navigate = useNavigate();
